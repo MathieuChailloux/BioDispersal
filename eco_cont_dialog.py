@@ -26,6 +26,7 @@ import os
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
+import processing
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -41,9 +42,30 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        tmp=self.CoutMaxSpinBox
         
     def runCost(self):
-        startRaster=self.rasterDepartComboBox.value
-        permRaster=self.rasterPermComboBox
+        startRaster=self.rasterDepartComboBox.currentLayer()
+        permRaster=self.rasterPermComboBox.currentLayer()
+        print ("startRaster = " + startRaster.name())
+        parameters = { 'input' : permRaster,
+                        'start_raster' : startRaster,
+                        'max_cost' : 5000,
+                        'output' : "D:\MChailloux\PNRHL_QGIS\tmpLayer.tif",
+                        'start_coordinates' : [0,0],
+                        'stop_coordinates' : (0,0),
+                        'nearest' : None,
+                        'outdir' : None,
+                        'start_points' :  None,
+                        'stop_points' : None,
+                        'null_cost' : None,
+                        'memory' : 5000,
+                        'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
+                        'GRASS_SNAP_TOLERANCE_PARAMETER' : None,
+                        'GRASS_MIN_AREA_PARAMETER' : None,
+                        '-k' : False,
+                        '-n' : False,
+                        '-r' : True,
+                        '-i' : False,
+                        '-b' : False};
+        processing.run("grass7:r.cost",parameters)
         #grass.run_command(start_raster=startRaster,input=permRaster,max_cost=?,output=?,memory=5000)

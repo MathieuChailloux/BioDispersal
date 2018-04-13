@@ -184,6 +184,7 @@ class EcologicalContinuity:
 
     def run(self):
         """Run method that performs all the real work"""
+        self.dlg.runButton.clicked.connect(self.dlg.runCost)
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
