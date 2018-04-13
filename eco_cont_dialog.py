@@ -41,3 +41,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        tmp=self.CoutMaxSpinBox
+        
+    def runCost(self):
+        startRaster=self.rasterDepartComboBox.value
+        permRaster=self.rasterPermComboBox
+        #grass.run_command(start_raster=startRaster,input=permRaster,max_cost=?,output=?,memory=5000)
