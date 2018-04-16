@@ -22,6 +22,9 @@
      <height>471</height>
     </rect>
    </property>
+   <property name="focusPolicy">
+    <enum>Qt::WheelFocus</enum>
+   </property>
    <property name="currentIndex">
     <number>0</number>
    </property>

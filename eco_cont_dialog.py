@@ -27,6 +27,9 @@ import os
 from PyQt5 import uic
 from PyQt5 import QtWidgets
 import processing
+import datetime
+from qgis.core import *
+from qgis.gui import *
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -46,26 +49,32 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
     def runCost(self):
         startRaster=self.rasterDepartComboBox.currentLayer()
         permRaster=self.rasterPermComboBox.currentLayer()
-        print ("startRaster = " + startRaster.name())
+        dateNow=datetime.datetime.now()
+        print ("[" + str(dateNow) + "] startRaster = " + startRaster.name())
         parameters = { 'input' : permRaster,
                         'start_raster' : startRaster,
                         'max_cost' : 5000,
-                        'output' : "D:\MChailloux\PNRHL_QGIS\tmpLayer.tif",
-                        'start_coordinates' : [0,0],
-                        'stop_coordinates' : (0,0),
-                        'nearest' : None,
-                        'outdir' : None,
+                        'output' : 'D:\\MChailloux\\PNRHL_QGIS\\tmpLayer_output.tif',
+                        'start_coordinates' : '0,0',
+                        'stop_coordinates' : '0,0',
+                        'nearest' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_nearest.tif',
+                        'outdir' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_movements.tif',
                         'start_points' :  None,
                         'stop_points' : None,
                         'null_cost' : None,
                         'memory' : 5000,
                         'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
-                        'GRASS_SNAP_TOLERANCE_PARAMETER' : None,
-                        'GRASS_MIN_AREA_PARAMETER' : None,
+                        'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
+                        'GRASS_MIN_AREA_PARAMETER' : 0,
                         '-k' : False,
                         '-n' : False,
                         '-r' : True,
                         '-i' : False,
                         '-b' : False};
-        processing.run("grass7:r.cost",parameters)
+        try:
+            processing.run("grass7:r.cost",parameters)
+            print ("call to r.cost successful")
+        except Exception as e:
+            print ("Failed to call r.cost : " + str(e))
+            raise e
         #grass.run_command(start_raster=startRaster,input=permRaster,max_cost=?,output=?,memory=5000)
