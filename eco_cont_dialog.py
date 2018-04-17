@@ -49,14 +49,15 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.connectComponents()
         
     def connectComponents(self):
+        self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         self.groupVectRun.clicked.connect(self.selectEntities)
         self.runButton.clicked.connect(self.runCost)
         
     def runCost(self):
         debug("Start runCost")
-        startRaster=self.rasterDepartComboBox.currentLayer()
-        permRaster=self.rasterPermComboBox.currentLayer()
-        dateNow=datetime.datetime.now()
+        startRaster = self.rasterDepartComboBox.currentLayer()
+        permRaster = self.rasterPermComboBox.currentLayer()
+        dateNow = datetime.datetime.now()
         debug ("startRaster = " + startRaster.name())
         parameters = { 'input' : permRaster,
                         'start_raster' : startRaster,
@@ -88,10 +89,14 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
             debug("End runCost")
         #grass.run_command(start_raster=startRaster,input=permRaster,max_cost=?,output=?,memory=5000)
         
+    def updateGroupVectLayer(self,layer):
+        self.groupVectFieldExpr.setLayer(layer)
+        
     def selectEntities(self):
         debug("Start selectEntities")
-        layer=self.groupVectMapLayer.currentLayer()
-        fiedlExpr=self.groupVectFieldExpr.expression()
-        group=self.groupVectGroup.currentText()
+        layer = self.groupVectMapLayer.currentLayer()
+        fiedlExpr = self.groupVectFieldExpr.expression()
+        group = self.groupVectGroup.currentText()
+        selection = layer.getFeatures(QgsFeatureRequest().setFilterExpression(fieldExpr))
         debug("End selectEntities")
         
