@@ -27,9 +27,10 @@ import os
 from PyQt5 import uic
 from PyQt5 import QtWidgets
 import processing
-import datetime
 from qgis.core import *
 from qgis.gui import *
+
+from .utils import *
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -45,16 +46,22 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        #self.connectComponents()
+        
+    def connectComponents(self):
+        self.groupVectRun.clicked.connect(self.selectEntities)
+        self.runButton.clicked.connect(self.runCost)
         
     def runCost(self):
+        debug("Start runCost")
         startRaster=self.rasterDepartComboBox.currentLayer()
         permRaster=self.rasterPermComboBox.currentLayer()
         dateNow=datetime.datetime.now()
-        print ("[" + str(dateNow) + "] startRaster = " + startRaster.name())
+        debug ("startRaster = " + startRaster.name())
         parameters = { 'input' : permRaster,
                         'start_raster' : startRaster,
                         'max_cost' : 5000,
-                        'output' : 'D:\\MChailloux\\PNRHL_QGIS\\tmpLayer_output.tif',
+                        'output' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_output.tif',
                         'start_coordinates' : '0,0',
                         'stop_coordinates' : '0,0',
                         'nearest' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_nearest.tif',
@@ -77,4 +84,14 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         except Exception as e:
             print ("Failed to call r.cost : " + str(e))
             raise e
+        finally:  
+            debug("End runCost")
         #grass.run_command(start_raster=startRaster,input=permRaster,max_cost=?,output=?,memory=5000)
+        
+    def selectEntities(self):
+        debug("Start selectEntities")
+        layer=self.groupVectMapLayer.currentLayer()
+        fiedlExpr=self.groupVectFieldExpr.expression()
+        group=self.groupVectGroup.currentText()
+        debug("End selectEntities")
+        
