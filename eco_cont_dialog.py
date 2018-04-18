@@ -50,6 +50,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.connectComponents()
         
     def connectComponents(self):
+        self.buttonAddGroup.clicked.connect(self.addGroup)
         self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         self.groupVectRun.clicked.connect(self.selectEntities)
         self.runButton.clicked.connect(self.runCost)
@@ -90,6 +91,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
             debug("End runCost")
         #grass.run_command(start_raster=startRaster,input=permRaster,max_cost=?,output=?,memory=5000)
         
+    def addGroup(self):
+        self.groupTable.insertRow(0)
+        
     def updateGroupVectLayer(self,layer):
         self.groupVectFieldExpr.setLayer(layer)
         
@@ -99,6 +103,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         fieldExpr = self.groupVectFieldExpr.expression()
         group = self.groupVectGroup.currentText()
         selection = layer.getFeatures(QgsFeatureRequest().setFilterExpression(fieldExpr))
+        newLayer=QgsVectorLayer("Polygon?crs=epsg:2154", "Segment buffers", "memory")
         writeShapefile(layer,'D:\MChailloux\PNRHL_QGIS\\test.shp')
         debug("End selectEntities")
         
