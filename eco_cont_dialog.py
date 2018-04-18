@@ -31,6 +31,7 @@ from qgis.core import *
 from qgis.gui import *
 
 from .utils import *
+from .qgsUtils import *
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -95,8 +96,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
     def selectEntities(self):
         debug("Start selectEntities")
         layer = self.groupVectMapLayer.currentLayer()
-        fiedlExpr = self.groupVectFieldExpr.expression()
+        fieldExpr = self.groupVectFieldExpr.expression()
         group = self.groupVectGroup.currentText()
         selection = layer.getFeatures(QgsFeatureRequest().setFilterExpression(fieldExpr))
+        writeShapefile(layer,'D:\MChailloux\PNRHL_QGIS\\test.shp')
         debug("End selectEntities")
         
