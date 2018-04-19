@@ -32,6 +32,7 @@ from qgis.gui import *
 
 from .utils import *
 from .qgsUtils import *
+from .groups import Groups
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -46,10 +47,13 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
+        self.tabs=[Groups(self)]
         self.setupUi(self)
         #self.connectComponents()
         
     def connectComponents(self):
+        for tab in self.tabs:
+            tab.connectComponents()
         self.buttonAddGroup.clicked.connect(self.addGroup)
         self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         self.groupVectRun.clicked.connect(self.selectEntities)

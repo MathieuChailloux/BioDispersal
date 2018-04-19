@@ -36,6 +36,9 @@ def debug(msg):
 def info(msg):
     printDate("[info] " + msg)
     
+def warn(msg):
+    printDate("[warn] " + msg)
+    
 def user_error(msg):
     printDate("[user error] " + msg)
     raise Exception(msg)
@@ -43,6 +46,8 @@ def user_error(msg):
 def internal_error(msg):
     printDate("[internal error] " + msg)
     raise Exception(msg)
+
+
     
 #def writeShapefile(layer,outfname):
 #    error = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname)
@@ -50,5 +55,3 @@ def internal_error(msg):
 #        info("Shapefile '" + outfname + "' succesfully created")
 #    else:
 #        user_error("Unable to create shapefile '" + outfname + "' : " + str(error))
-        
-        
