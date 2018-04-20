@@ -61,13 +61,16 @@ class Groups:
         # return False
         
     def addRow(self):
+        debug("Adding row")
         self.dlg.groupTable.insertRow(0)
         # for group in self.groups:
             # group.row += 1
         # self.groups.insert(0,Group(0,"",""))
             
     def delRow(self):
-        self.dlg.groupTable.removeRow(self.dlg.groupTable.currentRow())
+        row = self.dlg.groupTable.currentRow()
+        debug("Deleting row " + str(row))
+        self.dlg.groupTable.removeRow(row)
         
     def checkNoEmptyCell(self):
         for i in range(0, self.dlg.groupTable.rowCount()):
