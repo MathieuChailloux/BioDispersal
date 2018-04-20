@@ -46,43 +46,87 @@ class Groups:
 
     def __init__(self,dlg):
         self.dlg = dlg
-        self.groups = []
+        self.groups = {}
         
     def connectComponents(self):
-        self.dlg.groupTable.cellChanged.connect(self.updateTable)
+        #self.dlg.groupTable.cellChanged.connect(self.updateTable)
+        self.dlg.buttonAddGroup.clicked.connect(self.addRow)
+        self.dlg.buttonRemoveGroup.clicked.connect(self.delRow)
+        self.dlg.buttonSaveGroups.clicked.connect(self.saveGroups)
         
-    def getGroupAtRow(self,row):
-        for group in self.groups:
-            if group.row == row:
-                return group
-        internal_error("Could not find group at row '" + str(row) + "'")
+    # def idExists(self,row,id):
+        # for group in self.groups:
+            # if group.id == id and row != group.row:
+                # return True
+        # return False
         
-    def addRow():
-        for group in self.groups:
-            group.row += 1
-        self.groups.insert(0,Group(0,"",""))
+    def addRow(self):
+        self.dlg.groupTable.insertRow(0)
+        # for group in self.groups:
+            # group.row += 1
+        # self.groups.insert(0,Group(0,"",""))
             
-    def delRow():
-        pass
+    def delRow(self):
+        self.dlg.groupTable.removeRow(self.dlg.groupTable.currentRow())
         
-    def updateTable(self,row,col):
-        group = self.getGroupAtRow(row)
-        cell_val = self.dlg.groupTable.itemAt(row,col).text()
-        if cell_val:
-            if col == 0:
-                old_key = self.groups(row,col)
-                if old_key:
-                    self.groups[cell_val] = self.groups[old_key]
-                    del self.groups[old_key]
-                    debug("Group '" + old_key + "' renamed to '" + cell_val + "'")
-                else:
-                    descr_val = self.dlg.groupTable.itemAt(row,1).text()
-                    self.groups[cell_val] = ""
-                    debug("Group '" + cell_val + " created with description '" + descr_val +"'")
-            elif col == 1:
-                key_val = self.dlg.groupTable.itemAt(row,0).text()
-                if key_val:
-                    old_descr = self.group[key_val]
-                    self.groups[key_val] = cell_val
-                    debug("Group '" + key_val + "' description changed from '" + old_descr + "' to '" + cell_val + "'")
+    def checkNoEmptyCell(self):
+        for i in range(0, self.dlg.groupTable.rowCount()):
+            for j in range(0, self.dlg.groupTable.columnCount()):
+                if not self.dlg.groupTable.item(i,j):
+                    user_error("Empty cell at row " + str(i) + ", column " + str(j))
+        
+    def saveGroups(self):
+        self.checkNoEmptyCell()
+        self.groups = {}
+        for i in range(0, self.dlg.groupTable.rowCount()):
+            key = self.dlg.groupTable.item(i,0).text()
+            val = self.dlg.groupTable.item(i,1).text()
+            debug ("row " + str(i) + " = (" + str(key) + "," + str(val) + ")") 
+            if not key.isalnum():
+                user_error("Invalid group name : " + str(key))
+            elif key in self.groups:
+                debug(str(self.groups))
+                user_error("Group '" + key + "' already exists")
+            else:
+                self.groups[key] = val
+                debug("Adding group '" + key + "' : " + val)
+        
+        
+    # def updateTable(self,row,col):
+        # debug("[updateTable] row = " + str(row) + ", col = " + str(col))
+        # debug(str(self.dlg.groupTable.rowCount()))
+        # group = self.getGroupAtRow(row)
+        # cell_val = self.dlg.groupTable.itemAt(row,col).text()
+        # if col == 0:
+            # if cell_val:
+                # if self.idExists(row,cell_val):
+                    # warn("Group '" + cell_val + "' already exists")
+                # else:
+                    # old_id = group.id
+                    # group.id = cell_val
+                    # debug("Group '" + old_id + "' renamed to '" + cell_val + "'")
+            # else:
+                # warn("Setting empty id for group at row " + str(row))
+        # else:
+            # old_descr = group.descr
+            # group.descr = cell_val
+            # debug("Group '" + group.id + "' description changed from '" + old_descr + "' to '" + cell_val + "'")
+    
+        # if cell_val:
+            # if col == 0:
+                # old_key = self.groups(row,col)
+                # if old_key:
+                    # self.groups[cell_val] = self.groups[old_key]
+                    # del self.groups[old_key]
+                    # debug("Group '" + old_key + "' renamed to '" + cell_val + "'")
+                # else:
+                    # descr_val = self.dlg.groupTable.itemAt(row,1).text()
+                    # self.groups[cell_val] = ""
+                    # debug("Group '" + cell_val + " created with description '" + descr_val +"'")
+            # elif col == 1:
+                # key_val = self.dlg.groupTable.itemAt(row,0).text()
+                # if key_val:
+                    # old_descr = self.group[key_val]
+                    # self.groups[key_val] = cell_val
+                    # debug("Group '" + key_val + "' description changed from '" + old_descr + "' to '" + cell_val + "'")
             

@@ -54,7 +54,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
     def connectComponents(self):
         for tab in self.tabs:
             tab.connectComponents()
-        self.buttonAddGroup.clicked.connect(self.addGroup)
+        #self.buttonAddGroup.clicked.connect(self.addGroup)
         self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         self.groupVectRun.clicked.connect(self.selectEntities)
         self.runButton.clicked.connect(self.runCost)

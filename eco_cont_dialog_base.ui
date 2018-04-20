@@ -204,6 +204,19 @@
       <string>Add</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="buttonSaveGroups">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>310</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save Groups</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">
