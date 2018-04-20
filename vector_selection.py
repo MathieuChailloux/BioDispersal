@@ -22,6 +22,7 @@
  ***************************************************************************/
 """
 
+from PyQt5.QtWidgets import QTableWidgetItem
 from .utils import *
 
 class VectorSelection:
@@ -37,20 +38,26 @@ class VectorSelection:
     def equals(self,other):
         return (self.layer.name() == other.layer.name() and self.expr == other.expr and self.group == other.group)
 
-        
 
 class VectorSelections:
 
     def __init__(self,dlg):
         self.dlg = dlg
         self.selections = []
+        self.displayedSelections = []
+        self.filter = ""
         
     def connectComponents(self):
         self.dlg.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         self.dlg.groupVectRun.clicked.connect(self.addSelection)
+        self.dlg.groupVectRefresh.clicked.connect(self.refreshSelections)
+        self.dlg.groupVectFilter.textChanged.connect(self.setFilter)
         
     def updateGroupVectLayer(self,layer):
         self.dlg.groupVectFieldExpr.setLayer(layer)
+        
+    def setFilter(self,text):
+        self.filter = text
         
     def selectionExists(self,selection):
         for s in self.selections:
@@ -59,6 +66,7 @@ class VectorSelections:
         return False
         
     def addSelection(self):
+        debug("[addSelection]")
         layer = self.dlg.groupVectMapLayer.currentLayer()
         fieldExpr = self.dlg.groupVectFieldExpr.expression()
         group = self.dlg.groupVectGroup.currentText()
@@ -67,6 +75,22 @@ class VectorSelections:
             warn("Selection already exists")
         else:
             debug("Adding selection " + str(selection))
-            self.selections.insert(0,selection)
+            self.selections.append(selection)
+            
+    def refreshSelections(self):
+        debug("[refreshSelections]")
+        self.displayedSelections = []
+        for s in self.selections:
+            debug("lauer " + s.layer.name())
+            if self.filter in s.layer.name():
+                debug("filter ok")
+                n = self.dlg.groupVectTable.rowCount()
+                self.displayedSelections.append(s)
+                self.dlg.groupVectTable.insertRow(n)
+                self.dlg.groupVectTable.setItem(n,0,QTableWidgetItem(s.layer.name()))
+                self.dlg.groupVectTable.setItem(n,1,QTableWidgetItem(s.expr))
+                self.dlg.groupVectTable.setItem(n,1,QTableWidgetItem(s.group))
+            else:
+                debug("filter ko")
             
         
