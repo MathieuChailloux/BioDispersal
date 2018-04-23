@@ -54,6 +54,9 @@ class Groups:
         self.dlg.buttonRemoveGroup.clicked.connect(self.delRow)
         self.dlg.buttonSaveGroups.clicked.connect(self.saveGroups)
         
+    #def unload(self):
+    #    self.groups = {}
+        
     # def idExists(self,row,id):
         # for group in self.groups:
             # if group.id == id and row != group.row:

@@ -27,7 +27,8 @@ from .utils import *
 
 class VectorSelection:
     
-    def __init__(self,layer,expr,group):
+    def __init__(self,id,layer,expr,group):
+        self.id = id
         self.layer = layer
         self.expr = expr
         self.group = group
@@ -51,13 +52,26 @@ class VectorSelections:
         self.dlg.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         self.dlg.groupVectRun.clicked.connect(self.addSelection)
         self.dlg.groupVectRefresh.clicked.connect(self.refreshSelections)
+        self.dlg.groupVectDelete.clicked.connect(self.deleteSelection)
         self.dlg.groupVectFilter.textChanged.connect(self.setFilter)
+        
+    #def unload(self):
+    #    self.selections = []
+    #    self.displayedSelections = []
+    #    self.filter = ""
+    
+    def getSelection(self,id):
+        for s in self.selections:
+            if s.id == id:
+                return s
+        return None
         
     def updateGroupVectLayer(self,layer):
         self.dlg.groupVectFieldExpr.setLayer(layer)
         
     def setFilter(self,text):
         self.filter = text
+        self.refreshSelections()
         
     def selectionExists(self,selection):
         for s in self.selections:
@@ -67,19 +81,26 @@ class VectorSelections:
         
     def addSelection(self):
         debug("[addSelection]")
+        id = len(self.selections)
         layer = self.dlg.groupVectMapLayer.currentLayer()
         fieldExpr = self.dlg.groupVectFieldExpr.expression()
         group = self.dlg.groupVectGroup.currentText()
-        selection = VectorSelection(layer,fieldExpr,group)
+        selection = VectorSelection(id,layer,fieldExpr,group)
         if self.selectionExists(selection):
             warn("Selection already exists")
         else:
             debug("Adding selection " + str(selection))
             self.selections.append(selection)
+            self.refreshSelections()
+            
+    def clearTable(self):
+        debug("clearTable")
+        self.dlg.groupVectTable.setRowCount(0)
             
     def refreshSelections(self):
         debug("[refreshSelections]")
         self.displayedSelections = []
+        self.clearTable()
         for s in self.selections:
             debug("lauer " + s.layer.name())
             if self.filter in s.layer.name():
@@ -87,10 +108,29 @@ class VectorSelections:
                 n = self.dlg.groupVectTable.rowCount()
                 self.displayedSelections.append(s)
                 self.dlg.groupVectTable.insertRow(n)
-                self.dlg.groupVectTable.setItem(n,0,QTableWidgetItem(s.layer.name()))
-                self.dlg.groupVectTable.setItem(n,1,QTableWidgetItem(s.expr))
-                self.dlg.groupVectTable.setItem(n,1,QTableWidgetItem(s.group))
+                self.dlg.groupVectTable.setItem(n,0,QTableWidgetItem(str(s.id)))
+                self.dlg.groupVectTable.setItem(n,1,QTableWidgetItem(s.layer.name()))
+                self.dlg.groupVectTable.setItem(n,2,QTableWidgetItem(s.expr))
+                self.dlg.groupVectTable.setItem(n,3,QTableWidgetItem(s.group))
             else:
                 debug("filter ko")
+                
+    def deleteSelection(self):
+        debug("deleteSelection")
+        row = self.dlg.groupVectTable.currentRow()
+        if row >= 0:
+            debug("Removing row " + str(row))
+            id = int(self.dlg.groupVectTable.item(row,0).text())
+            selection = self.getSelection(id)
+            self.selections.remove(selection)
+            self.displayedSelections.remove(selection)
+            for s in self.selections:
+                if s.id >= id:
+                    s.id -= 1
+            #self.dlg.groupVectTable.removeRow(row)
+            self.refreshSelections()
+        else:
+            warn("No row selected")
+        
             
         

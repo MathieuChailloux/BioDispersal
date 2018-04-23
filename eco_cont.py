@@ -169,9 +169,13 @@ class EcologicalContinuity:
             text=self.tr(u'EcoCont'),
             callback=self.run,
             parent=self.iface.mainWindow())
+            
+        self.dlg.connectComponents()
 
 
     def unload(self):
+        #for tab in self.dlg.tabs:
+        #    tab.unload()
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
@@ -185,7 +189,7 @@ class EcologicalContinuity:
     def run(self):
         """Run method that performs all the real work"""
         #self.dlg.runButton.clicked.connect(self.dlg.runCost)
-        self.dlg.connectComponents()
+        #self.dlg.connectComponents()
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
