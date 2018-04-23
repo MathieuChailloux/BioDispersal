@@ -26,10 +26,18 @@ from qgis.gui import *
 from qgis.core import *
 from .utils import *
 
+def checkLayersCompatible(l1,l2):
+    crs1 = l1.crs().authid()
+    crs2 = l2.crs().authid()
+    geomType1 = l1.geometryType()
+    geomType2 = l1.geometryType()
+    return (crs1 == crs2 and geomType1 == geomType2)
+
 def createLayerFromExisting(inLayer,outName):
-    crs=inLayer.crs().authid()
-    geomType=inLayer.geometryType()
+    crs=str(inLayer.crs().authid())
+    geomType=str(inLayer.geometryType())
     outLayer=QgsVectorLayer(geomType + '?crs='+crs, outName, "memory")
+    return outLayer
 
 def writeShapefile(layer,outfname):
     crs = QgsCoordinateReferenceSystem("EPSG:2154")

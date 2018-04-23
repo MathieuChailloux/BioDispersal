@@ -23,6 +23,7 @@
 """
 
 import datetime
+import os.path
 
 debug_flag=True
 
@@ -47,6 +48,9 @@ def internal_error(msg):
     printDate("[internal error] " + msg)
     raise Exception(msg)
 
+def checkFileExists(fname):
+    if not (os.path.isfile(fname)):
+        user_error("File '" + fname + "' does not exist")
 
     
 #def writeShapefile(layer,outfname):
