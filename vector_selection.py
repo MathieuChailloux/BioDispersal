@@ -184,10 +184,13 @@ class VectorSelections:
             k_layer = createLayerFromExisting(tmp_s.in_layer,tmp_s.out_name)
             pr = k_layer.dataProvider()
             group_field = QgsField("Group", QVariant.String)
+            orig_field = QgsField("Origin", QVariant.String)
             new_fields = QgsFields()
             new_fields.append(group_field)
-            k_attributes = [group_field]
-            pr.addAttributes(k_attributes)
+            new_fields.append(orig_field)
+            #k_attributes = new_fields.allAttributesList()
+            #pr.addAttributes(k_attributes)
+            pr.addAttributes([group_field,orig_field])
             k_layer.updateFields()
             debug("fields = " + str(len(pr.fields())))
             for s in selections:
@@ -199,65 +202,43 @@ class VectorSelections:
                     features = s.in_layer.getFeatures(QgsFeatureRequest())
                 new_f = QgsFeature(new_fields)
                 for f in features:
-                    #new_f = QgsFeature()
                     new_f.setGeometry(f.geometry())
-                    #new_f.setAttributes(k_attributes)
-                    debug("fields = " + str(len(new_f.fields())))
                     new_f["Group"] = s.group
-                    #new_f.setAttributes(f.attributes())
-                    #new_f.setAttributes(["TODO"])
-                    #k_layer.startEditing()
-                    #with edit(k_layer):
-                    #    test = k_layer.addFeatures([new_f])
-                    #    if not test:
-                    #        internal_error("hey : " + str(new_f))
+                    new_f["Origin"] = s.in_layer.name()
                     res = pr.addFeature(new_f)
-                    if res:
-                        debug ("ok")
-                    else:
+                    if not res:
                         internal_error("ko")
-                    #assert(res == True)
-                    debug("features = " + str(k_layer.featureCount()))
                     k_layer.updateExtents()
-                    #k_layer.updateFields()
-                    #k_layer.commitChanges()
-                    #debug("adding feature")
             #k_layer.commitChanges()
-            #♦k_layer.updateExtents()
-            print("fields = " + str(len(pr.fields())))
-            print("features = " + str(pr.featureCount()))
+            #k_layer.updateExtents()
+            debug("nb fields = " + str(len(pr.fields())))
+            debug("nb features = " + str(pr.featureCount()))
             QgsProject.instance().addMapLayers([k_layer])
-            #k_layer.updateFields()
             #writeShapefile(k_layer,k)
             
             
-    def applySelections2(self):
-        tmp_s = self.selections[0]
-        in_layer = tmp_s.in_layer
-        #in_geom_type=in_layer.geometryType()
-        in_geom_type=in_layer.wkbType()
-        debug("geom type = " + str(in_geom_type))
-        #debug("geom type = " + QgsWkbTypes.geometryDisplayString(in_geom_type))
-        in_geom_type_str = QgsWkbTypes.displayString(in_geom_type)
-        debug("geom type = " + in_geom_type_str)
-        #oldattributeList = in_layer.dataProvider().fields().toList()
-        vl = QgsVectorLayer(in_geom_type_str, "temporary_points", "memory")
-        pr = vl.dataProvider()
-        pr.addAttributes([QgsField("name", QVariant.String),QgsField("age",  QVariant.Int),QgsField("size", QVariant.Double)])
-        #pr.addAttributes(oldattributeList)
-        vl.updateFields()
-        old_feats = in_layer.getFeatures()
-        for old_feat in old_feats:
-            old_f = old_feat
-        assert(old_f.hasGeometry())
-        assert(old_f.isValid())
-        fet = QgsFeature()
-        #fet.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(10,10)))
-        debug(str(old_f.geometry().asWkt()))
-        fet.setGeometry(old_f.geometry())
-        fet.setAttributes(["Johny", 2, 0.3])
-        pr.addFeatures([fet])
-        vl.updateExtents()
-        info ("fields: " + str(len(pr.fields())))
-        info ("features :" + str(pr.featureCount()))
+    # def applySelections2(self):
+        # tmp_s = self.selections[0]
+        # in_layer = tmp_s.in_layer
+        # in_geom_type=in_layer.wkbType()
+        # debug("geom type = " + str(in_geom_type))
+        # in_geom_type_str = QgsWkbTypes.displayString(in_geom_type)
+        # debug("geom type = " + in_geom_type_str)
+        # vl = QgsVectorLayer(in_geom_type_str, "temporary_points", "memory")
+        # pr = vl.dataProvider()
+        # pr.addAttributes([QgsField("name", QVariant.String),QgsField("age",  QVariant.Int),QgsField("size", QVariant.Double)])
+        # vl.updateFields()
+        # old_feats = in_layer.getFeatures()
+        # for old_feat in old_feats:
+            # old_f = old_feat
+        # assert(old_f.hasGeometry())
+        # assert(old_f.isValid())
+        # fet = QgsFeature()
+        # debug(str(old_f.geometry().asWkt()))
+        # fet.setGeometry(old_f.geometry())
+        # fet.setAttributes(["Johny", 2, 0.3])
+        # pr.addFeatures([fet])
+        # vl.updateExtents()
+        # info ("fields: " + str(len(pr.fields())))
+        # info ("features :" + str(pr.featureCount()))
         
