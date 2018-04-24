@@ -34,8 +34,11 @@ def checkLayersCompatible(l1,l2):
     return (crs1 == crs2 and geomType1 == geomType2)
 
 def createLayerFromExisting(inLayer,outName):
-    crs=str(inLayer.crs().authid())
-    geomType=str(inLayer.geometryType())
+    debug("[createLayerFromExisting]")
+    crs=str(inLayer.crs().authid()).lower()
+    geomType=QgsWkbTypes.displayString(inLayer.wkbType())
+    layerStr = geomType + '?crs='+crs
+    debug(layerStr)
     outLayer=QgsVectorLayer(geomType + '?crs='+crs, outName, "memory")
     return outLayer
 
