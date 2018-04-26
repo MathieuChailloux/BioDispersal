@@ -230,8 +230,8 @@
     <widget class="QFrame" name="frame">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>240</y>
+       <x>120</x>
+       <y>270</y>
        <width>341</width>
        <height>251</height>
       </rect>
@@ -264,7 +264,7 @@
        <bool>true</bool>
       </property>
       <property name="columnCount">
-       <number>4</number>
+       <number>6</number>
       </property>
       <column>
        <property name="text">
@@ -284,6 +284,16 @@
       <column>
        <property name="text">
         <string>Groupe</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Métagroupe</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Couche de sortie</string>
        </property>
       </column>
      </widget>
@@ -331,7 +341,7 @@
      <property name="geometry">
       <rect>
        <x>390</x>
-       <y>510</y>
+       <y>530</y>
        <width>75</width>
        <height>23</height>
       </rect>
@@ -346,7 +356,7 @@
        <x>130</x>
        <y>10</y>
        <width>331</width>
-       <height>211</height>
+       <height>241</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -434,30 +444,20 @@
        </rect>
       </property>
       <property name="text">
-       <string>Dossier de sortie</string>
+       <string>Métagroupe</string>
       </property>
      </widget>
      <widget class="QPushButton" name="groupVectAdd">
       <property name="geometry">
        <rect>
-        <x>100</x>
-        <y>180</y>
+        <x>230</x>
+        <y>190</y>
         <width>75</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
        <string>Add</string>
-      </property>
-     </widget>
-     <widget class="QgsFileWidget" name="groupVectOutLayerDir">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>120</y>
-        <width>171</width>
-        <height>27</height>
-       </rect>
       </property>
      </widget>
      <widget class="QLineEdit" name="groupVectGroupLine">
@@ -483,13 +483,23 @@
        <string>Couche de sortie</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="groupVectOutLayerName">
+     <widget class="QLineEdit" name="groupVectMetagroup">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>120</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QgsFileWidget" name="groupVectOutLayer">
       <property name="geometry">
        <rect>
         <x>110</x>
         <y>150</y>
-        <width>113</width>
-        <height>20</height>
+        <width>171</width>
+        <height>27</height>
        </rect>
       </property>
      </widget>
@@ -497,7 +507,7 @@
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
-     <string>Rasterisation</string>
+     <string>Rasterization</string>
     </attribute>
     <widget class="QLabel" name="label_4">
      <property name="geometry">
@@ -512,7 +522,7 @@
       <string>Couches réseau routier</string>
      </property>
     </widget>
-    <widget class="QgsMapLayerComboBox" name="mMapLayerComboBox">
+    <widget class="QgsMapLayerComboBox" name="rasterInLayer">
      <property name="geometry">
       <rect>
        <x>220</x>
@@ -522,7 +532,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QgsSpinBox" name="mQgsSpinBox">
+    <widget class="QgsSpinBox" name="rasterBuffer">
      <property name="geometry">
       <rect>
        <x>220</x>
@@ -545,29 +555,6 @@
       <string>Tampon</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="geometry">
-      <rect>
-       <x>250</x>
-       <y>170</y>
-       <width>75</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Parcourir</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_2">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>170</y>
-       <width>161</width>
-       <height>21</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_6">
      <property name="geometry">
       <rect>
@@ -581,7 +568,7 @@
       <string>Taille pixel</string>
      </property>
     </widget>
-    <widget class="QgsSpinBox" name="mQgsSpinBox_2">
+    <widget class="QgsSpinBox" name="rasterSize">
      <property name="geometry">
       <rect>
        <x>220</x>
@@ -589,6 +576,29 @@
        <width>90</width>
        <height>27</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QgsFileWidget" name="mQgsFileWidget">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>180</y>
+       <width>90</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>180</y>
+       <width>121</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Couches réseau routier</string>
      </property>
     </widget>
    </widget>
