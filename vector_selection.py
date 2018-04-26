@@ -235,6 +235,49 @@ class VectorSelections:
             warn("No row selected")
         
     def applySelections(self):
+        for k,mg in self.metagroups.items():#self.getSelectionsByMetagroup().items():
+            debug("[applySelections] " + str(mg))
+            selections = mg.selections
+            tmp_s = selections[0]
+            #oldattributeList = tmp_s.in_layer.dataProvider().fields().toList()
+            #debug(str(oldattributeList))
+            k_layer = createLayerFromExisting(tmp_s.in_layer,k)
+            pr = k_layer.dataProvider()
+            group_field = QgsField("Group", QVariant.String)
+            orig_field = QgsField("Origin", QVariant.String)
+            new_fields = QgsFields()
+            new_fields.append(group_field)
+            new_fields.append(orig_field)
+            #k_attributes = new_fields.allAttributesList()
+            #pr.addAttributes(k_attributes)
+            pr.addAttributes([group_field,orig_field])
+            k_layer.updateFields()
+            debug("fields = " + str(len(pr.fields())))
+            for s in selections:
+                debug("[applySelections] " + str(s.id))
+                checkLayersCompatible(k_layer,s.in_layer)
+                if s.expr:
+                    features = s.in_layer.getFeatures(QgsFeatureRequest().setFilterExpression(s.expr))
+                else:
+                    features = s.in_layer.getFeatures(QgsFeatureRequest())
+                new_f = QgsFeature(new_fields)
+                for f in features:
+                    new_f.setGeometry(f.geometry())
+                    new_f["Group"] = s.group
+                    new_f["Origin"] = s.in_layer.name()
+                    res = pr.addFeature(new_f)
+                    if not res:
+                        internal_error("ko")
+                    k_layer.updateExtents()
+            #k_layer.commitChanges()
+            #k_layer.updateExtents()
+            debug("nb fields = " + str(len(pr.fields())))
+            debug("nb features = " + str(pr.featureCount()))
+            #QgsProject.instance().addMapLayers([k_layer])
+            if mg.out_layer:
+                writeShapefile(k_layer,mg.out_layer)
+        
+    def applySelections_old(self):
         for k,mg in self.metagroups:#self.getSelectionsByMetagroup().items():
             debug("[applySelections] " + str(k))
             selections = mg.selections
