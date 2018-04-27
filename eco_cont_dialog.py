@@ -34,6 +34,7 @@ from .utils import *
 from .qgsUtils import *
 from .groups import Groups
 from .vector_selection import VectorSelections
+from .rasterization import Rasterization
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -48,7 +49,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.tabs=[Groups(self),VectorSelections(self)]
+        self.tabs=[Groups(self),VectorSelections(self),Rasterization(self)]
         self.setupUi(self)
         #self.connectComponents()
         
@@ -70,8 +71,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                         'start_raster' : startRaster,
                         'max_cost' : 5000,
                         'output' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_output.tif',
-                        'start_coordinates' : '0,0',
-                        'stop_coordinates' : '0,0',
+                        #'start_coordinates' : '0,0',
+                        #'stop_coordinates' : '0,0',
                         'nearest' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_nearest.tif',
                         'outdir' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_movements.tif',
                         'start_points' :  None,
@@ -85,7 +86,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                         '-n' : False,
                         '-r' : True,
                         '-i' : False,
-                        '-b' : False};
+                        '-b' : False}
+        #parameters = {}
         try:
             processing.run("grass7:r.cost",parameters)
             print ("call to r.cost successful")

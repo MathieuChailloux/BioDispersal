@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -519,7 +519,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Couches réseau routier</string>
+      <string>Couche vecteur initiale</string>
      </property>
     </widget>
     <widget class="QgsMapLayerComboBox" name="rasterInLayer">
@@ -578,7 +578,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QgsFileWidget" name="mQgsFileWidget">
+    <widget class="QgsFileWidget" name="rasterOutLayer">
      <property name="geometry">
       <rect>
        <x>230</x>
@@ -598,7 +598,20 @@
       </rect>
      </property>
      <property name="text">
-      <string>Couches réseau routier</string>
+      <string>Raster de sortie</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="rasterRun">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>230</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
      </property>
     </widget>
    </widget>
