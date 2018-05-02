@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>918</width>
+    <width>880</width>
     <height>681</height>
    </rect>
   </property>
@@ -26,134 +26,8 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>6</number>
    </property>
-   <widget class="QWidget" name="tab">
-    <attribute name="title">
-     <string>Coût cumulé</string>
-    </attribute>
-    <widget class="QDialogButtonBox" name="button_box">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
-       <y>200</y>
-       <width>181</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>80</x>
-       <y>20</y>
-       <width>91</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Raster de départ</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>80</x>
-       <y>70</y>
-       <width>111</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Raster de perméabilité</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>110</y>
-       <width>46</width>
-       <height>13</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Coût max</string>
-     </property>
-    </widget>
-    <widget class="QgsMapLayerComboBox" name="rasterDepartComboBox">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>20</y>
-       <width>160</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QgsMapLayerComboBox" name="rasterPermComboBox">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>60</y>
-       <width>160</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QgsSpinBox" name="CoutMaxSpinBox">
-     <property name="geometry">
-      <rect>
-       <x>250</x>
-       <y>110</y>
-       <width>90</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>80</x>
-       <y>160</y>
-       <width>161</width>
-       <height>21</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton">
-     <property name="geometry">
-      <rect>
-       <x>270</x>
-       <y>160</y>
-       <width>75</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Parcourir</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="runButton">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>200</y>
-       <width>75</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Run</string>
-     </property>
-    </widget>
-   </widget>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">
      <string>Milieux / groupes</string>
@@ -218,14 +92,9 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_5">
-    <attribute name="title">
-     <string>Routes</string>
-    </attribute>
-   </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">
-     <string>Groupe vecteur</string>
+     <string>Sélection</string>
     </attribute>
     <widget class="QFrame" name="frame">
      <property name="geometry">
@@ -505,6 +374,78 @@
      </widget>
     </widget>
    </widget>
+   <widget class="QWidget" name="tab_5">
+    <attribute name="title">
+     <string>Tampons</string>
+    </attribute>
+    <widget class="QFrame" name="frame_3">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>30</y>
+       <width>571</width>
+       <height>451</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QLabel" name="label_13">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>20</y>
+        <width>47</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Couche</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>50</y>
+        <width>47</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Couche</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>110</y>
+        <width>301</width>
+        <height>211</height>
+       </rect>
+      </property>
+      <column>
+       <property name="text">
+        <string>Métagroupe</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Groupe</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Tampon</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+   </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
      <string>Rasterization</string>
@@ -535,8 +476,8 @@
     <widget class="QgsSpinBox" name="rasterBuffer">
      <property name="geometry">
       <rect>
-       <x>220</x>
-       <y>100</y>
+       <x>230</x>
+       <y>140</y>
        <width>90</width>
        <height>27</height>
       </rect>
@@ -546,36 +487,13 @@
      <property name="geometry">
       <rect>
        <x>60</x>
-       <y>100</y>
+       <y>140</y>
        <width>121</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
       <string>Tampon</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_6">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>130</y>
-       <width>121</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Taille pixel</string>
-     </property>
-    </widget>
-    <widget class="QgsSpinBox" name="rasterSize">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>130</y>
-       <width>90</width>
-       <height>27</height>
-      </rect>
      </property>
     </widget>
     <widget class="QgsFileWidget" name="rasterOutLayer">
@@ -614,10 +532,194 @@
       <string>Run</string>
      </property>
     </widget>
+    <widget class="QgsFieldComboBox" name="mFieldComboBox">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>90</y>
+       <width>160</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>90</y>
+       <width>121</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Champ</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Coût cumulé</string>
+    </attribute>
+    <widget class="QDialogButtonBox" name="button_box">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>200</y>
+       <width>181</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>20</y>
+       <width>91</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Raster de départ</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>70</y>
+       <width>111</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Raster de perméabilité</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>110</y>
+       <width>46</width>
+       <height>13</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Coût max</string>
+     </property>
+    </widget>
+    <widget class="QgsMapLayerComboBox" name="rasterDepartComboBox">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>20</y>
+       <width>160</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QgsMapLayerComboBox" name="rasterPermComboBox">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>60</y>
+       <width>160</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QgsSpinBox" name="CoutMaxSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>110</y>
+       <width>90</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>160</y>
+       <width>161</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>160</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Parcourir</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="runButton">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>200</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_6">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QTableView" name="dlgTableView">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>80</y>
+       <width>361</width>
+       <height>311</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_7">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QTableView" name="tableViewSql">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>110</y>
+       <width>361</width>
+       <height>311</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsFieldComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgis.gui</header>
+  </customwidget>
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>

@@ -26,6 +26,8 @@ import os
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 import processing
 from qgis.core import *
 from qgis.gui import *
@@ -35,6 +37,7 @@ from .qgsUtils import *
 from .groups import Groups
 from .vector_selection import VectorSelections
 from .rasterization import Rasterization
+from .groups_model import Group, GroupsModel, GroupsModelSql, GroupItem, GroupModelTest
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -60,6 +63,20 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         #self.groupVectRun.clicked.connect(self.selectEntities)
         self.runButton.clicked.connect(self.runCost)
+        model_sql = GroupsModelSql(self)
+        g1 = Group("test")
+        model_sql.addGroup(g1)
+        model_sql.setHeaderData(0,QtCore.Qt.Horizontal,QtCore.Qt.AlignJustify,QtCore.Qt.TextAlignmentRole)
+        self.tableViewSql.setModel(model_sql)
+        self.tableViewSql.show()
+        #  model.setHeaderData(0,QtCore.Qt.Horizontal,QtCore.Qt.AlignJustify,QtCore.Qt.TextAlignmentRole)
+        #model = GroupsModel(self)
+        #self.dlgTableView.setModel(model)
+        #self.dlgTableView.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
+        model = GroupModelTest(self)
+        g2 = GroupItem("g1","group1")
+        model.addItem(g2)
+        self.dlgTableView.setModel(model)
         
     def runCost(self):
         debug("Start runCost")

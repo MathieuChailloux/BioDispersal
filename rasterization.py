@@ -29,6 +29,7 @@ from osgeo import gdal
 from qgis.core import *
 import processing
 from .utils import *
+from qgis.gui import QgsFileWidget
 
 import subprocess
 import sys
@@ -39,9 +40,13 @@ class Rasterization:
         self.dlg = dlg
         self.segments = 10
         
+    def initGui(self):
+        pass
+        
     def connectComponents(self):
         #self.dlg.rasterRun.clicked.connect(self.applyBuffer)
         self.dlg.rasterRun.clicked.connect(self.rasterize3)
+        self.dlg.rasterOutLayer.setStorageMode(QgsFileWidget.SaveFile)
         
     def applyBuffer(self):
         in_layer = self.dlg.rasterInLayer.currentLayer()
@@ -72,6 +77,9 @@ class Rasterization:
         # -ot Float32 -of GTiff path_to_data_file C:/Users/mathieu.chailloux/AppData/Local/Temp/processing_1056e33334bf4bfd893729147c7ae91b/5242c59677b04c6fa7aa46e59333c4af/OUTPUT.tif
         name = 'D:\MChailloux\SIG_TrameEcologique\AXE_COMMUNICATION\ROUTE_PRIMAIRE_PNRHL.shp'
         in_layer = self.dlg.rasterInLayer.currentLayer()
+        in_layer_uri = in_layer.dataProvider().dataSourceUri()
+        in_layer_path = in_layer_uri[:in_layer_uri.rfind('|')]
+        debug("layer path " + str(in_layer_path))
         extent = in_layer.extent()
         x_min = extent.xMinimum()
         x_max = extent.xMaximum()
@@ -95,12 +103,13 @@ class Rasterization:
                                 '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                                 #'-tr',str(x_res),str(y_res),
                                 '-ts', str(width), str(height),
-                                name,
+                                in_layer_path,
                                 'D:MChailloux/PNRHL_QGIS/tmpLayer_rasterized.tif'],
                                 stderr=subprocess.PIPE)#, stdout=sys.stdout)#stdin=PIPE, stdout=PIPE, stderr=PIPE)
         out,err = p.communicate()
-        debug(str(out))
-        debug(str(err))
+        info(str(out))
+        if err:
+            user_error(str(err))
         #p.communiacte()
         #subprocess.run("gdal_rasterize -help", shell=True,check=True)
         
