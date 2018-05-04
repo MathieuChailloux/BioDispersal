@@ -37,7 +37,7 @@ from .qgsUtils import *
 from .groups import Groups
 from .vector_selection import VectorSelections
 from .rasterization import Rasterization
-from .groups_model import Group, GroupsModel, GroupsModelSql, GroupItem, GroupModelTest
+from .groups_model import GroupModelTest, GroupItem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -63,12 +63,12 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         #self.groupVectRun.clicked.connect(self.selectEntities)
         self.runButton.clicked.connect(self.runCost)
-        model_sql = GroupsModelSql(self)
-        g1 = Group("test")
-        model_sql.addGroup(g1)
-        model_sql.setHeaderData(0,QtCore.Qt.Horizontal,QtCore.Qt.AlignJustify,QtCore.Qt.TextAlignmentRole)
-        self.tableViewSql.setModel(model_sql)
-        self.tableViewSql.show()
+        # model_sql = GroupsModelSql(self)
+        # g1 = Group("test")
+        # model_sql.addGroup(g1)
+        # model_sql.setHeaderData(0,QtCore.Qt.Horizontal,QtCore.Qt.AlignJustify,QtCore.Qt.TextAlignmentRole)
+        # self.tableViewSql.setModel(model_sql)
+        # self.tableViewSql.show()
         #  model.setHeaderData(0,QtCore.Qt.Horizontal,QtCore.Qt.AlignJustify,QtCore.Qt.TextAlignmentRole)
         #model = GroupsModel(self)
         #self.dlgTableView.setModel(model)

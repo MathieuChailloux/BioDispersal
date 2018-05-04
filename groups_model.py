@@ -24,45 +24,45 @@ class GroupModelTest(AbstractGroupModel):
         self.dlg = dlg
         self.items = []
 
-class GroupsModelSql(QSqlTableModel):
+# class GroupsModelSql(QSqlTableModel):
 
-    def __init__(self,dlg):
-        QSqlTableModel.__init__(self)
-        self.dlg = dlg
+    # def __init__(self,dlg):
+        # QSqlTableModel.__init__(self)
+        # self.dlg = dlg
         
-    def addGroup(self,group):
-        row=self.rowCount()
-        self.insertRecord(0,group)
-        self.setData(self.index(row,0),"test")
+    # def addGroup(self,group):
+        # row=self.rowCount()
+        # self.insertRecord(0,group)
+        # self.setData(self.index(row,0),"test")
         
-class GroupsModel(QAbstractTableModel):
+# class GroupsModel(QAbstractTableModel):
 
-    def __init__(self,dlg):
-        QAbstractTableModel.__init__(self)
-        self.dlg = dlg
-        self.items = [["toto","t1"],["tata","t2"]]
+    # def __init__(self,dlg):
+        # QAbstractTableModel.__init__(self)
+        # self.dlg = dlg
+        # self.items = [["toto","t1"],["tata","t2"]]
         
-    def rowCount(self,parent=QModelIndex()):
-        return len(self.items)
+    # def rowCount(self,parent=QModelIndex()):
+        # return len(self.items)
         
-    def columnCount(self,parent=QModelIndex()):
-        return 2
+    # def columnCount(self,parent=QModelIndex()):
+        # return 2
     
-    def data(self,index,role):
-        if not index.isValid():
-            return QVariant()
-        row = index.row()
-        col = index.column()
-        if row < self.rowCount():
-            return(QVariant(self.items[row][col]))
-        else:
-            assert false
+    # def data(self,index,role):
+        # if not index.isValid():
+            # return QVariant()
+        # row = index.row()
+        # col = index.column()
+        # if row < self.rowCount():
+            # return(QVariant(self.items[row][col]))
+        # else:
+            # assert false
         
-class Group(QSqlRecord):
+# class Group(QSqlRecord):
 
-    def __init__(self,name):
-        QSqlRecord.__init__(self)
-        nameField = QSqlField(fieldName="name",type=QVariant.String)
-        self.append(nameField)
-        self.setValue("name",name)
+    # def __init__(self,name):
+        # QSqlRecord.__init__(self)
+        # nameField = QSqlField(fieldName="name",type=QVariant.String)
+        # self.append(nameField)
+        # self.setValue("name",name)
         

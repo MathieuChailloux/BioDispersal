@@ -1,5 +1,5 @@
 
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex
+from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
 
 from abc import ABC, abstractmethod
 #class Abstract(ABC):
@@ -48,7 +48,9 @@ class AbstractGroupModel(QAbstractTableModel):
         row = index.row()
         item = self.items[row]
         val = item.getNField(index.column())
-        if row < self.rowCount():
+        if role != Qt.DisplayRole:
+            return QVariant()
+        elif row < self.rowCount():
             return(QVariant(val))
         else:
             return QVariant()
