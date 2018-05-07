@@ -30,23 +30,69 @@ from qgis.core import *
 import processing
 from .utils import *
 from qgis.gui import QgsFileWidget
+from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem
 
 import subprocess
 import sys
+
+# class RasterItem(AbstractGroupItem):
+    # def __init__(self,group,descr):
+        # self.group = group
+        # self.descr = descr
+        
+    # def getNField(self,n):
+        # if n == 0:
+            # return self.group
+        # elif n == 1:
+            # return self.descr
+        # else:
+            # assert false
+            
+    # def updateNField(self,n,value):
+        # if n == 0:
+            # self.group = value
+        # elif n == 1:
+            # self.descr = value
+        # else:
+            # assert false
+            
+    # def checkItem(self):
+        # debug("[checkItem] todo")
+
+class RasterItem(DictItem):
+    
+    def __init__(self,in_path,out_path,field):
+        dict = {"in_path" : in_path,
+                "out_path" : out_path,
+                "field" : field}
+        super().__init__(dict)
+        
+        
+class RasterModel(AbstractGroupModel):
+    
+    def __init__(self):
+        fields = ["in_path","out_path","field"]
+        super().__init__(self,fields)
+        
 
 class Rasterization:
 
     def __init__(self,dlg):
         self.dlg = dlg
         self.segments = 10
+        self.raster_model = RasterModel()
+        #test_item = 
+        #self.raster_model.
         
     def initGui(self):
         pass
         
     def connectComponents(self):
         #self.dlg.rasterRun.clicked.connect(self.applyBuffer)
-        self.dlg.rasterRun.clicked.connect(self.rasterize3)
+        self.dlg.rasterRun.clicked.connect(self.rasterize4)
         self.dlg.rasterOutLayer.setStorageMode(QgsFileWidget.SaveFile)
+        self.dlg.rasterView.setModel(self.raster_model)
+        #self.dlg.rasterField.layerChanged.connect(self.setField)
         
     def applyBuffer(self):
         in_layer = self.dlg.rasterInLayer.currentLayer()
@@ -70,6 +116,18 @@ class Rasterization:
             pr.addFeature(out_feat)
         QgsProject.instance().addMapLayer(out_layer)
         #return out_layer
+        
+    def rasterize4(self):
+        debug("rasterize4")
+        in_layer = self.dlg.rasterInLayer.currentLayer()
+        in_layer_uri = in_layer.dataProvider().dataSourceUri()
+        in_layer_path = in_layer_uri[:in_layer_uri.rfind('|')]
+        out_layer_path = self.dlg.rasterOutLayer.filePath()
+        field = self.dlg.rasterField.currentField()
+        item = RasterItem(in_layer_path,out_layer_path,field)
+        self.raster_model.addItem(item)
+        self.raster_model.layoutChanged.emit()
+        #self.dlg.rasterView.setModel(self.raster_model)
         
     def rasterize3(self):
         # command example from qgis : 

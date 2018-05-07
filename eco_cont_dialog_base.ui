@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>880</width>
-    <height>681</height>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>6</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">
@@ -532,7 +532,7 @@
       <string>Run</string>
      </property>
     </widget>
-    <widget class="QgsFieldComboBox" name="mFieldComboBox">
+    <widget class="QgsFieldComboBox" name="rasterField">
      <property name="geometry">
       <rect>
        <x>220</x>
@@ -553,6 +553,16 @@
      </property>
      <property name="text">
       <string>Champ</string>
+     </property>
+    </widget>
+    <widget class="QTableView" name="rasterView">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>290</y>
+       <width>321</width>
+       <height>191</height>
+      </rect>
      </property>
     </widget>
    </widget>

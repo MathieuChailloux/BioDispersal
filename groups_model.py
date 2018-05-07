@@ -2,6 +2,7 @@
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex
 from .abstract_model import AbstractGroupModel, AbstractGroupItem
+from .utils import *
          
 class GroupItem(AbstractGroupItem):
     
@@ -16,6 +17,17 @@ class GroupItem(AbstractGroupItem):
             return self.descr
         else:
             assert false
+            
+    def updateNField(self,n,value):
+        if n == 0:
+            self.group = value
+        elif n == 1:
+            self.descr = value
+        else:
+            assert false
+            
+    def checkItem(self):
+        debug("[checkItem] todo")
          
 class GroupModelTest(AbstractGroupModel):
 
