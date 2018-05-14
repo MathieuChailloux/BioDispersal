@@ -29,8 +29,10 @@ from osgeo import gdal
 from qgis.core import *
 import processing
 from .utils import *
+from .qgsUtils import *
 from qgis.gui import QgsFileWidget
-from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem
+from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel
+
 
 import subprocess
 import sys
@@ -58,22 +60,73 @@ import sys
             
     # def checkItem(self):
         # debug("[checkItem] todo")
+        
+raster_displayed_fields = ["in_layer_name","field","in_path","out_path"]
 
 class RasterItem(DictItem):
     
-    def __init__(self,in_path,out_path,field):
-        dict = {"in_path" : in_path,
+    def __init__(self,in_layer,in_path,out_path,field):
+        if not in_layer:
+            in_layer = QgsVectorLayer(in_path, layerNameOfPath(in_path), "ogr")
+        dict = {"in_layer_name" : in_layer.name(),
+                "field" : field,
+                "in_path" : in_path,
                 "out_path" : out_path,
-                "field" : field}
-        super().__init__(dict)
+                "in_layer" : in_layer}
+        super().__init__(dict,raster_displayed_fields)
         
+    def checkItem(self):
+        in_layer = self.dict["in_layer"]
+        in_path = self.dict["in_path"]
+        field = self.dict["field"]
+        real_field = in_layer.fields().field(field)
+        if not typeIsNumeric(real_field.type()):
+            user_error("Field " + str(field) + " is not numeric")
+        #for f in in_layer.fields():
+        #    info(str(f.type()))
         
-class RasterModel(AbstractGroupModel):
+    def applyRasterization(self):
+        debug("applyRasterization")
+        self.checkItem()
+        in_layer = self.dict["in_layer"]
+        in_path = self.dict["in_path"]
+        out_path = self.dict["out_path"]
+        out_path = out_path.replace("\\","/")
+        field = self.dict["field"]
+        extent = in_layer.extent()
+        x_min = extent.xMinimum()
+        x_max = extent.xMaximum()
+        y_min = extent.yMinimum()
+        y_max = extent.yMaximum()
+        # Create the destination data source
+        pixel_size = 25
+        NoData_value = -9999
+        #x_res = int((x_max - x_min) / pixel_size)
+        #y_res = int((y_max - y_min) / pixel_size)
+        width = int((x_max - x_min) / pixel_size)
+        height = int((y_max - y_min) / pixel_size)
+        p = subprocess.Popen(['gdal_rasterize',
+                                #'-l','layer_name',
+                                '-a',field,
+                                #'-burn','0.0',
+                                '-te',str(x_min),str(y_min),str(x_max),str(y_max),
+                                #'-tr',str(x_res),str(y_res),
+                                '-ts', str(width), str(height),
+                                in_path,
+                                out_path],
+                                stderr=subprocess.PIPE)#, stdout=sys.stdout)#stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        out,err = p.communicate()
+        debug(str(p.args))
+        info(str(out))
+        if err:
+            user_error(str(err))
+        
+class RasterModel(DictModel):
     
     def __init__(self):
-        fields = ["in_path","out_path","field"]
-        super().__init__(self,fields)
-        
+        #fields = ["in_layer_name","field","in_path","out_path"]
+        super().__init__(self,raster_displayed_fields)
+
 
 class Rasterization:
 
@@ -85,14 +138,19 @@ class Rasterization:
         #self.raster_model.
         
     def initGui(self):
-        pass
+        self.dlg.rasterView.resize(self.dlg.width / 1.5, self.dlg.height / 3.5)
         
     def connectComponents(self):
         #self.dlg.rasterRun.clicked.connect(self.applyBuffer)
-        self.dlg.rasterRun.clicked.connect(self.rasterize4)
+        self.dlg.rasterInLayer.layerChanged.connect(self.updateFieldLayer)
+        self.dlg.rasterAdd.clicked.connect(self.addRasterItem)
+        self.dlg.rasterRun.clicked.connect(self.rasterizeItems)
         self.dlg.rasterOutLayer.setStorageMode(QgsFileWidget.SaveFile)
         self.dlg.rasterView.setModel(self.raster_model)
         #self.dlg.rasterField.layerChanged.connect(self.setField)
+        
+    def updateFieldLayer(self,layer):
+        self.dlg.rasterField.setLayer(layer)
         
     def applyBuffer(self):
         in_layer = self.dlg.rasterInLayer.currentLayer()
@@ -117,17 +175,62 @@ class Rasterization:
         QgsProject.instance().addMapLayer(out_layer)
         #return out_layer
         
-    def rasterize4(self):
-        debug("rasterize4")
+    def addRasterItem(self):
+        debug("addRasterItem")
         in_layer = self.dlg.rasterInLayer.currentLayer()
+        if not in_layer:
+            user_error("No input layer selected")
         in_layer_uri = in_layer.dataProvider().dataSourceUri()
         in_layer_path = in_layer_uri[:in_layer_uri.rfind('|')]
+        checkFileExists(in_layer_path)
         out_layer_path = self.dlg.rasterOutLayer.filePath()
         field = self.dlg.rasterField.currentField()
-        item = RasterItem(in_layer_path,out_layer_path,field)
+        if not field:
+            user_error("No field selected")
+        item = RasterItem(in_layer,in_layer_path,out_layer_path,field)
         self.raster_model.addItem(item)
         self.raster_model.layoutChanged.emit()
         #self.dlg.rasterView.setModel(self.raster_model)
+        
+    def rasterizeItems(self,item):
+        for item in self.raster_model.items:
+            item.applyRasterization()
+        
+    def rasterize4(self):
+        in_layer = self.dlg.rasterInLayer.currentLayer()
+        in_layer_uri = in_layer.dataProvider().dataSourceUri()
+        in_layer_path = in_layer_uri[:in_layer_uri.rfind('|')]
+        debug("layer path " + str(in_layer_path))
+        extent = in_layer.extent()
+        x_min = extent.xMinimum()
+        x_max = extent.xMaximum()
+        y_min = extent.yMinimum()
+        y_max = extent.yMaximum()
+        #x_min = 617896.1697324323
+        #x_max = 6244885.235793086
+        #y_min = 723893.6697324323
+        #y_max = 6312983.51615631
+        # Create the destination data source
+        pixel_size = 25
+        NoData_value = -9999
+        #x_res = int((x_max - x_min) / pixel_size)
+        #y_res = int((y_max - y_min) / pixel_size)
+        width = int((x_max - x_min) / pixel_size)
+        height = int((y_max - y_min) / pixel_size)
+        p = subprocess.Popen(['gdal_rasterize',
+                                #'-l','layer_name',
+                                '-a','Importance',
+                                #'-burn','0.0',
+                                '-te',str(x_min),str(y_min),str(x_max),str(y_max),
+                                #'-tr',str(x_res),str(y_res),
+                                '-ts', str(width), str(height),
+                                in_layer_path,
+                                'D:MChailloux/PNRHL_QGIS/tmpLayer_rasterized.tif'],
+                                stderr=subprocess.PIPE)#, stdout=sys.stdout)#stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        out,err = p.communicate()
+        info(str(out))
+        if err:
+            user_error(str(err))
         
     def rasterize3(self):
         # command example from qgis : 

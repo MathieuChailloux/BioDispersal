@@ -56,6 +56,20 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         #self.connectComponents()
         
+    def initGui(self):
+        self.geometry = self.geometry()
+        self.x = self.x()
+        self.y = self.y()
+        self.width = self.width()
+        self.height = self.height()
+        step_x = self.width * 0.1
+        step_y = self.height * 0.1
+        new_w = self.width * 0.8
+        new_h = self.height * 0.8
+        self.tabWidget.setGeometry(self.x + step_x, self.y + step_y, new_w, new_h)
+        for tab in self.tabs:
+            tab.initGui()
+        
     def connectComponents(self):
         for tab in self.tabs:
             tab.connectComponents()
@@ -77,6 +91,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         g2 = GroupItem("g1","group1")
         model.addItem(g2)
         self.dlgTableView.setModel(model)
+        
+    def onResize(self,event):
+        new_size = event.size()
+        
         
     def runCost(self):
         debug("Start runCost")

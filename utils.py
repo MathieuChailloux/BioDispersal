@@ -51,7 +51,13 @@ def internal_error(msg):
 def checkFileExists(fname):
     if not (os.path.isfile(fname)):
         user_error("File '" + fname + "' does not exist")
-
+        
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
     
 #def writeShapefile(layer,outfname):
 #    error = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname)

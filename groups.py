@@ -48,6 +48,9 @@ class Groups:
         self.dlg = dlg
         self.groups = {}
         
+    def initGui(self):
+        pass
+        
     def connectComponents(self):
         #self.dlg.groupTable.cellChanged.connect(self.updateTable)
         self.dlg.buttonAddGroup.clicked.connect(self.addRow)

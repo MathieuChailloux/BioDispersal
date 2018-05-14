@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>880</width>
-    <height>680</height>
+    <width>939</width>
+    <height>663</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">
@@ -396,8 +396,8 @@
      <widget class="QLabel" name="label_13">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>20</y>
+        <x>60</x>
+        <y>30</y>
         <width>47</width>
         <height>13</height>
        </rect>
@@ -409,40 +409,74 @@
      <widget class="QLabel" name="label_14">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>50</y>
+        <x>60</x>
+        <y>60</y>
         <width>47</width>
         <height>13</height>
        </rect>
       </property>
       <property name="text">
-       <string>Couche</string>
+       <string>Condition</string>
       </property>
      </widget>
-     <widget class="QTableWidget" name="tableWidget">
+     <widget class="QTableView" name="bufferView">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>110</y>
-        <width>301</width>
-        <height>211</height>
+        <x>50</x>
+        <y>140</y>
+        <width>321</width>
+        <height>191</height>
        </rect>
       </property>
-      <column>
-       <property name="text">
-        <string>Métagroupe</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Groupe</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Tampon</string>
-       </property>
-      </column>
+     </widget>
+     <widget class="QgsMapLayerComboBox" name="bufferMapLayer">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>20</y>
+        <width>160</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QgsFieldExpressionWidget" name="bufferCondition">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>60</y>
+        <width>200</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QgsSpinBox" name="bufferValue">
+      <property name="geometry">
+       <rect>
+        <x>249</x>
+        <y>100</y>
+        <width>111</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>0</number>
+      </property>
+      <property name="maximum">
+       <number>999</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_30">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>100</y>
+        <width>46</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Tampon</string>
+      </property>
      </widget>
     </widget>
    </widget>
@@ -519,7 +553,7 @@
       <string>Raster de sortie</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="rasterRun">
+    <widget class="QPushButton" name="rasterAdd">
      <property name="geometry">
       <rect>
        <x>290</x>
@@ -529,7 +563,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Run</string>
+      <string>Add</string>
      </property>
     </widget>
     <widget class="QgsFieldComboBox" name="rasterField">
@@ -563,6 +597,32 @@
        <width>321</width>
        <height>191</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="rasterRun">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>500</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="rasterRemove">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>260</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Remove</string>
      </property>
     </widget>
    </widget>
@@ -625,7 +685,7 @@
       <string>Coût max</string>
      </property>
     </widget>
-    <widget class="QgsMapLayerComboBox" name="rasterDepartComboBox">
+    <widget class="QgsMapLayerComboBox" name="costStartRaster">
      <property name="geometry">
       <rect>
        <x>220</x>
@@ -635,7 +695,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QgsMapLayerComboBox" name="rasterPermComboBox">
+    <widget class="QgsMapLayerComboBox" name="costPermRaster">
      <property name="geometry">
       <rect>
        <x>220</x>
@@ -645,7 +705,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QgsSpinBox" name="CoutMaxSpinBox">
+    <widget class="QgsSpinBox" name="costMaxVal">
      <property name="geometry">
       <rect>
        <x>250</x>
@@ -653,29 +713,6 @@
        <width>90</width>
        <height>27</height>
       </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>80</x>
-       <y>160</y>
-       <width>161</width>
-       <height>21</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton">
-     <property name="geometry">
-      <rect>
-       <x>270</x>
-       <y>160</y>
-       <width>75</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Parcourir</string>
      </property>
     </widget>
     <widget class="QPushButton" name="runButton">
@@ -689,6 +726,29 @@
      </property>
      <property name="text">
       <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QgsFileWidget" name="costOutLayer">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>150</y>
+       <width>171</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_29">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>150</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Couche de sortie</string>
      </property>
     </widget>
    </widget>

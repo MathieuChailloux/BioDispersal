@@ -107,8 +107,8 @@ class VectorSelections:
         self.filter = ""
         
     def initGui(self):
-        self.groupVectTable.setColumnWidth(0,40)
-        self.groupVectTable.setColumnWidth(1,80)
+        self.dlg.groupVectTable.setColumnWidth(0,40)
+        self.dlg.groupVectTable.setColumnWidth(1,80)
         
     def connectComponents(self):
         self.dlg.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)

@@ -25,6 +25,24 @@
 from qgis.gui import *
 from qgis.core import *
 from .utils import *
+from PyQt5.QtCore import QVariant
+
+def typeIsInteger(t):
+    return (t == QVariant.Int
+            or t == QVariant.UInt
+            or t == QVariant.LongLong
+            or t == QVariant.ULongLong)
+            
+def typeIsFloat(t):
+    return (t == QVariant.Double)
+    
+def typeIsNumeric(t):
+    return (typeIsInteger(t) or typeIsFloat(t))
+
+def layerNameOfPath(p):
+    bn = os.path.basename(p)
+    res = os.path.splitext(bn)[0]
+    return res
 
 def checkLayersCompatible(l1,l2):
     crs1 = l1.crs().authid()
