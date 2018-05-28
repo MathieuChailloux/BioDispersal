@@ -37,7 +37,8 @@ from .qgsUtils import *
 from .groups import Groups
 from .vector_selection import VectorSelections
 from .rasterization import Rasterization
-from .groups_model import GroupModelTest, GroupItem
+#from .groups_model import GroupModelTest, GroupItem
+from .groups import Groups, Metagroups
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -52,7 +53,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.tabs=[Groups(self),VectorSelections(self),Rasterization(self)]
+        self.tabs=[Groups(self),
+                    Metagroups(self),
+                    VectorSelections(self),
+                    Rasterization(self)]
         self.setupUi(self)
         #self.connectComponents()
         
@@ -66,7 +70,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         step_y = self.height * 0.1
         new_w = self.width * 0.8
         new_h = self.height * 0.8
-        self.tabWidget.setGeometry(self.x + step_x, self.y + step_y, new_w, new_h)
+        #self.tabWidget.setGeometry(self.x + step_x, self.y + step_y, new_w, new_h)
         for tab in self.tabs:
             tab.initGui()
         
@@ -87,10 +91,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #model = GroupsModel(self)
         #self.dlgTableView.setModel(model)
         #self.dlgTableView.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
-        model = GroupModelTest(self)
-        g2 = GroupItem("g1","group1")
-        model.addItem(g2)
-        self.dlgTableView.setModel(model)
+        #model = GroupModelTest(self)
+        #g2 = GroupItem("g1","group1")
+        #model.addItem(g2)
+        #self.dlgTableView.setModel(model)
         
     def onResize(self,event):
         new_size = event.size()

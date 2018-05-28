@@ -76,3 +76,4 @@ def writeShapefile(layer,outfname):
         info("Shapefile '" + outfname + "' succesfully created")
     else:
         user_error("Unable to create shapefile '" + outfname + "' : " + str(error_msg))
+        

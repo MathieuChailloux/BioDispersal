@@ -55,7 +55,7 @@ class ArrayItem(AbstractGroupItem):
 # Fields not displayed must be stored at the end
 class DictItem(AbstractGroupItem):
     
-    def __init__(self,dict,fields):
+    def __init__(self,dict,fields=None):
         if not fields:
             fields = list(dict.keys())
         self.field_to_idx = {f : fields.index(f) for f in fields}
@@ -136,11 +136,25 @@ class AbstractGroupModel(QAbstractTableModel):
     def addItem(self,item):
         debug("addItem")
         for i in self.items:
-            if i == item:
+            if i.equals(item):
                 warn("Item " + str(item) + " already exists")
                 return
         self.items.append(item)
         self.insertRow(0)
+        
+    def removeItems(self,indexes):
+        n = 0
+        rows = sorted([i.row() for i in indexes])
+        for row in rows:
+            row -= n
+            del self.items[row]
+            n += 1
+        #item = self.getNItem(row)
+        #for i in self.items:
+        #    if i.equals(item):
+        #        self.items.remove(i)
+        #        return
+        #assert(False)
         
 class DictModel(AbstractGroupModel):
 
