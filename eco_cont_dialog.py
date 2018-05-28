@@ -34,11 +34,11 @@ from qgis.gui import *
 
 from .utils import *
 from .qgsUtils import *
-from .groups import Groups
 from .vector_selection import VectorSelections
 from .rasterization import Rasterization
 #from .groups_model import GroupModelTest, GroupItem
-from .groups import Groups, Metagroups
+from .metagroups import Metagroups
+from .groups import Groups
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -53,10 +53,14 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.tabs=[Groups(self),
-                    Metagroups(self),
-                    VectorSelections(self),
-                    Rasterization(self)]
+        metagroupConnector = Metagroups(self)
+        self.groupConnector = Groups(self,metagroupConnector.metagroupsModel)
+        rasterizationConnector = Rasterization(self)
+        #self.tabs=[Groups(self),
+        #            Metagroups(self),
+        #            VectorSelections(self),
+        #            Rasterization(self)]
+        self.tabs = [self.groupConnector,metagroupConnector,rasterizationConnector]
         self.setupUi(self)
         #self.connectComponents()
         
@@ -81,6 +85,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         #self.groupVectRun.clicked.connect(self.selectEntities)
         self.runButton.clicked.connect(self.runCost)
+        #self.groupConnector.setMetagroupsModel(metagroupConnector.metagroupsModel)
+        #self.groupConnector.metagroupsModel.layoutChanged.connect(self.updateMetagroups)
+        #self.metagroupsModel.layoutChanged.connect(self.groupsModel.updateMetagroups)
         # model_sql = GroupsModelSql(self)
         # g1 = Group("test")
         # model_sql.addGroup(g1)

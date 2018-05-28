@@ -141,6 +141,7 @@ class AbstractGroupModel(QAbstractTableModel):
                 return
         self.items.append(item)
         self.insertRow(0)
+        self.layoutChanged.emit()
         
     def removeItems(self,indexes):
         n = 0
@@ -149,6 +150,7 @@ class AbstractGroupModel(QAbstractTableModel):
             row -= n
             del self.items[row]
             n += 1
+        self.layoutChanged.emit()
         #item = self.getNItem(row)
         #for i in self.items:
         #    if i.equals(item):
@@ -161,16 +163,17 @@ class DictModel(AbstractGroupModel):
     def __init__(self,parent,fields):
         AbstractGroupModel.__init__(self,parent,fields)
         
-    def itemEquals(self,i1,i2):
-        for f in self.fields:
-            if not (i1.dict[f] == i2.dict[f]):
-                debug("diff " + str(i1.dict[f]) + " - " +  str(i2.dict[f]))
-                return False
-        return True
+    # def itemEquals(self,i1,i2):
+        # for f in self.fields:
+            # if not (i1.dict[f] == i2.dict[f]):
+                # debug("diff " + str(i1.dict[f]) + " - " +  str(i2.dict[f]))
+                # return False
+        # return True
         
     def itemExists(self,item):
         for i in self.items:
-            if self.itemEquals(i,item):
+            #if self.itemEquals(i,item):
+            if i.equals(item):
                 return True
         return False
         
