@@ -39,6 +39,7 @@ from .metagroups import Metagroups
 from .groups import Groups
 from .vector_selection import VectorSelections
 from .selection import SelectionConnector
+from .buffers import BufferConnector
 from .rasterization import Rasterization
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -69,10 +70,12 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         metagroupConnector = Metagroups(self)
         groupConnector = Groups(self,metagroupConnector.model)
         selectionConnector = SelectionConnector(self,groupConnector.model)
+        bufferConnector = BufferConnector(self,groupConnector.model)
         rasterizationConnector = Rasterization(self)
         self.tabs = [groupConnector,
                      metagroupConnector,
                      selectionConnector,
+                     bufferConnector,
                      rasterizationConnector]
         
         
