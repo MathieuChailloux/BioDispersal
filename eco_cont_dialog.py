@@ -34,11 +34,12 @@ from qgis.gui import *
 
 from .utils import *
 from .qgsUtils import *
-from .vector_selection import VectorSelections
-from .rasterization import Rasterization
 #from .groups_model import GroupModelTest, GroupItem
 from .metagroups import Metagroups
 from .groups import Groups
+from .vector_selection import VectorSelections
+from .selection import SelectionConnector
+from .rasterization import Rasterization
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -66,9 +67,13 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         
     def initTabs(self):
         metagroupConnector = Metagroups(self)
-        self.groupConnector = Groups(self,metagroupConnector.metagroupsModel)
+        groupConnector = Groups(self,metagroupConnector.model)
+        selectionConnector = SelectionConnector(self,groupConnector.model)
         rasterizationConnector = Rasterization(self)
-        self.tabs = [self.groupConnector,metagroupConnector,rasterizationConnector]
+        self.tabs = [groupConnector,
+                     metagroupConnector,
+                     selectionConnector,
+                     rasterizationConnector]
         
         
     def initGui(self):

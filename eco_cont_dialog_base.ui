@@ -745,7 +745,7 @@
        <string>Métagroupe</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="selecctionAdd">
+     <widget class="QPushButton" name="selectionAdd">
       <property name="geometry">
        <rect>
         <x>230</x>
