@@ -27,6 +27,9 @@ import os.path
 
 debug_flag=True
 
+# class TODOException(Exception):
+    # pass
+
 def printDate(msg):
     print ("[" + str(datetime.datetime.now()) + "] " + msg)
     
@@ -46,6 +49,10 @@ def user_error(msg):
     
 def internal_error(msg):
     printDate("[internal error] " + msg)
+    raise Exception(msg)
+    
+def todo_error(msg):
+    printDate("[Feature not yet implemented] " + msg)
     raise Exception(msg)
 
 def checkFileExists(fname):

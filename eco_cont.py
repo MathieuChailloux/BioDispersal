@@ -170,6 +170,7 @@ class EcologicalContinuity:
             callback=self.run,
             parent=self.iface.mainWindow())
             
+        self.dlg.initTabs()
         self.dlg.initGui()
         self.dlg.connectComponents()
 

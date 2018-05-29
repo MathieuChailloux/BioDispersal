@@ -53,16 +53,23 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        metagroupConnector = Metagroups(self)
-        self.groupConnector = Groups(self,metagroupConnector.metagroupsModel)
-        rasterizationConnector = Rasterization(self)
+        #metagroupConnector = Metagroups(self)
+        #self.groupConnector = Groups(self,metagroupConnector.metagroupsModel)
+        #rasterizationConnector = Rasterization(self)
         #self.tabs=[Groups(self),
         #            Metagroups(self),
         #            VectorSelections(self),
         #            Rasterization(self)]
-        self.tabs = [self.groupConnector,metagroupConnector,rasterizationConnector]
+        #self.tabs = [self.groupConnector,metagroupConnector,rasterizationConnector]
         self.setupUi(self)
         #self.connectComponents()
+        
+    def initTabs(self):
+        metagroupConnector = Metagroups(self)
+        self.groupConnector = Groups(self,metagroupConnector.metagroupsModel)
+        rasterizationConnector = Rasterization(self)
+        self.tabs = [self.groupConnector,metagroupConnector,rasterizationConnector]
+        
         
     def initGui(self):
         self.geometry = self.geometry()

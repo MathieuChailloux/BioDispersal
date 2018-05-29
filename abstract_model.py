@@ -187,3 +187,35 @@ class DictModel(AbstractGroupModel):
             self.insertRow(0)
         
     #def dataChanged(self,
+    
+    
+    
+class AbstractConnector:
+
+    def __init__(self,model,view,addButton,removeButton):
+        self.model = model
+        self.view = view
+        self.addButton = addButton
+        self.removeButton = removeButton
+        
+    def connectComponents(self):
+        self.view.setModel(self.model)
+        if self.addButton:
+            self.addButton.clicked.connect(self.addItem)
+        if self.removeButton:
+            self.removeButton.clicked.connect(self.removeItem)
+        
+    @abstractmethod
+    def mkItem(self):
+        todo_error("mkItem not implemented")
+        
+    def addItem(self):
+        item = self.mkItem()
+        self.model.addItem(item)
+        self.model.layoutChanged.emit()
+        
+    def removeItem(self,item):
+        indices = self.view.selectedIndexes()
+        debug(str(indices))
+        self.model.removeItems(indices)
+        
