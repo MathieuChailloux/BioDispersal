@@ -1,6 +1,7 @@
 
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex
+from qgis.gui import QgsFileWidget
 from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 from .utils import *
          
@@ -96,6 +97,7 @@ class Groups(AbstractConnector):
     def connectComponents(self):
         super().connectComponents()
         self.dlg.groupsMetagroup.setModel(self.metagroupsModel)
+        self.dlg.groupsLayer.setStorageMode(QgsFileWidget.SaveFile)
         #self.metagroupsModel.layoutChanged.connect(self.updateMetagroups)
 
     def mkItem(self):

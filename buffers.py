@@ -15,6 +15,12 @@ class BufferItem(DictItem):
     def equals(self,other):
         return (self.dict == other.dict)
         
+    def applyItem(self):
+        debug("applyBuffer")
+        grp = self.dict["in_group"]
+        info(str(type(grp)))
+        
+        
 class BufferModel(DictModel):
     
     def __init__(self):
@@ -39,6 +45,7 @@ class BufferConnector(AbstractConnector):
         super().connectComponents()
         self.dlg.bufferInGroup.setModel(self.groupsModel)
         self.dlg.bufferOutGroup.setModel(self.groupsModel)
+        self.dlg.bufferRun.clicked.connect(self.model.applyItems)
         
     def mkItem(self):
         in_group = self.dlg.bufferInGroup.currentText()

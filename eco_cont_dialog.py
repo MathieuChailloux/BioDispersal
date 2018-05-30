@@ -31,6 +31,7 @@ from PyQt5.QtCore import *
 import processing
 from qgis.core import *
 from qgis.gui import *
+from qgis.gui import QgsFileWidget
 
 from .utils import *
 from .qgsUtils import *
@@ -40,7 +41,7 @@ from .groups import Groups
 from .vector_selection import VectorSelections
 from .selection import SelectionConnector
 from .buffers import BufferConnector
-from .rasterization import Rasterization
+from .rasterization import RasterizationConnector
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -71,7 +72,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         groupConnector = Groups(self,metagroupConnector.model)
         selectionConnector = SelectionConnector(self,groupConnector.model)
         bufferConnector = BufferConnector(self,groupConnector.model)
-        rasterizationConnector = Rasterization(self)
+        rasterizationConnector = RasterizationConnector(self)
         self.tabs = [groupConnector,
                      metagroupConnector,
                      selectionConnector,
@@ -100,23 +101,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         #self.groupVectRun.clicked.connect(self.selectEntities)
         self.runButton.clicked.connect(self.runCost)
-        #self.groupConnector.setMetagroupsModel(metagroupConnector.metagroupsModel)
-        #self.groupConnector.metagroupsModel.layoutChanged.connect(self.updateMetagroups)
-        #self.metagroupsModel.layoutChanged.connect(self.groupsModel.updateMetagroups)
-        # model_sql = GroupsModelSql(self)
-        # g1 = Group("test")
-        # model_sql.addGroup(g1)
-        # model_sql.setHeaderData(0,QtCore.Qt.Horizontal,QtCore.Qt.AlignJustify,QtCore.Qt.TextAlignmentRole)
-        # self.tableViewSql.setModel(model_sql)
-        # self.tableViewSql.show()
-        #  model.setHeaderData(0,QtCore.Qt.Horizontal,QtCore.Qt.AlignJustify,QtCore.Qt.TextAlignmentRole)
-        #model = GroupsModel(self)
-        #self.dlgTableView.setModel(model)
-        #self.dlgTableView.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
-        #model = GroupModelTest(self)
-        #g2 = GroupItem("g1","group1")
-        #model.addItem(g2)
-        #self.dlgTableView.setModel(model)
+        # Main tab connectors
+        self.saveModelButton.clicked.connect(self.saveModel)
+        self.saveModelPath.setStorageMode(QgsFileWidget.SaveFile)
+        self.loadModelPath.setStorageMode(QgsFileWidget.GetFile)
         
     def onResize(self,event):
         new_size = event.size()
@@ -175,3 +163,14 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         writeShapefile(layer,'D:\MChailloux\PNRHL_QGIS\\test.shp')
         debug("End selectEntities")
         
+    def toXML(self):
+        xmlStr = "<ModelConfig>\n"
+        for t in self.tabs:
+            xmlStr += t.model.toXML() + "\n"
+        xmlStr += "</ModelConfig>\n"
+        return xmlStr
+
+    def saveModel(self):
+        xmlStr = self.toXML()
+        fname = self.saveModelPath.filePath()
+        writeFile(fname,xmlStr)

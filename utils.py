@@ -59,6 +59,10 @@ def checkFileExists(fname):
     if not (os.path.isfile(fname)):
         user_error("File '" + fname + "' does not exist")
         
+def writeFile(fname,str):
+    with open(fname,"w") as f:
+        f.write(str)        
+        
 def is_number(s):
     try:
         float(s)

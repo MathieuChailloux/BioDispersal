@@ -31,7 +31,7 @@ import processing
 from .utils import *
 from .qgsUtils import *
 from qgis.gui import QgsFileWidget
-from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel
+from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 
 
 import subprocess
@@ -128,6 +128,35 @@ class RasterModel(DictModel):
         super().__init__(self,raster_displayed_fields)
 
 
+class RasterizationConnector(AbstractConnector):
+
+    def __init__(self,dlg):
+        self.dlg = dlg
+        self.raster_model = RasterModel()
+        super().__init__(self.raster_model,self.dlg.rasterView,
+                         self.dlg.rasterAdd,self.dlg.rasterRemove)
+                         
+    def initGui(self):
+        pass
+                         
+    def connectComponents(self):
+        super().connectComponents()
+        
+    def mkItem(self):
+        in_layer = self.dlg.rasterInLayer.currentLayer()
+        if not in_layer:
+            user_error("No input layer selected")
+        in_layer_uri = in_layer.dataProvider().dataSourceUri()
+        in_layer_path = in_layer_uri[:in_layer_uri.rfind('|')]
+        #checkFileExists(in_layer_path)
+        out_layer_path = self.dlg.rasterOutLayer.filePath()
+        field = self.dlg.rasterField.currentField()
+        if not field:
+            user_error("No field selected")
+        item = RasterItem(in_layer,in_layer_path,out_layer_path,field)
+        return item
+        
+        
 class Rasterization:
 
     def __init__(self,dlg):

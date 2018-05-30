@@ -58,6 +58,7 @@ def checkLayersCompatible(l1,l2):
                     + "' not compatible with geometry '" + str(geomType2)
                     + "' of layer " + l2.name())
     #return (crs1 == crs2 and geomType1 == geomType2)
+    
 
 def createLayerFromExisting(inLayer,outName):
     debug("[createLayerFromExisting]")

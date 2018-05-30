@@ -30,6 +30,10 @@ class AbstractGroupItem:
     def equals(self,other):
         return False
         
+    @abstractmethod
+    def applyItem(self):
+        pass
+        
 class ArrayItem(AbstractGroupItem):
     
     def __init__(self,arr):
@@ -77,6 +81,13 @@ class DictItem(AbstractGroupItem):
             
     def equals(self,other):
         self.dict == other.dict
+        
+    def toXML(self):
+        xmlStr = "<" + self.__class__.__name__
+        for k,v in self.dict.items():
+            xmlStr += " " + k + "=\"" + str(v) + "\""
+        xmlStr += "/>"
+        return xmlStr
     
 class AbstractGroupModel(QAbstractTableModel):
 
@@ -158,6 +169,11 @@ class AbstractGroupModel(QAbstractTableModel):
         #        return
         #assert(False)
         
+    def applyItems(self):
+        debug("[applyItems]")
+        for i in self.items:
+            i.applyItem()
+        
 class DictModel(AbstractGroupModel):
 
     def __init__(self,parent,fields):
@@ -185,6 +201,14 @@ class DictModel(AbstractGroupModel):
             debug("adding item")
             self.items.append(item)
             self.insertRow(0)
+        
+    def toXML(self):
+        xmlStr = " <" + self.__class__.__name__ + ">"
+        for i in self.items:
+            xmlStr += "  " + i.toXML() + "\n"
+        xmlStr += " </" + self.__class__.__name__ + ">"
+        return xmlStr
+        
         
     #def dataChanged(self,
     
