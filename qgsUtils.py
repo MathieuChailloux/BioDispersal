@@ -22,9 +22,12 @@
  ***************************************************************************/
 """
 
+import os
+
 from qgis.gui import *
 from qgis.core import *
-from .utils import *
+#from .utils import *
+import utils
 from PyQt5.QtCore import QVariant
 
 def typeIsInteger(t):
@@ -39,42 +42,63 @@ def typeIsFloat(t):
 def typeIsNumeric(t):
     return (typeIsInteger(t) or typeIsFloat(t))
 
+def pathOfLayer(l):
+    uri = l.dataProvider().dataSourceUri()
+    path = uri[:uri.rfind('|')]
+    return path
+      
 def layerNameOfPath(p):
     bn = os.path.basename(p)
     res = os.path.splitext(bn)[0]
     return res
+    
+def loadVectorLayer(fname):
+    layer = QgsVectorLayer(fname, layerNameOfPath(fname), "ogr")
+    return layer
+    
+def getLoadedLayerByName(name):
+    layers = QgsProject.instance().mapLayersByName('my layer name')
+    nb_layers = len(layers)
+    if nb_layers == 0:
+        utils.warn("No layer named '" + name + "' found")
+        return None
+    elif nb_layers > 1:
+        utils.user_error("Several layers named '" + name + "' found")
+    else:
+        return layers[0]
 
 def checkLayersCompatible(l1,l2):
     crs1 = l1.crs().authid()
     crs2 = l2.crs().authid()
     if crs1 != crs2:
-        user_error("Layer " + l1.name() + " SRID '" + str(crs1)
+        utils.user_error("Layer " + l1.name() + " SRID '" + str(crs1)
                     + "' not compatible with SRID '" + str(crs2)
                     + "' of layer " + l2.name())
     geomType1 = l1.geometryType()
     geomType2 = l1.geometryType()
     if geomType1 != geomType2:
-        user_error("Layer " + l1.name() + " geometry '" + str(geomType1)
+        utils.user_error("Layer " + l1.name() + " geometry '" + str(geomType1)
                     + "' not compatible with geometry '" + str(geomType2)
                     + "' of layer " + l2.name())
     #return (crs1 == crs2 and geomType1 == geomType2)
     
 
 def createLayerFromExisting(inLayer,outName):
-    debug("[createLayerFromExisting]")
+    utils.debug("[createLayerFromExisting]")
     crs=str(inLayer.crs().authid()).lower()
     geomType=QgsWkbTypes.displayString(inLayer.wkbType())
     layerStr = geomType + '?crs='+crs
-    debug(layerStr)
+    utils.debug(layerStr)
     outLayer=QgsVectorLayer(geomType + '?crs='+crs, outName, "memory")
     return outLayer
 
 def writeShapefile(layer,outfname):
+    utils.debug("[writeShapefile] " + outfname)
     crs = QgsCoordinateReferenceSystem("EPSG:2154")
     #params = 
     (error, error_msg) = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname,'utf-8',destCRS=crs,driverName='ESRI Shapefile')
     if error == QgsVectorFileWriter.NoError:
-        info("Shapefile '" + outfname + "' succesfully created")
+        utils.info("Shapefile '" + outfname + "' succesfully created")
     else:
-        user_error("Unable to create shapefile '" + outfname + "' : " + str(error_msg))
+        utils.user_error("Unable to create shapefile '" + outfname + "' : " + str(error_msg))
         

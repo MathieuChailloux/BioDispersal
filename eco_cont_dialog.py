@@ -23,6 +23,7 @@
 """
 
 import os
+import sys
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
@@ -37,16 +38,16 @@ from .utils import *
 from .qgsUtils import *
 #from .groups_model import GroupModelTest, GroupItem
 from .metagroups import Metagroups
-from .groups import Groups
-from .vector_selection import VectorSelections
+import groups
+#from .groups import Groups, groupsModel
+#from .vector_selection import VectorSelections
 from .selection import SelectionConnector
 from .buffers import BufferConnector
 from .rasterization import RasterizationConnector
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
-
-
+    
 class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
@@ -68,8 +69,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.connectComponents()
         
     def initTabs(self):
+        global groupsModel
         metagroupConnector = Metagroups(self)
-        groupConnector = Groups(self,metagroupConnector.model)
+        groupConnector = groups.GroupConnector(self,metagroupConnector.model)
+        groups.groupsModel = groupConnector.model
         selectionConnector = SelectionConnector(self,groupConnector.model)
         bufferConnector = BufferConnector(self,groupConnector.model)
         rasterizationConnector = RasterizationConnector(self)

@@ -146,8 +146,7 @@ class RasterizationConnector(AbstractConnector):
         in_layer = self.dlg.rasterInLayer.currentLayer()
         if not in_layer:
             user_error("No input layer selected")
-        in_layer_uri = in_layer.dataProvider().dataSourceUri()
-        in_layer_path = in_layer_uri[:in_layer_uri.rfind('|')]
+        in_layer_path = pathOfLayer(in_layer)
         #checkFileExists(in_layer_path)
         out_layer_path = self.dlg.rasterOutLayer.filePath()
         field = self.dlg.rasterField.currentField()

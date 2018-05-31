@@ -1,7 +1,7 @@
 
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
-from .utils import *
-
+#from .utils import *
+import utils
 
 from abc import ABC, abstractmethod
 #class Abstract(ABC):
@@ -133,7 +133,7 @@ class AbstractGroupModel(QAbstractTableModel):
             return QVariant()
             
     def setData(self, index, value, role):
-        debug("setData")
+        utils.debug("setData")
         if role == Qt.EditRole:
             item = self.getNItem(index.row())
             item.updateNField(index.column(),value)
@@ -145,7 +145,7 @@ class AbstractGroupModel(QAbstractTableModel):
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
             
     def addItem(self,item):
-        debug("addItem")
+        utils.debug("addItem")
         for i in self.items:
             if i.equals(item):
                 warn("Item " + str(item) + " already exists")
@@ -170,7 +170,7 @@ class AbstractGroupModel(QAbstractTableModel):
         #assert(False)
         
     def applyItems(self):
-        debug("[applyItems]")
+        utils.debug("[applyItems]")
         for i in self.items:
             i.applyItem()
         
@@ -194,11 +194,11 @@ class DictModel(AbstractGroupModel):
         return False
         
     def addItem(self,item):
-        debug("DictItem.addItem")
+        utils.debug("DictItem.addItem")
         if self.itemExists(item):
-            warn("Item " + str(item) + " already exists")
+            utils.warn("Item " + str(item) + " already exists")
         else:
-            debug("adding item")
+            utils.debug("adding item")
             self.items.append(item)
             self.insertRow(0)
         
@@ -231,7 +231,7 @@ class AbstractConnector:
         
     @abstractmethod
     def mkItem(self):
-        todo_error("mkItem not implemented")
+        utils.todo_error("mkItem not implemented")
         
     def addItem(self):
         item = self.mkItem()
@@ -240,6 +240,6 @@ class AbstractConnector:
         
     def removeItem(self,item):
         indices = self.view.selectedIndexes()
-        debug(str(indices))
+        utils.debug(str(indices))
         self.model.removeItems(indices)
         

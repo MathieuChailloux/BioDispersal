@@ -24,6 +24,10 @@
 
 import datetime
 import os.path
+import sys
+
+file_dir = os.path.dirname(__file__)
+sys.path.append(file_dir)
 
 debug_flag=True
 
@@ -55,6 +59,9 @@ def todo_error(msg):
     printDate("[Feature not yet implemented] " + msg)
     raise Exception(msg)
 
+def normPath(fname):
+    return fname.replace('\\','/')
+    
 def checkFileExists(fname):
     if not (os.path.isfile(fname)):
         user_error("File '" + fname + "' does not exist")

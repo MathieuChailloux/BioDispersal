@@ -1,13 +1,22 @@
 
+import os
+
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex
 from qgis.gui import QgsFileWidget
-from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
-from .utils import *
+#from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
+import abstract_model
+# import abstract_model
+#from .utils import *
+#import utils
+#from .qgsUtils import *
+import qgsUtils
          
 groups_fields = ["group","descr","metagroup","layer"]
+groupsModel = None
 
-class GroupItem(DictItem):
+
+class GroupItem(abstract_model.DictItem):
     
     def __init__(self,group,descr,metagroup,layer):
         dict = {"group" : group,
@@ -23,11 +32,42 @@ class GroupItem(DictItem):
     def equals(self,other):
         return (self.dict["group"] == other.dict["group"])
         
-class GroupModel(DictModel):
+    def getLayer(self):
+        name = self.dict["group"]
+        layer = self.dict["layer"]
+        if layer == "memory":
+            res = qgsUtils.getLoadedLayerByName(name)
+        elif os.path.isfile(layer):
+            res = qgsUtils.loadVectorLayer(layer)
+        else:
+            return None
+            
+    # def getOrCreateLayer(self,init_layer):
+        # name = self.dict["group"]
+        # layer = self.dict["layer"]
+        # if layer = "memory":
+            # res = getLoadedLayerByName(name)
+            # if not res:
+                # res = createLayerFromExistingOne(init_layer)
+        # elif os.path.isfile(layer):
+            # res = loadVectorLayer(layer)
+        # if not res:
+            # res = createLayerFromExistingOne(init_layer)
+        # if layer != "memory":
+            # writeShapefile(res,layer)
+        # return res
+        
+        
+class GroupModel(abstract_model.DictModel):
 
     def __init__(self):
         super().__init__(self,groups_fields)
         
+    def getGroupByName(self,name):
+        for i in self.items:
+            if i.dict["group"] == name:
+                return i
+        internal_error("Could not find group '" + name + "'")
          
 # class Groups(AbstractConnector):
 
@@ -79,7 +119,7 @@ class GroupModel(DictModel):
          
 
 
-class Groups(AbstractConnector):
+class GroupConnector(abstract_model.AbstractConnector):
 
     def __init__(self,dlg,metagroupsModel):
         self.dlg = dlg

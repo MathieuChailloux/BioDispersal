@@ -31,7 +31,6 @@ from .resources import *
 from .eco_cont_dialog import EcologicalContinuityDialog
 import os.path
 
-
 class EcologicalContinuity:
     """QGIS Plugin Implementation."""
 

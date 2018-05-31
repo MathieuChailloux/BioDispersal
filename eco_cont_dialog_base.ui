@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="tab_10">
     <attribute name="title">
@@ -1071,7 +1071,7 @@
        <x>410</x>
        <y>30</y>
        <width>391</width>
-       <height>481</height>
+       <height>491</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -1249,6 +1249,19 @@
         <width>171</width>
         <height>27</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="selectionRun">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>460</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Run</string>
       </property>
      </widget>
     </widget>
