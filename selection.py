@@ -61,6 +61,8 @@ class SelectionItem(DictItem):
                 internal_error("ko")
             group_layer.updateExtents()
         debug("length(feats) = " + str(tmp_cpt))
+        if tmp_cpt == 0:
+            warn("No entity selected from '" + str(self) + "'")
         if out_storage != "memory":
             writeShapefile(group_layer,out_storage)
         

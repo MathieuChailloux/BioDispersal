@@ -32,7 +32,7 @@ from .utils import *
 from .qgsUtils import *
 from qgis.gui import QgsFileWidget
 from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
-
+import groups
 
 import subprocess
 import sys
@@ -61,37 +61,42 @@ import sys
     # def checkItem(self):
         # debug("[checkItem] todo")
         
-raster_displayed_fields = ["in_layer_name","field","in_path","out_path"]
+raster_displayed_fields = ["in_group","field","out_group"]
 
 class RasterItem(DictItem):
     
-    def __init__(self,in_layer,in_path,out_path,field):
+    def __init__(self,in_group,field,out_group):
         if not in_layer:
             in_layer = QgsVectorLayer(in_path, layerNameOfPath(in_path), "ogr")
-        dict = {"in_layer_name" : in_layer.name(),
+        dict = {"in_group" : in_group,
                 "field" : field,
-                "in_path" : in_path,
-                "out_path" : out_path,
-                "in_layer" : in_layer}
+                "out_group" : out_group}
         super().__init__(dict,raster_displayed_fields)
         
+    # TODO : possible to filter field combo box with numeric types ?
     def checkItem(self):
-        in_layer = self.dict["in_layer"]
-        in_path = self.dict["in_path"]
-        field = self.dict["field"]
-        real_field = in_layer.fields().field(field)
-        if not typeIsNumeric(real_field.type()):
-            user_error("Field " + str(field) + " is not numeric")
-        #for f in in_layer.fields():
-        #    info(str(f.type()))
+        pass
+        # in_group = self.dict["in_group"]
+        # field = self.dict["field"]
+        # out_group = self.dict["out_group"]
+        # real_field = in_layer.fields().field(field)
+        # if not typeIsNumeric(real_field.type()):
+            # user_error("Field " + str(field) + " is not numeric")
         
-    def applyRasterization(self):
+    def applyItem(self):
         debug("applyRasterization")
         self.checkItem()
-        in_layer = self.dict["in_layer"]
-        in_path = self.dict["in_path"]
-        out_path = self.dict["out_path"]
-        out_path = out_path.replace("\\","/")
+        in_group = self.dict["in_group"]
+        in_group_item = groups.groupsModel.getGroupByName(in_group)
+        in_path = in_group_item.path
+        in_layer = in_group.getLayerForce()
+        if in_layer.is_memory:
+            in_group_item.saveLayerAsFile()
+        out_group = self.dict["out_group"]
+        out_group_item = groups.groupsModel.getGroupByName(out_group)
+        out_path = out_group_item.path
+        #out_path = self.dict["out_path"]
+        #out_path = out_path.replace("\\","/")
         field = self.dict["field"]
         extent = in_layer.extent()
         x_min = extent.xMinimum()

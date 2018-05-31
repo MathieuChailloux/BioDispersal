@@ -30,6 +30,7 @@ file_dir = os.path.dirname(__file__)
 sys.path.append(file_dir)
 
 debug_flag=True
+tmpDir="D:/MChailloux/tmp"
 
 # class TODOException(Exception):
     # pass
