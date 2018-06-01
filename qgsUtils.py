@@ -67,6 +67,12 @@ def getLoadedLayerByName(name):
     else:
         return layers[0]
 
+def getLayerCrsStr(layer):
+    return str(layer.crs().authid().lower())
+    
+def getLayerGeomStr(layer):
+    return QgsWkbTypes.displayString(layer.wkbType())
+        
 def checkLayersCompatible(l1,l2):
     crs1 = l1.crs().authid()
     crs2 = l2.crs().authid()
@@ -83,14 +89,37 @@ def checkLayersCompatible(l1,l2):
     #return (crs1 == crs2 and geomType1 == geomType2)
     
 
-def createLayerFromExisting(inLayer,outName):
+def createLayerFromExisting(inLayer,outName,geomType=None,crs=None):
     utils.debug("[createLayerFromExisting]")
-    crs=str(inLayer.crs().authid()).lower()
-    geomType=QgsWkbTypes.displayString(inLayer.wkbType())
+    # crs=str(inLayer.crs().authid()).lower()
+    # geomType=QgsWkbTypes.displayString(inLayer.wkbType())
+    if not crs:
+        crs=getLayerCrsStr(inLayer)
+    if not geomType:
+        geomType=getGeomTypeStr(inLayer)
     layerStr = geomType + '?crs='+crs
     utils.debug(layerStr)
     outLayer=QgsVectorLayer(geomType + '?crs='+crs, outName, "memory")
     return outLayer
+    
+def applyBuffer(in_layer,buffer_val,out_layer):
+    utils.debug("[applyBuffer]")
+    #writeShapefile(in_layer,"D:/MChailloux/tmp/tmp_buf.shp")
+    in_pr = in_layer.dataProvider()
+    out_pr = out_layer.dataProvider()
+    new_fields = QgsFields()
+    out_layer.updateFields()
+    out_f = QgsFeature(new_fields)
+    for in_f in in_layer.getFeatures():
+        #out_f = QgsFeature(in_f)
+        buf_geom = in_f.geometry().buffer(buffer_val,8)
+        poly = buf_geom.asPolygon()
+        out_f.setGeometry(QgsGeometry.fromPolygonXY(poly))
+        res = out_pr.addFeature(out_f)
+        #if not res:
+        #    utils.internal_error("ko")
+        out_layer.updateExtents()
+    return out_layer
 
 def writeShapefile(layer,outfname):
     utils.debug("[writeShapefile] " + outfname)

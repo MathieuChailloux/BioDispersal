@@ -33,12 +33,14 @@ class GroupItem(abstract_model.DictItem):
                 "metagroup" : metagroup,
                 "layer" : layer}
         #assert(groups_fields == dict.keys())
+        self.name = group
         if layer == "memory":
             self.is_memory = True
             self.path = utils.tmpDir + "/" + group
         else:
             self.is_memory = False
             self.path = layer
+        self.layer = None
         super().__init__(dict)
         
     def checkItem(self):
@@ -46,6 +48,18 @@ class GroupItem(abstract_model.DictItem):
         
     def equals(self,other):
         return (self.dict["group"] == other.dict["group"])
+        
+    def instantiateLayer(self,inLayer=None,geomType=None,crs=None):
+        if self.layer:
+            utils.debug("Layer '" + self.name + " already exists")
+        elif self.is_memory:
+            self.layer = qgsUtils.createLayerFromExisting(inLayer,self.name,geomType,crs)
+        elif os.path.isfile(self.path):
+            self.layer = qgsUtils.loadVectorLayer(self.path)
+        else:
+            self.layer = qgsUtils.createLayerFromExisting(inLayer,self.name,geomType,crs)
+            qgsUtils.writeShapefile(self.layer,self.path)
+            
         
     def getLayer(self):
         name = self.dict["group"]
@@ -66,27 +80,28 @@ class GroupItem(abstract_model.DictItem):
             res = qgsUtils.loadVectorLayer(layer)
         else:
             utils.user_error("Could not find layer for group '" + name + "'")
+        return res
             
     def mkTmpLayerPath(self):
         tmpPath = utils.tmpDir + "/" + self.dict["group"]
         return tmpPath
         
     def saveLayerAsFile(self):
-        grp = self.dict["group"]
-        layer = self.getLayer()
-        if layer:
-            writeShapefile(layer,self.path)
+        #grp = self.dict["group"]
+        #layer = self.getLayer()
+        if self.layer:
+            qgsUtils.writeShapefile(self.layer,self.path)
         else:
-            utils.user_error("Could not find layer for group '" + grp + "'")
+            utils.user_error("Could not find layer for group '" + self.name + "'")
         
     def getAndCreateLayerPath(self):
         name = self.dict["group"]
         if self.is_memory:
-            loadedLayer = getLoadedLayerByName(name)
+            loadedLayer = qgsUtils.getLoadedLayerByName(name)
             if loadedLayer:
                 uri = loadedLayer.dataProvider().dataSourceUri()
                 if uri:
-                    return pathOfLayer(loadedLayer)
+                    return qgsUtils.pathOfLayer(loadedLayer)
                 else:
                     tmp_path = self.mkTmpLayerPath()
             

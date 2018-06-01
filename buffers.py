@@ -1,6 +1,8 @@
 
 from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 from .utils import *
+from .qgsUtils import *
+import groups
 
 buffer_fields = ["in_group","buffer","out_group"]
 
@@ -17,8 +19,25 @@ class BufferItem(DictItem):
         
     def applyItem(self):
         debug("applyBuffer")
-        grp = self.dict["in_group"]
-        info(str(type(grp)))
+        in_group = self.dict["in_group"]
+        in_group_item = groups.groupsModel.getGroupByName(in_group)
+        in_layer = in_group_item.layer
+        if not in_layer:
+            in_group_item.instantiateLayer()
+            in_layer = in_group_item.layer
+            #in_layer = in_group_item.layer
+        out_group = self.dict["out_group"]
+        out_group_item = groups.groupsModel.getGroupByName(out_group)
+        #out_layer = out_group_item.getLayer()
+        if not out_group_item.layer:
+            out_group_item.instantiateLayer(inLayer=in_layer,geomType="Polygon")
+        #out_layer = createLayerFromExisting(in_layer,out_group,geomType="Polygon")
+        out_layer = applyBuffer(in_layer,200,out_group_item.layer)
+        assert (out_layer != None)
+        out_group_item.layer = out_layer
+        if not out_group_item.is_memory:
+            out_group_item.saveLayerAsFile()
+        #info(str(type(grp)))
         
         
 class BufferModel(DictModel):
