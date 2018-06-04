@@ -71,6 +71,11 @@ class SelectionModel(DictModel):
     def __init__(self):
         super().__init__(self,selection_fields)
         
+    @staticmethod
+    def mkItemFromDict(dict):
+        checkFields(selection_fields,dict.keys())
+        item = RasterItem(dict["in_layer"],dict["expr"],dict["group"])
+        return item
 
 class SelectionConnector(AbstractConnector):
 

@@ -45,6 +45,12 @@ class BufferModel(DictModel):
     def __init__(self):
         super().__init__(self,buffer_fields)
         
+    @staticmethod
+    def mkItemFromDict(dict):
+        checkFields(buffer_fields,dict.keys())
+        item = BufferItem(dict["in_layer"],dict["expr"],dict["group"])
+        return item
+        
 class BufferConnector(AbstractConnector):
 
     def __init__(self,dlg,groupsModel):

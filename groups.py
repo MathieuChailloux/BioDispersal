@@ -41,7 +41,7 @@ class GroupItem(abstract_model.DictItem):
             self.is_memory = False
             self.path = layer
         self.layer = None
-        super().__init__(dict)
+        super().__init__(dict)        
         
     def checkItem(self):
         pass
@@ -125,6 +125,12 @@ class GroupModel(abstract_model.DictModel):
 
     def __init__(self):
         super().__init__(self,groups_fields)
+        
+    @staticmethod
+    def mkItemFromDict(dict):
+        utils.checkFields(groups_fields,dict.keys())
+        item = GroupItem(dict["group"],dict["descr"],dict["metagroup"],dict["layer"])
+        return item
         
     def getGroupByName(self,name):
         for i in self.items:

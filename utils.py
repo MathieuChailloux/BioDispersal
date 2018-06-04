@@ -78,6 +78,12 @@ def is_number(s):
     except ValueError:
         return False
     
+def checkFields(ref_fields,fields):
+    if ref_fields != fields:
+        for rf in ref_fields:
+            if rf not in fields:
+                user_error("Missing field '" + rf + "'")
+    
 #def writeShapefile(layer,outfname):
 #    error = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname)
 #    if error == QgsVectorFileWriter.NoError:

@@ -44,6 +44,7 @@ import groups
 from .selection import SelectionConnector
 from .buffers import BufferConnector
 from .rasterization import RasterizationConnector
+from .config_parsing import *
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -81,6 +82,11 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                      selectionConnector,
                      bufferConnector,
                      rasterizationConnector]
+        self.models = {"MetagroupModel" : metagroupConnector.model,
+                        "GroupModel" : groupConnector.model,
+                        "SelectionModel" : selectionConnector.model,
+                        "BufferModel" : bufferConnector.model,
+                        "RasterModel" : rasterizationConnector.model}
         
         
     def initGui(self):
@@ -106,6 +112,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         self.runButton.clicked.connect(self.runCost)
         # Main tab connectors
         self.saveModelButton.clicked.connect(self.saveModel)
+        self.loadModelButton.clicked.connect(self.loadModel)
         self.saveModelPath.setStorageMode(QgsFileWidget.SaveFile)
         self.loadModelPath.setStorageMode(QgsFileWidget.GetFile)
         
@@ -177,3 +184,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         xmlStr = self.toXML()
         fname = self.saveModelPath.filePath()
         writeFile(fname,xmlStr)
+        
+    def loadModel(self):
+        modelPath = self.loadModelPath.filePath()
+        checkFileExists(modelPath)
+        setConfigModels(self.models)
+        parseConfig(modelPath)

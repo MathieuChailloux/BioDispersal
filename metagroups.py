@@ -5,7 +5,7 @@ from .utils import *
 
 metagroups_fields = ["metagroup","descr"]
          
-class Metagroup(DictItem):
+class MetagroupItem(DictItem):
     def __init__(self,metagroup,descr):
         dict = {"metagroup" : metagroup,
                 "descr" : descr}
@@ -24,6 +24,11 @@ class MetagroupModel(DictModel):
     def __init__(self):
         super().__init__(self,metagroups_fields)
         
+    @staticmethod
+    def mkItemFromDict(dict):
+        checkFields(metagroups_fields,dict.keys())
+        item = MetagroupItem(dict["metagroup"],dict["descr"])
+        return item
         
 class Metagroups(AbstractConnector):
 
@@ -42,7 +47,7 @@ class Metagroups(AbstractConnector):
     def mkItem(self):
         name = self.dlg.metagroupsName.text()
         descr = self.dlg.metagroupsDescr.text()
-        metagroupItem = Metagroup(name,descr)
+        metagroupItem = MetagroupItem(name,descr)
         return metagroupItem
         
     # def removeMetagroup(self):

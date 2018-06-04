@@ -132,6 +132,11 @@ class RasterModel(DictModel):
         #fields = ["in_layer_name","field","in_path","out_path"]
         super().__init__(self,raster_displayed_fields)
 
+    @staticmethod
+    def mkItemFromDict(dict):
+        checkFields(raster_displayed_fields,dict.keys())
+        item = RasterItem(dict["metagroup"],dict["descr"])
+        return item
 
 class RasterizationConnector(AbstractConnector):
 

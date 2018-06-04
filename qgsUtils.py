@@ -124,7 +124,9 @@ def applyBuffer(in_layer,buffer_val,out_layer):
 def writeShapefile(layer,outfname):
     utils.debug("[writeShapefile] " + outfname)
     crs = QgsCoordinateReferenceSystem("EPSG:2154")
-    #params = 
+    #params =
+    if os.path.isfile(outfname):
+        os.remove(outfname)
     (error, error_msg) = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname,'utf-8',destCRS=crs,driverName='ESRI Shapefile')
     if error == QgsVectorFileWriter.NoError:
         utils.info("Shapefile '" + outfname + "' succesfully created")
