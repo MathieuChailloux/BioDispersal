@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>7</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="tab_10">
     <attribute name="title">
@@ -826,7 +826,7 @@
        <string>Couche</string>
       </property>
      </widget>
-     <widget class="QgsFieldExpressionWidget" name="selectionVectorExpr">
+     <widget class="QgsFieldExpressionWidget" name="selectionExpr">
       <property name="geometry">
        <rect>
         <x>120</x>
