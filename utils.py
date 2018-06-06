@@ -69,8 +69,8 @@ def checkFileExists(fname):
         
 def writeFile(fname,str):
     with open(fname,"w") as f:
-        f.write(str)        
-        
+        f.write(str)
+    
 def is_number(s):
     try:
         float(s)
@@ -83,6 +83,8 @@ def checkFields(ref_fields,fields):
         for rf in ref_fields:
             if rf not in fields:
                 user_error("Missing field '" + rf + "'")
+                
+
     
 #def writeShapefile(layer,outfname):
 #    error = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname)

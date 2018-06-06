@@ -38,8 +38,9 @@ from .utils import *
 from .qgsUtils import *
 #from .groups_model import GroupModelTest, GroupItem
 from .metagroups import Metagroups
+import params
 import groups
-#from .groups import Groups, groupsModel
+#from .groups import Groups, classModel
 #from .vector_selection import VectorSelections
 from .selection import SelectionConnector
 from .buffers import BufferConnector
@@ -59,7 +60,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         #metagroupConnector = Metagroups(self)
-        #self.groupConnector = Groups(self,metagroupConnector.metagroupsModel)
+        #self.groupConnector = Groups(self,metagroupConnector.metaclassModel)
         #rasterizationConnector = Rasterization(self)
         #self.tabs=[Groups(self),
         #            Metagroups(self),
@@ -70,23 +71,27 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.connectComponents()
         
     def initTabs(self):
-        global groupsModel
-        metagroupConnector = Metagroups(self)
-        groupConnector = groups.GroupConnector(self,metagroupConnector.model)
-        groups.groupsModel = groupConnector.model
-        selectionConnector = SelectionConnector(self,groupConnector.model)
-        bufferConnector = BufferConnector(self,groupConnector.model)
-        rasterizationConnector = RasterizationConnector(self)
-        self.tabs = [groupConnector,
-                     metagroupConnector,
-                     selectionConnector,
-                     bufferConnector,
-                     rasterizationConnector]
-        self.models = {"MetagroupModel" : metagroupConnector.model,
-                        "GroupModel" : groupConnector.model,
-                        "SelectionModel" : selectionConnector.model,
-                        "BufferModel" : bufferConnector.model,
-                        "RasterModel" : rasterizationConnector.model}
+        global classModel
+        #metagroupConnector = Metagroups(self)
+        #groupConnector = groups.GroupConnector(self,metagroupConnector.model)
+        paramsConnector = params.ParamsConnector(self)
+        params.params = paramsConnector
+        classConnector = classes.ClassConnector(self)
+        classes.classModel = classConnector.model
+        selectionConnector = SelectionConnector(self,classes.classModel)
+        #bufferConnector = BufferConnector(self,groupConnector.model)
+        #rasterizationConnector = RasterizationConnector(self)
+        self.tabs = [paramsConnector,
+                     classConnector,
+                     selectionConnector]
+                     #bufferConnector,
+                     #rasterizationConnector]
+        self.models = {}
+        # self.models = {"MetagroupModel" : metagroupConnector.model,
+                        # "GroupModel" : groupConnector.model,
+                        # "SelectionModel" : selectionConnector.model,
+                        # "BufferModel" : bufferConnector.model,
+                        # "RasterModel" : rasterizationConnector.model}
         
         
     def initGui(self):

@@ -28,6 +28,7 @@ from qgis.gui import *
 from qgis.core import *
 #from .utils import *
 import utils
+import pathlib
 from PyQt5.QtCore import QVariant
 
 def typeIsInteger(t):
@@ -52,8 +53,24 @@ def layerNameOfPath(p):
     res = os.path.splitext(bn)[0]
     return res
     
+def isVectorPath(fname):
+    vector_extensions = [".shp"]
+    utils.checkFileExists(fname)
+    extension = pathlib.Path(fname).suffix
+    return (extension in vector_extensions)
+    
+def isRasterPath(fname):
+    vector_extensions = [".tif"]
+    utils.checkFileExists(fname)
+    extension = pathlib.Path(fname).suffix
+    return (extension in vector_extensions)
+    
 def loadVectorLayer(fname):
     layer = QgsVectorLayer(fname, layerNameOfPath(fname), "ogr")
+    if layer == None:
+        utils.user_error("Could not load layer '" + fname + "'")
+    if not layer.isValid():
+        utils.user_error("Invalid layer '" + fname + "'")
     return layer
     
 def getLoadedLayerByName(name):
