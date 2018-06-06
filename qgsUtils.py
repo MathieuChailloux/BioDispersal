@@ -113,7 +113,7 @@ def createLayerFromExisting(inLayer,outName,geomType=None,crs=None):
     if not crs:
         crs=getLayerCrsStr(inLayer)
     if not geomType:
-        geomType=getGeomTypeStr(inLayer)
+        geomType=getLayerGeomStr(inLayer)
     layerStr = geomType + '?crs='+crs
     utils.debug(layerStr)
     outLayer=QgsVectorLayer(geomType + '?crs='+crs, outName, "memory")
@@ -139,7 +139,7 @@ def applyBuffer(in_layer,buffer_val,out_layer):
     return out_layer
 
 def writeShapefile(layer,outfname):
-    utils.debug("[writeShapefile] " + outfname)
+    utils.debug("[writeShapefile] " + outfname + " from " + str(layer))
     crs = QgsCoordinateReferenceSystem("EPSG:2154")
     #params =
     if os.path.isfile(outfname):

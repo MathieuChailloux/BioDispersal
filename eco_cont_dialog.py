@@ -75,10 +75,12 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #metagroupConnector = Metagroups(self)
         #groupConnector = groups.GroupConnector(self,metagroupConnector.model)
         paramsConnector = params.ParamsConnector(self)
-        params.params = paramsConnector
+        params.params = paramsConnector.model
+        groupsConnector = groups.GroupConnector(self)
+        groups.groupsModel = groupsConnector.model
         classConnector = classes.ClassConnector(self)
         classes.classModel = classConnector.model
-        selectionConnector = SelectionConnector(self,classes.classModel)
+        selectionConnector = SelectionConnector(self)
         #bufferConnector = BufferConnector(self,groupConnector.model)
         #rasterizationConnector = RasterizationConnector(self)
         self.tabs = [paramsConnector,

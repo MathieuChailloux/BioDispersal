@@ -34,8 +34,6 @@ class ClassItem(abstract_model.DictItem):
                 "descr" : descr}
         #assert(class_fields == dict.keys())
         self.name = cls
-        self.vectorLayer = None
-        self.rasterLayer = None
         super().__init__(dict)
         
     def checkItem(self):
@@ -43,18 +41,6 @@ class ClassItem(abstract_model.DictItem):
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
-
-    def getVectorPath(self):
-        basename = self.name + "_vector.shp"
-        return params.mkTmpPath(basename)
-        
-    def getRasterPath(self):
-        basename = self.name + "_raster.tif"
-        return params.mkTmpPath(basename)
-        
-    def saveVectorLayer(self):
-        vector_path = self.getVectorPath()
-        writeShapefile(self.vectorLayer,vector_path)
             
         
 class ClassModel(abstract_model.DictModel):
