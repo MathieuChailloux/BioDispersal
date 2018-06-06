@@ -88,12 +88,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                      selectionConnector]
                      #bufferConnector,
                      #rasterizationConnector]
-        self.models = {}
-        # self.models = {"MetagroupModel" : metagroupConnector.model,
-                        # "GroupModel" : groupConnector.model,
-                        # "SelectionModel" : selectionConnector.model,
-                        # "BufferModel" : bufferConnector.model,
-                        # "RasterModel" : rasterizationConnector.model}
+        self.models = {"ParamsModel" : paramsConnector.model,
+                        "GroupModel" : groupsConnector.model,
+                        "ClassModel" : classConnector.model,
+                        "SelectionModel" : selectionConnector.model}
         
         
     def initGui(self):
@@ -182,8 +180,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         
     def toXML(self):
         xmlStr = "<ModelConfig>\n"
-        for t in self.tabs:
-            xmlStr += t.model.toXML() + "\n"
+        for k, m in self.models.items():
+            xmlStr += m.toXML() + "\n"
         xmlStr += "</ModelConfig>\n"
         return xmlStr
 

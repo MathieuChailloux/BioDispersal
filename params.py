@@ -5,14 +5,16 @@ from qgis.gui import QgsFileWidget
 
 import utils
 import qgsUtils
+import abstract_model
+
 
 params = None
 
-class ParamsModel:
+class ParamsModel(abstract_model.AbstractGroupModel):
 
     def __init__(self):
-        self.extentLayer = None
-        self.workspace = None
+        self.extentLayer = ""
+        self.workspace = ""
         self.useRelativePath = True
         
     def setExtentLayer(self,path):
@@ -22,6 +24,8 @@ class ParamsModel:
     def setWorkspace(self,path):
         self.workspace = path
         utils.debug("Workspace directory set to '" + path)
+        if not os.path.isdir(path):
+            user_error("Directory '" + path + "' does not exist")
         self.tmpDir = os.path.join(path,"tmp")
         if not os.path.isdir(self.tmpDir):
             os.makedirs(self.tmpDir)
@@ -33,8 +37,22 @@ class ParamsModel:
         else:
             self.useRelativePath = False
     
+    def fromXMLDict(self,dict):
+        ws = dict["workspace"]
+        if ws:
+            self.setWorkspace(ws)
+        et = dict["extent"]
+        if et:
+            self.setExtentLayer(et)
+        self.useRelativePath = bool(dict["useRelPath"])
+    
     def toXML(self):
-        return ""
+        xmlStr = "<ParamsModel"
+        xmlStr += " workspace=\"" + str(self.workspace) + "\""
+        xmlStr += " extent=\"" + str(self.extentLayer) + "\""
+        xmlStr += " useRelPath=\"" + str(self.useRelativePath) + "\""
+        xmlStr += "/>"
+        return xmlStr
 
 class ParamsConnector:
 
