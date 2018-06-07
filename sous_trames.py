@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex
 #from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 #from .utils import *
+import params
 import abstract_model
 import utils
 
@@ -17,6 +18,7 @@ class STItem(abstract_model.DictItem):
     def __init__(self,st,descr):
         dict = {"name" : st,
                 "descr" : descr}
+        self.name = st
         #assert(st_fields == dict.keys())
         super().__init__(dict)
         

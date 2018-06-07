@@ -42,11 +42,15 @@ class FusionModel(abstract_model.AbstractGroupModel):
         
     def applyItems(self):
         for st, groups in self.st_groups.items():
-            st_item = getSTByName(st)
+            st_item = sous_trames.getSTByName(st)
             utils.debug("apply fusion to " + st)
+            grp_args = [g.getRasterPath() for g in groups.items]
+            utils.debug(str(grp_args))
             cmd_args = ['gdal_merge.bat',
                         '-o', st_item.getMergedPath(),
-                        '']
+                        #'-ps','25','25',
+                        '-n','0']
+            cmd_args = cmd_args + grp_args
             p = subprocess.Popen(cmd_args,stderr=subprocess.PIPE)
             out,err = p.communicate()
             utils.debug(str(p.args))
