@@ -114,8 +114,16 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionFieldLayer.fileChanged.connect(self.setInLayerField)
         self.dlg.selectionFieldAdd.clicked.connect(self.addItemsFromField)
         self.dlg.selectionClassCombo.setModel(classes.classModel)
+        self.dlg.selectionClassCombo.currentTextChanged.connect(self.setClass)
         self.dlg.selectionGroupCombo.setModel(groups.groupsModel)
+        self.dlg.selectionGroupCombo.currentTextChanged.connect(self.setGroup)
         self.dlg.selectionRun.clicked.connect(self.model.applyItems)
+        
+    def setClass(self,text):
+        self.dlg.selectionClass.setText(text)
+        
+    def setGroup(self,text):
+        self.dlg.selectionGroup.setText(text)
                         
     def setInLayerFromCombo(self,layer):
         debug("setInLayerFromCombo")

@@ -105,7 +105,7 @@ class AbstractGroupModel(QAbstractTableModel):
         if n < self.rowCount():
             return self.items[n]
         else:
-            internal_error("Unexpected index " + str(n))
+            utils.internal_error("Unexpected index " + str(n))
         
     def rowCount(self,parent=QModelIndex()):
         return len(self.items)
@@ -155,6 +155,7 @@ class AbstractGroupModel(QAbstractTableModel):
         self.layoutChanged.emit()
         
     def removeItems(self,indexes):
+        utils.debug("[removeItems] nb of items = " + str(len(self.items))) 
         n = 0
         rows = sorted([i.row() for i in indexes])
         for row in rows:

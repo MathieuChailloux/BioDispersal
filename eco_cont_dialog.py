@@ -39,10 +39,12 @@ from .qgsUtils import *
 #from .groups_model import GroupModelTest, GroupItem
 from .metagroups import Metagroups
 import params
+import sous_trames
 import groups
 #from .groups import Groups, classModel
 #from .vector_selection import VectorSelections
 from .selection import SelectionConnector
+from .fusion import FusionConnector
 from .buffers import BufferConnector
 from .rasterization import RasterizationConnector
 from .config_parsing import *
@@ -76,16 +78,22 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #groupConnector = groups.GroupConnector(self,metagroupConnector.model)
         paramsConnector = params.ParamsConnector(self)
         params.params = paramsConnector.model
+        stConnector = sous_trames.STConnector(self)
+        sous_trames.stModel = stConnector.model
         groupsConnector = groups.GroupConnector(self)
         groups.groupsModel = groupsConnector.model
         classConnector = classes.ClassConnector(self)
         classes.classModel = classConnector.model
         selectionConnector = SelectionConnector(self)
+        fusionConnector = FusionConnector(self)
         #bufferConnector = BufferConnector(self,groupConnector.model)
         #rasterizationConnector = RasterizationConnector(self)
         self.tabs = [paramsConnector,
+                     stConnector,
+                     groupsConnector,
                      classConnector,
-                     selectionConnector]
+                     selectionConnector,
+                     fusionConnector]
                      #bufferConnector,
                      #rasterizationConnector]
         self.models = {"ParamsModel" : paramsConnector.model,

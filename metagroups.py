@@ -34,8 +34,8 @@ class Metagroups(AbstractConnector):
 
     def __init__(self,dlg):
         self.dlg = dlg
-        self.metagroupsModel = MetagroupModel()
-        super().__init__(self.metagroupsModel,self.dlg.metagroupsView,
+        self.metaclassModel = MetagroupModel()
+        super().__init__(self.metaclassModel,self.dlg.metagroupsView,
                          self.dlg.metagroupsAdd,self.dlg.metagroupsRemove)
         
     def initGui(self):
@@ -54,19 +54,19 @@ class Metagroups(AbstractConnector):
         # debug("removeMetagroup")
         # indices = self.dlg.metagroupsView.selectedIndexes()
         # debug(str(indices))
-        # self.metagroupsModel.removeItems(indices)
+        # self.metaclassModel.removeItems(indices)
         
 # class Metagroups:
 
     # def __init__(self,dlg):
         # self.dlg = dlg
-        # self.metagroupsModel = MetagroupModel()
+        # self.metaclassModel = MetagroupModel()
         
     # def initGui(self):
         # pass
         
     # def connectComponents(self):
-        # self.dlg.metagroupsView.setModel(self.metagroupsModel)
+        # self.dlg.metagroupsView.setModel(self.metaclassModel)
         # self.dlg.metagroupsAdd.clicked.connect(self.addMetagroup)
         # self.dlg.metagroupsRemove.clicked.connect(self.removeMetagroup)
 
@@ -74,11 +74,11 @@ class Metagroups(AbstractConnector):
         # name = self.dlg.metagroupsName.text()
         # descr = self.dlg.metagroupsDescr.text()
         # metagroupItem = Metagroup(name,descr)
-        # self.metagroupsModel.addItem(metagroupItem)
-        # self.metagroupsModel.layoutChanged.emit()
+        # self.metaclassModel.addItem(metagroupItem)
+        # self.metaclassModel.layoutChanged.emit()
         
     # def removeMetagroup(self):
         # debug("removeMetagroup")
         # indices = self.dlg.metagroupsView.selectedIndexes()
         # debug(str(indices))
-        # self.metagroupsModel.removeItems(indices)
+        # self.metaclassModel.removeItems(indices)

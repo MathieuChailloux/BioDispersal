@@ -22,6 +22,12 @@ def getGroupByName(groups_name):
             return group
     return None
 
+def copyGroupModel(model):
+    new_model = GroupModel()
+    for i in model.items:
+        new_model.addItem(i)
+    return new_model
+    
 # def getGroupStorage(grp):
     # groupItem = groupsModel.getGroupByName(out_name)
     # group_storage = groupItem.dict["layer"]
