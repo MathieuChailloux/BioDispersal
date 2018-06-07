@@ -8,7 +8,7 @@ import utils
 import qgsUtils
 import params
          
-class_fields = ["name","descr"]
+class_fields = ["code","name","descr"]
 classModel = None
 
 def getClassLayer(grp):
@@ -29,8 +29,13 @@ def getClassByName(class_name):
     
 class ClassItem(abstract_model.DictItem):
     
-    def __init__(self,cls,descr):
-        dict = {"name" : cls,
+    def __init__(self,cls,descr,code):
+        utils.debug("init with code " + str(code))
+        if code == None:
+            code = classModel.getFreeCode()
+            utils.debug("new code = " + str(code))
+        dict = {"code": code,
+                "name" : cls,
                 "descr" : descr}
         #assert(class_fields == dict.keys())
         self.name = cls
@@ -60,6 +65,19 @@ class ClassModel(abstract_model.DictModel):
                 return i
         None
         #utils.internal_error("Could not find class '" + name + "'")
+        
+    def codeExists(self,n):
+        for i in self.items:
+            if i.dict["code"] == n:
+                return True
+        return False
+            
+    def getFreeCode(self):
+        cpt = 1
+        while True:
+            if not self.codeExists(cpt):
+                return cpt
+            cpt += 1
          
 
 class ClassConnector(abstract_model.AbstractConnector):

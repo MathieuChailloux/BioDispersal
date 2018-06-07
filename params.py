@@ -10,12 +10,15 @@ import abstract_model
 
 params = None
 
+params_fields = ["extent","workspace","useRelPath"]
+
 class ParamsModel(abstract_model.AbstractGroupModel):
 
     def __init__(self):
         self.extentLayer = ""
         self.workspace = ""
         self.useRelativePath = True
+        super().__init__(self,params_fields)
         
     def setExtentLayer(self,path):
         self.extentLayerPath = path
@@ -25,7 +28,7 @@ class ParamsModel(abstract_model.AbstractGroupModel):
         self.workspace = path
         utils.debug("Workspace directory set to '" + path)
         if not os.path.isdir(path):
-            user_error("Directory '" + path + "' does not exist")
+            utils.user_error("Directory '" + path + "' does not exist")
         self.tmpDir = os.path.join(path,"tmp")
         if not os.path.isdir(self.tmpDir):
             os.makedirs(self.tmpDir)

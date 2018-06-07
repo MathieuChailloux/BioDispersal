@@ -7,6 +7,7 @@ import abstract_model
 import utils
 import qgsUtils
 import params
+import qgsTreatments
          
 groups_fields = ["name","descr"]
 groupsModel = None
@@ -63,6 +64,13 @@ class GroupItem(abstract_model.DictItem):
         vector_path = self.getVectorPath()
         qgsUtils.writeShapefile(self.vectorLayer,vector_path)
             
+    def applyRasterizationItem(self):
+        utils.debug("[applyRasterizationItem]")
+        field = "Code"
+        group_name = self.dict["name"]
+        in_path = self.getVectorPath()
+        out_path = self.getRasterPath()
+        qgsTreatments.applyRasterization(in_path,field,out_path)
         
 class GroupModel(abstract_model.DictModel):
 

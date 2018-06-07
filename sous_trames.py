@@ -7,6 +7,12 @@ import utils
 st_fields = ["name","descr"]
 stModel = None
          
+def getSTByName(st_name):
+    for st in stModel.items:
+        if st.name == st_name:
+            return st
+    return None
+         
 class STItem(abstract_model.DictItem):
     def __init__(self,st,descr):
         dict = {"name" : st,
@@ -19,6 +25,10 @@ class STItem(abstract_model.DictItem):
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
+        
+    def getMergedPath(self):
+        basename = self.name + "_merged.tif"
+        return params.mkTmpPath(basename)
         
         
 class STModel(abstract_model.DictModel):

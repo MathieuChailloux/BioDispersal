@@ -1,5 +1,6 @@
 
 import copy
+import subprocess
 
 from PyQt5.QtCore import QModelIndex
 
@@ -9,6 +10,7 @@ import qgsUtils
 import params
 import sous_trames
 import groups
+from .qgsTreatments import *
 
 fusion_fields = ["name","descr"]
         
@@ -32,10 +34,26 @@ class FusionModel(abstract_model.AbstractGroupModel):
             self.layoutChanged.emit()
         
     def loadAllGroups(self):
+        utils.debug("[loadAllGroups]")
         self.current_model = groups.copyGroupModel(groups.groupsModel)
         self.st_groups[self.current_st] = self.current_model
         #self.layoutToBeChanged.emit()
         self.layoutChanged.emit()
+        
+    def applyItems(self):
+        for st, groups in self.st_groups.items():
+            st_item = getSTByName(st)
+            utils.debug("apply fusion to " + st)
+            cmd_args = ['gdal_merge.bat',
+                        '-o', st_item.getMergedPath(),
+                        '']
+            p = subprocess.Popen(cmd_args,stderr=subprocess.PIPE)
+            out,err = p.communicate()
+            utils.debug(str(p.args))
+            utils.info(str(out))
+            if err:
+                utils.user_error(str(err))
+            
         
     # def addST(self,st):
         # self.st_groups[st] = groups.groupsModel.copy()
@@ -87,6 +105,7 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)
         self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
+        self.dlg.fusionRun.clicked.connect(self.model.applyItems)
         
     def changeST(self,st):
         self.model.setCurrentST(st)

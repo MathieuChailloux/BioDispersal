@@ -5,13 +5,14 @@ from .qgsUtils import *
 #from .groups import classModel
 import classes
 import groups
+from .qgsTreatments import *
 
 selection_fields = ["in_layer","expr","class","group"]
 
 # TODO : manage duplicates
 class SelectionItem(DictItem):
 
-    def __init__(self,in_layer,expr,cls,group):
+    def __init__(self,in_layer,expr,cls,group,code=None):
         dict = {"in_layer" : in_layer,
                 "expr" : expr,
                 "class" : cls,
@@ -20,7 +21,7 @@ class SelectionItem(DictItem):
         self.is_raster = isRasterPath(in_layer)
         class_item = classes.classModel.getClassByName(cls)
         if not class_item:
-            class_item = classes.ClassItem(cls,"")
+            class_item = classes.ClassItem(cls,"",code)
             classes.classModel.addItem(class_item)
             classes.classModel.layoutChanged.emit()
         group_item = groups.groupsModel.getGroupByName(group)
@@ -37,6 +38,7 @@ class SelectionItem(DictItem):
     def applyItem(self):
         if self.is_vector:
             self.applyVectorItem()
+            #self.applyRasterItem()
         elif self.is_raster:
             self.applyRasterItem()
         else:
@@ -49,6 +51,7 @@ class SelectionItem(DictItem):
         in_layer = loadVectorLayer(in_layer_path)
         expr = self.dict["expr"]
         class_name = self.dict["class"]
+        class_item = classes.getClassByName(class_name)
         group_name = self.dict["group"]
         group_item = groups.getGroupByName(group_name)
         out_vector_layer = group_item.vectorLayer
@@ -56,7 +59,8 @@ class SelectionItem(DictItem):
             out_vector_layer = createLayerFromExisting(in_layer,class_name + "_vector")
             orig_field = QgsField("Origin", QVariant.String)
             class_field = QgsField("Class", QVariant.String)
-            out_vector_layer.dataProvider().addAttributes([orig_field,class_field])
+            code_field = QgsField("Code", QVariant.String)
+            out_vector_layer.dataProvider().addAttributes([orig_field,class_field,code_field])
             out_vector_layer.updateFields()
         pr = out_vector_layer.dataProvider()
         if expr:
@@ -71,6 +75,7 @@ class SelectionItem(DictItem):
             new_f.setGeometry(f.geometry())
             new_f["Origin"] = in_layer.name()
             new_f["Class"] = class_name
+            new_f["Code"] = class_item.dict["code"]
             res = pr.addFeature(new_f)
             if not res:
                 internal_error("ko")
@@ -80,9 +85,16 @@ class SelectionItem(DictItem):
         if tmp_cpt == 0:
             warn("No entity selected from '" + str(self) + "'")
         group_item.saveVectorLayer()
-            
-    def applyItemRaster(self):
-        internal_error("[applyItemRaster]")
+        
+        
+    # def applyRasterItem(self):
+        # debug("[applyItemRaster]")
+        # field = "Code"
+        # group_name = self.dict["group"]
+        # group_item = groups.groupsModel.getGroupByName(group_name)
+        # in_path = group_item.getVectorPath()
+        # out_path = group_item.getRasterPath()
+        # applyRasterization(in_path,field,out_path)
         
 class SelectionModel(DictModel):
     
@@ -95,6 +107,20 @@ class SelectionModel(DictModel):
         item = RasterItem(dict["in_layer"],dict["expr"],dict["class"])
         return item
 
+    def applyItems(self):
+        selectionsByGroup = {}
+        for i in self.items:
+            grp = i.dict["group"]
+            if grp in selectionsByGroup:
+                selectionsByGroup[grp].append(i)
+            else:
+                selectionsByGroup[grp] = [i]
+        for g, selections in selectionsByGroup.items():
+            grp_item = groups.getGroupByName(g)
+            for s in selections:
+                s.applyVectorItem()
+            grp_item.applyRasterizationItem()
+        
 class SelectionConnector(AbstractConnector):
 
     def __init__(self,dlg):
@@ -127,9 +153,10 @@ class SelectionConnector(AbstractConnector):
                         
     def setInLayerFromCombo(self,layer):
         debug("setInLayerFromCombo")
-        path=pathOfLayer(layer)
-        self.dlg.selectionInLayer.lineEdit().setValue(path)
-        self.dlg.selectionExpr.setLayer(layer)
+        if layer:
+            path=pathOfLayer(layer)
+            self.dlg.selectionInLayer.lineEdit().setValue(path)
+            self.dlg.selectionExpr.setLayer(layer)
         
     def setInLayer(self,path):
         debug("setInLayer " + path)
@@ -145,9 +172,10 @@ class SelectionConnector(AbstractConnector):
         
     def setInLayerFieldFromCombo(self,layer):
         debug("[setInLayerFieldFromCombo]")
-        path=pathOfLayer(layer)
-        self.dlg.selectionFieldLayer.lineEdit().setValue(path)
-        self.dlg.selectionField.setLayer(layer)
+        if layer:
+            path=pathOfLayer(layer)
+            self.dlg.selectionFieldLayer.lineEdit().setValue(path)
+            self.dlg.selectionField.setLayer(layer)
         
     def setInLayerField(self,path):
         debug("[setInLayerField]")
@@ -176,8 +204,12 @@ class SelectionConnector(AbstractConnector):
         debug(str(field_values))
         items = []
         for fv in field_values:
+            grp_name = group + "_" + str(fv)
+            class_item = classes.ClassItem(grp_name,"",int(fv))
+            classes.classModel.addItem(class_item)
+            classes.classModel.layoutChanged.emit()
             expr = "\"" + field_name + "\" = " + str(fv)
-            item = SelectionItem(in_layer_path,expr,str(fv),group)
+            item = SelectionItem(in_layer_path,expr,grp_name,group)
             items.append(item)
         return items
         
