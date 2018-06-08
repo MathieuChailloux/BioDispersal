@@ -57,12 +57,12 @@ class FusionModel(abstract_model.AbstractGroupModel):
         fusion_model = cls() 
         for st_root in root:
             st_name = st_root.attrib["name"]
-            cls.current_st = st
+            fusion_model.current_st = st_name
             for grp in st_root:
                 grp_model = parseModel(grp)
-                cls.st_groups[st_name] = grp_model
-                cls.current_model = grp_model
-        return cls
+                fusion_model.st_groups[st_name] = grp_model
+                fusion_model.current_model = grp_model
+        return fusion_model
         
     def applyItems(self):
         for st, groups in self.st_groups.items():
@@ -82,6 +82,34 @@ class FusionModel(abstract_model.AbstractGroupModel):
             if err:
                 utils.user_error(str(err))
             
+    def updateItems(self,i1,i2):
+        new_items = []
+        for i in range(0,len(self.items)):
+            if i == i1:
+                new_idx = i2
+            elif i == i2:
+                new_idx = i1
+            else:
+                new_idx = i
+            new_items.append(self.current_model.items[i])
+        self.current_model.items = new_items
+        #self.st_groups[self.current_st].items = new_items
+        self.layoutChanged.emit()
+        
+    def upgradeElem(self,idx):
+        row = idx.row()
+        utils.debug("upgradeElem " + str(row))
+        if row > 0:
+            self.updateItems(row -1, row)
+        self.layoutChanged.emit()
+        
+    def downgradeElem(self,idx):
+        row = idx.row()
+        utils.debug("downgradeElem " + str(row))
+        if row < len(self.current_model.items) - 1:
+            self.updateItems(row, row + 1)
+        self.layoutChanged.emit()
+        
         
     # def addST(self,st):
         # self.st_groups[st] = groups.groupsModel.copy()
@@ -134,6 +162,8 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)
         self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
         self.dlg.fusionRun.clicked.connect(self.model.applyItems)
+        self.dlg.fusionUp.clicked.connect(self.upgradeItem)
+        self.dlg.fusionDown.clicked.connect(self.downgradeItem)
         
     def changeST(self,st):
         self.model.setCurrentST(st)
@@ -143,6 +173,28 @@ class FusionConnector(abstract_model.AbstractConnector):
         grp = self.dlg.fusionGroup.currentText()
         grp_item = groups.groupsModel.getGroupByName(grp)
         return grp_item   
+        
+    def upgradeItem(self):
+        utils.debug("upgradeItem")
+        indices = self.view.selectedIndexes()
+        nb_indices = len(indices)
+        if nb_indices == 0:
+            utils.debug("no idx selected")
+        elif nb_indices == 1:
+            self.model.upgradeElem(indices[0])
+        else:
+            utils.warn("Several indices selected, please select only one")
+            
+    def downgradeItem(self):
+        utils.debug("downgradeItem")
+        indices = self.view.selectedIndexes()
+        nb_indices = len(indices)
+        if nb_indices == 0:
+            utils.debug("no idx selected")
+        elif nb_indices == 1:
+            self.model.downgradeElem(indices[0])
+        else:
+            utils.warn("Several indices selected, please select only one")
         
 # class FusionConnector:
     
