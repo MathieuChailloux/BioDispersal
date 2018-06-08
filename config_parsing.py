@@ -1,6 +1,7 @@
 
 from .abstract_model import *
 from .params import *
+from .sous_trames import *
 from .metagroups import *
 from .groups import *
 from .classes import *
@@ -29,6 +30,7 @@ import xml.etree.ElementTree as ET
 # }
 
 mk_item = {
+    "STModel" : STModel.mkItemFromDict,
     "GroupModel" : GroupModel.mkItemFromDict,
     "ClassModel" : ClassModel.mkItemFromDict,
     "SelectionModel" : SelectionModel.mkItemFromDict
@@ -51,6 +53,7 @@ def parseConfig(config_file):
 def parseModel(model_root):
     global config_models, mk_item
     model_tag = model_root.tag
+    debug("parseModel " + str(model_tag))
     if model_tag not in config_models:
         user_error("Unknown Model '" + model_tag + "'")
     model = config_models[model_tag]
@@ -61,6 +64,6 @@ def parseModel(model_root):
             item = mk_item[model_tag](dict)
             model.addItem(item)
     else:
-        dict = model_root.attrib
-        model.fromXMLDict(dict)
+        #dict = model_root.attrib
+        model.fromXMLRoot(model_root)
         

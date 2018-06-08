@@ -40,6 +40,10 @@ class ParamsModel(abstract_model.AbstractGroupModel):
         else:
             self.useRelativePath = False
     
+    def fromXMLRoot(self,root):
+        dict = root.attrib
+        return self.fromXMLDict(dict)
+    
     def fromXMLDict(self,dict):
         ws = dict["workspace"]
         if ws:
@@ -49,8 +53,8 @@ class ParamsModel(abstract_model.AbstractGroupModel):
             self.setExtentLayer(et)
         self.useRelativePath = bool(dict["useRelPath"])
     
-    def toXML(self):
-        xmlStr = "<ParamsModel"
+    def toXML(self,indent=""):
+        xmlStr = indent + "<ParamsModel"
         xmlStr += " workspace=\"" + str(self.workspace) + "\""
         xmlStr += " extent=\"" + str(self.extentLayer) + "\""
         xmlStr += " useRelPath=\"" + str(self.useRelativePath) + "\""

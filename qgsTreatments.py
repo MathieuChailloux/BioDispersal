@@ -24,6 +24,7 @@ def applyRasterization(in_path,field,out_path):
     height = int((y_max - y_min) / pixel_size)
     p = subprocess.Popen(['gdal_rasterize',
                             #'-l','layer_name',
+                            '-at',
                             '-a',field,
                             #'-burn','0.0',
                             '-te',str(x_min),str(y_min),str(x_max),str(y_max),

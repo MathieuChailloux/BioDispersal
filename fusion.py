@@ -1,6 +1,7 @@
 
 import copy
 import subprocess
+import xml.etree.ElementTree as ET
 
 from PyQt5.QtCore import QModelIndex
 
@@ -11,6 +12,7 @@ import params
 import sous_trames
 import groups
 from .qgsTreatments import *
+from .config_parsing import *
 
 fusion_fields = ["name","descr"]
         
@@ -39,6 +41,28 @@ class FusionModel(abstract_model.AbstractGroupModel):
         self.st_groups[self.current_st] = self.current_model
         #self.layoutToBeChanged.emit()
         self.layoutChanged.emit()
+        
+    def toXML(self,indent=""):
+        xmlStr = indent + "<" + self.__class__.__name__ + ">\n"
+        for st, grp in self.st_groups.items():
+            xmlStr += indent + " <ST name=\"" + st + "\">\n"
+            xmlStr += grp.toXML(indent=indent + "  ")
+            xmlStr += indent + " </ST>"
+        xmlStr += indent + "</" + self.__class__.__name__ + ">"
+        return xmlStr
+    
+    @classmethod
+    def fromXMLRoot(cls,root):
+        #checkFields(fusion_fields,dict.keys())
+        fusion_model = cls() 
+        for st_root in root:
+            st_name = st_root.attrib["name"]
+            cls.current_st = st
+            for grp in st_root:
+                grp_model = parseModel(grp)
+                cls.st_groups[st_name] = grp_model
+                cls.current_model = grp_model
+        return cls
         
     def applyItems(self):
         for st, groups in self.st_groups.items():

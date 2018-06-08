@@ -56,7 +56,7 @@ class ClassModel(abstract_model.DictModel):
     @staticmethod
     def mkItemFromDict(dict):
         utils.checkFields(class_fields,dict.keys())
-        item = ClassItem(dict["name"],dict["descr"])
+        item = ClassItem(dict["name"],dict["descr"],dict["code"])
         return item
         
     def getClassByName(self,name):

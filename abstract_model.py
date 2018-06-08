@@ -82,10 +82,11 @@ class DictItem(AbstractGroupItem):
     def equals(self,other):
         self.dict == other.dict
         
-    def toXML(self):
-        xmlStr = "<" + self.__class__.__name__
+    def toXML(self,indent=""):
+        xmlStr = indent + "<" + self.__class__.__name__
         for k,v in self.dict.items():
-            xmlStr += " " + k + "=\"" + str(v) + "\""
+            utils.debug(str(v))
+            xmlStr += indent + " " + k + "='" + str(v) + "'"
         xmlStr += "/>"
         return xmlStr
     
@@ -203,11 +204,12 @@ class DictModel(AbstractGroupModel):
             self.items.append(item)
             self.insertRow(0)
         
-    def toXML(self):
-        xmlStr = " <" + self.__class__.__name__ + ">"
+    def toXML(self,indent=" "):
+        utils.debug("toXML " + self.__class__.__name__)
+        xmlStr = indent + "<" + self.__class__.__name__ + ">\n"
         for i in self.items:
-            xmlStr += "  " + i.toXML() + "\n"
-        xmlStr += " </" + self.__class__.__name__ + ">"
+            xmlStr += i.toXML(indent=indent + " ") + "\n"
+        xmlStr += indent + "</" + self.__class__.__name__ + ">"
         return xmlStr
         
         

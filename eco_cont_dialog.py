@@ -97,9 +97,11 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                      #bufferConnector,
                      #rasterizationConnector]
         self.models = {"ParamsModel" : paramsConnector.model,
+                        "STModel" : stConnector.model,
                         "GroupModel" : groupsConnector.model,
                         "ClassModel" : classConnector.model,
-                        "SelectionModel" : selectionConnector.model}
+                        "SelectionModel" : selectionConnector.model,
+                        "FusionModel" : fusionConnector.model}
         
         
     def initGui(self):
@@ -191,6 +193,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         for k, m in self.models.items():
             xmlStr += m.toXML() + "\n"
         xmlStr += "</ModelConfig>\n"
+        debug("Final xml : \n" + xmlStr)
         return xmlStr
 
     def saveModel(self):

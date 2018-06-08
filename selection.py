@@ -104,7 +104,7 @@ class SelectionModel(DictModel):
     @staticmethod
     def mkItemFromDict(dict):
         checkFields(selection_fields,dict.keys())
-        item = RasterItem(dict["in_layer"],dict["expr"],dict["class"])
+        item = SelectionItem(dict["in_layer"],dict["expr"],dict["class"],dict["group"])
         return item
 
     def applyItems(self):
