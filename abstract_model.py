@@ -67,11 +67,19 @@ class DictItem(AbstractGroupItem):
         self.nb_fields = len(fields)
         self.dict = dict
         
+    def recompute(self):
+        fields = list(self.dict.keys())
+        self.field_to_idx = {f : fields.index(f) for f in fields}
+        self.idx_to_fields = {fields.index(f) : f for f in fields}
+        self.nb_fields = len(fields)
+        
     def getNField(self,n):
         if n < self.nb_fields:
             return self.dict[self.idx_to_fields[n]]
         else:
-            assert false
+            utils.debug("getNField " + str(n))
+            utils.debug("item fields = " + str(self.dict.keys()))
+            assert False
             
     def updateNField(self,n,value):
         if n < self.nb_fields:

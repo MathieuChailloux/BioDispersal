@@ -1,7 +1,7 @@
 import os
 
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex
+from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
 from qgis.gui import QgsFileWidget
 import abstract_model
 import utils
@@ -50,6 +50,8 @@ class ClassItem(abstract_model.DictItem):
         
 class ClassModel(abstract_model.DictModel):
 
+    classAdded = pyqtSignal('PyQt_PyObject')
+    
     def __init__(self):
         super().__init__(self,class_fields)
         
@@ -78,6 +80,10 @@ class ClassModel(abstract_model.DictModel):
             if not self.codeExists(cpt):
                 return cpt
             cpt += 1
+            
+    def addItem(self,item):
+        super().addItem(item)
+        self.classAdded.emit(item)
          
 
 class ClassConnector(abstract_model.AbstractConnector):
@@ -97,6 +103,6 @@ class ClassConnector(abstract_model.AbstractConnector):
     def mkItem(self):
         name = self.dlg.className.text()
         descr = self.dlg.classDescr.text()
-        classItem = ClassItem(name,descr)
+        classItem = ClassItem(name,descr,None)
         return classItem
          

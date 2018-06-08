@@ -45,6 +45,7 @@ import groups
 #from .vector_selection import VectorSelections
 from .selection import SelectionConnector
 from .fusion import FusionConnector
+import friction
 from .buffers import BufferConnector
 from .rasterization import RasterizationConnector
 from .config_parsing import *
@@ -86,6 +87,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         classes.classModel = classConnector.model
         selectionConnector = SelectionConnector(self)
         fusionConnector = FusionConnector(self)
+        frictionConnector = friction.FrictionConnector(self)
+        friction.frictionModel = frictionConnector.model
         #bufferConnector = BufferConnector(self,groupConnector.model)
         #rasterizationConnector = RasterizationConnector(self)
         self.tabs = [paramsConnector,
@@ -93,7 +96,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                      groupsConnector,
                      classConnector,
                      selectionConnector,
-                     fusionConnector]
+                     fusionConnector,
+                     frictionConnector]
                      #bufferConnector,
                      #rasterizationConnector]
         self.models = {"ParamsModel" : paramsConnector.model,
