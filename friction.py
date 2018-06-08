@@ -1,10 +1,15 @@
 
+import csv
+import os
+
 from PyQt5.QtCore import pyqtSlot
 
 import utils
 import sous_trames
 import classes
+import params
 import abstract_model
+import qgsTreatments
 
 frictionModel = None
 
@@ -75,11 +80,28 @@ class FrictionModel(abstract_model.DictModel):
                     out_class = i.dict[st_name]
                     f.write(str(in_class) + " = " + str(out_class) + "\n")
                 
-        
-        
+    def applyReclass(self):
+        utils.debug("applyReclass")
+        for st_item in self.sous_trames:
+            st_name = st_item.dict["name"]
+            utils.debug("applyReclass " + st_name)
+            st_rules_fname = st_item.getRulesPath()
+            st_merged_fname = st_item.getMergedPath()
+            st_friction_fname = st_item.getFrictionPath()
+            qgsTreatments.applyReclass(st_merged_fname,st_friction_fname,st_rules_fname,st_name)
         
     def applyItems(self):
-        self.createRulesFiles() 
+        self.createRulesFiles()
+        #self.applyReclass()
+        
+    def saveCSV(self):
+        fname = os.path.join(params.params.tmpDir,"friction.csv")
+        with open(fname,"w") as f:
+            writer = csv.DictWriter(f,fieldnames=self.fields)
+            for i in self.items:
+                writer.writerow(i.dict)
+        
+           
            
 class FrictionConnector(abstract_model.AbstractConnector):
     
@@ -100,5 +122,6 @@ class FrictionConnector(abstract_model.AbstractConnector):
         classes.classModel.classAdded.connect(catchClassAdded)
         super().connectComponents()
         self.dlg.frictionRun.clicked.connect(self.model.applyItems)
+        self.dlg.frictionSave.clicked.connect(self.model.saveCSV)
         #sous_trames.stModel.groupAdded.connect(self.internCatchGroupAdded)
             

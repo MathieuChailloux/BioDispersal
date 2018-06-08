@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="tab_10">
     <attribute name="title">
@@ -1688,7 +1688,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>180</y>
+        <y>70</y>
         <width>321</width>
         <height>191</height>
        </rect>
@@ -1698,7 +1698,7 @@
       <property name="geometry">
        <rect>
         <x>150</x>
-        <y>150</y>
+        <y>40</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -1707,24 +1707,11 @@
        <string>Remove</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="bufferAdd_2">
-      <property name="geometry">
-       <rect>
-        <x>250</x>
-        <y>150</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Add</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="frictionRun">
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>380</y>
+        <y>270</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -1733,86 +1720,11 @@
        <string>Run</string>
       </property>
      </widget>
-     <widget class="QLabel" name="bufferInGroupLabel_2">
-      <property name="geometry">
-       <rect>
-        <x>12</x>
-        <y>40</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Groupe d'entrée</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="bufferInGroup_2">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>40</y>
-        <width>201</width>
-        <height>22</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QgsDoubleSpinBox" name="bufferValue_2">
-      <property name="geometry">
-       <rect>
-        <x>121</x>
-        <y>70</y>
-        <width>201</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="minimum">
-       <double>0.000000000000000</double>
-      </property>
-      <property name="maximum">
-       <double>9999999.000000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="bufferValueLabel_2">
-      <property name="geometry">
-       <rect>
-        <x>12</x>
-        <y>70</y>
-        <width>91</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Valeur du tampon</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="bufferOutGroup_2">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>110</y>
-        <width>201</width>
-        <height>22</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="bufferOutGroupLabel_2">
-      <property name="geometry">
-       <rect>
-        <x>12</x>
-        <y>110</y>
-        <width>91</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Groupe de sortie</string>
-      </property>
-     </widget>
      <widget class="QLineEdit" name="selectionFilter_4">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>150</y>
+        <y>40</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -1844,6 +1756,29 @@
       </property>
       <property name="text">
        <string>Friction</string>
+      </property>
+     </widget>
+     <widget class="QgsFileWidget" name="frictionCsvFile">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>320</y>
+        <width>211</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="frictionSave">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>320</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Run</string>
       </property>
      </widget>
     </widget>
@@ -1997,11 +1932,6 @@
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QgsDoubleSpinBox</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>qgis.gui</header>
-  </customwidget>
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>

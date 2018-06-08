@@ -1,5 +1,8 @@
 
+from qgis.core import QgsProcessingFeedback
+
 import subprocess
+import processing
 
 import utils
 import qgsUtils
@@ -38,3 +41,21 @@ def applyRasterization(in_path,field,out_path):
     utils.info(str(out))
     if err:
         utils.user_error(str(err))
+        
+def applyReclass(in_path,out_path,rules_file,title):
+    parameters = {'input' : in_path,
+                  'output' : out_path,
+                  'rules' : rules_file,
+                  'title' : title,
+                   'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
+                   'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
+                   'GRASS_MIN_AREA_PARAMETER' : 0}
+    feedback = QgsProcessingFeedback()
+    try:
+        processing.run("grass7:r.reclass",parameters,feedback=feedback)
+        utils.debug ("call to r.cost successful")
+    except Exception as e:
+        utils.warn ("Failed to call r.reclass : " + str(e))
+        raise e
+    finally:
+        utils.debug("End runCost")

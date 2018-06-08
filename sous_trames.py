@@ -39,6 +39,10 @@ class STItem(abstract_model.DictItem):
         basename = self.name + "_rules.txt"
         return params.mkTmpPath(basename)
         
+    def getFrictionPath(self):
+        basename = self.name + "_friction.tif"
+        return params.mkTmpPath(basename)
+        
         
 class STModel(abstract_model.DictModel):
 
