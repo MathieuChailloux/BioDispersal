@@ -78,13 +78,45 @@ def is_number(s):
     except ValueError:
         return False
     
+def is_integer(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+        
 def checkFields(ref_fields,fields):
     if ref_fields != fields:
         for rf in ref_fields:
             if rf not in fields:
                 user_error("Missing field '" + rf + "'")
-                
-
+             
+def checkDictField(item,fieldname,prefix=None):
+    if prefix == None:
+        prefix = item.__class__.name
+    if not item.dict[fieldname]:
+        user_error(prefix + " with empty name '" + str(item.dict[fieldname]) + "'")
+        
+def checkName(item,prefix=None):
+    checkDictField(item,"name",prefix)
+    
+def checkDescr(item,prefix=None):
+    if prefix == None:
+        prefix = item.__class__.name
+    if not item.dict["descr"]:
+        warn(prefix + " with empty name '" + str(item.dict["descr"]) + "'")
+        
+# def checkName(item,prefix=None):
+    # if prefix == None:
+        # prefix = item.__class__.name
+    # if not item.name:
+        # user_error(prefix + " with empty name '" + str(item.name) + "'")
+        
+# def checkDescr(item,prefix=None):
+    # if prefix == None:
+        # prefix = item.__class__.name
+    # if not item.dict["descr"]:
+        # user_error(prefix + " with empty name '" + str(item.name) + "'")
     
 #def writeShapefile(layer,outfname):
 #    error = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname)

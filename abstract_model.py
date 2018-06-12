@@ -41,13 +41,14 @@ class ArrayItem(AbstractGroupItem):
         self.nb_fields = len(arr)
         
     def getNField(self,n):
-        if n < nb_fields:
+        if n < self.nb_fields:
             return self.arr[n]
         else:
-            assert false
+            utils.warn("getNField(" + str(n) + ") out of bounds : " + str(nb_fields))
+            #assert false
             
     def updateNField(self,n,value):
-        if n < nb_fields:
+        if n < self.nb_fields:
             self.arr[n] = value
         else:
             assert false
@@ -205,6 +206,7 @@ class DictModel(AbstractGroupModel):
         
     def addItem(self,item):
         utils.debug("DictItem.addItem")
+        item.checkItem()
         if self.itemExists(item):
             utils.warn("Item " + str(item) + " already exists")
         else:

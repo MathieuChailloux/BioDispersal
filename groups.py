@@ -47,10 +47,15 @@ class GroupItem(abstract_model.DictItem):
         super().__init__(dict)
         
     def checkItem(self):
-        pass
+        prefix="Group"
+        utils.checkName(self,prefix)
+        utils.checkDescr(self,prefix)
+        
         
     def equals(self,other):
-        return (self.dict["name"] == other.dict["name"])
+        utils.checkName(self,"Group")
+        if not self.dict["descr"]:
+            utils.warn("Class '" + self.name + " with empty description")
 
     def getVectorPath(self):
         basename = self.name + "_vector.shp"

@@ -1,8 +1,12 @@
 
+#from qgis.gui import QgsMapLayerProxyModel
+from qgis.core import QgsMapLayerProxyModel
+#from PyQt5.QtGui import QgsMapLayerProxyModel
 from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 from .utils import *
 from .qgsUtils import *
 #from .groups import classModel
+import params
 import classes
 import groups
 from .qgsTreatments import *
@@ -12,7 +16,7 @@ selection_fields = ["in_layer","expr","class","group"]
 # TODO : manage duplicates
 class SelectionItem(DictItem):
 
-    def __init__(self,in_layer,expr,cls,group,code=None):
+    def __init__(self,in_layer,expr,cls,group,class_descr="",group_descr="",code=None):
         dict = {"in_layer" : in_layer,
                 "expr" : expr,
                 "class" : cls,
@@ -21,18 +25,18 @@ class SelectionItem(DictItem):
         self.is_raster = isRasterPath(in_layer)
         class_item = classes.classModel.getClassByName(cls)
         if not class_item:
-            class_item = classes.ClassItem(cls,"",code)
+            class_item = classes.ClassItem(cls,class_descr,code)
             classes.classModel.addItem(class_item)
             classes.classModel.layoutChanged.emit()
         group_item = groups.groupsModel.getGroupByName(group)
         if not group_item:
-            group_item = groups.GroupItem(group,"")
+            group_item = groups.GroupItem(group,group_descr)
             groups.groupsModel.addItem(group_item)
             groups.groupsModel.layoutChanged.emit()
         #self.cls = cls
         super().__init__(dict)
         
-    def checkParams(self):
+    def checkItem(self):
         pass
         
     def applyItem(self):
@@ -108,6 +112,7 @@ class SelectionModel(DictModel):
         return item
 
     def applyItems(self):
+        params.checkInit()
         selectionsByGroup = {}
         for i in self.items:
             grp = i.dict["group"]
@@ -127,26 +132,31 @@ class SelectionConnector(AbstractConnector):
         self.dlg = dlg
         selectionModel = SelectionModel()
         super().__init__(selectionModel,self.dlg.selectionView,
-                        self.dlg.selectionAdd,self.dlg.selectionRemove)
+                        None,self.dlg.selectionRemove)
                         
     def initGui(self):
-        pass
+        self.activateFieldMode()
+        self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         
     def connectComponents(self):
         super().connectComponents()
         self.dlg.selectionInLayerCombo.layerChanged.connect(self.setInLayerFromCombo)
-        self.dlg.selectionInLayer.fileChanged.connect(self.setInLayer)
-        self.dlg.selectionFieldLayerCombo.layerChanged.connect(self.setInLayerFieldFromCombo)
-        self.dlg.selectionFieldLayer.fileChanged.connect(self.setInLayerField)
-        self.dlg.selectionFieldAdd.clicked.connect(self.addItemsFromField)
+        #self.dlg.selectionInLayer.fileChanged.connect(self.setInLayer)
+        self.dlg.selectionInLayer.fileChanged.connect(self.setInLayerField)
+        #self.dlg.selectionFieldLayerCombo.layerChanged.connect(self.setInLayerFieldFromCombo)
+        #self.dlg.selectionFieldLayer.fileChanged.connect(self.setInLayerField)
+        #self.dlg.selectionFieldAdd.clicked.connect(self.addItemsFromField)
         self.dlg.selectionClassCombo.setModel(classes.classModel)
         self.dlg.selectionClassCombo.currentTextChanged.connect(self.setClass)
         self.dlg.selectionGroupCombo.setModel(groups.groupsModel)
         self.dlg.selectionGroupCombo.currentTextChanged.connect(self.setGroup)
         self.dlg.selectionRun.clicked.connect(self.model.applyItems)
+        self.dlg.fieldSelectionMode.stateChanged.connect(self.switchFieldMode)
+        self.dlg.exprSelectionMode.stateChanged.connect(self.switchExprMode)
+        self.dlg.selectionAdd.clicked.connect(self.addItems)
         
     def setClass(self,text):
-        self.dlg.selectionClass.setText(text)
+        self.dlg.selectionClassName.setText(text)
         
     def setGroup(self,text):
         self.dlg.selectionGroup.setText(text)
@@ -157,10 +167,12 @@ class SelectionConnector(AbstractConnector):
             path=pathOfLayer(layer)
             self.dlg.selectionInLayer.lineEdit().setValue(path)
             self.dlg.selectionExpr.setLayer(layer)
+            self.dlg.selectionField.setLayer(layer)
         
     def setInLayer(self,path):
         debug("setInLayer " + path)
         loaded_layer = loadVectorLayer(path)
+        #loaded_layer = QgsVectorLayer(path, "test", "ogr")
         debug(str(loaded_layer))
         if loaded_layer == None:
             user_error("Could not load layer '" + path + "'")
@@ -169,54 +181,121 @@ class SelectionConnector(AbstractConnector):
         debug(str(loaded_layer.fields().names()))
         # TODO : fix setLayer not working
         self.dlg.selectionExpr.setLayer(loaded_layer)
+        self.dlg.selectionField.setLayer(loaded_layer)
+        debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
+        debug(str(self.dlg.selectionField.layer().fields().names()))
         
-    def setInLayerFieldFromCombo(self,layer):
-        debug("[setInLayerFieldFromCombo]")
-        if layer:
-            path=pathOfLayer(layer)
-            self.dlg.selectionFieldLayer.lineEdit().setValue(path)
-            self.dlg.selectionField.setLayer(layer)
+    # def setInLayerFieldFromCombo(self,layer):
+        # debug("[setInLayerFieldFromCombo]")
+        # if layer:
+            # path=pathOfLayer(layer)
+            # self.dlg.selectionFieldLayer.lineEdit().setValue(path)
+            # self.dlg.selectionField.setLayer(layer)
         
     def setInLayerField(self,path):
         debug("[setInLayerField]")
-        #layer = loadVectorLayer(path)
         layer = QgsVectorLayer(path, "test", "ogr")
-        # TODO : fix setLayer not working
         self.dlg.selectionField.setLayer(layer)
         
         
-    def mkItem(self):
+    # def mkItem(self):
+        # in_layer = self.dlg.selectionInLayer.filePath()
+        # expr = self.dlg.selectionExprName.expression()
+        # cls = self.dlg.selectionClassName.text()
+        # group = self.dlg.selectionGroup.text()
+        # selection = SelectionItem(in_layer,expr,cls,group)
+        # return selection
+        
+    def mkItemFromExpr(self):
         in_layer = self.dlg.selectionInLayer.filePath()
         expr = self.dlg.selectionExpr.expression()
-        cls = self.dlg.selectionClass.text()
-        group = self.dlg.selectionGroup.text()
-        selection = SelectionItem(in_layer,expr,cls,group)
+        cls = self.dlg.selectionClassName.text()
+        class_descr = self.dlg.selectionClassName.text()
+        group = self.dlg.selectionGroupName.text()
+        group_descr = self.dlg.selectionGroupDescr.text()
+        selection = SelectionItem(in_layer,expr,cls,group,class_descr,group_descr)
         return selection
         
+        
     def mkItemsFromField(self):
-        in_layer_path = self.dlg.selectionFieldLayer.filePath()
+        in_layer_path = self.dlg.selectionInLayer.filePath()
+        checkFileExists(in_layer_path)
         in_layer = loadVectorLayer(in_layer_path)
         field_name = self.dlg.selectionField.currentField()
-        group = self.dlg.selectionFieldGroup.text()
+        if not field_name:
+            user_error("No field selected")
+        group = self.dlg.selectionGroupName.text()
+        group_descr = self.dlg.selectionGroupDescr.text()
+        if not group:
+            user_error("No group selected")
         field_values = set()
         for f in in_layer.getFeatures():
             field_values.add(f[field_name])
         debug(str(field_values))
         items = []
         for fv in field_values:
-            grp_name = group + "_" + str(fv)
-            class_item = classes.ClassItem(grp_name,"",int(fv))
-            classes.classModel.addItem(class_item)
-            classes.classModel.layoutChanged.emit()
+            class_name = group + "_" + str(fv)
+            class_descr = "Class " + str(fv) + " of group " + group
+            class_item = classes.ClassItem(class_name,class_descr,int(fv))
+            #classes.classModel.addItem(class_item)
+            #classes.classModel.layoutChanged.emit()
             expr = "\"" + field_name + "\" = " + str(fv)
-            item = SelectionItem(in_layer_path,expr,grp_name,group)
+            item = SelectionItem(in_layer_path,expr,class_name,group,class_descr,group_descr)
             items.append(item)
         return items
         
-    def addItemsFromField(self):
+    def addItems(self):
         debug("[addItemsFromField]")
-        items = self.mkItemsFromField()
-        for i in items:
-            self.model.addItem(i)
-        self.model.layoutChanged.emit()
+        if self.dlg.fieldSelectionMode.checkState() == 0:
+            items = [self.mkItemFromExpr()]
+        elif self.dlg.fieldSelectionMode.checkState() == 2:
+            items = self.mkItemsFromField()
+        else:
+            assert false
+        for item in items:
+            self.model.addItem(item)
+            self.model.layoutChanged.emit()
+        
+    # def addItemsFromField(self):
+        # debug("[addItemsFromField]")
+        # items = self.mkItemsFromField()
+        # for i in items:
+            # self.model.addItem(i)
+        # self.model.layoutChanged.emit()
+        
+    def switchFieldMode(self,checked):
+        if checked:
+            self.activateFieldMode()
+        else:
+            self.activateExprMode()
+            
+    def switchExprMode(self,checked):
+        if checked:
+            self.activateExprMode()
+        else:
+            self.activateFieldMode()
+        
+    def activateExprMode(self):
+        self.dlg.fieldSelectionMode.setCheckState(0)
+        self.dlg.exprSelectionMode.setCheckState(2)
+        self.dlg.selectionField.hide()
+        self.dlg.selectionFieldLabel.hide()
+        self.dlg.selectionExpr.show()
+        self.dlg.selectionExprLabel.show()
+        self.dlg.selectionClassLabel.show()
+        self.dlg.selectionClassCombo.show()
+        self.dlg.selectionClassName.show()
+        self.dlg.selectionClassDescr.show()
+        
+    def activateFieldMode(self):
+        self.dlg.exprSelectionMode.setCheckState(0)
+        self.dlg.fieldSelectionMode.setCheckState(2)
+        self.dlg.selectionExpr.hide()
+        self.dlg.selectionExprLabel.hide()
+        self.dlg.selectionField.show()
+        self.dlg.selectionFieldLabel.show()
+        self.dlg.selectionClassLabel.hide()
+        self.dlg.selectionClassCombo.hide()
+        self.dlg.selectionClassName.hide()
+        self.dlg.selectionClassDescr.hide()
     

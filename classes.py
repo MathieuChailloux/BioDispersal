@@ -42,7 +42,11 @@ class ClassItem(abstract_model.DictItem):
         super().__init__(dict)
         
     def checkItem(self):
-        pass
+        utils.checkName(self,prefix="Class")
+        #if not utils.is_integer(self.dict["code"]):
+        #    utils.user_error("Class '" + self.name + " with non-integer code : " + str(self.dict["code"]))
+        if not self.dict["descr"]:
+            utils.warn("Class '" + self.name + " with empty description")
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
@@ -51,6 +55,7 @@ class ClassItem(abstract_model.DictItem):
 class ClassModel(abstract_model.DictModel):
 
     classAdded = pyqtSignal('PyQt_PyObject')
+    classRemoved = pyqtSignal('PyQt_PyObject')
     
     def __init__(self):
         super().__init__(self,class_fields)
@@ -91,8 +96,7 @@ class ClassConnector(abstract_model.AbstractConnector):
     def __init__(self,dlg):
         self.dlg = dlg
         classModel = ClassModel()
-        super().__init__(classModel,self.dlg.classView,
-                        self.dlg.classAdd,self.dlg.classRemove)
+        super().__init__(classModel,self.dlg.classView,None,None)
         
     def initGui(self):
         pass

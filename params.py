@@ -12,6 +12,10 @@ params = None
 
 params_fields = ["extent","workspace","useRelPath"]
 
+def checkInit():
+    if not params.workspace:
+        utils.user_error("Workspace paramter not initialized")
+
 class ParamsModel(abstract_model.AbstractGroupModel):
 
     def __init__(self):

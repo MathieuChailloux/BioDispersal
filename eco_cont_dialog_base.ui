@@ -26,13 +26,8 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>5</number>
+    <number>2</number>
    </property>
-   <widget class="QWidget" name="tab_10">
-    <attribute name="title">
-     <string>Aide</string>
-    </attribute>
-   </widget>
    <widget class="QWidget" name="tab_9">
     <attribute name="title">
      <string>MainPanel</string>
@@ -60,7 +55,7 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>300</y>
+       <y>420</y>
        <width>271</width>
        <height>111</height>
       </rect>
@@ -156,8 +151,8 @@
     <widget class="QFrame" name="frame_8">
      <property name="geometry">
       <rect>
-       <x>430</x>
-       <y>260</y>
+       <x>610</x>
+       <y>340</y>
        <width>201</width>
        <height>211</height>
       </rect>
@@ -387,7 +382,7 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>190</y>
+       <y>330</y>
        <width>251</width>
        <height>91</height>
       </rect>
@@ -403,7 +398,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>81</width>
+        <width>161</width>
         <height>21</height>
        </rect>
       </property>
@@ -459,8 +454,8 @@
       <rect>
        <x>70</x>
        <y>50</y>
-       <width>251</width>
-       <height>131</height>
+       <width>381</width>
+       <height>161</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -469,31 +464,12 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <widget class="QLabel" name="paramlabel_5">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>111</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Dossier de travail</string>
-      </property>
-     </widget>
      <widget class="QgsFileWidget" name="workspace">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>30</y>
-        <width>141</width>
+        <x>110</x>
+        <y>0</y>
+        <width>151</width>
         <height>27</height>
        </rect>
       </property>
@@ -501,55 +477,20 @@
      <widget class="QLabel" name="label_44">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>30</y>
+        <x>0</x>
+        <y>0</y>
         <width>111</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Workspace</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QFrame" name="frame_13">
-     <property name="geometry">
-      <rect>
-       <x>340</x>
-       <y>60</y>
-       <width>361</width>
-       <height>151</height>
-      </rect>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <widget class="QLabel" name="paramlabel_6">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>141</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Paramètres généraux</string>
+       <string>Dossier de travail*</string>
       </property>
      </widget>
      <widget class="QgsFileWidget" name="extentLayer">
       <property name="geometry">
        <rect>
-        <x>109</x>
+        <x>110</x>
         <y>30</y>
         <width>151</width>
         <height>27</height>
@@ -559,33 +500,20 @@
      <widget class="QLabel" name="label_45">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>1</x>
         <y>30</y>
         <width>111</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Couche d'emprise</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_46">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>70</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Résolution raster</string>
+       <string>Couche d'emprise*</string>
       </property>
      </widget>
      <widget class="QgsSpinBox" name="rasterResolution">
       <property name="geometry">
        <rect>
-        <x>109</x>
+        <x>110</x>
         <y>60</y>
         <width>151</width>
         <height>27</height>
@@ -595,11 +523,50 @@
        <number>999999</number>
       </property>
      </widget>
+     <widget class="QLabel" name="label_46">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>60</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Résolution raster*</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="paramsRelPath">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>110</y>
+        <width>16</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="paramsRelPath_3">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>130</y>
+        <width>16</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
      <widget class="QLabel" name="label_48">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>100</y>
+        <y>110</y>
         <width>111</width>
         <height>16</height>
        </rect>
@@ -608,24 +575,11 @@
        <string>Use relative paths</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="paramsRelPath">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>100</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_107">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>120</y>
+        <y>130</y>
         <width>111</width>
         <height>16</height>
        </rect>
@@ -634,168 +588,19 @@
        <string>Override existing files</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="paramsRelPath_3">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>120</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_19">
     <attribute name="title">
      <string>Classes</string>
     </attribute>
-    <widget class="QFrame" name="frame_27">
-     <property name="geometry">
-      <rect>
-       <x>410</x>
-       <y>10</y>
-       <width>381</width>
-       <height>531</height>
-      </rect>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <widget class="QTableView" name="classView">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>130</y>
-        <width>361</width>
-        <height>231</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_97">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Classes</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="groupsFilter_3">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>100</y>
-        <width>113</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-       </font>
-      </property>
-      <property name="placeholderText">
-       <string>[Filter]</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="classRemove">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>100</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Remove</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="classDescr">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>70</y>
-        <width>231</width>
-        <height>20</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_98">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>70</y>
-        <width>61</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Description</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_99">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>40</y>
-        <width>47</width>
-        <height>13</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Name</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="className">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>40</y>
-        <width>231</width>
-        <height>20</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="classAdd">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>100</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Add</string>
-      </property>
-     </widget>
-    </widget>
     <widget class="QFrame" name="frame_28">
      <property name="geometry">
       <rect>
        <x>20</x>
        <y>10</y>
        <width>381</width>
-       <height>261</height>
+       <height>361</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -808,17 +613,17 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>120</y>
+        <y>110</y>
         <width>361</width>
-        <height>131</height>
+        <height>241</height>
        </rect>
       </property>
      </widget>
      <widget class="QLabel" name="label_102">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>10</y>
+        <x>10</x>
+        <y>0</y>
         <width>91</width>
         <height>16</height>
        </rect>
@@ -838,7 +643,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>90</y>
+        <y>80</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -856,7 +661,7 @@
       <property name="geometry">
        <rect>
         <x>170</x>
-        <y>90</y>
+        <y>80</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -869,7 +674,7 @@
       <property name="geometry">
        <rect>
         <x>280</x>
-        <y>90</y>
+        <y>80</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -882,7 +687,7 @@
       <property name="geometry">
        <rect>
         <x>120</x>
-        <y>60</y>
+        <y>50</y>
         <width>231</width>
         <height>20</height>
        </rect>
@@ -892,7 +697,7 @@
       <property name="geometry">
        <rect>
         <x>120</x>
-        <y>30</y>
+        <y>20</y>
         <width>231</width>
         <height>20</height>
        </rect>
@@ -902,7 +707,7 @@
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>30</y>
+        <y>20</y>
         <width>47</width>
         <height>13</height>
        </rect>
@@ -915,7 +720,7 @@
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>60</y>
+        <y>50</y>
         <width>61</width>
         <height>16</height>
        </rect>
@@ -928,10 +733,10 @@
     <widget class="QFrame" name="frame_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>280</y>
+       <x>420</x>
+       <y>10</y>
        <width>381</width>
-       <height>271</height>
+       <height>361</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -976,7 +781,7 @@
      <widget class="QLabel" name="label_108">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>30</x>
         <y>50</y>
         <width>61</width>
         <height>16</height>
@@ -989,7 +794,7 @@
      <widget class="QLabel" name="label_109">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>30</x>
         <y>20</y>
         <width>47</width>
         <height>13</height>
@@ -1038,7 +843,7 @@
         <x>10</x>
         <y>110</y>
         <width>361</width>
-        <height>161</height>
+        <height>241</height>
        </rect>
       </property>
      </widget>
@@ -1051,10 +856,10 @@
     <widget class="QFrame" name="frame_29">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>10</y>
-       <width>771</width>
-       <height>491</height>
+       <width>821</width>
+       <height>541</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -1067,8 +872,8 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>270</y>
-        <width>711</width>
+        <y>310</y>
+        <width>751</width>
         <height>192</height>
        </rect>
       </property>
@@ -1076,8 +881,8 @@
      <widget class="QPushButton" name="selectionRun">
       <property name="geometry">
        <rect>
-        <x>350</x>
-        <y>470</y>
+        <x>360</x>
+        <y>510</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -1090,7 +895,7 @@
       <property name="geometry">
        <rect>
         <x>160</x>
-        <y>240</y>
+        <y>280</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -1103,7 +908,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>240</y>
+        <y>280</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -1117,11 +922,286 @@
        <string>[Filter]</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_106">
+     <widget class="QFrame" name="frame_30">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>10</y>
+        <y>0</y>
+        <width>451</width>
+        <height>261</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QComboBox" name="selectionGroupCombo">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>170</y>
+         <width>121</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QgsFieldExpressionWidget" name="selectionExpr">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>120</y>
+         <width>281</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selectionGroupLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>170</y>
+         <width>61</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Groupe</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="selectionGroupName">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>170</y>
+         <width>91</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="placeholderText">
+        <string>[name]</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selectionExprLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>61</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Expression</string>
+       </property>
+      </widget>
+      <widget class="QgsFileWidget" name="selectionInLayer">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>50</y>
+         <width>171</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selectionLayerLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>61</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Couche</string>
+       </property>
+      </widget>
+      <widget class="QgsMapLayerComboBox" name="selectionInLayerCombo">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>50</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="selectionAdd">
+       <property name="geometry">
+        <rect>
+         <x>314</x>
+         <y>230</y>
+         <width>121</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Add Selection</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selectionClassLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>200</y>
+         <width>61</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Classe</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="selectionClassDescr">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>200</y>
+         <width>131</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="placeholderText">
+        <string>[description]</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="selectionClassCombo">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>200</y>
+         <width>121</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selectionFieldLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>61</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Champ</string>
+       </property>
+      </widget>
+      <widget class="QgsFieldComboBox" name="selectionField">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>120</y>
+         <width>281</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="selectionClassName">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>200</y>
+         <width>91</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="placeholderText">
+        <string>[name]</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="selectionGroupDescr">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>170</y>
+         <width>131</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="placeholderText">
+        <string>[description]</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selectionLabel">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>20</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Sélection</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="fieldSelectionMode">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>100</y>
+         <width>70</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Par champ</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selectionModeLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Mode de sélection</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="exprSelectionMode">
+       <property name="geometry">
+        <rect>
+         <x>290</x>
+         <y>100</y>
+         <width>101</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Par expression</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QTableView" name="classView">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>40</y>
+        <width>301</width>
+        <height>241</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="classesLabel">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>20</y>
         <width>81</width>
         <height>16</height>
        </rect>
@@ -1134,307 +1214,8 @@
        </font>
       </property>
       <property name="text">
-       <string>Sélection</string>
+       <string>Classes</string>
       </property>
-     </widget>
-     <widget class="QFrame" name="frame_30">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>40</y>
-        <width>331</width>
-        <height>181</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QComboBox" name="selectionGroupCombo">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>120</y>
-         <width>141</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QgsFieldExpressionWidget" name="selectionExpr">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>60</y>
-         <width>241</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_105">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>120</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Groupe</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="selectionGroup">
-       <property name="geometry">
-        <rect>
-         <x>82</x>
-         <y>120</y>
-         <width>91</width>
-         <height>20</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_101">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>60</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Expression</string>
-       </property>
-      </widget>
-      <widget class="QgsFileWidget" name="selectionInLayer">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>30</y>
-         <width>141</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_100">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Couche</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_110">
-       <property name="geometry">
-        <rect>
-         <x>110</x>
-         <y>0</y>
-         <width>111</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Par expression</string>
-       </property>
-      </widget>
-      <widget class="QgsMapLayerComboBox" name="selectionInLayerCombo">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>30</y>
-         <width>91</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="selectionAdd">
-       <property name="geometry">
-        <rect>
-         <x>240</x>
-         <y>150</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Add</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_112">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>90</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Classe</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="selectionClass">
-       <property name="geometry">
-        <rect>
-         <x>82</x>
-         <y>90</y>
-         <width>91</width>
-         <height>20</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="selectionClassCombo">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>90</y>
-         <width>141</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QFrame" name="frame_31">
-      <property name="geometry">
-       <rect>
-        <x>380</x>
-        <y>40</y>
-        <width>331</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QLabel" name="label_115">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>60</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Champ</string>
-       </property>
-      </widget>
-      <widget class="QgsFileWidget" name="selectionFieldLayer">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>30</y>
-         <width>141</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_116">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Couche</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_117">
-       <property name="geometry">
-        <rect>
-         <x>110</x>
-         <y>0</y>
-         <width>121</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Occupation du sol</string>
-       </property>
-      </widget>
-      <widget class="QgsMapLayerComboBox" name="selectionFieldLayerCombo">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>30</y>
-         <width>91</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="selectionFieldAdd">
-       <property name="geometry">
-        <rect>
-         <x>240</x>
-         <y>120</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Add</string>
-       </property>
-      </widget>
-      <widget class="QgsFieldComboBox" name="selectionField">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>60</y>
-         <width>241</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="selectionFieldGroup">
-       <property name="geometry">
-        <rect>
-         <x>82</x>
-         <y>90</y>
-         <width>241</width>
-         <height>20</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_114">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>90</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Groupe</string>
-       </property>
-      </widget>
      </widget>
     </widget>
    </widget>
@@ -1782,6 +1563,16 @@
       </property>
      </widget>
     </widget>
+    <widget class="QgsExtentGroupBox" name="mExtentGroupBox">
+     <property name="geometry">
+      <rect>
+       <x>510</x>
+       <y>70</y>
+       <width>300</width>
+       <height>139</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -1932,6 +1723,18 @@
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qgis.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QgsExtentGroupBox</class>
+   <extends>QgsCollapsibleGroupBox</extends>
+   <header>qgis.gui</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>
