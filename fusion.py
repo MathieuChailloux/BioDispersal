@@ -45,15 +45,13 @@ class FusionModel(abstract_model.AbstractGroupModel):
             self.loadAllGroups()
         else:
             self.current_model = self.st_groups[st]
-            self.layoutChanged.emit()
+            self.current_model.layoutChanged.emit()
         utils.debug(str(self))
         
     def loadAllGroups(self):
         utils.debug("[loadAllGroups]")
         self.current_model = groups.copyGroupModel(groups.groupsModel)
         self.st_groups[self.current_st] = self.current_model
-        #self.layoutToBeChanged.emit()
-        #self.layoutChanged.emit()
         self.current_model.layoutChanged.emit()
         
     def toXML(self,indent=""):
@@ -97,52 +95,32 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 utils.user_error(str(err))
             
     def updateItems(self,i1,i2):
-        #new_items = []
-        #for i in range(0,len(self.items)):
-        #    if i == i1:
-        #        new_idx = i2
-        #    elif i == i2:
-        #        new_idx = i1
-        #    else:
-        #        new_idx = i
-        #    new_items.append(self.current_model.items[i])
-        # self.current_model.items = new_items
-        # self.st_groups[self.current_st].items = new_items
         k = self.current_st
         self.current_model.items[i1], self.current_model.items[i2] = self.current_model.items[i2], self.current_model.items[i1]
-        #self.st_groups[self.current_st].items = new_items
         self.current_model.layoutChanged.emit()
-        self.layoutChanged.emit()
         
     def upgradeElem(self,idx):
         row = idx.row()
         utils.debug("upgradeElem " + str(row))
         if row > 0:
             self.updateItems(row -1, row)
-        self.layoutChanged.emit()
+        #self.layoutChanged.emit()
         
     def downgradeElem(self,idx):
         row = idx.row()
         utils.debug("downgradeElem " + str(row))
         if row < len(self.current_model.items) - 1:
             self.updateItems(row, row + 1)
-        self.layoutChanged.emit()
-        
-        
-    # def addST(self,st):
-        # self.st_groups[st] = groups.groupsModel.copy()
         
     def removeItems(self,index):
         utils.debug("[removeItems] nb of items = " + str(len(self.current_model.items))) 
         self.current_model.removeItems(index)
         self.current_model.layoutChanged.emit()
-        self.layoutChanged.emit()
         
     def addItem(self,item):
         utils.debug("[addItemFusion]")
         self.current_model.addItem(item)
         self.current_model.layoutChanged.emit()
-        self.layoutChanged.emit()
         
     def data(self,index,role):
         utils.debug("[dataFusionModel]")
