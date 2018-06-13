@@ -4,6 +4,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from PyQt5.QtCore import QModelIndex
+from PyQt5.QtGui import QIcon
 
 import abstract_model
 import utils
@@ -24,23 +25,36 @@ class FusionModel(abstract_model.AbstractGroupModel):
         self.current_model = None
         super().__init__(self,fusion_fields)
         
+    def __str__(self):
+        res = ""
+        for st, grp_model in self.st_groups.items():
+            res += st + " : "
+            for g in grp_model.items:
+                res += g.dict["name"] + ", "
+            res += "\n"
+        return res
+        
     def getCurrModel(self):
         return self.st_groups[self.st_current_st]
         
     def setCurrentST(self,st):
+        utils.debug("setCurrentST " + str(st))
+        utils.debug(str(self))
         self.current_st = st
-        if st not in self.st_groups:
+        if st not in self.st_groups: 
             self.loadAllGroups()
         else:
             self.current_model = self.st_groups[st]
             self.layoutChanged.emit()
+        utils.debug(str(self))
         
     def loadAllGroups(self):
         utils.debug("[loadAllGroups]")
         self.current_model = groups.copyGroupModel(groups.groupsModel)
         self.st_groups[self.current_st] = self.current_model
         #self.layoutToBeChanged.emit()
-        self.layoutChanged.emit()
+        #self.layoutChanged.emit()
+        self.current_model.layoutChanged.emit()
         
     def toXML(self,indent=""):
         xmlStr = indent + "<" + self.__class__.__name__ + ">\n"
@@ -83,17 +97,21 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 utils.user_error(str(err))
             
     def updateItems(self,i1,i2):
-        new_items = []
-        for i in range(0,len(self.items)):
-            if i == i1:
-                new_idx = i2
-            elif i == i2:
-                new_idx = i1
-            else:
-                new_idx = i
-            new_items.append(self.current_model.items[i])
-        self.current_model.items = new_items
+        #new_items = []
+        #for i in range(0,len(self.items)):
+        #    if i == i1:
+        #        new_idx = i2
+        #    elif i == i2:
+        #        new_idx = i1
+        #    else:
+        #        new_idx = i
+        #    new_items.append(self.current_model.items[i])
+        # self.current_model.items = new_items
+        # self.st_groups[self.current_st].items = new_items
+        k = self.current_st
+        self.current_model.items[i1], self.current_model.items[i2] = self.current_model.items[i2], self.current_model.items[i1]
         #self.st_groups[self.current_st].items = new_items
+        self.current_model.layoutChanged.emit()
         self.layoutChanged.emit()
         
     def upgradeElem(self,idx):
@@ -153,7 +171,10 @@ class FusionConnector(abstract_model.AbstractConnector):
                          self.dlg.fusionAdd,self.dlg.fusionRemove)
                          
     def initGui(self):
-        pass
+        upIcon = QIcon(':plugins/eco_cont/icons/up-arrow.png')
+        downIcon = QIcon(':plugins/eco_cont/icons/down-arrow.png')
+        self.dlg.fusionUp.setIcon(upIcon)
+        self.dlg.fusionDown.setIcon(downIcon)
                          
     def connectComponents(self):
         super().connectComponents()

@@ -66,4 +66,5 @@ def parseModel(model_root):
     else:
         #dict = model_root.attrib
         model.fromXMLRoot(model_root)
+    model.layoutChanged.emit()
         

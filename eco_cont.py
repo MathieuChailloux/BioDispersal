@@ -162,7 +162,7 @@ class EcologicalContinuity:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/eco_cont/icon.png'
+        icon_path = ':/plugins/eco_cont/icons/icon.png'
         self.add_action(
             icon_path,
             text=self.tr(u'EcoCont'),
