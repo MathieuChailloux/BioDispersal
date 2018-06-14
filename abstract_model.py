@@ -187,6 +187,10 @@ class AbstractGroupModel(QAbstractTableModel):
         utils.debug("[applyItems]")
         for i in self.items:
             i.applyItem()
+            
+    def orderItems(self,idx):
+        utils.debug("orderItems " + str(idx))
+        self.items = sorted(self.items, key=lambda i: i.dict[i.idx_to_fields[idx]])
         
 class DictModel(AbstractGroupModel):
 
@@ -254,6 +258,7 @@ class AbstractConnector:
             self.addButton.clicked.connect(self.addItem)
         if self.removeButton:
             self.removeButton.clicked.connect(self.removeItems)
+        self.view.horizontalHeader().sectionClicked.connect(self.model.orderItems)
         
     @abstractmethod
     def mkItem(self):
