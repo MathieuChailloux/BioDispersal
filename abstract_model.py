@@ -191,6 +191,7 @@ class AbstractGroupModel(QAbstractTableModel):
     def orderItems(self,idx):
         utils.debug("orderItems " + str(idx))
         self.items = sorted(self.items, key=lambda i: i.dict[i.idx_to_fields[idx]])
+        self.layoutChanged.emit()
         
 class DictModel(AbstractGroupModel):
 

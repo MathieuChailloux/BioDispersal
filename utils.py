@@ -25,6 +25,7 @@
 import datetime
 import os.path
 import sys
+import subprocess
 
 file_dir = os.path.dirname(__file__)
 sys.path.append(file_dir)
@@ -105,6 +106,14 @@ def checkDescr(item,prefix=None):
         prefix = item.__class__.name
     if not item.dict["descr"]:
         warn(prefix + " with empty name '" + str(item.dict["descr"]) + "'")
+        
+def executeCmd(cmd_args):
+    p = subprocess.Popen(cmd_args,stderr=subprocess.PIPE,stdout=subprocess.PIPE)
+    out,err = p.communicate()
+    debug(str(p.args))
+    info(str(out))
+    if err:
+        user_error(str(err))
         
 # def checkName(item,prefix=None):
     # if prefix == None:

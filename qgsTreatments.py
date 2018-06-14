@@ -1,8 +1,9 @@
 
 from qgis.core import QgsProcessingFeedback
 
+import sys
 import subprocess
-import processing
+#import processing
 
 import utils
 import qgsUtils
@@ -42,7 +43,7 @@ def applyRasterization(in_path,field,out_path):
     if err:
         utils.user_error(str(err))
         
-def applyReclass(in_path,out_path,rules_file,title):
+def applyReclassProcessing(in_path,out_path,rules_file,title):
     parameters = {'input' : in_path,
                   'output' : out_path,
                   'rules' : rules_file,
@@ -59,3 +60,23 @@ def applyReclass(in_path,out_path,rules_file,title):
         raise e
     finally:
         utils.debug("End runCost")
+        
+def applyReclassGdal(in_path,out_path,reclass_dict):
+    cmd_args = ['gdal_calc.bat',
+                '-A', in_path,
+                '--outfile='+out_path]
+    expr = '--calc='
+    for old_cls,new_cls in reclass_dict.items():
+        if expr != '--calc=':
+            expr += '+'
+        expr += str(new_cls) + '*(A==' + str(old_cls)+ ')'
+    cmd_args.append(expr)
+    utils.executeCmd(cmd_args)
+    # p = subprocess.Popen(cmd_args,stderr=subprocess.PIPE,stdout=subprocess.PIPE)
+    # out,err = p.communicate()
+    # utils.debug(str(p.args))
+    # utils.info(str(out))
+    # if err:
+        # utils.user_error(str(err))
+        
+        

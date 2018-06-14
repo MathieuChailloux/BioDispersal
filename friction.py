@@ -62,6 +62,7 @@ class FrictionModel(abstract_model.DictModel):
         self.layoutChanged.emit()
         
     def removeClassFromName(self,name):
+        self.classes = [cls_item for cls_item in self.classes if cls_item.dict["name"] == name]
         for i in range(0,len(self.items)):
             if self.items[i].dict["class"] == name:
                 del self.items[i]
@@ -85,7 +86,9 @@ class FrictionModel(abstract_model.DictModel):
         
     def removeSTFromName(self,st_name):
         utils.debug("removeSTFromName " + st_name)
+        self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] == name]
         self.removeField(st_name)
+        self.layoutChanged.emit()
         # for i in self.items:
             # utils.debug(str(i.dict.items()))
             # del i.dict[st_name]
@@ -105,19 +108,34 @@ class FrictionModel(abstract_model.DictModel):
                     out_class = i.dict[st_name]
                     f.write(str(in_class) + " = " + str(out_class) + "\n")
                 
-    def applyReclass(self):
+    def applyReclassProcessing(self):
         utils.debug("applyReclass")
+        self.createRulesFiles()
         for st_item in self.sous_trames:
             st_name = st_item.dict["name"]
             utils.debug("applyReclass " + st_name)
             st_rules_fname = st_item.getRulesPath()
+            utils.checkFileExists(st_rules_fname)
             st_merged_fname = st_item.getMergedPath()
+            utils.checkFileExists(st_merged_fname)
             st_friction_fname = st_item.getFrictionPath()
-            qgsTreatments.applyReclass(st_merged_fname,st_friction_fname,st_rules_fname,st_name)
+            qgsTreatments.applyReclassProcessing(st_merged_fname,st_friction_fname,st_rules_fname,st_name)
+        
+    def applyReclassGdal(self):
+        utils.debug("applyReclassGdal")
+        for st_item in self.sous_trames:
+            st_merged_fname = st_item.getMergedPath()
+            utils.checkFileExists(st_merged_fname)
+            st_friction_fname = st_item.getFrictionPath()
+            reclass_dict = {}
+            for r in self.rows:
+                reclass_dict[r['code']] = r[st_item.dict["name"]]
+            #utils.debug("applyReclassGdal")
+            qgsTreatments.applyReclassGdal(st_merged_fname,st_friction_fname,reclass_dict)
         
     def applyItems(self):
-        self.createRulesFiles()
         #self.applyReclass()
+        self.applyReclassGdal()
         
     def saveCSV(self):
         fname = os.path.join(params.params.tmpDir,"friction.csv")
