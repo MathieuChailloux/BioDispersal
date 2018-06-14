@@ -19,9 +19,17 @@ def catchSTAdded(st_item):
     frictionModel.addSTItem(st_item)
     
 @pyqtSlot()
+def catchSTRemoved(name):
+    frictionModel.removeSTFromName(name)
+    
+@pyqtSlot()
 def catchClassAdded(class_item):
     utils.debug("classAdded " + class_item.dict["name"])
     frictionModel.addClassItem(class_item)
+    
+@pyqtSlot()
+def catchClassRemoved(name):
+    frictionModel.removeClassFromName(name)
 
 class FrictionRowItem(abstract_model.DictItem):
 
@@ -53,6 +61,13 @@ class FrictionModel(abstract_model.DictModel):
         self.addItem(row_item)
         self.layoutChanged.emit()
         
+    def removeClassFromName(self,name):
+        for i in range(0,len(self.items)):
+            if self.items[i].dict["class"] == name:
+                del self.items[i]
+                self.layoutChanged.emit()
+                return
+        
     def addSTCols(self,row):
         for st in sous_trames.getSTList():
             row[st] = self.defaultVal
@@ -67,6 +82,16 @@ class FrictionModel(abstract_model.DictModel):
         self.fields.append(st_name)
         self.sous_trames.append(st_item)
         self.layoutChanged.emit()
+        
+    def removeSTFromName(self,st_name):
+        utils.debug("removeSTFromName " + st_name)
+        self.removeField(st_name)
+        # for i in self.items:
+            # utils.debug(str(i.dict.items()))
+            # del i.dict[st_name]
+            # i.recompute()
+        # self.removeField(st_name)
+        # self.layoutChanged.emit()
         
     def createRulesFiles(self):
         utils.debug("createRulesFiles")
@@ -119,7 +144,9 @@ class FrictionConnector(abstract_model.AbstractConnector):
         
     def connectComponents(self):
         sous_trames.stModel.stAdded.connect(catchSTAdded)
+        sous_trames.stModel.stRemoved.connect(catchSTRemoved)
         classes.classModel.classAdded.connect(catchClassAdded)
+        classes.classModel.classRemoved.connect(catchClassRemoved)
         super().connectComponents()
         self.dlg.frictionRun.clicked.connect(self.model.applyItems)
         self.dlg.frictionSave.clicked.connect(self.model.saveCSV)

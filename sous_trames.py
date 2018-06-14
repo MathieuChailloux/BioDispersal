@@ -18,6 +18,7 @@ def getSTList():
     return [st.dict["name"] for st in stModel.items]
          
 class STItem(abstract_model.DictItem):
+
     def __init__(self,st,descr):
         dict = {"name" : st,
                 "descr" : descr}
@@ -47,6 +48,7 @@ class STItem(abstract_model.DictItem):
 class STModel(abstract_model.DictModel):
 
     stAdded = pyqtSignal('PyQt_PyObject')
+    stRemoved = pyqtSignal('PyQt_PyObject')
 
     def __init__(self):
         super().__init__(self,st_fields)
@@ -60,6 +62,18 @@ class STModel(abstract_model.DictModel):
     def addItem(self,item):
         super().addItem(item)
         self.stAdded.emit(item)
+        
+    def addItem(self,item):
+        super().addItem(item)
+        self.stAdded.emit(item)
+        
+    def removeItems(self,indexes):
+        names = [self.items[idx.row()].dict["name"] for idx in indexes]
+        utils.debug("names " + str(names))
+        super().removeItems(indexes)
+        for n in names:
+            utils.debug("stRemoved " + str(n))
+            self.stRemoved.emit(n)
         
 class STConnector(abstract_model.AbstractConnector):
 

@@ -164,6 +164,9 @@ class AbstractGroupModel(QAbstractTableModel):
         self.insertRow(0)
         self.layoutChanged.emit()
         
+    def removeField(self,fieldname):
+        self.fields.remove(fieldname)
+        
     def removeItems(self,indexes):
         utils.debug("[removeItems] nb of items = " + str(len(self.items))) 
         n = 0
@@ -213,6 +216,16 @@ class DictModel(AbstractGroupModel):
             utils.debug("adding item")
             self.items.append(item)
             self.insertRow(0)
+            
+    def removeField(self,fieldname):
+        utils.debug("removeField " + fieldname)
+        for i in self.items:
+            utils.debug(str(i.dict.items()))
+            del i.dict[fieldname]
+            i.recompute()
+        self.fields.remove(fieldname)
+        self.layoutChanged.emit()
+        
         
     def toXML(self,indent=" "):
         utils.debug("toXML " + self.__class__.__name__)
@@ -240,7 +253,7 @@ class AbstractConnector:
         if self.addButton:
             self.addButton.clicked.connect(self.addItem)
         if self.removeButton:
-            self.removeButton.clicked.connect(self.removeItem)
+            self.removeButton.clicked.connect(self.removeItems)
         
     @abstractmethod
     def mkItem(self):
@@ -251,7 +264,7 @@ class AbstractConnector:
         self.model.addItem(item)
         self.model.layoutChanged.emit()
         
-    def removeItem(self,item):
+    def removeItems(self):
         indices = self.view.selectedIndexes()
         utils.debug(str(indices))
         self.model.removeItems(indices)

@@ -90,6 +90,11 @@ class ClassModel(abstract_model.DictModel):
         super().addItem(item)
         self.classAdded.emit(item)
          
+    def removeItems(self,indexes):
+        names = [self.items[idx.row()].dict["name"] for idx in indexes]
+        super().removeItems(indexes)
+        for n in names:
+            self.classRemoved.emit(n)
 
 class ClassConnector(abstract_model.AbstractConnector):
 
