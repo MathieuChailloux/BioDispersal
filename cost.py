@@ -1,27 +1,37 @@
 
+import processing
 
+from params import *
 from .utils import *
 from .qgsUtils import *
+import sous_trames
+from .abstract_model import *
 
 cost_fields = ["start_layer","perm_layer","cost","output_path"]
 
 class CostItem(DictItem):
 
-    def __init__(self,start_layer,perm_layer,cost,out_path):
-        dict = {"start_layer" : start_layer;
+    def __init__(self,st_name,start_layer,perm_layer,cost):
+        dict = {"st_name" : st_name,
+                "start_layer" : start_layer,
                 "perm_layer" : perm_layer,
-                "cost" : cost,
-                "output_path" : out_path}
+                "cost" : cost}
         super().__init__(dict)
         
         
-    def applyRCost(self):
+    def applyItem(self):
         debug("Start runCost")
+        checkInit()
+        st_name = self.dict["st_name"]
+        st_item = sous_trames.getSTByName(st_name)
         startRaster = self.dict["start_layer"]
+        checkFileExists(startRaster)
         permRaster = self.dict["perm_layer"]
+        checkFileExists(permRaster)
         cost = self.dict["cost"]
-        outPath = self.dict["output_path"]
-        debug ("startRaster = " + startRaster.name())
+        outPath = st_item.getDispersionPath(cost)#.replace("\\\\","/")
+        #outPath = 'D:\MChailloux\tmp\workspace\tmp2\tmp\st1_dispersion_200.tif'
+        debug ("startRaster = " + startRaster)
         parameters = { 'input' : permRaster,
                         'start_raster' : startRaster,
                         'max_cost' : int(cost),
@@ -42,7 +52,7 @@ class CostItem(DictItem):
                         '-r' : True,
                         '-i' : False,
                         '-b' : False}
-        #parameters = {}
+        debug("parameters : " + str(parameters))
         try:
             processing.run("grass7:r.cost",parameters)
             print ("call to r.cost successful")
@@ -60,12 +70,13 @@ class CostModel(DictModel):
     def __init__(self):
         super().__init__(self,cost_fields)
         
-        
-class Cost:
+class CostConnector(AbstractConnector):
 
     def __init__(self,dlg):
         self.dlg = dlg
-        self.cost_model = CostModel()
+        costModel = CostModel()
+        super().__init__(costModel,self.dlg.costView,
+                         self.dlg.costAdd,self.dlg.costRemove)
         #test_item = 
         #self.raster_model.
         
@@ -74,10 +85,29 @@ class Cost:
         #self.dlg.rasterView.resize(self.dlg.width / 1.5, self.dlg.height / 3.5)
         
     def connectComponents(self):
-        #self.dlg.rasterRun.clicked.connect(self.applyBuffer)
-        self.dlg.rasterInLayer.layerChanged.connect(self.updateFieldLayer)
-        self.dlg.rasterAdd.clicked.connect(self.addRasterItem)
-        self.dlg.rasterRun.clicked.connect(self.rasterizeItems)
-        self.dlg.rasterOutLayer.setStorageMode(QgsFileWidget.SaveFile)
-        self.dlg.rasterView.setModel(self.raster_model)
-        #self.dlg.rasterField.layerChanged.connect(self.setField)
+        self.dlg.costSTCombo.setModel(sous_trames.stModel)
+        self.dlg.costStartRasterCombo.layerChanged.connect(self.setStartRasterFromCombo)
+        self.dlg.costPermRasterCombo.layerChanged.connect(self.setPermRasterFromCombo)
+        self.dlg.costRun.clicked.connect(self.model.applyItems)
+        super().connectComponents()
+        
+    def setStartRasterFromCombo(self,layer):
+        debug("setStartRasterFromCombo")
+        if layer:
+            path=pathOfLayer(layer)
+            self.dlg.costStartRaster.lineEdit().setValue(path)
+        
+    def setPermRasterFromCombo(self,layer):
+        debug("setPermRasterFromCombo")
+        if layer:
+            path=pathOfLayer(layer)
+            self.dlg.costPermRaster.lineEdit().setValue(path)
+        
+    def mkItem(self):
+        st_name = self.dlg.costSTCombo.currentText()
+        start_layer = self.dlg.costStartRaster.filePath()
+        perm_layer = self.dlg.costPermRaster.filePath()
+        cost = str(self.dlg.costMaxVal.value())
+        cost_item = CostItem(st_name,start_layer,perm_layer,cost)
+        return cost_item
+        

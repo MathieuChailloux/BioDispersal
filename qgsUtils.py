@@ -44,8 +44,12 @@ def typeIsNumeric(t):
     return (typeIsInteger(t) or typeIsFloat(t))
 
 def pathOfLayer(l):
+    utils.debug("pathOfLayer")
     uri = l.dataProvider().dataSourceUri()
-    path = uri[:uri.rfind('|')]
+    utils.debug(str(uri))
+    #path = uri[:uri.rfind('|')]
+    path = uri
+    utils.debug(str(path))
     return path
       
 def layerNameOfPath(p):

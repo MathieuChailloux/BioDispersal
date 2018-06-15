@@ -46,8 +46,7 @@ import groups
 from .selection import SelectionConnector
 from .fusion import FusionConnector
 import friction
-from .buffers import BufferConnector
-from .rasterization import RasterizationConnector
+from .cost import CostConnector
 from .config_parsing import *
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -89,6 +88,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         fusionConnector = FusionConnector(self)
         frictionConnector = friction.FrictionConnector(self)
         friction.frictionModel = frictionConnector.model
+        costConnector = CostConnector(self)
         #bufferConnector = BufferConnector(self,groupConnector.model)
         #rasterizationConnector = RasterizationConnector(self)
         self.tabs = [paramsConnector,
@@ -97,7 +97,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                      classConnector,
                      selectionConnector,
                      fusionConnector,
-                     frictionConnector]
+                     frictionConnector,
+                     costConnector]
                      #bufferConnector,
                      #rasterizationConnector]
         self.models = {"ParamsModel" : paramsConnector.model,
@@ -105,7 +106,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                         "GroupModel" : groupsConnector.model,
                         "ClassModel" : classConnector.model,
                         "SelectionModel" : selectionConnector.model,
-                        "FusionModel" : fusionConnector.model}
+                        "FusionModel" : fusionConnector.model,
+                        "CostModel" : costConnector.model}
         
         
     def initGui(self):
@@ -128,7 +130,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.buttonAddGroup.clicked.connect(self.addGroup)
         #self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
         #self.groupVectRun.clicked.connect(self.selectEntities)
-        self.runButton.clicked.connect(self.runCost)
+        #self.runButton.clicked.connect(self.runCost)
         # Main tab connectors
         self.saveModelButton.clicked.connect(self.saveModel)
         self.loadModelButton.clicked.connect(self.loadModel)
@@ -139,41 +141,41 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         new_size = event.size()
         
         
-    def runCost(self):
-        debug("Start runCost")
-        startRaster = self.rasterDepartComboBox.currentLayer()
-        permRaster = self.rasterPermComboBox.currentLayer()
-        dateNow = datetime.datetime.now()
-        debug ("startRaster = " + startRaster.name())
-        parameters = { 'input' : permRaster,
-                        'start_raster' : startRaster,
-                        'max_cost' : 5000,
-                        'output' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_output.tif',
+    # def runCost(self):
+        # debug("Start runCost")
+        # startRaster = self.rasterDepartComboBox.currentLayer()
+        # permRaster = self.rasterPermComboBox.currentLayer()
+        # dateNow = datetime.datetime.now()
+        # debug ("startRaster = " + startRaster.name())
+        # parameters = { 'input' : permRaster,
+                        # 'start_raster' : startRaster,
+                        # 'max_cost' : 5000,
+                        # 'output' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_output.tif',
                         #'start_coordinates' : '0,0',
                         #'stop_coordinates' : '0,0',
-                        'nearest' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_nearest.tif',
-                        'outdir' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_movements.tif',
-                        'start_points' :  None,
-                        'stop_points' : None,
-                        'null_cost' : None,
-                        'memory' : 5000,
-                        'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
-                        'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
-                        'GRASS_MIN_AREA_PARAMETER' : 0,
-                        '-k' : False,
-                        '-n' : False,
-                        '-r' : True,
-                        '-i' : False,
-                        '-b' : False}
+                        # 'nearest' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_nearest.tif',
+                        # 'outdir' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_movements.tif',
+                        # 'start_points' :  None,
+                        # 'stop_points' : None,
+                        # 'null_cost' : None,
+                        # 'memory' : 5000,
+                        # 'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
+                        # 'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
+                        # 'GRASS_MIN_AREA_PARAMETER' : 0,
+                        # '-k' : False,
+                        # '-n' : False,
+                        # '-r' : True,
+                        # '-i' : False,
+                        # '-b' : False}
         #parameters = {}
-        try:
-            processing.run("grass7:r.cost",parameters)
-            print ("call to r.cost successful")
-        except Exception as e:
-            print ("Failed to call r.cost : " + str(e))
-            raise e
-        finally:  
-            debug("End runCost")
+        # try:
+            # processing.run("grass7:r.cost",parameters)
+            # print ("call to r.cost successful")
+        # except Exception as e:
+            # print ("Failed to call r.cost : " + str(e))
+            # raise e
+        # finally:  
+            # debug("End runCost")
         #grass.run_command(start_raster=startRaster,input=permRaster,max_cost=?,output=?,memory=5000)
         
     def addGroup(self):

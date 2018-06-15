@@ -108,7 +108,9 @@ def checkDescr(item,prefix=None):
         warn(prefix + " with empty name '" + str(item.dict["descr"]) + "'")
         
 def executeCmd(cmd_args):
-    p = subprocess.Popen(cmd_args,stderr=subprocess.PIPE,stdout=subprocess.PIPE)
+    p = subprocess.Popen(cmd_args,
+                         stderr=subprocess.PIPE,
+                         stdout=subprocess.PIPE)
     out,err = p.communicate()
     debug(str(p.args))
     info(str(out))

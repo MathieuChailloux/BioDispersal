@@ -44,6 +44,10 @@ class STItem(abstract_model.DictItem):
         basename = self.name + "_friction.tif"
         return params.mkTmpPath(basename)
         
+    def getDispersionPath(self,cost):
+        basename = self.name + "_dispersion_" + str(cost) + ".tif"
+        return params.mkTmpPath(basename)
+        
         
 class STModel(abstract_model.DictModel):
 
