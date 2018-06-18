@@ -63,7 +63,7 @@ class FrictionModel(abstract_model.DictModel):
         self.layoutChanged.emit()
         
     def removeClassFromName(self,name):
-        self.classes = [cls_item for cls_item in self.classes if cls_item.dict["name"] == name]
+        self.classes = [cls_item for cls_item in self.classes if cls_item.dict["name"] != name]
         for i in range(0,len(self.items)):
             if self.items[i].dict["class"] == name:
                 del self.items[i]
@@ -87,7 +87,7 @@ class FrictionModel(abstract_model.DictModel):
         
     def removeSTFromName(self,st_name):
         utils.debug("removeSTFromName " + st_name)
-        self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] == st_name]
+        self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] != st_name]
         self.removeField(st_name)
         self.layoutChanged.emit()
         # for i in self.items:

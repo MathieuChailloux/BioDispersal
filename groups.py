@@ -91,7 +91,7 @@ class GroupModel(abstract_model.DictModel):
     @staticmethod
     def mkItemFromDict(dict):
         utils.checkFields(groups_fields,dict.keys())
-        item = GroupItem(dict["name"],dict["descr"])
+        item = GroupItem(dict["name"],dict["descr"],dict["geom"])
         return item
         
     def getGroupByName(self,name):

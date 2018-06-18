@@ -8,6 +8,7 @@ from .classes import *
 from .selection import *
 from .buffers import *
 from .rasterization import *
+from .cost import *
 
 from .utils import *
 
@@ -33,7 +34,8 @@ mk_item = {
     "STModel" : STModel.mkItemFromDict,
     "GroupModel" : GroupModel.mkItemFromDict,
     "ClassModel" : ClassModel.mkItemFromDict,
-    "SelectionModel" : SelectionModel.mkItemFromDict
+    "SelectionModel" : SelectionModel.mkItemFromDict,
+    "CostModel" : CostModel.mkItemFromDict
     #"BufferModel" : BufferModel.mkItemFromDict,
     #"RasterModel" : RasterModel.mkItemFromDict
 }

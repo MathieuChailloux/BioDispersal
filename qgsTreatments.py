@@ -3,7 +3,7 @@ from qgis.core import QgsProcessingFeedback
 
 import sys
 import subprocess
-#import processing
+import processing
 
 import utils
 import qgsUtils
@@ -11,32 +11,49 @@ import qgsUtils
 def applySelection(in_layer,expr,out_layer):
     pass
     
-def applyRasterization(in_path,field,out_path):
+def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None):
     utils.debug("applyRasterization")
     in_layer = qgsUtils.loadVectorLayer(in_path)
-    extent = in_layer.extent()
+    if extent_path:
+        extent_layer = qgsUtils.loadVectorLayer(extent_path)
+        extent = extent_layer.extent()
+    else:
+        in_layer = qgsUtils.loadVectorLayer(in_path)
+        extent = in_layer.extent()
     x_min = extent.xMinimum()
     x_max = extent.xMaximum()
     y_min = extent.yMinimum()
     y_max = extent.yMaximum()
-    # Create the destination data source
-    pixel_size = 25
-    NoData_value = -9999
-    #x_res = int((x_max - x_min) / pixel_size)
-    #y_res = int((y_max - y_min) / pixel_size)
-    width = int((x_max - x_min) / pixel_size)
-    height = int((y_max - y_min) / pixel_size)
-    p = subprocess.Popen(['gdal_rasterize',
-                            #'-l','layer_name',
-                            '-at',
-                            '-a',field,
-                            #'-burn','0.0',
-                            '-te',str(x_min),str(y_min),str(x_max),str(y_max),
-                            #'-tr',str(x_res),str(y_res),
-                            '-ts', str(width), str(height),
-                            in_path,
-                            out_path],
-                            stderr=subprocess.PIPE)#, stdout=sys.stdout)#stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    if not resolution:
+        utils.warn("Setting rasterization resolution to 25")
+        resolution = 25
+    #NoData_value = -9999
+    width = int((x_max - x_min) / float(resolution))
+    height = int((y_max - y_min) / float(resolution))
+    parameters = ['gdal_rasterize',
+                  '-at',
+                  '-te',str(x_min),str(y_min),str(x_max),str(y_max),
+                  '-ts', str(width), str(height),
+                  #'-tr',str(resolution),str(resolution),
+                  in_path,
+                  out_path]
+    parameters += ['-te',str(resolution),str(resolution)]
+    if field == "geom":
+        parameters += ['-b', '1', '-burn', '1']
+    else:
+        parameters += ['-a',field]
+    p = subprocess.Popen(parameters,stderr=subprocess.PIPE)
+    # p = subprocess.Popen(['gdal_rasterize',
+                            # '-l','layer_name',
+                            # '-at',
+                            # '-a',field,
+                            # '-burn','0.0',
+                            # '-te',str(x_min),str(y_min),str(x_max),str(y_max),
+                            # '-tr',str(x_res),str(y_res),
+                            # '-ts', str(width), str(height),
+                            # in_path,
+                            # out_path],
+                            # stderr=subprocess.PIPE)#, stdout=sys.stdout)#stdin=PIPE, stdout=PIPE, stderr=PIPE)
     out,err = p.communicate()
     utils.debug(str(p.args))
     utils.info(str(out))
@@ -78,5 +95,39 @@ def applyReclassGdal(in_path,out_path,reclass_dict):
     # utils.info(str(out))
     # if err:
         # utils.user_error(str(err))
+        
+def applyRCost(start_path,cost_path,cost,out_path):
+        utils.debug ("applyRCost")
+        utils.checkFileExists(start_path)
+        utils.checkFileExists(cost_path)
+        parameters = { 'input' : cost_path,
+                        'start_raster' : start_path,
+                        'max_cost' : int(cost),
+                        'output' : out_path,
+                        #'start_coordinates' : '0,0',
+                        #'stop_coordinates' : '0,0',
+                        #'outdir' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_movements.tif',
+                        #'nearest' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_nearest.tif',
+                        #'start_points' :  None,
+                        #'stop_points' : None,
+                        'null_cost' : None,
+                        'memory' : 5000,
+                        'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
+                        'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
+                        'GRASS_MIN_AREA_PARAMETER' : 0,
+                        '-k' : False,
+                        '-n' : False,
+                        '-r' : True,
+                        '-i' : False,
+                        '-b' : False}
+        utils.debug("parameters : " + str(parameters))
+        try:
+            processing.run("grass7:r.cost",parameters)
+            print ("call to r.cost successful")
+        except Exception as e:
+            print ("Failed to call r.cost : " + str(e))
+            raise e
+        finally:  
+            utils.debug("End runCost")
         
         

@@ -48,6 +48,11 @@ class STItem(abstract_model.DictItem):
         basename = self.name + "_dispersion_" + str(cost) + ".tif"
         return params.mkTmpPath(basename)
         
+    def getStartLayerPath(self):
+        basename = self.name + "_start.tif"
+        return params.mkTmpPath(basename)
+        
+        
         
 class STModel(abstract_model.DictModel):
 

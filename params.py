@@ -15,18 +15,40 @@ params_fields = ["extent","workspace","useRelPath"]
 def checkInit():
     if not params.workspace:
         utils.user_error("Workspace paramter not initialized")
+    if not params.extentLayer:
+        utils.user_error("Extent layer paramter not initialized")
+    if not params.resolution:
+        utils.user_error("Resolution paramter not initialized")
 
+def mkTmpPath(fname):
+    if params.tmpDir:
+        tmpFname = os.path.join(params.tmpDir,fname)
+        return tmpFname
+    else:
+        utils.user_error("Workspace not set")
+        
+def getResolution():
+    return params.resolution
+    
+def getExtentLayer():
+    return params.extentLayer
+        
 class ParamsModel(abstract_model.AbstractGroupModel):
 
     def __init__(self):
-        self.extentLayer = ""
-        self.workspace = ""
+        self.workspace = None
+        self.extentLayer = None
+        self.resolution = None
         self.useRelativePath = True
         super().__init__(self,params_fields)
         
     def setExtentLayer(self,path):
-        self.extentLayerPath = path
-        self.extentLayer = qgsUtils.loadVectorLayer(self.extentLayerPath)
+        self.extentLayer = path
+        #self.extentLayerPath = path
+        #self.extentLayer = qgsUtils.loadVectorLayer(self.extentLayerPath)
+        
+    def setResolution(self,resolution):
+        self.resolution = resolution
         
     def setWorkspace(self,path):
         self.workspace = path
@@ -55,10 +77,14 @@ class ParamsModel(abstract_model.AbstractGroupModel):
         et = dict["extent"]
         if et:
             self.setExtentLayer(et)
+        resolution = dict["resolution"]
+        if resolution:
+            self.setResolution(resolution)
         self.useRelativePath = bool(dict["useRelPath"])
     
     def toXML(self,indent=""):
         xmlStr = indent + "<ParamsModel"
+        xmlStr += " resolution=\"" + str(self.resolution) + "\""
         xmlStr += " workspace=\"" + str(self.workspace) + "\""
         xmlStr += " extent=\"" + str(self.extentLayer) + "\""
         xmlStr += " useRelPath=\"" + str(self.useRelativePath) + "\""
@@ -75,9 +101,10 @@ class ParamsConnector:
         pass
         
     def connectComponents(self):
+        self.dlg.rasterResolution.valueChanged.connect(self.model.setResolution)
         self.dlg.extentLayer.setStorageMode(QgsFileWidget.GetFile)
-        self.dlg.workspace.setStorageMode(QgsFileWidget.GetDirectory)
         self.dlg.extentLayer.fileChanged.connect(self.model.setExtentLayer)
+        self.dlg.workspace.setStorageMode(QgsFileWidget.GetDirectory)
         self.dlg.workspace.fileChanged.connect(self.model.setWorkspace)
         self.dlg.paramsRelPath.stateChanged.connect(self.model.setUseRelPath)
         
@@ -92,9 +119,3 @@ def normPath(p):
     else:
         return p
         
-def mkTmpPath(fname):
-    if params.tmpDir:
-        tmpFname = os.path.join(params.tmpDir,fname)
-        return tmpFname
-    else:
-        utils.user_error("Workspace not set")

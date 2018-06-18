@@ -234,7 +234,7 @@ class SelectionConnector(AbstractConnector):
         class_item = classes.getClassByName(cls)
         if not class_item:
             class_descr = self.dlg.selectionClassName.text()
-            class_item = ClassItem(cls,class_descr)
+            class_item = classes.ClassItem(cls,class_descr,None)
             classes.classModel.addItem(class_item)
             classes.classModel.layoutChanged.emit()
         return class_item
@@ -245,7 +245,7 @@ class SelectionConnector(AbstractConnector):
         checkFileExists(in_layer_path)
         in_layer = loadVectorLayer(in_layer_path)
         in_geom = getLayerSimpleGeomStr(in_layer)
-        # expr = self.dlg.selectionExpr.expression()
+        expr = self.dlg.selectionExpr.expression()
         # cls = self.dlg.selectionClassName.text()
         # class_descr = self.dlg.selectionClassName.text()
         # group = self.dlg.selectionGroupName.text()
