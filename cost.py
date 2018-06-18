@@ -18,6 +18,11 @@ class CostItem(DictItem):
                 "cost" : cost}
         super().__init__(dict)
         
+    def equals(self,other):
+        if self.dict["st_name"] == other.dict["st_name"]:
+            return False
+        elif self.dict["cost"] == other.dict["cost"]:
+            return False
         
     def applyItem(self):
         debug("Start runCost")
@@ -69,6 +74,9 @@ class CostModel(DictModel):
     
     def __init__(self):
         super().__init__(self,cost_fields)
+        
+    def fromXMLRoot(self,root):
+        pass
         
 class CostConnector(AbstractConnector):
 

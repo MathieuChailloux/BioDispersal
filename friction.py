@@ -3,6 +3,7 @@ import csv
 import os
 
 from PyQt5.QtCore import pyqtSlot
+from qgis.gui import QgsFileWidget
 
 import utils
 import sous_trames
@@ -86,7 +87,7 @@ class FrictionModel(abstract_model.DictModel):
         
     def removeSTFromName(self,st_name):
         utils.debug("removeSTFromName " + st_name)
-        self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] == name]
+        self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] == st_name]
         self.removeField(st_name)
         self.layoutChanged.emit()
         # for i in self.items:
@@ -154,7 +155,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         super().__init__(frictionModel,self.dlg.frictionView,None,None)
         
     def initGui(self):
-        pass
+        self.dlg.frictionCsvFile.setStorageMode(QgsFileWidget.SaveFile)
         
     @pyqtSlot()
     def internCatchGroupAdded(grp):

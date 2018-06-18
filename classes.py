@@ -8,7 +8,7 @@ import utils
 import qgsUtils
 import params
          
-class_fields = ["code","name","descr"]
+class_fields = ["name","code","descr"]
 classModel = None
 
 def getClassLayer(grp):
@@ -34,8 +34,8 @@ class ClassItem(abstract_model.DictItem):
         if code == None:
             code = classModel.getFreeCode()
             utils.debug("new code = " + str(code))
-        dict = {"code": code,
-                "name" : cls,
+        dict = {"name" : cls,
+                "code": code,
                 "descr" : descr}
         #assert(class_fields == dict.keys())
         self.name = cls

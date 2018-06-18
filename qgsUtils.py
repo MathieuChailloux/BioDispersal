@@ -47,8 +47,10 @@ def pathOfLayer(l):
     utils.debug("pathOfLayer")
     uri = l.dataProvider().dataSourceUri()
     utils.debug(str(uri))
-    #path = uri[:uri.rfind('|')]
-    path = uri
+    if l.type() == QgsMapLayer.VectorLayer:
+        path = uri[:uri.rfind('|')]
+    else:
+        path = uri
     utils.debug(str(path))
     return path
       
@@ -93,6 +95,11 @@ def getLayerCrsStr(layer):
     
 def getLayerGeomStr(layer):
     return QgsWkbTypes.displayString(layer.wkbType())
+    
+def getLayerSimpleGeomStr(layer):
+    type = layer.wkbType()
+    geom_type = QgsWkbTypes.geometryType(type)
+    return QgsWkbTypes.geometryDisplayString(geom_type)
         
 def checkLayersCompatible(l1,l2):
     crs1 = l1.crs().authid()

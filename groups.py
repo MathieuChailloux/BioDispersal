@@ -9,7 +9,7 @@ import qgsUtils
 import params
 import qgsTreatments
          
-groups_fields = ["name","descr"]
+groups_fields = ["name","descr","geom"]
 groupsModel = None
 
 def getGroupLayer(grp):
@@ -36,9 +36,12 @@ def copyGroupModel(model):
     
 class GroupItem(abstract_model.DictItem):
     
-    def __init__(self,group,descr):
+    def __init__(self,group,descr,geom):
+        if not geom:
+            geom = "No geometry"
         dict = {"name" : group,
-                "descr" : descr}
+                "descr" : descr,
+                "geom" : geom}
         #assert(groups_fields == dict.keys())
         self.name = group
         #self.in_layer = None
@@ -51,6 +54,11 @@ class GroupItem(abstract_model.DictItem):
         utils.checkName(self,prefix)
         utils.checkDescr(self,prefix)
         
+    def checkGeom(self,geom):
+        if self.dict["geom"] != geom:
+            utils.user_error("Incompatible geometries for group '"
+                             + self.dict["name"] + "' : "
+                             + self.dict["geom"] + " vs " + str(geom))
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
@@ -103,7 +111,7 @@ class GroupConnector(abstract_model.AbstractConnector):
                         self.dlg.groupsAdd,self.dlg.groupsRemove)
         
     def initGui(self):
-        pass
+        pass#self.dlg.groupFrame.hide()
         
     def connectComponents(self):
         super().connectComponents()

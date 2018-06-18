@@ -26,9 +26,9 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>5</number>
+    <number>3</number>
    </property>
-   <widget class="QWidget" name="tab_9">
+   <widget class="QWidget" name="mainTab">
     <attribute name="title">
      <string>MainPanel</string>
     </attribute>
@@ -590,7 +590,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_19">
+   <widget class="QWidget" name="stTab">
     <attribute name="title">
      <string>Classes</string>
     </attribute>
@@ -730,10 +730,15 @@
       </property>
      </widget>
     </widget>
-    <widget class="QFrame" name="frame_2">
+   </widget>
+   <widget class="QWidget" name="groupsTab">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QFrame" name="groupFrame">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>10</x>
        <y>10</y>
        <width>381</width>
        <height>361</height>
@@ -848,8 +853,54 @@
       </property>
      </widget>
     </widget>
+    <widget class="QFrame" name="classFrame">
+     <property name="geometry">
+      <rect>
+       <x>430</x>
+       <y>20</y>
+       <width>411</width>
+       <height>321</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QLabel" name="classesLabel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Classes</string>
+      </property>
+     </widget>
+     <widget class="QTableView" name="classView">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>301</width>
+        <height>241</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
    </widget>
-   <widget class="QWidget" name="tab_20">
+   <widget class="QWidget" name="selectionTab">
     <attribute name="title">
      <string>Selection</string>
     </attribute>
@@ -859,7 +910,7 @@
        <x>10</x>
        <y>10</y>
        <width>821</width>
-       <height>541</height>
+       <height>551</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -872,7 +923,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>310</y>
+        <y>320</y>
         <width>751</width>
         <height>192</height>
        </rect>
@@ -882,7 +933,7 @@
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>510</y>
+        <y>520</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -895,7 +946,7 @@
       <property name="geometry">
        <rect>
         <x>160</x>
-        <y>280</y>
+        <y>290</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -908,7 +959,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>280</y>
+        <y>290</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -927,8 +978,8 @@
        <rect>
         <x>10</x>
         <y>0</y>
-        <width>451</width>
-        <height>261</height>
+        <width>471</width>
+        <height>271</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -941,7 +992,7 @@
        <property name="geometry">
         <rect>
          <x>80</x>
-         <y>170</y>
+         <y>150</y>
          <width>121</width>
          <height>22</height>
         </rect>
@@ -951,7 +1002,7 @@
        <property name="geometry">
         <rect>
          <x>160</x>
-         <y>120</y>
+         <y>100</y>
          <width>281</width>
          <height>21</height>
         </rect>
@@ -961,7 +1012,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>170</y>
+         <y>150</y>
          <width>61</width>
          <height>21</height>
         </rect>
@@ -974,7 +1025,7 @@
        <property name="geometry">
         <rect>
          <x>210</x>
-         <y>170</y>
+         <y>150</y>
          <width>91</width>
          <height>20</height>
         </rect>
@@ -987,7 +1038,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>120</y>
+         <y>100</y>
          <width>61</width>
          <height>21</height>
         </rect>
@@ -1000,7 +1051,7 @@
        <property name="geometry">
         <rect>
          <x>270</x>
-         <y>50</y>
+         <y>30</y>
          <width>171</width>
          <height>27</height>
         </rect>
@@ -1010,7 +1061,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>50</y>
+         <y>30</y>
          <width>61</width>
          <height>21</height>
         </rect>
@@ -1023,7 +1074,7 @@
        <property name="geometry">
         <rect>
          <x>80</x>
-         <y>50</y>
+         <y>30</y>
          <width>171</width>
          <height>21</height>
         </rect>
@@ -1033,7 +1084,7 @@
        <property name="geometry">
         <rect>
          <x>314</x>
-         <y>230</y>
+         <y>240</y>
          <width>121</width>
          <height>23</height>
         </rect>
@@ -1046,7 +1097,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>200</y>
+         <y>180</y>
          <width>61</width>
          <height>21</height>
         </rect>
@@ -1059,7 +1110,7 @@
        <property name="geometry">
         <rect>
          <x>310</x>
-         <y>200</y>
+         <y>180</y>
          <width>131</width>
          <height>20</height>
         </rect>
@@ -1072,7 +1123,7 @@
        <property name="geometry">
         <rect>
          <x>80</x>
-         <y>200</y>
+         <y>180</y>
          <width>121</width>
          <height>22</height>
         </rect>
@@ -1082,7 +1133,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>120</y>
+         <y>100</y>
          <width>61</width>
          <height>21</height>
         </rect>
@@ -1095,7 +1146,7 @@
        <property name="geometry">
         <rect>
          <x>160</x>
-         <y>120</y>
+         <y>100</y>
          <width>281</width>
          <height>21</height>
         </rect>
@@ -1105,7 +1156,7 @@
        <property name="geometry">
         <rect>
          <x>210</x>
-         <y>200</y>
+         <y>180</y>
          <width>91</width>
          <height>20</height>
         </rect>
@@ -1118,7 +1169,7 @@
        <property name="geometry">
         <rect>
          <x>310</x>
-         <y>170</y>
+         <y>150</y>
          <width>131</width>
          <height>20</height>
         </rect>
@@ -1131,7 +1182,7 @@
        <property name="geometry">
         <rect>
          <x>190</x>
-         <y>20</y>
+         <y>0</y>
          <width>81</width>
          <height>16</height>
         </rect>
@@ -1151,7 +1202,7 @@
        <property name="geometry">
         <rect>
          <x>160</x>
-         <y>100</y>
+         <y>80</y>
          <width>70</width>
          <height>17</height>
         </rect>
@@ -1164,7 +1215,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
+         <y>80</y>
          <width>101</width>
          <height>21</height>
         </rect>
@@ -1177,7 +1228,7 @@
        <property name="geometry">
         <rect>
          <x>290</x>
-         <y>100</y>
+         <y>80</y>
          <width>101</width>
          <height>17</height>
         </rect>
@@ -1187,39 +1238,9 @@
        </property>
       </widget>
      </widget>
-     <widget class="QTableView" name="classView">
-      <property name="geometry">
-       <rect>
-        <x>470</x>
-        <y>40</y>
-        <width>301</width>
-        <height>241</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="classesLabel">
-      <property name="geometry">
-       <rect>
-        <x>600</x>
-        <y>20</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Classes</string>
-      </property>
-     </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_6">
+   <widget class="QWidget" name="fusionTab">
     <attribute name="title">
      <string>5 - Fusion</string>
     </attribute>
@@ -1353,7 +1374,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Groupe</string>
+       <string>Ajouter groupe</string>
       </property>
      </widget>
      <widget class="QLabel" name="bufferInGroupLabel_6">
@@ -1420,7 +1441,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="Friction">
+   <widget class="QWidget" name="frictionTab">
     <attribute name="title">
      <string>6 - Friction</string>
     </attribute>
@@ -1429,8 +1450,8 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>421</width>
-       <height>421</height>
+       <width>771</width>
+       <height>441</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -1444,8 +1465,8 @@
        <rect>
         <x>10</x>
         <y>70</y>
-        <width>321</width>
-        <height>191</height>
+        <width>721</width>
+        <height>291</height>
        </rect>
       </property>
      </widget>
@@ -1465,8 +1486,8 @@
      <widget class="QPushButton" name="frictionRun">
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>270</y>
+        <x>640</x>
+        <y>380</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -1516,8 +1537,8 @@
      <widget class="QgsFileWidget" name="frictionCsvFile">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>320</y>
+        <x>120</x>
+        <y>380</y>
         <width>211</width>
         <height>27</height>
        </rect>
@@ -1526,26 +1547,29 @@
      <widget class="QPushButton" name="frictionSave">
       <property name="geometry">
        <rect>
-        <x>260</x>
-        <y>320</y>
+        <x>340</x>
+        <y>380</y>
         <width>75</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>Run</string>
+       <string>Export</string>
       </property>
      </widget>
-    </widget>
-    <widget class="QgsExtentGroupBox" name="mExtentGroupBox">
-     <property name="geometry">
-      <rect>
-       <x>510</x>
-       <y>70</y>
-       <width>300</width>
-       <height>139</height>
-      </rect>
-     </property>
+     <widget class="QLabel" name="frictionSaveLabel">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>380</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Exporter CSV</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="tab">
@@ -1600,7 +1624,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Raster de départ</string>
+       <string>Vecteur de départ</string>
       </property>
      </widget>
      <widget class="QgsMapLayerComboBox" name="costStartRasterCombo">
@@ -1633,7 +1657,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Raster de perméabilité</string>
+       <string>Raster de friction</string>
       </property>
      </widget>
      <widget class="QgsSpinBox" name="costMaxVal">
@@ -1756,18 +1780,6 @@
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QgsCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QgsExtentGroupBox</class>
-   <extends>QgsCollapsibleGroupBox</extends>
-   <header>qgis.gui</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>

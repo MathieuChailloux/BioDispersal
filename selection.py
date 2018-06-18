@@ -16,23 +16,23 @@ selection_fields = ["in_layer","expr","class","group"]
 # TODO : manage duplicates
 class SelectionItem(DictItem):
 
-    def __init__(self,in_layer,expr,cls,group,class_descr="",group_descr="",code=None):
+    def __init__(self,in_layer,expr,cls,group):#,class_descr="",group_descr="",code=None):
         dict = {"in_layer" : in_layer,
                 "expr" : expr,
                 "class" : cls,
                 "group" : group}
         self.is_vector = isVectorPath(in_layer)
         self.is_raster = isRasterPath(in_layer)
-        class_item = classes.classModel.getClassByName(cls)
-        if not class_item:
-            class_item = classes.ClassItem(cls,class_descr,code)
-            classes.classModel.addItem(class_item)
-            classes.classModel.layoutChanged.emit()
-        group_item = groups.groupsModel.getGroupByName(group)
-        if not group_item:
-            group_item = groups.GroupItem(group,group_descr)
-            groups.groupsModel.addItem(group_item)
-            groups.groupsModel.layoutChanged.emit()
+        # class_item = classes.classModel.getClassByName(cls)
+        # if not class_item:
+            # class_item = classes.ClassItem(cls,class_descr,code)
+            # classes.classModel.addItem(class_item)
+            # classes.classModel.layoutChanged.emit()
+        # group_item = groups.groupsModel.getGroupByName(group)
+        # if not group_item:
+            # group_item = groups.GroupItem(group,group_descr)
+            # groups.groupsModel.addItem(group_item)
+            # groups.groupsModel.layoutChanged.emit()
         #self.cls = cls
         super().__init__(dict)
         
@@ -156,10 +156,14 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionAdd.clicked.connect(self.addItems)
         
     def setClass(self,text):
-        self.dlg.selectionClassName.setText(text)
+        cls_item = classes.getClassByName(text)
+        self.dlg.selectionClassName.setText(cls_item.dict["name"])
+        slef.dlg.selectionClassDescr.setText(cls_item.dict["descr"])
         
     def setGroup(self,text):
-        self.dlg.selectionGroup.setText(text)
+        grp_item = groups.getGroupByName(text)
+        self.dlg.selectionGroup.setText(grp_item.dict["name"])
+        self.dlg.selectionGroup.setText(grp_item.dict["descr"])
                         
     def setInLayerFromCombo(self,layer):
         debug("setInLayerFromCombo")
@@ -206,14 +210,52 @@ class SelectionConnector(AbstractConnector):
         # selection = SelectionItem(in_layer,expr,cls,group)
         # return selection
         
-    def mkItemFromExpr(self):
-        in_layer = self.dlg.selectionInLayer.filePath()
-        expr = self.dlg.selectionExpr.expression()
-        cls = self.dlg.selectionClassName.text()
-        class_descr = self.dlg.selectionClassName.text()
+    def getOrCreateGroup(self):
         group = self.dlg.selectionGroupName.text()
-        group_descr = self.dlg.selectionGroupDescr.text()
-        selection = SelectionItem(in_layer,expr,cls,group,class_descr,group_descr)
+        if not group:
+            user_error("No group selected")
+        group_item = groups.getGroupByName(group)
+        if not group_item:
+            group_descr = self.dlg.selectionGroupDescr.text()
+            in_layer_path = self.dlg.selectionInLayer.filePath()
+            checkFileExists(in_layer_path)
+            in_layer = loadVectorLayer(in_layer_path)
+            in_geom = getLayerSimpleGeomStr(in_layer)
+            group_item = groups.GroupItem(group,group_descr,in_geom)
+            groups.groupsModel.addItem(group_item)
+            groups.groupsModel.layoutChanged.emit()
+        return group_item
+        
+        
+    def getOrCreateClass(self):
+        cls = self.dlg.selectionClassName.text()
+        if not cls:
+            user_error("No class selected")
+        class_item = classes.getClassByName(cls)
+        if not class_item:
+            class_descr = self.dlg.selectionClassName.text()
+            class_item = ClassItem(cls,class_descr)
+            classes.classModel.addItem(class_item)
+            classes.classModel.layoutChanged.emit()
+        return class_item
+        
+        
+    def mkItemFromExpr(self):
+        in_layer_path = self.dlg.selectionInLayer.filePath()
+        checkFileExists(in_layer_path)
+        in_layer = loadVectorLayer(in_layer_path)
+        in_geom = getLayerSimpleGeomStr(in_layer)
+        # expr = self.dlg.selectionExpr.expression()
+        # cls = self.dlg.selectionClassName.text()
+        # class_descr = self.dlg.selectionClassName.text()
+        # group = self.dlg.selectionGroupName.text()
+        # group_descr = self.dlg.selectionGroupDescr.text()
+        grp_item = self.getOrCreateGroup()
+        grp_item.checkGeom(in_geom)
+        grp_name = grp_item.dict["name"]
+        class_item = self.getOrCreateClass()
+        cls_name = class_item.dict["name"]
+        selection = SelectionItem(in_layer_path,expr,cls_name,grp_name)#,class_descr,group_descr)
         return selection
         
         
@@ -221,11 +263,13 @@ class SelectionConnector(AbstractConnector):
         in_layer_path = self.dlg.selectionInLayer.filePath()
         checkFileExists(in_layer_path)
         in_layer = loadVectorLayer(in_layer_path)
+        in_geom = getLayerSimpleGeomStr(in_layer)
         field_name = self.dlg.selectionField.currentField()
         if not field_name:
             user_error("No field selected")
-        group = self.dlg.selectionGroupName.text()
-        group_descr = self.dlg.selectionGroupDescr.text()
+        grp_item = self.getOrCreateGroup()
+        grp_item.checkGeom(in_geom)
+        group = grp_item.dict["name"]
         if not group:
             user_error("No group selected")
         field_values = set()
@@ -236,11 +280,11 @@ class SelectionConnector(AbstractConnector):
         for fv in field_values:
             class_name = group + "_" + str(fv)
             class_descr = "Class " + str(fv) + " of group " + group
-            class_item = classes.ClassItem(class_name,class_descr,int(fv))
-            #classes.classModel.addItem(class_item)
-            #classes.classModel.layoutChanged.emit()
+            class_item = classes.ClassItem(class_name,class_descr,fv)
+            classes.classModel.addItem(class_item)
+            classes.classModel.layoutChanged.emit()
             expr = "\"" + field_name + "\" = " + str(fv)
-            item = SelectionItem(in_layer_path,expr,class_name,group,class_descr,group_descr)
+            item = SelectionItem(in_layer_path,expr,class_name,group)#,class_descr,group_descr)
             items.append(item)
         return items
         
@@ -251,7 +295,7 @@ class SelectionConnector(AbstractConnector):
         elif self.dlg.fieldSelectionMode.checkState() == 2:
             items = self.mkItemsFromField()
         else:
-            assert false
+            assert False
         for item in items:
             self.model.addItem(item)
             self.model.layoutChanged.emit()
