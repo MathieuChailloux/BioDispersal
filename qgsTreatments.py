@@ -31,17 +31,17 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None):
     width = int((x_max - x_min) / float(resolution))
     height = int((y_max - y_min) / float(resolution))
     parameters = ['gdal_rasterize',
-                  '-at',
+                  #'-l','tmp_layer',
+                  #'-at',
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
-                  '-ts', str(width), str(height),
-                  #'-tr',str(resolution),str(resolution),
-                  in_path,
-                  out_path]
-    parameters += ['-te',str(resolution),str(resolution)]
+                  '-ts', str(width), str(height)]
     if field == "geom":
-        parameters += ['-b', '1', '-burn', '1']
+        parameters += ['-burn', '1.0']
     else:
         parameters += ['-a',field]
+    parameters += ['-ot','Int32']
+    parameters += ['-of','GTiff']
+    parameters += [in_path,out_path]
     p = subprocess.Popen(parameters,stderr=subprocess.PIPE)
     # p = subprocess.Popen(['gdal_rasterize',
                             # '-l','layer_name',
@@ -120,9 +120,10 @@ def applyRCost(start_path,cost_path,cost,out_path):
                         '-r' : True,
                         '-i' : False,
                         '-b' : False}
+        feedback = QgsProcessingFeedback()
         utils.debug("parameters : " + str(parameters))
         try:
-            processing.run("grass7:r.cost",parameters)
+            processing.run("grass7:r.cost",parameters,feedback=feedback)
             print ("call to r.cost successful")
         except Exception as e:
             print ("Failed to call r.cost : " + str(e))

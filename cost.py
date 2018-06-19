@@ -31,28 +31,23 @@ class CostItem(DictItem):
         st_item = sous_trames.getSTByName(st_name)
         startLayer = self.dict["start_layer"]
         utils.checkFileExists(startLayer)
+        startRaster = st_item.getStartLayerPath()
         params.checkInit()
         extent_layer_path = params.getExtentLayer()
         #extent_layer_path = pathOfLayer(extent_layer)
-        applyRasterization(startLayer,"geom",st_item.getStartLayerPath(),
+        applyRasterization(startLayer,"geom",startRaster,
                            params.getResolution(),extent_layer_path)
         permRaster = self.dict["perm_layer"]
         #utils.checkFileExists(permRaster)
         cost = self.dict["cost"]
         outPath = st_item.getDispersionPath(cost)#.replace("\\\\","/")
-        applyRCost(startLayer,permRaster,cost,outPath)
-        #outPath = 'D:\MChailloux\tmp\workspace\tmp2\tmp\st1_dispersion_200.tif'
-        # debug ("startLayer = " + startLayer)
+        applyRCost(startRaster,permRaster,cost,outPath)
+        # outPath = 'D:\MChailloux\tmp\workspace\tmp2\tmp\st1_dispersion_200.tif'
+        # utils.debug ("startLayer = " + startLayer)
         # parameters = { 'input' : permRaster,
                         # 'start_raster' : startLayer,
                         # 'max_cost' : int(cost),
                         # 'output' : outPath,
-                        # 'start_coordinates' : '0,0',
-                        # 'stop_coordinates' : '0,0',
-                        # 'outdir' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_movements.tif',
-                        # 'nearest' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_nearest.tif',
-                        # 'start_points' :  None,
-                        # 'stop_points' : None,
                         # 'null_cost' : None,
                         # 'memory' : 5000,
                         # 'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
