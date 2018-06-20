@@ -99,6 +99,41 @@ class DictItem(AbstractGroupItem):
         xmlStr += "/>"
         return xmlStr
     
+class FieldsModel(QAbstractTableModel):
+
+    def __init__(self,parent,dict):
+        QAbstractTableModel.__init__(self)
+        self.dict = dict
+        self.fields = dict.keys()
+        
+    def rowCount(self,parent=QModelIndex()):
+        return len(self.fields)
+        
+    def columnCount(self,parent=QModelIndex()):
+        return 1
+    
+    def getNItem(self,n):
+        return self.dict[self.fields[n]]
+    
+    def data(self,index,role):
+        if not index.isValid():
+            return QVariant()
+        row = index.row()
+        item = self.getNItem(row)
+        if role != Qt.DisplayRole:
+            return QVariant()
+        elif row < self.rowCount():
+            return(QVariant(item))
+        else:
+            return QVariant()
+            
+    def headerData(self,col,orientation,role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return QVariant("value")
+        elif orientation == Qt.Vertical and role == Qt.DisplayRole:
+            return(self.fields[col])
+        return QVariant()
+    
 class AbstractGroupModel(QAbstractTableModel):
 
     def __init__(self,parent,fields):

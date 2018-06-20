@@ -2,6 +2,7 @@
 import os.path
 
 from qgis.gui import QgsFileWidget
+from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
 
 import utils
 import qgsUtils
@@ -33,22 +34,27 @@ def getResolution():
 def getExtentLayer():
     return params.extentLayer
         
-class ParamsModel(abstract_model.AbstractGroupModel):
+#class ParamsModel(abstract_model.AbstractGroupModel):
+class ParamsModel(QAbstractTableModel):
 
     def __init__(self):
         self.workspace = None
         self.extentLayer = None
         self.resolution = None
         self.useRelativePath = True
-        super().__init__(self,params_fields)
+        self.fields = ["workspace","extentLayer","resolution"]
+        QAbstractTableModel.__init__(self)
         
     def setExtentLayer(self,path):
         self.extentLayer = path
+        self.layoutChanged.emit()
+        
         #self.extentLayerPath = path
         #self.extentLayer = qgsUtils.loadVectorLayer(self.extentLayerPath)
         
     def setResolution(self,resolution):
         self.resolution = resolution
+        self.layoutChanged.emit()
         
     def setWorkspace(self,path):
         self.workspace = path
@@ -65,6 +71,7 @@ class ParamsModel(abstract_model.AbstractGroupModel):
             self.useRelativePath = True
         else:
             self.useRelativePath = False
+        self.layoutChanged.emit()
     
     def fromXMLRoot(self,root):
         dict = root.attrib
@@ -81,6 +88,7 @@ class ParamsModel(abstract_model.AbstractGroupModel):
         if resolution:
             self.setResolution(resolution)
         self.useRelativePath = bool(dict["useRelPath"])
+        self.layoutChanged.emit()
     
     def toXML(self,indent=""):
         xmlStr = indent + "<ParamsModel"
@@ -90,6 +98,42 @@ class ParamsModel(abstract_model.AbstractGroupModel):
         xmlStr += " useRelPath=\"" + str(self.useRelativePath) + "\""
         xmlStr += "/>"
         return xmlStr
+        
+    def rowCount(self,parent=QModelIndex()):
+        return 3
+        
+    def columnCount(self,parent=QModelIndex()):
+        return 1
+              
+    def getNItem(self,n):
+        items = [self.workspace,
+                 self.extentLayer,
+                 self.resolution,
+                 self.useRelativePath,
+                 ""]
+        return items[n]
+            
+    def data(self,index,role):
+        if not index.isValid():
+            return QVariant()
+        row = index.row()
+        item = self.getNItem(row)
+        if role != Qt.DisplayRole:
+            return QVariant()
+        elif row < self.rowCount():
+            return(QVariant(item))
+        else:
+            return QVariant()
+            
+    def flags(self, index):
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        
+    def headerData(self,col,orientation,role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return QVariant("value")
+        elif orientation == Qt.Vertical and role == Qt.DisplayRole:
+            return QVariant(self.fields[col])
+        return QVariant()
 
 class ParamsConnector:
 
@@ -101,6 +145,7 @@ class ParamsConnector:
         pass
         
     def connectComponents(self):
+        self.dlg.paramsView.setModel(self.model)
         self.dlg.rasterResolution.valueChanged.connect(self.model.setResolution)
         self.dlg.extentLayer.setStorageMode(QgsFileWidget.GetFile)
         self.dlg.extentLayer.fileChanged.connect(self.model.setExtentLayer)

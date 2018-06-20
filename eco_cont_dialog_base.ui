@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>5</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
@@ -454,8 +454,8 @@
       <rect>
        <x>70</x>
        <y>50</y>
-       <width>381</width>
-       <height>161</height>
+       <width>281</width>
+       <height>151</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -588,6 +588,16 @@
        <string>Override existing files</string>
       </property>
      </widget>
+    </widget>
+    <widget class="QTableView" name="paramsView">
+     <property name="geometry">
+      <rect>
+       <x>390</x>
+       <y>30</y>
+       <width>311</width>
+       <height>111</height>
+      </rect>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="stTab">
