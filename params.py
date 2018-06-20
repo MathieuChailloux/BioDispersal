@@ -3,6 +3,7 @@ import os.path
 
 from qgis.gui import QgsFileWidget
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
+from PyQt5.QtWidgets import QAbstractItemView
 
 import utils
 import qgsUtils
@@ -126,7 +127,7 @@ class ParamsModel(QAbstractTableModel):
             return QVariant()
             
     def flags(self, index):
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
         
     def headerData(self,col,orientation,role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -142,7 +143,8 @@ class ParamsConnector:
         self.model = ParamsModel()
         
     def initGui(self):
-        pass
+        #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
+        self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         
     def connectComponents(self):
         self.dlg.paramsView.setModel(self.model)
