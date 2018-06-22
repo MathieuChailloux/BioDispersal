@@ -68,6 +68,9 @@ class DictItem(AbstractGroupItem):
         self.nb_fields = len(fields)
         self.dict = dict
         
+    def __str__(self):
+        return str(self.dict)
+        
     def recompute(self):
         fields = list(self.dict.keys())
         self.field_to_idx = {f : fields.index(f) for f in fields}
@@ -248,7 +251,7 @@ class DictModel(AbstractGroupModel):
         return False
         
     def addItem(self,item):
-        utils.debug("DictItem.addItem")
+        utils.debug("DictItem.addItem " + str(item))
         if not item:
             utils.internal_error("Empty item")
         item.checkItem()

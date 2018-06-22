@@ -16,7 +16,7 @@ params_fields = ["extent","workspace","useRelPath"]
 
 def checkInit():
     if not params.workspace:
-        utils.user_error("Workspace paramter not initialized")
+        utils.user_error("Workspace parameter not initialized")
     if not params.extentLayer:
         utils.user_error("Extent layer paramter not initialized")
     if not params.resolution:

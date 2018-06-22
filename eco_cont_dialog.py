@@ -107,6 +107,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                         "ClassModel" : classConnector.model,
                         "SelectionModel" : selectionConnector.model,
                         "FusionModel" : fusionConnector.model,
+                        "FrictionModel" : frictionConnector.model,
                         "CostModel" : costConnector.model}
         
         

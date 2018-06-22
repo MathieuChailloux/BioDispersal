@@ -39,11 +39,11 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None):
                   '-of','GTiff',
                   'a_nodata','NoData']
     if field == "geom":
-        parameters += ['-burn', '1.0']
+        parameters += ['-burn', '1']
     else:
         parameters += ['-a',field]
-    parameters += ['-ot','Int32']
-    parameters += ['-of','GTiff']
+    #parameters += ['-ot','Int32']
+    #parameters += ['-of','GTiff']
     parameters += [in_path,out_path]
     p = subprocess.Popen(parameters,stderr=subprocess.PIPE)
     # p = subprocess.Popen(['gdal_rasterize',

@@ -13,6 +13,7 @@ import abstract_model
 import qgsTreatments
 
 frictionModel = None
+frictionFields = ["class_descr","class","code"]
 
 @pyqtSlot()
 def catchSTAdded(st_item):
@@ -49,8 +50,8 @@ class FrictionModel(abstract_model.DictModel):
         self.defaultVal = 100
         self.classes = []
         self.sous_trames = []
-        fields = ["class_descr","class","code"]
-        super().__init__(self,fields)
+        self.fields = ["class_descr","class","code"]
+        super().__init__(self,self.fields)
         
     def classExists(self,cls_name):
         for cls in self.classes:
@@ -90,6 +91,7 @@ class FrictionModel(abstract_model.DictModel):
                 i.dict[st_name] = self.defaultVal
                 i.recompute()
             self.fields.append(st_name)
+            frictionFields.append(st_name)
             self.sous_trames.append(st_item)
             self.layoutChanged.emit()
         
@@ -97,13 +99,8 @@ class FrictionModel(abstract_model.DictModel):
         utils.debug("removeSTFromName " + st_name)
         self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] != st_name]
         self.removeField(st_name)
+        frictionFields.remove(st_name)
         self.layoutChanged.emit()
-        # for i in self.items:
-            # utils.debug(str(i.dict.items()))
-            # del i.dict[st_name]
-            # i.recompute()
-        # self.removeField(st_name)
-        # self.layoutChanged.emit()
         
     def createRulesFiles(self):
         utils.debug("createRulesFiles")
@@ -146,22 +143,44 @@ class FrictionModel(abstract_model.DictModel):
         #self.applyReclass()
         self.applyReclassGdal()
         
-    def saveCSV(self):
-        fname = os.path.join(params.params.tmpDir,"friction.csv")
-        with open(fname,"w") as f:
-            writer = csv.DictWriter(f,fieldnames=self.fields)
+    def saveCSV(self,fname):
+        with open(fname,"w", newline='') as f:
+            writer = csv.DictWriter(f,fieldnames=self.fields,delimiter=';')
+            writer.writeheader()
             for i in self.items:
                 writer.writerow(i.dict)
                 
     @classmethod
-    def fromCSV(cls,root):
-        pass
-        
-           
+    def fromCSV(cls,fname):
+        model = cls()
+        with open(fname,"r") as f:
+            reader = csv.DictReader(f,fieldnames=frictionFields,delimiter=';')
+            header = reader.fieldnames
+            model.fields = header
+            model.sous_trames = []
+            for st in header[3:]:
+                st_item = sous_trames.getSTByName(st)
+                if not st_item:
+                    utils.user_error("ST '" + st + "' does not exist")
+                model.sous_trames.append(st_item)
+            first_line = next(reader)
+            for row in reader:
+                item = FrictionRowItem(row)
+                model.addItem(item)
+        return model
+    
+    @classmethod    
+    def fromXMLRoot(cls,root):
+        model = cls()
+        for fr in root:
+            item = FrictionRowItem(root.attrib)
+            model.addItem(item)
+        return model
            
 class FrictionConnector(abstract_model.AbstractConnector):
     
     def __init__(self,dlg):
+        global frictionModel
         self.dlg = dlg
         frictionModel = FrictionModel()
         super().__init__(frictionModel,self.dlg.frictionView,None,None)
@@ -180,6 +199,25 @@ class FrictionConnector(abstract_model.AbstractConnector):
         classes.classModel.classRemoved.connect(catchClassRemoved)
         super().connectComponents()
         self.dlg.frictionRun.clicked.connect(self.model.applyItems)
-        self.dlg.frictionSave.clicked.connect(self.model.saveCSV)
+        self.dlg.frictionSave.clicked.connect(self.saveCSV)
+        self.dlg.frictionLoad.clicked.connect(self.loadCSV)
         #sous_trames.stModel.groupAdded.connect(self.internCatchGroupAdded)
+        
+    def loadCSV(self):
+        global frictionModel, frictionFields
+        fname = self.dlg.frictionLoadFile.filePath()
+        utils.checkFileExists(fname)
+        new_model = self.model.fromCSV(fname)
+        self.model = new_model
+        frictionModel = new_model
+        frictionFields = new_model.fields
+        #self.view.setModel(self.model)
+        self.connectComponents()
+        self.model.layoutChanged.emit()
+        #frictionModel.layoutChanged.emit()
+        
+    def saveCSV(self):
+        fname = self.dlg.frictionCsvFile.filePath()
+        self.model.saveCSV(fname)
+     
             
