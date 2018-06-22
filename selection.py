@@ -122,6 +122,10 @@ class SelectionModel(DictModel):
                 selectionsByGroup[grp] = [i]
         for g, selections in selectionsByGroup.items():
             grp_item = groups.getGroupByName(g)
+            grp_vector_path = grp_item.getVectorPath()
+            if os.path.isfile(grp_vector_path):
+                utils.info("Deleting existing file '" + grp_vector_path + "'")
+                os.remove(grp_vector_path)
             for s in selections:
                 s.applyVectorItem()
             grp_item.applyRasterizationItem()
@@ -280,7 +284,7 @@ class SelectionConnector(AbstractConnector):
         for fv in field_values:
             class_name = group + "_" + str(fv)
             class_descr = "Class " + str(fv) + " of group " + group
-            class_item = classes.ClassItem(class_name,class_descr,fv)
+            class_item = classes.ClassItem(class_name,class_descr,None)
             classes.classModel.addItem(class_item)
             classes.classModel.layoutChanged.emit()
             expr = "\"" + field_name + "\" = " + str(fv)

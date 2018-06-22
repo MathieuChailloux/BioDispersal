@@ -205,8 +205,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         return xmlStr
 
     def saveModel(self):
-        xmlStr = self.toXML()
         fname = self.saveModelPath.filePath()
+        checkFileExists(fname)
+        xmlStr = self.toXML()
         writeFile(fname,xmlStr)
         
     def loadModel(self):

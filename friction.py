@@ -52,15 +52,22 @@ class FrictionModel(abstract_model.DictModel):
         fields = ["class_descr","class","code"]
         super().__init__(self,fields)
         
+    def classExists(self,cls_name):
+        for cls in self.classes:
+            if cls["class"] == cls_name:
+                return True
+        return False
+        
     def addClassItem(self,cls_item):
         new_row = {"class_descr" : cls_item.dict["descr"],
                    "class" : cls_item.dict["name"],
                    "code" : cls_item.dict["code"]}
         self.addSTCols(new_row)
         row_item = FrictionRowItem(new_row)
-        self.rows.append(new_row)
-        self.addItem(row_item)
-        self.layoutChanged.emit()
+        if not self.classExists(cls_item.dict["name"]):
+            self.rows.append(new_row)
+            self.addItem(row_item)
+            self.layoutChanged.emit()
         
     def removeClassFromName(self,name):
         self.classes = [cls_item for cls_item in self.classes if cls_item.dict["name"] != name]
@@ -76,14 +83,15 @@ class FrictionModel(abstract_model.DictModel):
             
     def addSTItem(self,st_item):
         st_name = st_item.dict["name"]
-        for r in self.rows:
-            r[st_name] = self.defaultVal
-        for i in self.items:
-            i.dict[st_name] = self.defaultVal
-            i.recompute()
-        self.fields.append(st_name)
-        self.sous_trames.append(st_item)
-        self.layoutChanged.emit()
+        if st_name not in self.fields:
+            for r in self.rows:
+                r[st_name] = self.defaultVal
+            for i in self.items:
+                i.dict[st_name] = self.defaultVal
+                i.recompute()
+            self.fields.append(st_name)
+            self.sous_trames.append(st_item)
+            self.layoutChanged.emit()
         
     def removeSTFromName(self,st_name):
         utils.debug("removeSTFromName " + st_name)
@@ -144,6 +152,10 @@ class FrictionModel(abstract_model.DictModel):
             writer = csv.DictWriter(f,fieldnames=self.fields)
             for i in self.items:
                 writer.writerow(i.dict)
+                
+    @classmethod
+    def fromCSV(cls,root):
+        pass
         
            
            

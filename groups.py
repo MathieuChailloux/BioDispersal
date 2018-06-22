@@ -81,7 +81,10 @@ class GroupItem(abstract_model.DictItem):
         group_name = self.dict["name"]
         in_path = self.getVectorPath()
         out_path = self.getRasterPath()
-        qgsTreatments.applyRasterization(in_path,field,out_path)
+        params.checkInit()
+        resolution = params.getResolution()
+        extent_path = params.getExtentLayer()
+        qgsTreatments.applyRasterization(in_path,field,out_path,resolution,extent_path)
         
 class GroupModel(abstract_model.DictModel):
 

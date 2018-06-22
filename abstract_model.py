@@ -44,7 +44,7 @@ class ArrayItem(AbstractGroupItem):
         if n < self.nb_fields:
             return self.arr[n]
         else:
-            utils.warn("getNField(" + str(n) + ") out of bounds : " + str(nb_fields))
+            utils.internal_error("getNField(" + str(n) + ") out of bounds : " + str(nb_fields))
             #assert false
             
     def updateNField(self,n,value):
@@ -80,7 +80,7 @@ class DictItem(AbstractGroupItem):
         else:
             utils.debug("getNField " + str(n))
             utils.debug("item fields = " + str(self.dict.keys()))
-            assert False
+            utils.internal_error("Accessing " + str(n) + " field < " + str(self.nb_fields))
             
     def updateNField(self,n,value):
         if n < self.nb_fields:
@@ -89,7 +89,7 @@ class DictItem(AbstractGroupItem):
             assert false
             
     def equals(self,other):
-        self.dict == other.dict
+        return (self.dict == other.dict)
         
     def toXML(self,indent=""):
         xmlStr = indent + "<" + self.__class__.__name__
@@ -249,6 +249,8 @@ class DictModel(AbstractGroupModel):
         
     def addItem(self,item):
         utils.debug("DictItem.addItem")
+        if not item:
+            utils.internal_error("Empty item")
         item.checkItem()
         if self.itemExists(item):
             utils.warn("Item " + str(item) + " already exists")

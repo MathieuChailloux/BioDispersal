@@ -161,3 +161,11 @@ def writeShapefile(layer,outfname):
     else:
         utils.user_error("Unable to create shapefile '" + outfname + "' : " + str(error_msg))
         
+def coordsOfExtentPath(extent_path):
+    extent_layer = loadVectorLayer(extent_path)
+    extent = extent_layer.extent()
+    x_min = extent.xMinimum()
+    x_max = extent.xMaximum()
+    y_min = extent.yMinimum()
+    y_max = extent.yMaximum()
+    return [str(x_min),str(y_min),str(x_max),str(y_max)]

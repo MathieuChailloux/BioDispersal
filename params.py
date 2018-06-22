@@ -34,6 +34,20 @@ def getResolution():
     
 def getExtentLayer():
     return params.extentLayer
+    
+def getExtentCoords():
+    extent_path = params.extentLayer
+    if extent_path:
+        return qgsUtils.coordsOfExtentPath(extent_path)
+        # extent_layer = qgsUtils.loadVectorLayer(extent_path)
+        # extent = extent_layer.extent()
+        # x_min = extent.xMinimum()
+        # x_max = extent.xMaximum()
+        # y_min = extent.yMinimum()
+        # y_max = extent.yMaximum()
+        # return [str(x_min),str(y_min),str(x_max),str(y_max)]
+    else:
+        utils.user_error("Extent layer not initialized")
         
 #class ParamsModel(abstract_model.AbstractGroupModel):
 class ParamsModel(QAbstractTableModel):

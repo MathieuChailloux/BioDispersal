@@ -32,9 +32,12 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None):
     height = int((y_max - y_min) / float(resolution))
     parameters = ['gdal_rasterize',
                   #'-l','tmp_layer',
-                  #'-at',
+                  '-at',
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
-                  '-ts', str(width), str(height)]
+                  '-ts', str(width), str(height),
+                  '-ot','Int16',
+                  '-of','GTiff',
+                  'a_nodata','NoData']
     if field == "geom":
         parameters += ['-burn', '1.0']
     else:
@@ -112,11 +115,11 @@ def applyRCost(start_path,cost_path,cost,out_path):
                         #'stop_points' : None,
                         'null_cost' : None,
                         'memory' : 5000,
-                        'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
+                        'GRASS_REGION_CELLSIZE_PARAMETER' : 25,
                         'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
                         'GRASS_MIN_AREA_PARAMETER' : 0,
                         '-k' : False,
-                        '-n' : False,
+                        '-n' : True,
                         '-r' : True,
                         '-i' : False,
                         '-b' : False}
