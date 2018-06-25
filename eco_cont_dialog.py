@@ -135,8 +135,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.groupVectRun.clicked.connect(self.selectEntities)
         #self.runButton.clicked.connect(self.runCost)
         # Main tab connectors
-        self.saveModelButton.clicked.connect(self.saveModel)
-        self.loadModelButton.clicked.connect(self.loadModel)
+        self.saveModelPath.fileChanged.connect(self.saveModel)
+        self.loadModelPath.fileChanged.connect(self.loadModel)
+        # self.saveModelButton.clicked.connect(self.saveModel)
+        # self.loadModelButton.clicked.connect(self.loadModel)
         self.saveModelPath.setStorageMode(QgsFileWidget.SaveFile)
         self.loadModelPath.setStorageMode(QgsFileWidget.GetFile)
         
@@ -205,14 +207,15 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         debug("Final xml : \n" + xmlStr)
         return xmlStr
 
-    def saveModel(self):
-        fname = self.saveModelPath.filePath()
-        checkFileExists(fname)
+    def saveModel(self,fname):
+        #fname = self.saveModelPath.filePath()
+        #checkFileExists(fname)
         xmlStr = self.toXML()
         writeFile(fname,xmlStr)
         
-    def loadModel(self):
-        modelPath = self.loadModelPath.filePath()
-        checkFileExists(modelPath)
+    def loadModel(self,fname):
+        #modelPath = self.loadModelPath.filePath()
+        debug("loadModel")
+        checkFileExists(fname)
         setConfigModels(self.models)
-        parseConfig(modelPath)
+        parseConfig(fname)

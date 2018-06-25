@@ -124,7 +124,7 @@ class SelectionModel(DictModel):
             grp_item = groups.getGroupByName(g)
             grp_vector_path = grp_item.getVectorPath()
             if os.path.isfile(grp_vector_path):
-                utils.info("Deleting existing file '" + grp_vector_path + "'")
+                info("Deleting existing file '" + grp_vector_path + "'")
                 os.remove(grp_vector_path)
             for s in selections:
                 s.applyVectorItem()
@@ -145,8 +145,8 @@ class SelectionConnector(AbstractConnector):
     def connectComponents(self):
         super().connectComponents()
         self.dlg.selectionInLayerCombo.layerChanged.connect(self.setInLayerFromCombo)
-        #self.dlg.selectionInLayer.fileChanged.connect(self.setInLayer)
-        self.dlg.selectionInLayer.fileChanged.connect(self.setInLayerField)
+        self.dlg.selectionInLayer.fileChanged.connect(self.setInLayer)
+        #self.dlg.selectionInLayer.fileChanged.connect(self.setInLayerField)
         #self.dlg.selectionFieldLayerCombo.layerChanged.connect(self.setInLayerFieldFromCombo)
         #self.dlg.selectionFieldLayer.fileChanged.connect(self.setInLayerField)
         #self.dlg.selectionFieldAdd.clicked.connect(self.addItemsFromField)
@@ -176,6 +176,8 @@ class SelectionConnector(AbstractConnector):
             self.dlg.selectionInLayer.lineEdit().setValue(path)
             self.dlg.selectionExpr.setLayer(layer)
             self.dlg.selectionField.setLayer(layer)
+        else:
+            warn("Could not load selection in layer")
         
     def setInLayer(self,path):
         debug("setInLayer " + path)
@@ -330,7 +332,10 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionFieldLabel.hide()
         self.dlg.selectionExpr.show()
         self.dlg.selectionExprLabel.show()
-        self.dlg.selectionClassLabel.show()
+        self.dlg.selectionFieldClassLabel.hide()
+        self.dlg.selectionClassAddLabel.show()
+        self.dlg.selectionClassAdd.show()
+        self.dlg.selectionClassNewLabel.show()
         self.dlg.selectionClassCombo.show()
         self.dlg.selectionClassName.show()
         self.dlg.selectionClassDescr.show()
@@ -342,7 +347,10 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionExprLabel.hide()
         self.dlg.selectionField.show()
         self.dlg.selectionFieldLabel.show()
-        self.dlg.selectionClassLabel.hide()
+        self.dlg.selectionFieldClassLabel.show()
+        self.dlg.selectionClassAddLabel.hide()
+        self.dlg.selectionClassAdd.hide()
+        self.dlg.selectionClassNewLabel.hide()
         self.dlg.selectionClassCombo.hide()
         self.dlg.selectionClassName.hide()
         self.dlg.selectionClassDescr.hide()

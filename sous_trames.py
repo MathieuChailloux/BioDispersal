@@ -93,7 +93,7 @@ class STConnector(abstract_model.AbstractConnector):
                          self.dlg.stAdd,self.dlg.stRemove)
         
     def initGui(self):
-        pass
+        self.dlg.stFilter.hide()
         
     def connectComponents(self):
         super().connectComponents()

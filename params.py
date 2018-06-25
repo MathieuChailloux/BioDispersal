@@ -159,6 +159,7 @@ class ParamsConnector:
     def initGui(self):
         #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
         self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        #self.dlg.loadModelFrame.hide()
         
     def connectComponents(self):
         self.dlg.paramsView.setModel(self.model)

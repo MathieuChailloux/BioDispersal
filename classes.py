@@ -110,8 +110,9 @@ class ClassConnector(abstract_model.AbstractConnector):
         super().connectComponents()
 
     def mkItem(self):
-        name = self.dlg.className.text()
-        descr = self.dlg.classDescr.text()
+        name = self.dlg.selectionClassName.text()
+        self.dlg.selectionClassCombo.setCurrentText(name)
+        descr = self.dlg.selectionClassDescr.text()
         classItem = ClassItem(name,descr,None)
         return classItem
          

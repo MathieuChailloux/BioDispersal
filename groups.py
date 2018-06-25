@@ -111,7 +111,9 @@ class GroupConnector(abstract_model.AbstractConnector):
         self.dlg = dlg
         groupsModel = GroupModel()
         super().__init__(groupsModel,self.dlg.groupsView,
-                        self.dlg.groupsAdd,self.dlg.groupsRemove)
+                        self.dlg.selectionGroupAdd,self.dlg.groupsRemove)
+        # super().__init__(groupsModel,self.dlg.groupsView,
+                        # self.dlg.groupsAdd,self.dlg.groupsRemove)
         
     def initGui(self):
         pass#self.dlg.groupFrame.hide()
@@ -120,8 +122,9 @@ class GroupConnector(abstract_model.AbstractConnector):
         super().connectComponents()
 
     def mkItem(self):
-        name = self.dlg.groupsName.text()
-        descr = self.dlg.groupsDescr.text()
+        name = self.dlg.selectionGroupName.text()
+        self.dlg.selectionGroupCombo.setCurrentText(name)
+        descr = self.dlg.selectionGroupDescr.text()
         groupsItem = GroupItem(name,descr)
         return groupsItem
          

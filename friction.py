@@ -199,13 +199,15 @@ class FrictionConnector(abstract_model.AbstractConnector):
         classes.classModel.classRemoved.connect(catchClassRemoved)
         super().connectComponents()
         self.dlg.frictionRun.clicked.connect(self.model.applyItems)
-        self.dlg.frictionSave.clicked.connect(self.saveCSV)
-        self.dlg.frictionLoad.clicked.connect(self.loadCSV)
+        # self.dlg.frictionSave.clicked.connect(self.saveCSV)
+        # self.dlg.frictionLoad.clicked.connect(self.loadCSV)
+        self.dlg.frictionCsvFile.fileChanged.connect(self.saveCSV)
+        self.dlg.frictionLoadFile.fileChanged.connect(self.loadCSV)
         #sous_trames.stModel.groupAdded.connect(self.internCatchGroupAdded)
         
-    def loadCSV(self):
+    def loadCSV(self,fname):
         global frictionModel, frictionFields
-        fname = self.dlg.frictionLoadFile.filePath()
+        #fname = self.dlg.frictionLoadFile.filePath()
         utils.checkFileExists(fname)
         new_model = self.model.fromCSV(fname)
         self.model = new_model
@@ -216,8 +218,8 @@ class FrictionConnector(abstract_model.AbstractConnector):
         self.model.layoutChanged.emit()
         #frictionModel.layoutChanged.emit()
         
-    def saveCSV(self):
-        fname = self.dlg.frictionCsvFile.filePath()
+    def saveCSV(self,fname):
+        #fname = self.dlg.frictionCsvFile.filePath()
         self.model.saveCSV(fname)
      
             
