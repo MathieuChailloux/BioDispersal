@@ -1,5 +1,5 @@
 
-from qgis.core import QgsProcessingFeedback
+from qgis.core import QgsProcessingFeedback, QgsProject
 
 import sys
 import subprocess
@@ -11,7 +11,7 @@ import qgsUtils
 def applySelection(in_layer,expr,out_layer):
     pass
     
-def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None):
+def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,load_flag=False):
     utils.debug("applyRasterization")
     in_layer = qgsUtils.loadVectorLayer(in_path)
     if extent_path:
@@ -37,7 +37,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None):
                   '-ts', str(width), str(height),
                   '-ot','Int16',
                   '-of','GTiff',
-                  'a_nodata','NoData']
+                  '-a_nodata','NoData']
     if field == "geom":
         parameters += ['-burn', '1']
     else:
@@ -62,6 +62,9 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None):
     utils.info(str(out))
     if err:
         utils.user_error(str(err))
+    elif load_flag:
+        res_layer = qgsUtils.loadRasterLayer(out_path)
+        QgsProject.instance().addMapLayer(res_layer)
         
 def applyReclassProcessing(in_path,out_path,rules_file,title):
     parameters = {'input' : in_path,

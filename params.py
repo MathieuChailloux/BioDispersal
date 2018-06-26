@@ -12,7 +12,7 @@ import abstract_model
 
 params = None
 
-params_fields = ["extent","workspace","useRelPath"]
+params_fields = ["extent","workspace","useRelPath","projectFile"]
 
 def checkInit():
     if not params.workspace:
@@ -57,7 +57,8 @@ class ParamsModel(QAbstractTableModel):
         self.extentLayer = None
         self.resolution = None
         self.useRelativePath = True
-        self.fields = ["workspace","extentLayer","resolution"]
+        self.projectFile = ""
+        self.fields = ["workspace","extentLayer","resolution","projectFile"]
         QAbstractTableModel.__init__(self)
         
     def setExtentLayer(self,path):
@@ -93,29 +94,31 @@ class ParamsModel(QAbstractTableModel):
         return self.fromXMLDict(dict)
     
     def fromXMLDict(self,dict):
-        ws = dict["workspace"]
-        if ws:
-            self.setWorkspace(ws)
-        et = dict["extent"]
-        if et:
-            self.setExtentLayer(et)
-        resolution = dict["resolution"]
-        if resolution:
-            self.setResolution(resolution)
-        self.useRelativePath = bool(dict["useRelPath"])
+        if "workspace" in dict:
+            self.setWorkspace(dict["workspace"])
+        if "extent" in dict:
+            self.setExtentLayer(dict["extent"])
+        if "resolution" in dict:
+            self.setResolution(dict["resolution"])
+        if "useRelPath" in dict:
+            self.useRelativePath = bool(dict["useRelPath"])
         self.layoutChanged.emit()
     
     def toXML(self,indent=""):
         xmlStr = indent + "<ParamsModel"
-        xmlStr += " resolution=\"" + str(self.resolution) + "\""
-        xmlStr += " workspace=\"" + str(self.workspace) + "\""
-        xmlStr += " extent=\"" + str(self.extentLayer) + "\""
-        xmlStr += " useRelPath=\"" + str(self.useRelativePath) + "\""
+        if self.resolution:
+            xmlStr += " resolution=\"" + str(self.resolution) + "\""
+        if self.workspace:
+            xmlStr += " workspace=\"" + str(self.workspace) + "\""
+        if self.extentLayer:
+            xmlStr += " extent=\"" + str(self.extentLayer) + "\""
+        if self.useRelativePath:
+            xmlStr += " useRelPath=\"" + str(self.useRelativePath) + "\""
         xmlStr += "/>"
         return xmlStr
         
     def rowCount(self,parent=QModelIndex()):
-        return 3
+        return len(self.fields)
         
     def columnCount(self,parent=QModelIndex()):
         return 1
@@ -124,6 +127,7 @@ class ParamsModel(QAbstractTableModel):
         items = [self.workspace,
                  self.extentLayer,
                  self.resolution,
+                 self.projectFile,
                  self.useRelativePath,
                  ""]
         return items[n]
@@ -159,6 +163,8 @@ class ParamsConnector:
     def initGui(self):
         #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
         self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.dlg.saveModelPath.setFilter("*.xml")
+        self.dlg.loadModelPath.setFilter("*.xml")
         #self.dlg.loadModelFrame.hide()
         
     def connectComponents(self):

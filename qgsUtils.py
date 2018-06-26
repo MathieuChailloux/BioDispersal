@@ -72,12 +72,20 @@ def isRasterPath(fname):
     return (extension in vector_extensions)
     
 def loadVectorLayer(fname):
+    utils.checkFileExists(fname)
     layer = QgsVectorLayer(fname, layerNameOfPath(fname), "ogr")
     if layer == None:
         utils.user_error("Could not load layer '" + fname + "'")
     if not layer.isValid():
         utils.user_error("Invalid layer '" + fname + "'")
     return layer
+    
+def loadRasterLayer(fname):
+    utils.checkFileExists(fname)
+    rlayer = QgsRasterLayer(fname, layerNameOfPath(fname))
+    if not rlayer.isValid():
+        utils.internal_error("Invalid raster layer '" + fname + "'")
+    return rlayer
     
 def getLoadedLayerByName(name):
     layers = QgsProject.instance().mapLayersByName('my layer name')

@@ -187,6 +187,9 @@ class FrictionConnector(abstract_model.AbstractConnector):
         
     def initGui(self):
         self.dlg.frictionCsvFile.setStorageMode(QgsFileWidget.SaveFile)
+        self.dlg.frictionCsvFile.setFilter("*.csv")
+        self.dlg.frictionLoadFile.setStorageMode(QgsFileWidget.GetFile)
+        self.dlg.frictionLoadFile.setFilter("*.csv")
         
     @pyqtSlot()
     def internCatchGroupAdded(grp):

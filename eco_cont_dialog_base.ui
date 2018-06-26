@@ -285,9 +285,9 @@
      <property name="geometry">
       <rect>
        <x>40</x>
-       <y>210</y>
-       <width>311</width>
-       <height>101</height>
+       <y>400</y>
+       <width>361</width>
+       <height>131</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -299,8 +299,8 @@
      <widget class="QgsFileWidget" name="saveModelPath">
       <property name="geometry">
        <rect>
-        <x>130</x>
-        <y>30</y>
+        <x>160</x>
+        <y>50</y>
         <width>171</width>
         <height>27</height>
        </rect>
@@ -310,13 +310,13 @@
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>30</y>
+        <y>50</y>
         <width>111</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Enregistrer projet</string>
+       <string>Enregistrer projet sous</string>
       </property>
      </widget>
      <widget class="QLabel" name="paramlabel_5">
@@ -341,8 +341,8 @@
      <widget class="QgsFileWidget" name="loadModelPath">
       <property name="geometry">
        <rect>
-        <x>130</x>
-        <y>60</y>
+        <x>160</x>
+        <y>20</y>
         <width>171</width>
         <height>27</height>
        </rect>
@@ -352,13 +352,39 @@
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>60</y>
+        <y>20</y>
         <width>111</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
        <string>Ouvrir projet</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_42">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>80</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Enregistrer projet</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="saveProjectButton">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>80</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Enregistrer</string>
       </property>
      </widget>
     </widget>
@@ -505,10 +531,10 @@
     <widget class="QTableView" name="paramsView">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>330</y>
-       <width>541</width>
-       <height>111</height>
+       <x>40</x>
+       <y>220</y>
+       <width>501</width>
+       <height>141</height>
       </rect>
      </property>
     </widget>
@@ -636,7 +662,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Name</string>
+       <string>Nom</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_104">
