@@ -171,6 +171,7 @@ class SelectionConnector(AbstractConnector):
                         
     def setInLayerFromCombo(self,layer):
         debug("setInLayerFromCombo")
+        debug(str(layer.__class__.__name__))
         if layer:
             path=pathOfLayer(layer)
             self.dlg.selectionInLayer.lineEdit().setValue(path)
@@ -182,14 +183,13 @@ class SelectionConnector(AbstractConnector):
     def setInLayer(self,path):
         debug("setInLayer " + path)
         loaded_layer = loadVectorLayer(path)
-        #loaded_layer = QgsVectorLayer(path, "test", "ogr")
-        debug(str(loaded_layer))
+        QgsProject.instance().addMapLayer(loaded_layer)
         if loaded_layer == None:
             user_error("Could not load layer '" + path + "'")
         if not loaded_layer.isValid():
             user_error("Invalid layer '" + path + "'")
-        debug(str(loaded_layer.fields().names()))
-        # TODO : fix setLayer not working
+        QgsProject.instance().addMapLayer(loaded_layer)
+        self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
         self.dlg.selectionExpr.setLayer(loaded_layer)
         self.dlg.selectionField.setLayer(loaded_layer)
         debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
