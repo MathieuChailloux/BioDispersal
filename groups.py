@@ -10,6 +10,7 @@ import params
 import qgsTreatments
          
 groups_fields = ["name","descr","geom"]
+groupsConnector = None
 groupsModel = None
 
 def getGroupLayer(grp):

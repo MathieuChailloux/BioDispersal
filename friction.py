@@ -12,6 +12,7 @@ import params
 import abstract_model
 import qgsTreatments
 
+frictionConnector = None
 frictionModel = None
 frictionFields = ["class_descr","class","code"]
 
@@ -46,7 +47,6 @@ class FrictionRowItem(abstract_model.DictItem):
 class FrictionModel(abstract_model.DictModel):
 
     def __init__(self):
-        self.rows = []
         self.defaultVal = 100
         self.classes = []
         self.sous_trames = []
@@ -66,7 +66,7 @@ class FrictionModel(abstract_model.DictModel):
         self.addSTCols(new_row)
         row_item = FrictionRowItem(new_row)
         if not self.classExists(cls_item.dict["name"]):
-            self.rows.append(new_row)
+            #self.rows.append(new_row)
             self.addItem(row_item)
             self.layoutChanged.emit()
         
@@ -79,14 +79,16 @@ class FrictionModel(abstract_model.DictModel):
                 return
         
     def addSTCols(self,row):
+        utils.debug("addSTCols")
         for st in sous_trames.getSTList():
             row[st] = self.defaultVal
             
     def addSTItem(self,st_item):
+        utils.debug("addSTItem")
         st_name = st_item.dict["name"]
         if st_name not in self.fields:
-            for r in self.rows:
-                r[st_name] = self.defaultVal
+            # for r in self.rows:
+                # r[st_name] = self.defaultVal
             for i in self.items:
                 i.dict[st_name] = self.defaultVal
                 i.recompute()
@@ -134,8 +136,9 @@ class FrictionModel(abstract_model.DictModel):
             utils.checkFileExists(st_merged_fname)
             st_friction_fname = st_item.getFrictionPath()
             reclass_dict = {}
-            for r in self.rows:
-                reclass_dict[r['code']] = r[st_item.dict["name"]]
+            for r in self.items:
+                reclass_dict[r.dict['code']] = r.dict[st_item.dict["name"]]
+            utils.debug(str(reclass_dict))
             #utils.debug("applyReclassGdal")
             qgsTreatments.applyReclassGdal(st_merged_fname,st_friction_fname,reclass_dict)
         
@@ -153,6 +156,7 @@ class FrictionModel(abstract_model.DictModel):
     @classmethod
     def fromCSV(cls,fname):
         model = cls()
+        model.classes = classes.classModel.items
         with open(fname,"r") as f:
             reader = csv.DictReader(f,fieldnames=frictionFields,delimiter=';')
             header = reader.fieldnames
@@ -169,13 +173,19 @@ class FrictionModel(abstract_model.DictModel):
                 model.addItem(item)
         return model
     
-    @classmethod    
-    def fromXMLRoot(cls,root):
-        model = cls()
+        
+    def fromXMLRoot(self,root):
+        #model = cls()
+        eraseFlag = True
+        if eraseFlag:
+            self.classes = classes.classModel.items
+            self.sous_trames = sous_trames.stModel.items
+            self.items = []
         for fr in root:
-            item = FrictionRowItem(root.attrib)
-            model.addItem(item)
-        return model
+            item = FrictionRowItem(fr.attrib)
+            self.addItem(item)
+        self.layoutChanged.emit()
+        #return model
            
 class FrictionConnector(abstract_model.AbstractConnector):
     
@@ -219,7 +229,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         #self.view.setModel(self.model)
         self.connectComponents()
         self.model.layoutChanged.emit()
-        #frictionModel.layoutChanged.emit()
+        frictionModel.layoutChanged.emit()
         
     def saveCSV(self,fname):
         #fname = self.dlg.frictionCsvFile.filePath()

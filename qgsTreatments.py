@@ -95,6 +95,8 @@ def applyReclassGdal(in_path,out_path,reclass_dict):
         expr += str(new_cls) + '*(A==' + str(old_cls)+ ')'
     cmd_args.append(expr)
     utils.executeCmd(cmd_args)
+    res_layer = qgsUtils.loadRasterLayer(out_path)
+    QgsProject.instance().addMapLayer(res_layer)
     # p = subprocess.Popen(cmd_args,stderr=subprocess.PIPE,stdout=subprocess.PIPE)
     # out,err = p.communicate()
     # utils.debug(str(p.args))
@@ -131,6 +133,8 @@ def applyRCost(start_path,cost_path,cost,out_path):
         try:
             processing.run("grass7:r.cost",parameters,feedback=feedback)
             print ("call to r.cost successful")
+            res_layer = qgsUtils.loadRasterLayer(out_path)
+            QgsProject.instance().addMapLayer(res_layer)
         except Exception as e:
             print ("Failed to call r.cost : " + str(e))
             raise e

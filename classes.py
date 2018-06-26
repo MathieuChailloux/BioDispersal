@@ -9,6 +9,7 @@ import qgsUtils
 import params
          
 class_fields = ["name","code","descr"]
+classConnector = None
 classModel = None
 
 def getClassLayer(grp):

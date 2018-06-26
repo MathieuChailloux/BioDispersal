@@ -73,9 +73,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.connectComponents()
         
     def initTabs(self):
-        global classModel
-        #metagroupConnector = Metagroups(self)
-        #groupConnector = groups.GroupConnector(self,metagroupConnector.model)
+        #global params.paramsConnector, classes.classConnector
         paramsConnector = params.ParamsConnector(self)
         params.params = paramsConnector.model
         stConnector = sous_trames.STConnector(self)
@@ -91,24 +89,33 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         costConnector = CostConnector(self)
         #bufferConnector = BufferConnector(self,groupConnector.model)
         #rasterizationConnector = RasterizationConnector(self)
-        self.tabs = [paramsConnector,
-                     stConnector,
-                     groupsConnector,
-                     classConnector,
-                     selectionConnector,
-                     fusionConnector,
-                     frictionConnector,
-                     costConnector]
+        self.connectors = {"Params" : paramsConnector,
+                           "ST" : stConnector,
+                           "Group" : groupsConnector,
+                           "Class" : classConnector,
+                           "Selection" : selectionConnector,
+                           "Fusion" : fusionConnector,
+                           "Friction" : frictionConnector,
+                           "Cost" : costConnector}
+        self.recomputeModels()
+        # self.tabs = [paramsConnector,
+                     # stConnector,
+                     # groupsConnector,
+                     # classConnector,
+                     # self.selectionConnector,
+                     # self.fusionConnector,
+                     # self.frictionConnector,
+                     # self.costConnector]
                      #bufferConnector,
                      #rasterizationConnector]
-        self.models = {"ParamsModel" : paramsConnector.model,
-                        "STModel" : stConnector.model,
-                        "GroupModel" : groupsConnector.model,
-                        "ClassModel" : classConnector.model,
-                        "SelectionModel" : selectionConnector.model,
-                        "FusionModel" : fusionConnector.model,
-                        "FrictionModel" : frictionConnector.model,
-                        "CostModel" : costConnector.model}
+        # self.models = {"ParamsModel" : paramsConnector.model,
+                        # "STModel" : stConnector.model,
+                        # "GroupModel" : groupsConnector.model,
+                        # "ClassModel" : classConnector.model,
+                        # "SelectionModel" : selectionConnector.model,
+                        # "FusionModel" : fusionConnector.model,
+                        # "FrictionModel" : frictionConnector.model,
+                        # "CostModel" : costConnector.model}
         
         
     def initGui(self):
@@ -122,13 +129,13 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         new_w = self.width * 0.8
         new_h = self.height * 0.8
         #self.tabWidget.setGeometry(self.x + step_x, self.y + step_y, new_w, new_h)
-        for tab in self.tabs:
+        for k, tab in self.connectors.items():
             tab.initGui()
         self.groupsTab.hide()
         self.treatmentsFrame.hide()
         
     def connectComponents(self):
-        for tab in self.tabs:
+        for k, tab in self.connectors.items():
             tab.connectComponents()
         #self.buttonAddGroup.clicked.connect(self.addGroup)
         #self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
@@ -190,15 +197,25 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
     def updateGroupVectLayer(self,layer):
         self.groupVectFieldExpr.setLayer(layer)
         
-    def selectEntities(self):
-        debug("Start selectEntities")
-        layer = self.groupVectMapLayer.currentLayer()
-        fieldExpr = self.groupVectFieldExpr.expression()
-        group = self.groupVectGroup.currentText()
-        selection = layer.getFeatures(QgsFeatureRequest().setFilterExpression(fieldExpr))
-        newLayer=QgsVectorLayer("Polygon?crs=epsg:2154", "Segment buffers", "memory")
-        writeShapefile(layer,'D:\MChailloux\PNRHL_QGIS\\test.shp')
-        debug("End selectEntities")
+    # def selectEntities(self):
+        # debug("Start selectEntities")
+        # layer = self.groupVectMapLayer.currentLayer()
+        # fieldExpr = self.groupVectFieldExpr.expression()
+        # group = self.groupVectGroup.currentText()
+        # selection = layer.getFeatures(QgsFeatureRequest().setFilterExpression(fieldExpr))
+        # newLayer=QgsVectorLayer("Polygon?crs=epsg:2154", "Segment buffers", "memory")
+        # writeShapefile(layer,'D:\MChailloux\PNRHL_QGIS\\test.shp')
+        # debug("End selectEntities")
+        
+    def recomputeModels(self):
+        self.models = {"ParamsModel" : params.params,
+                        "STModel" : sous_trames.stModel,
+                        "GroupModel" : groups.groupsModel,
+                        "ClassModel" : classes.classModel,
+                        "SelectionModel" : self.connectors["Selection"].model,
+                        "FusionModel" : self.connectors["Fusion"].model,
+                        "FrictionModel" : friction.frictionModel,
+                        "CostModel" : self.connectors["Cost"].model}
         
     def toXML(self):
         xmlStr = "<ModelConfig>\n"
@@ -209,12 +226,14 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         return xmlStr
 
     def saveModelAs(self,fname):
+        self.recomputeModels()
         xmlStr = self.toXML()
         params.params.projectFile = fname
         writeFile(fname,xmlStr)
         
     def saveModel(self):
         fname = params.params.projectFile
+        checkFileExists(fname)
         self.saveModelAs(fname)
         
     def loadModel(self,fname):

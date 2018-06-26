@@ -16,6 +16,7 @@ from .qgsTreatments import *
 from .config_parsing import *
 
 fusion_fields = ["name","descr"]
+fusionConnector = None
         
 class FusionModel(abstract_model.AbstractGroupModel):
     
@@ -83,10 +84,12 @@ class FusionModel(abstract_model.AbstractGroupModel):
             st_item = sous_trames.getSTByName(st)
             groups = self.st_groups[st]
             utils.debug("apply fusion to " + st)
+            utils.debug(str([g.dict["name"] for g in groups.items]))
             grp_args = [g.getRasterPath() for g in groups.items]
             utils.debug(str(grp_args))
+            out_path = st_item.getMergedPath()
             cmd_args = ['gdal_merge.bat',
-                        '-o', st_item.getMergedPath(),
+                        '-o', out_path,
                         '-of', 'GTiff',
                         '-ot','Int16',
                         '-n','0']
@@ -100,6 +103,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
             utils.info(str(out))
             if err:
                 utils.user_error(str(err))
+            else:
+                res_layer = qgsUtils.loadRasterLayer(out_path)
+                QgsProject.instance().addMapLayer(res_layer)
             
     def updateItems(self,i1,i2):
         k = self.current_st
