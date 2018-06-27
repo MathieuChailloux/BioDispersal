@@ -8,6 +8,7 @@ from PyQt5.QtGui import QIcon
 
 import abstract_model
 import utils
+import xmlUtils
 import qgsUtils
 import params
 import sous_trames
@@ -16,7 +17,7 @@ from .qgsTreatments import *
 from .config_parsing import *
 
 fusion_fields = ["name","descr"]
-fusionConnector = None
+#fusionConnector = None
         
 class FusionModel(abstract_model.AbstractGroupModel):
     
@@ -64,18 +65,22 @@ class FusionModel(abstract_model.AbstractGroupModel):
         xmlStr += indent + "</" + self.__class__.__name__ + ">"
         return xmlStr
     
-    @classmethod
-    def fromXMLRoot(cls,root):
+    def fromXMLRoot(self,root):
         #checkFields(fusion_fields,dict.keys())
-        fusion_model = cls() 
+        eraseFlag = xmlUtils.getNbChildren(root) > 0
+        if eraseFlag:
+            pass#self.items = []
+        #fusion_model = cls() 
         for st_root in root:
             st_name = st_root.attrib["name"]
-            fusion_model.current_st = st_name
+            self.current_st = st_name
             for grp in st_root:
-                grp_model = parseModel(grp)
-                fusion_model.st_groups[st_name] = grp_model
-                fusion_model.current_model = grp_model
-        return fusion_model
+                grp_model = parseModel(grp,True)
+                if not grp_model:
+                    utils.internal_error("Could not parse group model for " + st_name)
+                self.st_groups[st_name] = grp_model
+                self.current_model = grp_model
+        #return fusion_model
         
     def applyItems(self):
         res = str(params.getResolution())
@@ -92,7 +97,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
                         '-o', out_path,
                         '-of', 'GTiff',
                         '-ot','Int16',
-                        '-n','0']
+                        '-n', 'NoData',
+                        '-a_nodata', 'NoData']
             #cmd_args += ['-ul_lr']
             #cmd_args += extent_coords
             #cmd_args += ['-ps',res,res]
