@@ -97,8 +97,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
                         '-o', out_path,
                         '-of', 'GTiff',
                         '-ot','Int16',
-                        '-n', 'NoData',
-                        '-a_nodata', 'NoData']
+                        '-n', nodata_val,
+                        '-a_nodata', '-1']
             #cmd_args += ['-ul_lr']
             #cmd_args += extent_coords
             #cmd_args += ['-ps',res,res]
@@ -142,7 +142,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         self.current_model.layoutChanged.emit()
         
     def data(self,index,role):
-        utils.debug("[dataFusionModel]")
+        #utils.debug("[dataFusionModel]")
         return self.current_model.data(index,role)
         
     def rowCount(self,parent=QModelIndex()):

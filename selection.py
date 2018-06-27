@@ -124,8 +124,7 @@ class SelectionModel(DictModel):
             grp_item = groups.getGroupByName(g)
             grp_vector_path = grp_item.getVectorPath()
             if os.path.isfile(grp_vector_path):
-                info("Deleting existing file '" + grp_vector_path + "'")
-                os.remove(grp_vector_path)
+                removeFile(grp_vector_path)
             for s in selections:
                 s.applyVectorItem()
             grp_item.applyRasterizationItem()

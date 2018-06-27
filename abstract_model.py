@@ -164,8 +164,9 @@ class AbstractGroupModel(QAbstractTableModel):
     def headerData(self,col,orientation,role):
         #if col >= self.columnCount():
         if col >= len(self.fields):
-            utils.warn("Header out of bounds : " + self.__class__.__name__
-                        + " " + str(col) + " " + str(self.fields))
+            pass
+            #utils.warn("Header out of bounds : " + self.__class__.__name__
+            #            + " " + str(col) + " " + str(self.fields))
         elif orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return QVariant(self.fields[col])
         return QVariant()

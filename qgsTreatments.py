@@ -8,6 +8,8 @@ import processing
 import utils
 import qgsUtils
 
+nodata_val = '-1'
+
 def applySelection(in_layer,expr,out_layer):
     pass
     
@@ -37,7 +39,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
                   '-ts', str(width), str(height),
                   '-ot','Int16',
                   '-of','GTiff',
-                  '-a_nodata','NoData']
+                  '-a_nodata',nodata_val]
     if field == "geom":
         parameters += ['-burn', '1']
     else:

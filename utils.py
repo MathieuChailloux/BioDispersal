@@ -68,6 +68,11 @@ def checkFileExists(fname):
     if not (os.path.isfile(fname)):
         user_error("File '" + fname + "' does not exist")
         
+def removeFile(path):
+    info("Deleting existing file '" + path + "'")
+    os.remove(path)
+    
+        
 def writeFile(fname,str):
     with open(fname,"w") as f:
         f.write(str)
