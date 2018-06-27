@@ -113,23 +113,27 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 res_layer = qgsUtils.loadRasterLayer(out_path)
                 QgsProject.instance().addMapLayer(res_layer)
             
-    def updateItems(self,i1,i2):
-        k = self.current_st
-        self.current_model.items[i1], self.current_model.items[i2] = self.current_model.items[i2], self.current_model.items[i1]
-        self.current_model.layoutChanged.emit()
+    # def updateItems(self,i1,i2):
+        # k = self.current_st
+        # self.current_model.items[i1], self.current_model.items[i2] = self.current_model.items[i2], self.current_model.items[i1]
+        # self.current_model.layoutChanged.emit()
         
-    def upgradeElem(self,idx):
-        row = idx.row()
-        utils.debug("upgradeElem " + str(row))
-        if row > 0:
-            self.updateItems(row -1, row)
-        #self.layoutChanged.emit()
+    # def upgradeElem(self,idx):
+        # row = idx.row()
+        # utils.debug("upgradeElem " + str(row))
+        # if row > 0:
+            # self.swapItems(row -1, row)
         
     def downgradeElem(self,idx):
         row = idx.row()
         utils.debug("downgradeElem " + str(row))
         if row < len(self.current_model.items) - 1:
-            self.updateItems(row, row + 1)
+            self.swapItems(row, row + 1)
+            
+    def swapItems(self,i1,i2):
+        self.current_model.swapItems(i1,i2)
+        #self.current_model.layoutChanged.emit()
+        self.layoutChanged.emit()
         
     def removeItems(self,index):
         utils.debug("[removeItems] nb of items = " + str(len(self.current_model.items))) 
@@ -192,27 +196,27 @@ class FusionConnector(abstract_model.AbstractConnector):
         grp_item = groups.groupsModel.getGroupByName(grp)
         return grp_item   
         
-    def upgradeItem(self):
-        utils.debug("upgradeItem")
-        indices = self.view.selectedIndexes()
-        nb_indices = len(indices)
-        if nb_indices == 0:
-            utils.debug("no idx selected")
-        elif nb_indices == 1:
-            self.model.upgradeElem(indices[0])
-        else:
-            utils.warn("Several indices selected, please select only one")
+    # def upgradeItem(self):
+        # utils.debug("upgradeItem")
+        # indices = self.view.selectedIndexes()
+        # nb_indices = len(indices)
+        # if nb_indices == 0:
+            # utils.debug("no idx selected")
+        # elif nb_indices == 1:
+            # self.model.upgradeElem(indices[0])
+        # else:
+            # utils.warn("Several indices selected, please select only one")
             
-    def downgradeItem(self):
-        utils.debug("downgradeItem")
-        indices = self.view.selectedIndexes()
-        nb_indices = len(indices)
-        if nb_indices == 0:
-            utils.debug("no idx selected")
-        elif nb_indices == 1:
-            self.model.downgradeElem(indices[0])
-        else:
-            utils.warn("Several indices selected, please select only one")
+    # def downgradeItem(self):
+        # utils.debug("downgradeItem")
+        # indices = self.view.selectedIndexes()
+        # nb_indices = len(indices)
+        # if nb_indices == 0:
+            # utils.debug("no idx selected")
+        # elif nb_indices == 1:
+            # self.model.downgradeElem(indices[0])
+        # else:
+            # utils.warn("Several indices selected, please select only one")
         
 # class FusionConnector:
     

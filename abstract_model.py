@@ -1,6 +1,5 @@
 
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
-#from .utils import *
 import utils
 
 from abc import ABC, abstractmethod
@@ -236,6 +235,22 @@ class AbstractGroupModel(QAbstractTableModel):
         self.items = sorted(self.items, key=lambda i: i.dict[i.idx_to_fields[idx]])
         self.layoutChanged.emit()
         
+    def upgradeElem(self,idx):
+        row = idx.row()
+        utils.debug("upgradeElem " + str(row))
+        if row > 0:
+            self.swapItems(row -1, row)
+        
+    def downgradeElem(self,idx):
+        row = idx.row()
+        utils.debug("downgradeElem " + str(row))
+        if row < len(self.items) - 1:
+            self.swapItems(row, row + 1)
+            
+    def swapItems(self,i1,i2):
+        self.items[i1], self.items[i2] = self.items[i2], self.items[i1]
+        self.layoutChanged.emit()
+        
 class DictModel(AbstractGroupModel):
 
     def __init__(self,parent,fields):
@@ -319,4 +334,26 @@ class AbstractConnector:
         indices = self.view.selectedIndexes()
         utils.debug(str(indices))
         self.model.removeItems(indices)
+        
+    def upgradeItem(self):
+        utils.debug("upgradeItem")
+        indices = self.view.selectedIndexes()
+        nb_indices = len(indices)
+        if nb_indices == 0:
+            utils.debug("no idx selected")
+        elif nb_indices == 1:
+            self.model.upgradeElem(indices[0])
+        else:
+            utils.warn("Several indices selected, please select only one")
+            
+    def downgradeItem(self):
+        utils.debug("downgradeItem")
+        indices = self.view.selectedIndexes()
+        nb_indices = len(indices)
+        if nb_indices == 0:
+            utils.debug("no idx selected")
+        elif nb_indices == 1:
+            self.model.downgradeElem(indices[0])
+        else:
+            utils.warn("Several indices selected, please select only one")
         

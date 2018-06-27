@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
@@ -702,7 +702,7 @@
      <widget class="QTableView" name="selectionView">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>60</x>
         <y>420</y>
         <width>561</width>
         <height>192</height>
@@ -712,7 +712,7 @@
      <widget class="QPushButton" name="selectionRun">
       <property name="geometry">
        <rect>
-        <x>210</x>
+        <x>270</x>
         <y>620</y>
         <width>121</width>
         <height>23</height>
@@ -1164,6 +1164,32 @@
         <string>Ajouter</string>
        </property>
       </widget>
+     </widget>
+     <widget class="QPushButton" name="selectionUp">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>450</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="selectionDown">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>550</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
      </widget>
     </widget>
    </widget>

@@ -1,11 +1,10 @@
 
 #from qgis.gui import QgsMapLayerProxyModel
 from qgis.core import QgsMapLayerProxyModel
-#from PyQt5.QtGui import QgsMapLayerProxyModel
+from PyQt5.QtGui import QIcon
 from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 from .utils import *
 from .qgsUtils import *
-#from .groups import classModel
 import params
 import classes
 import groups
@@ -138,6 +137,10 @@ class SelectionConnector(AbstractConnector):
                         None,self.dlg.selectionRemove)
                         
     def initGui(self):
+        upIcon = QIcon(':plugins/eco_cont/icons/up-arrow.png')
+        downIcon = QIcon(':plugins/eco_cont/icons/down-arrow.png')
+        self.dlg.selectionUp.setIcon(upIcon)
+        self.dlg.selectionDown.setIcon(downIcon)
         self.activateFieldMode()
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         
@@ -157,6 +160,8 @@ class SelectionConnector(AbstractConnector):
         self.dlg.fieldSelectionMode.stateChanged.connect(self.switchFieldMode)
         self.dlg.exprSelectionMode.stateChanged.connect(self.switchExprMode)
         self.dlg.selectionAdd.clicked.connect(self.addItems)
+        self.dlg.selectionUp.clicked.connect(self.upgradeItem)
+        self.dlg.selectionDown.clicked.connect(self.downgradeItem)
         
     def setClass(self,text):
         cls_item = classes.getClassByName(text)
