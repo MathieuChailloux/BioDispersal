@@ -55,7 +55,7 @@ class FrictionModel(abstract_model.DictModel):
         
     def classExists(self,cls_name):
         for cls in self.classes:
-            if cls["class"] == cls_name:
+            if cls.dict["class"] == cls_name:
                 return True
         return False
         

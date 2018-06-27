@@ -1,6 +1,7 @@
 
 import os.path
 
+from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsFileWidget
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
 from PyQt5.QtWidgets import QAbstractItemView
@@ -12,7 +13,9 @@ import abstract_model
 
 params = None
 
-params_fields = ["extent","workspace","useRelPath","projectFile"]
+params_fields = ["extent","workspace","useRelPath","projectFile","crs"]
+
+defaultCrs = QgsCoordinateReferenceSystem("EPSG:2154")
 
 def checkInit():
     if not params.workspace:
@@ -21,6 +24,10 @@ def checkInit():
         utils.user_error("Extent layer paramter not initialized")
     if not params.resolution:
         utils.user_error("Resolution paramter not initialized")
+    if not params.crs:
+        utils.user_error("CRS paramter not initialized")
+    if not params.crs.isValid():
+        utils.user_error("Invalid CRS")
 
 def mkTmpPath(fname):
     if params.tmpDir:
@@ -58,7 +65,8 @@ class ParamsModel(QAbstractTableModel):
         self.resolution = None
         self.useRelativePath = True
         self.projectFile = ""
-        self.fields = ["workspace","extentLayer","resolution","projectFile"]
+        self.crs = defaultCrs
+        self.fields = ["workspace","extentLayer","resolution","projectFile","crs"]
         QAbstractTableModel.__init__(self)
         
     def setExtentLayer(self,path):
@@ -71,6 +79,13 @@ class ParamsModel(QAbstractTableModel):
     def setResolution(self,resolution):
         self.resolution = resolution
         self.layoutChanged.emit()
+        
+    def setCrs(self,crs):
+        self.crs = crs
+        self.layoutChanged.emit()
+        
+    def getCrsStr(self):
+        return self.crs.authid().lower()
         
     def setWorkspace(self,path):
         self.workspace = path
@@ -128,7 +143,7 @@ class ParamsModel(QAbstractTableModel):
                  self.extentLayer,
                  self.resolution,
                  self.projectFile,
-                 self.useRelativePath,
+                 self.crs.description(),
                  ""]
         return items[n]
             
@@ -165,6 +180,7 @@ class ParamsConnector:
         self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.dlg.saveModelPath.setFilter("*.xml")
         self.dlg.loadModelPath.setFilter("*.xml")
+        self.dlg.paramsCrs.setCrs(defaultCrs)
         #self.dlg.loadModelFrame.hide()
         
     def connectComponents(self):
@@ -175,6 +191,8 @@ class ParamsConnector:
         self.dlg.workspace.setStorageMode(QgsFileWidget.GetDirectory)
         self.dlg.workspace.fileChanged.connect(self.model.setWorkspace)
         self.dlg.paramsRelPath.stateChanged.connect(self.model.setUseRelPath)
+        self.dlg.paramsCrs.crsChanged.connect(self.model.setCrs)
+        self.model.layoutChanged.emit()
         
         
 # def initParams(dlg):

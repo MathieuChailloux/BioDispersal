@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Plugin Test</string>
   </property>
-  <widget class="QTabWidget" name="groups">
+  <widget class="QTabWidget" name="pluginTabs">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -26,11 +26,11 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
-     <string>Paramètes</string>
+     <string>Paramètres</string>
     </attribute>
     <widget class="QLabel" name="paramlabel">
      <property name="geometry">
@@ -285,7 +285,7 @@
      <property name="geometry">
       <rect>
        <x>40</x>
-       <y>400</y>
+       <y>470</y>
        <width>361</width>
        <height>131</height>
       </rect>
@@ -393,8 +393,8 @@
       <rect>
        <x>70</x>
        <y>50</y>
-       <width>281</width>
-       <height>151</height>
+       <width>461</width>
+       <height>211</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -408,8 +408,8 @@
        <rect>
         <x>110</x>
         <y>0</y>
-        <width>151</width>
-        <height>27</height>
+        <width>261</width>
+        <height>21</height>
        </rect>
       </property>
      </widget>
@@ -431,8 +431,8 @@
        <rect>
         <x>110</x>
         <y>30</y>
-        <width>151</width>
-        <height>27</height>
+        <width>261</width>
+        <height>21</height>
        </rect>
       </property>
      </widget>
@@ -454,8 +454,8 @@
        <rect>
         <x>110</x>
         <y>60</y>
-        <width>151</width>
-        <height>27</height>
+        <width>261</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="maximum">
@@ -479,7 +479,7 @@
       <property name="geometry">
        <rect>
         <x>240</x>
-        <y>110</y>
+        <y>140</y>
         <width>16</width>
         <height>17</height>
        </rect>
@@ -488,24 +488,27 @@
        <string/>
       </property>
      </widget>
-     <widget class="QCheckBox" name="paramsRelPath_3">
+     <widget class="QCheckBox" name="eraseExisting">
       <property name="geometry">
        <rect>
         <x>240</x>
-        <y>130</y>
+        <y>160</y>
         <width>16</width>
         <height>17</height>
        </rect>
       </property>
       <property name="text">
        <string/>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QLabel" name="useRelPathLabel">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>110</y>
+        <y>140</y>
         <width>141</width>
         <height>16</height>
        </rect>
@@ -518,7 +521,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>130</y>
+        <y>160</y>
         <width>151</width>
         <height>16</height>
        </rect>
@@ -527,14 +530,63 @@
        <string>Écraser les fichiers existants</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_108">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>180</y>
+        <width>211</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Afficher l'onglet de visualisation</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="displayVisu">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>180</y>
+        <width>16</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Afficher l'onglet de visualisation</string>
+      </property>
+     </widget>
+     <widget class="QgsProjectionSelectionWidget" name="paramsCrs">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>90</y>
+        <width>261</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_47">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Projection*</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QTableView" name="paramsView">
      <property name="geometry">
       <rect>
        <x>40</x>
-       <y>220</y>
-       <width>501</width>
-       <height>141</height>
+       <y>270</y>
+       <width>511</width>
+       <height>181</height>
       </rect>
      </property>
     </widget>
@@ -546,8 +598,8 @@
     <widget class="QFrame" name="frame_28">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>10</y>
+       <x>30</x>
+       <y>20</y>
        <width>441</width>
        <height>401</height>
       </rect>
@@ -726,7 +778,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>0</y>
+        <y>10</y>
         <width>571</width>
         <height>401</height>
        </rect>
@@ -954,7 +1006,7 @@
       <widget class="QLabel" name="selectionLabel">
        <property name="geometry">
         <rect>
-         <x>190</x>
+         <x>30</x>
          <y>0</y>
          <width>81</width>
          <height>16</height>
@@ -1200,7 +1252,7 @@
     <widget class="QFrame" name="frame_11">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>50</x>
        <y>10</y>
        <width>411</width>
        <height>501</height>
@@ -1395,8 +1447,8 @@
     <widget class="QFrame" name="frame_10">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>20</y>
+       <x>40</x>
+       <y>10</y>
        <width>781</width>
        <height>641</height>
       </rect>
@@ -1534,8 +1586,8 @@
     <widget class="QPushButton" name="costRun">
      <property name="geometry">
       <rect>
-       <x>200</x>
-       <y>470</y>
+       <x>220</x>
+       <y>460</y>
        <width>161</width>
        <height>31</height>
       </rect>
@@ -1547,8 +1599,8 @@
     <widget class="QTableView" name="costView">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>240</y>
+       <x>70</x>
+       <y>230</y>
        <width>451</width>
        <height>221</height>
       </rect>
@@ -1557,8 +1609,8 @@
     <widget class="QFrame" name="frame">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>60</y>
+       <x>70</x>
+       <y>50</y>
        <width>451</width>
        <height>161</height>
       </rect>
@@ -1714,8 +1766,8 @@
     <widget class="QLabel" name="label_28">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>10</y>
+       <x>50</x>
+       <y>20</y>
        <width>81</width>
        <height>16</height>
       </rect>
@@ -1734,13 +1786,13 @@
    </widget>
    <widget class="QWidget" name="groupsTab">
     <attribute name="title">
-     <string>Groupes/Classes</string>
+     <string>Visualisation</string>
     </attribute>
     <widget class="QFrame" name="groupFrame">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>10</y>
+       <x>30</x>
+       <y>20</y>
        <width>381</width>
        <height>361</height>
       </rect>
@@ -1799,7 +1851,7 @@
      <property name="geometry">
       <rect>
        <x>430</x>
-       <y>10</y>
+       <y>20</y>
        <width>411</width>
        <height>321</height>
       </rect>
@@ -1863,6 +1915,11 @@
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
+   <header>qgis.gui</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsProjectionSelectionWidget</class>
+   <extends>QWidget</extends>
    <header>qgis.gui</header>
   </customwidget>
   <customwidget>

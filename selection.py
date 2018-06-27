@@ -1,6 +1,6 @@
 
 #from qgis.gui import QgsMapLayerProxyModel
-from qgis.core import QgsMapLayerProxyModel
+from qgis.core import QgsMapLayerProxyModel, QgsCoordinateTransform, QgsProject, QgsGeometry
 from PyQt5.QtGui import QIcon
 from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 from .utils import *
@@ -57,15 +57,30 @@ class SelectionItem(DictItem):
         class_item = classes.getClassByName(class_name)
         group_name = self.dict["group"]
         group_item = groups.getGroupByName(group_name)
-        out_vector_layer = group_item.vectorLayer
-        if not out_vector_layer:
-            out_vector_layer = createLayerFromExisting(in_layer,class_name + "_vector")
+        out_vector_layer_path = group_item.getVectorPath()
+        if os.path.isfile(out_vector_layer_path):
+            out_vector_layer = group_item.vectorLayer
+        else:
+            out_vector_layer = createLayerFromExisting(in_layer,class_name + "_vector",
+                                                       geomType=None,crs=params.params.getCrsStr())
+            group_item.vectorLayer = out_vector_layer
             orig_field = QgsField("Origin", QVariant.String)
             class_field = QgsField("Class", QVariant.String)
             code_field = QgsField("Code", QVariant.String)
             out_vector_layer.dataProvider().addAttributes([orig_field,class_field,code_field])
             out_vector_layer.updateFields()
         pr = out_vector_layer.dataProvider()
+        in_crs = in_layer.sourceCrs()
+        out_crs = out_vector_layer.sourceCrs()
+        debug("in_crs : " + str(in_crs.description()))
+        debug("out_crs : " + str(out_crs.description()))
+        debug("in_crsid : " + str(in_crs.authid()))
+        debug("out_crsid : " + str(out_crs.authid()))
+        if in_crs.authid() == out_crs.authid():
+            transform_flag = False
+        else:
+            transform_flag = True
+            transformator = QgsCoordinateTransform(in_crs,out_crs,QgsProject.instance())
         if expr:
             feats = in_layer.getFeatures(QgsFeatureRequest().setFilterExpression(expr))
         else:
@@ -75,7 +90,12 @@ class SelectionItem(DictItem):
         tmp_cpt = 0
         for f in feats:
             tmp_cpt += 1
-            new_f.setGeometry(f.geometry())
+            geom = f.geometry()
+            if transform_flag:
+                transf_res = geom.transform(transformator)#,QgsCoordinateTransform.ForwardTransform)
+                if transf_res != QgsGeometry.Success:
+                    internal_error("Could not transform geometry : " + str(trasf_res))
+            new_f.setGeometry(geom)
             new_f["Origin"] = in_layer.name()
             new_f["Class"] = class_name
             new_f["Code"] = class_item.dict["code"]
@@ -178,7 +198,7 @@ class SelectionConnector(AbstractConnector):
         debug(str(layer.__class__.__name__))
         if layer:
             path=pathOfLayer(layer)
-            self.dlg.selectionInLayer.lineEdit().setValue(path)
+            #self.dlg.selectionInLayer.lineEdit().setValue(path)
             self.dlg.selectionExpr.setLayer(layer)
             self.dlg.selectionField.setLayer(layer)
         else:

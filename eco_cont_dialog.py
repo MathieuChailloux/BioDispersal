@@ -98,6 +98,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                            "Friction" : frictionConnector,
                            "Cost" : costConnector}
         self.recomputeModels()
+        #self.visuTab = 
         # self.tabs = [paramsConnector,
                      # stConnector,
                      # groupsConnector,
@@ -153,6 +154,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
     def onResize(self,event):
         new_size = event.size()
         
+    def displayVisuTab(self):
+        pass
         
     # def runCost(self):
         # debug("Start runCost")
