@@ -8,7 +8,7 @@ import processing
 import utils
 import qgsUtils
 
-nodata_val = '-1'
+nodata_val = '-9999'
 
 def applySelection(in_layer,expr,out_layer):
     pass

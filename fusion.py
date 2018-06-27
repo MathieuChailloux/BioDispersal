@@ -98,7 +98,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
                         '-of', 'GTiff',
                         '-ot','Int16',
                         '-n', nodata_val,
-                        '-a_nodata', '-1']
+                        '-a_nodata', nodata_val]
             #cmd_args += ['-ul_lr']
             #cmd_args += extent_coords
             #cmd_args += ['-ps',res,res]

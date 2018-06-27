@@ -8,7 +8,7 @@ import sous_trames
 from .abstract_model import *
 from .qgsTreatments import *
 
-cost_fields = ["start_layer","perm_layer","cost"]
+cost_fields = ["st_name","start_layer","perm_layer","cost"]
 
 class CostItem(DictItem):
 
