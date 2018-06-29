@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Plugin Test</string>
+   <string>BioDispersal</string>
   </property>
   <widget class="QTabWidget" name="pluginTabs">
    <property name="geometry">
