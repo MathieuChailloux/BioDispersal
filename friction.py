@@ -179,7 +179,9 @@ class FrictionModel(abstract_model.DictModel):
             for st in header[3:]:
                 st_item = sous_trames.getSTByName(st)
                 if not st_item:
-                    utils.user_error("ST '" + st + "' does not exist")
+                    utils.debug(str(frictionFields))
+                    utils.debug(str(st))
+                    utils.user_error("Sous-trame '" + st + "' does not exist")
                 model.sous_trames.append(st_item)
             first_line = next(reader)
             for row in reader:

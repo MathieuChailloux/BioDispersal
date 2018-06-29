@@ -189,7 +189,7 @@ class SelectionConnector(AbstractConnector):
     def setClass(self,text):
         cls_item = classes.getClassByName(text)
         self.dlg.selectionClassName.setText(cls_item.dict["name"])
-        slef.dlg.selectionClassDescr.setText(cls_item.dict["descr"])
+        self.dlg.selectionClassDescr.setText(cls_item.dict["descr"])
         
     def setGroup(self,text):
         grp_item = groups.getGroupByName(text)
@@ -244,7 +244,7 @@ class SelectionConnector(AbstractConnector):
         # return selection
         
     def getOrCreateGroup(self):
-        group = self.dlg.selectionGroupName.text()
+        group = self.dlg.selectionGroupCombo.currentText()
         if not group:
             user_error("No group selected")
         group_item = groups.getGroupByName(group)
@@ -262,7 +262,7 @@ class SelectionConnector(AbstractConnector):
         
         
     def getOrCreateClass(self):
-        cls = self.dlg.selectionClassName.text()
+        cls = self.dlg.selectionClassCombo.currentText()
         if not cls:
             user_error("No class selected")
         class_item = classes.getClassByName(cls)

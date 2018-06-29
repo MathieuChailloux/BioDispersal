@@ -209,6 +209,7 @@ class ParamsConnector:
         self.dlg.options2Frame.hide()
         self.model.setResolution(25)
         self.dlg.rasterResolution.setValue(25)
+        self.dlg.paramsView.setColumnWidth(1,50)
         #self.dlg.loadModelFrame.hide()
         
     def connectComponents(self):

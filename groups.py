@@ -64,13 +64,27 @@ class GroupItem(abstract_model.DictItem):
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
 
+    def getGroupPath(self):
+        params.checkWorkspaceInit()
+        groups_path = os.path.join(params.params.workspace,"Groupes")
+        if not os.path.isdir(groups_path):
+            utils.info("Creating groups directory '" + groups_path + "'")
+            os.makedirs(groups_path)
+        group_path = os.path.join(groups_path,self.name)
+        if not os.path.isdir(group_path):
+            utils.info("Creating group directory '" + group_path + "'")
+            os.makedirs(group_path)
+        return group_path
+        
     def getVectorPath(self):
         basename = self.name + "_vector.shp"
-        return params.mkTmpPath(basename,True)
+        grp_path = self.getGroupPath()
+        return os.path.join(grp_path,basename)
         
     def getRasterPath(self):
         basename = self.name + "_raster.tif"
-        return params.mkTmpPath(basename,True)
+        grp_path = self.getGroupPath()
+        return os.path.join(grp_path,basename)
         
     def saveVectorLayer(self):
         vector_path = self.getVectorPath()

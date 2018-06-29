@@ -4,6 +4,7 @@ from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
 import params
 import abstract_model
 import utils
+import os
 
 st_fields = ["name","descr"]
 stModel = None
@@ -32,25 +33,42 @@ class STItem(abstract_model.DictItem):
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
         
+    def getSTPath(self):
+        params.checkWorkspaceInit()
+        all_st_path = os.path.join(params.params.workspace,"SousTrames")
+        if not os.path.isdir(all_st_path):
+            utils.info("Creating ST directory '" + all_st_path + "'")
+            os.makedirs(all_st_path)
+        st_path = os.path.join(all_st_path,self.name)
+        if not os.path.isdir(st_path):
+            utils.info("Creating ST directory '" + st_path + "'")
+            os.makedirs(st_path)
+        return st_path
+        
     def getMergedPath(self):
         basename = self.name + "_merged.tif"
-        return params.mkTmpPath(basename,abs_flag=True)
+        st_path = self.getSTPath()
+        return os.path.join(st_path,basename)
         
     def getRulesPath(self):
         basename = self.name + "_rules.txt"
-        return params.mkTmpPath(basename,abs_flag=True)
+        st_path = self.getSTPath()
+        return os.path.join(st_path,basename)
         
     def getFrictionPath(self):
         basename = self.name + "_friction.tif"
-        return params.mkTmpPath(basename,abs_flag=True)
+        st_path = self.getSTPath()
+        return os.path.join(st_path,basename)
         
     def getDispersionPath(self,cost):
         basename = self.name + "_dispersion_" + str(cost) + ".tif"
-        return params.mkTmpPath(basename,abs_flag=True)
+        st_path = self.getSTPath()
+        return os.path.join(st_path,basename)
         
     def getStartLayerPath(self):
         basename = self.name + "_start.tif"
-        return params.mkTmpPath(basename,abs_flag=True)
+        st_path = self.getSTPath()
+        return os.path.join(st_path,basename)
         
         
         
@@ -94,6 +112,9 @@ class STConnector(abstract_model.AbstractConnector):
         
     def initGui(self):
         self.dlg.stFilter.hide()
+        #self.dlg.stView.setColumnWidth(0,25)
+        #self.dlg.stView.setColumnWidth(1,50)
+        #self.dlg.stView.setColumnWidth(2,100)
         
     def connectComponents(self):
         super().connectComponents()

@@ -97,7 +97,7 @@ class DictItem(AbstractGroupItem):
         xmlStr = indent + "<" + self.__class__.__name__
         for k,v in self.dict.items():
             utils.debug(str(v))
-            xmlStr += indent + " " + k + "='" + str(v) + "'"
+            xmlStr += indent + " " + k + "=\"" + str(v).replace('"','&quot;') + "\""
         xmlStr += "/>"
         return xmlStr
     

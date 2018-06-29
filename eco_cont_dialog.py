@@ -235,7 +235,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         
     def saveModel(self):
         fname = params.params.projectFile
-        checkFileExists(fname,"Model ")
+        checkFileExists(fname,"Project ")
         self.saveModelAs(fname)
         
     def loadModel(self,fname):

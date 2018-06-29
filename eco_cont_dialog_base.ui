@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>5</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
@@ -1964,32 +1964,32 @@
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgsfieldcombobox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsfieldexpressionwidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>
-   <header>qgsfilewidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgsmaplayercombobox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsprojectionselectionwidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgsspinbox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources/>
