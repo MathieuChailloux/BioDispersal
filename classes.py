@@ -76,7 +76,7 @@ class ClassModel(abstract_model.DictModel):
         
     def codeExists(self,n):
         for i in self.items:
-            if i.dict["code"] == n:
+            if int(i.dict["code"]) == n:
                 return True
         return False
             

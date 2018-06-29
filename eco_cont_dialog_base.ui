@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
@@ -1401,8 +1401,8 @@
       <rect>
        <x>50</x>
        <y>10</y>
-       <width>411</width>
-       <height>501</height>
+       <width>441</width>
+       <height>621</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -1415,7 +1415,7 @@
       <property name="geometry">
        <rect>
         <x>330</x>
-        <y>360</y>
+        <y>510</y>
         <width>71</width>
         <height>21</height>
        </rect>
@@ -1497,7 +1497,7 @@
       <property name="geometry">
        <rect>
         <x>70</x>
-        <y>360</y>
+        <y>510</y>
         <width>111</width>
         <height>21</height>
        </rect>
@@ -1512,7 +1512,7 @@
         <x>70</x>
         <y>110</y>
         <width>341</width>
-        <height>241</height>
+        <height>391</height>
        </rect>
       </property>
      </widget>
@@ -1520,7 +1520,7 @@
       <property name="geometry">
        <rect>
         <x>220</x>
-        <y>390</y>
+        <y>540</y>
         <width>71</width>
         <height>31</height>
        </rect>
