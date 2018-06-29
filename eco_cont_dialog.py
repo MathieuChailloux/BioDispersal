@@ -132,7 +132,6 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.tabWidget.setGeometry(self.x + step_x, self.y + step_y, new_w, new_h)
         for k, tab in self.connectors.items():
             tab.initGui()
-        self.groupsTab.hide()
         self.treatmentsFrame.hide()
         
     def connectComponents(self):
@@ -236,7 +235,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         
     def saveModel(self):
         fname = params.params.projectFile
-        checkFileExists(fname)
+        checkFileExists(fname,"Model ")
         self.saveModelAs(fname)
         
     def loadModel(self,fname):

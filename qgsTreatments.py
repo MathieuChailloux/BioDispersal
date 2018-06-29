@@ -109,8 +109,8 @@ def applyReclassGdal(in_path,out_path,reclass_dict):
         
 def applyRCost(start_path,cost_path,cost,out_path):
         utils.debug ("applyRCost")
-        utils.checkFileExists(start_path)
-        utils.checkFileExists(cost_path)
+        utils.checkFileExists(start_path,"Dispersion Start Layer ")
+        utils.checkFileExists(cost_path,"Dispersion Permeability Raster ")
         parameters = { 'input' : cost_path,
                         'start_raster' : start_path,
                         'max_cost' : int(cost),

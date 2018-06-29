@@ -30,7 +30,7 @@ class CostItem(DictItem):
         st_name = self.dict["st_name"]
         st_item = sous_trames.getSTByName(st_name)
         startLayer = params.getOrigPath(self.dict["start_layer"])
-        utils.checkFileExists(startLayer)
+        utils.checkFileExists(startLayer,"Dispersion Start Layer ")
         startRaster = st_item.getStartLayerPath()
         params.checkInit()
         extent_layer_path = params.getExtentLayer()
@@ -103,8 +103,10 @@ class CostConnector(AbstractConnector):
         
     def connectComponents(self):
         self.dlg.costSTCombo.setModel(sous_trames.stModel)
-        self.dlg.costStartLayerCombo.layerChanged.connect(self.setStartLayerFromCombo)
-        self.dlg.costPermRasterCombo.layerChanged.connect(self.setPermRasterFromCombo)
+        #self.dlg.costStartLayerCombo.layerChanged.connect(self.setStartLayerFromCombo)
+        self.dlg.costStartLayer.fileChanged.connect(self.setStartLayer)
+        self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
+        #self.dlg.costPermRasterCombo.layerChanged.connect(self.setPermRasterFromCombo)
         self.dlg.costRun.clicked.connect(self.model.applyItems)
         super().connectComponents()
         
@@ -112,6 +114,14 @@ class CostConnector(AbstractConnector):
         st_item = sous_trames.getSTByName(text)
         st_friction_path = st_item.getFrictionPath()
         self.dlg.costPermRaster.lineEdit().setValue(st_friction_path)
+        
+    def setStartLayer(self,path):
+        layer = loadVectorLayer(path)
+        self.dlg.costStartLayerCombo.setLayer(layer)
+        
+    def setPermRaster(self,path):
+        layer = loadRasterLayer(path)
+        self.dlg.costPermRasterCombo.setLayer(layer)
         
     def setStartLayerFromCombo(self,layer):
         utils.debug("setStartLayerFromCombo")
@@ -127,9 +137,11 @@ class CostConnector(AbstractConnector):
         
     def mkItem(self):
         st_name = self.dlg.costSTCombo.currentText()
-        start_layer = params.normalizePath(self.dlg.costStartLayer.filePath())
-        perm_layer = params.normalizePath(self.dlg.costPermRaster.filePath())
+        start_layer = self.dlg.costStartLayerCombo.layer()
+        start_layer_path = params.normalizePath(pathOfLayer(start_layer))
+        perm_layer = self.dlg.costPermRasterCombo.layer()
+        perm_layer_path = params.normalizePath(pathOfLayer(perm_layer))
         cost = str(self.dlg.costMaxVal.value())
-        cost_item = CostItem(st_name,start_layer,perm_layer,cost)
+        cost_item = CostItem(st_name,start_layer_path,perm_layer_path,cost)
         return cost_item
         

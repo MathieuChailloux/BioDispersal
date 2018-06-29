@@ -64,9 +64,9 @@ def todo_error(msg):
 def normPath(fname):
     return fname.replace('\\','/')
     
-def checkFileExists(fname):
+def checkFileExists(fname,prefix=""):
     if not (os.path.isfile(fname)):
-        user_error("File '" + fname + "' does not exist")
+        user_error(prefix + "File '" + fname + "' does not exist")
         
 def removeFile(path):
     info("Deleting existing file '" + path + "'")

@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
@@ -1658,7 +1658,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Ouvrir le tableau de friction depuis</string>
+        <string>Ouvrir le tableau</string>
        </property>
       </widget>
       <widget class="QLabel" name="frictionSaveLabel">
@@ -1679,26 +1679,26 @@
    </widget>
    <widget class="QWidget" name="tab">
     <attribute name="title">
-     <string>6 - Coût cumulé</string>
+     <string>6 - Dispersion</string>
     </attribute>
     <widget class="QPushButton" name="costRun">
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>460</y>
+       <y>540</y>
        <width>161</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Calculer les aires de dispersion</string>
+      <string>Lancer la modélisation</string>
      </property>
     </widget>
     <widget class="QTableView" name="costView">
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>230</y>
+       <y>290</y>
        <width>451</width>
        <height>221</height>
       </rect>
@@ -1710,7 +1710,7 @@
        <x>70</x>
        <y>50</y>
        <width>451</width>
-       <height>161</height>
+       <height>221</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -1724,31 +1724,37 @@
        <rect>
         <x>0</x>
         <y>40</y>
-        <width>91</width>
+        <width>131</width>
         <height>20</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Vecteur de départ</string>
+       <string>2 - Vecteur de départ</string>
       </property>
      </widget>
      <widget class="QgsMapLayerComboBox" name="costStartLayerCombo">
       <property name="geometry">
        <rect>
-        <x>120</x>
-        <y>40</y>
-        <width>111</width>
-        <height>21</height>
+        <x>140</x>
+        <y>60</y>
+        <width>291</width>
+        <height>16</height>
        </rect>
       </property>
      </widget>
      <widget class="QgsMapLayerComboBox" name="costPermRasterCombo">
       <property name="geometry">
        <rect>
-        <x>120</x>
-        <y>70</y>
-        <width>111</width>
-        <height>21</height>
+        <x>140</x>
+        <y>110</y>
+        <width>291</width>
+        <height>16</height>
        </rect>
       </property>
      </widget>
@@ -1756,21 +1762,27 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>70</y>
-        <width>111</width>
+        <y>100</y>
+        <width>121</width>
         <height>16</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Raster de friction</string>
+       <string>3 - Raster de friction</string>
       </property>
      </widget>
      <widget class="QgsSpinBox" name="costMaxVal">
       <property name="geometry">
        <rect>
-        <x>120</x>
-        <y>100</y>
-        <width>111</width>
+        <x>140</x>
+        <y>160</y>
+        <width>291</width>
         <height>20</height>
        </rect>
       </property>
@@ -1782,45 +1794,51 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>100</y>
-        <width>46</width>
-        <height>13</height>
+        <y>160</y>
+        <width>81</width>
+        <height>16</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Coût max</string>
+       <string>4 - Coût max</string>
       </property>
      </widget>
      <widget class="QPushButton" name="costAdd">
       <property name="geometry">
        <rect>
-        <x>200</x>
-        <y>130</y>
-        <width>75</width>
-        <height>23</height>
+        <x>150</x>
+        <y>190</y>
+        <width>131</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>Ajouter</string>
+       <string>Ajouter dispersion</string>
       </property>
      </widget>
      <widget class="QgsFileWidget" name="costStartLayer">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>40</y>
-        <width>201</width>
-        <height>21</height>
+        <x>140</x>
+        <y>80</y>
+        <width>291</width>
+        <height>16</height>
        </rect>
       </property>
      </widget>
      <widget class="QgsFileWidget" name="costPermRaster">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>70</y>
-        <width>201</width>
-        <height>21</height>
+        <x>140</x>
+        <y>130</y>
+        <width>291</width>
+        <height>16</height>
        </rect>
       </property>
      </widget>
@@ -1843,21 +1861,66 @@
         <height>20</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Sous-trame</string>
+       <string>1 - Sous-trame</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="costRemove">
+     <widget class="QLabel" name="costStartRasterLabel_2">
       <property name="geometry">
        <rect>
-        <x>360</x>
-        <y>130</y>
-        <width>75</width>
-        <height>23</height>
+        <x>30</x>
+        <y>60</y>
+        <width>111</width>
+        <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>Supprimer</string>
+       <string>Sélectionner couche</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="costStartRasterLabel_3">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>80</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Ouvrir couche</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="costStartRasterLabel_4">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>110</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Sélectionner couche</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="costStartRasterLabel_5">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>130</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Ouvrir couche</string>
       </property>
      </widget>
     </widget>
@@ -1881,11 +1944,19 @@
       <string>Dispersion</string>
      </property>
     </widget>
-   </widget>
-   <widget class="QWidget" name="groupsTab">
-    <attribute name="title">
-     <string>Visualisation</string>
-    </attribute>
+    <widget class="QPushButton" name="costRemove">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>520</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Supprimer</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
@@ -1893,32 +1964,32 @@
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsfieldcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsfieldexpressionwidget.h</header>
   </customwidget>
   <customwidget>
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsfilewidget.h</header>
   </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsprojectionselectionwidget.h</header>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
