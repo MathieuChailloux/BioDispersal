@@ -61,13 +61,11 @@ def layerNameOfPath(p):
     
 def isVectorPath(fname):
     vector_extensions = [".shp"]
-    utils.checkFileExists(fname)
     extension = pathlib.Path(fname).suffix
     return (extension in vector_extensions)
     
 def isRasterPath(fname):
     vector_extensions = [".tif"]
-    utils.checkFileExists(fname)
     extension = pathlib.Path(fname).suffix
     return (extension in vector_extensions)
     

@@ -55,7 +55,7 @@ class FrictionModel(abstract_model.DictModel):
         
     def classExists(self,cls_name):
         for cls in self.classes:
-            if cls.dict["class"] == cls_name:
+            if cls.dict["name"] == cls_name:
                 return True
         return False
         
@@ -130,13 +130,26 @@ class FrictionModel(abstract_model.DictModel):
             qgsTreatments.applyReclassProcessing(st_merged_fname,st_friction_fname,st_rules_fname,st_name)
         
     def applyReclassGdal(self):
-        utils.debug("applyReclassGdal")
+        utils.debug("friction.applyReclassGdal")
         for st_item in self.sous_trames:
             st_merged_fname = st_item.getMergedPath()
             utils.checkFileExists(st_merged_fname)
             st_friction_fname = st_item.getFrictionPath()
+            if os.path.isfile(st_friction_fname):
+                os.remove(st_friction_fname)
+                aux_name = st_friction_fname + ".aux.xml"
+                if os.path.isfile(aux_name):
+                    os.remove(aux_name)
             reclass_dict = {}
             for r in self.items:
+                st_name = st_item.dict["name"]
+                class_code = r.dict['code']
+                coeff = r.dict[st_name]
+                if not utils.is_integer(coeff):
+                    class_name = r.dict['class']
+                    utils.user_error("Friction coefficient for class " + class_name
+                                     + " and st " + st_name 
+                                     + " is not an integer : '" + str(coeff) + "'")
                 reclass_dict[r.dict['code']] = r.dict[st_item.dict["name"]]
             utils.debug(str(reclass_dict))
             #utils.debug("applyReclassGdal")
@@ -144,6 +157,7 @@ class FrictionModel(abstract_model.DictModel):
         
     def applyItems(self):
         #self.applyReclass()
+        utils.debug("applyItems")
         self.applyReclassGdal()
         
     def saveCSV(self,fname):
@@ -205,6 +219,9 @@ class FrictionConnector(abstract_model.AbstractConnector):
     def internCatchGroupAdded(grp):
         utils.debug("groupAdded2 " + grp)
         
+    def printCatch(self):
+        utils.debug("frictionRun catched")
+        
     def connectComponents(self):
         sous_trames.stModel.stAdded.connect(catchSTAdded)
         sous_trames.stModel.stRemoved.connect(catchSTRemoved)
@@ -212,6 +229,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         classes.classModel.classRemoved.connect(catchClassRemoved)
         super().connectComponents()
         self.dlg.frictionRun.clicked.connect(self.model.applyItems)
+        #self.dlg.frictionRun.clicked.connect(self.printCatch)
         # self.dlg.frictionSave.clicked.connect(self.saveCSV)
         # self.dlg.frictionLoad.clicked.connect(self.loadCSV)
         self.dlg.frictionCsvFile.fileChanged.connect(self.saveCSV)

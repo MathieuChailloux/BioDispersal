@@ -49,7 +49,7 @@ class SelectionItem(DictItem):
         
     def applyVectorItem(self):
         debug("classModel = " + str(classes.classModel))
-        in_layer_path = self.dict["in_layer"]
+        in_layer_path = params.getOrigPath(self.dict["in_layer"])
         checkFileExists(in_layer_path)
         in_layer = loadVectorLayer(in_layer_path)
         expr = self.dict["expr"]
@@ -162,6 +162,7 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionUp.setIcon(upIcon)
         self.dlg.selectionDown.setIcon(downIcon)
         self.activateFieldMode()
+        self.activateClassDisplay()
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         
     def connectComponents(self):
@@ -175,13 +176,15 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionClassCombo.setModel(classes.classModel)
         self.dlg.selectionClassCombo.currentTextChanged.connect(self.setClass)
         self.dlg.selectionGroupCombo.setModel(groups.groupsModel)
-        self.dlg.selectionGroupCombo.currentTextChanged.connect(self.setGroup)
+        #self.dlg.selectionGroupCombo.currentTextChanged.connect(self.setGroup)
         self.dlg.selectionRun.clicked.connect(self.model.applyItems)
         self.dlg.fieldSelectionMode.stateChanged.connect(self.switchFieldMode)
         self.dlg.exprSelectionMode.stateChanged.connect(self.switchExprMode)
         self.dlg.selectionAdd.clicked.connect(self.addItems)
         self.dlg.selectionUp.clicked.connect(self.upgradeItem)
         self.dlg.selectionDown.clicked.connect(self.downgradeItem)
+        self.dlg.groupDisplay.stateChanged.connect(self.switchGroupDisplay)
+        self.dlg.classDisplay.stateChanged.connect(self.switchClassDisplay)
         
     def setClass(self,text):
         cls_item = classes.getClassByName(text)
@@ -190,8 +193,8 @@ class SelectionConnector(AbstractConnector):
         
     def setGroup(self,text):
         grp_item = groups.getGroupByName(text)
-        self.dlg.selectionGroup.setText(grp_item.dict["name"])
-        self.dlg.selectionGroup.setText(grp_item.dict["descr"])
+        self.dlg.selectionGroupName.setText(grp_item.dict["name"])
+        self.dlg.selectionGroupDescr.setText(grp_item.dict["descr"])
                         
     def setInLayerFromCombo(self,layer):
         debug("setInLayerFromCombo")
@@ -247,9 +250,10 @@ class SelectionConnector(AbstractConnector):
         group_item = groups.getGroupByName(group)
         if not group_item:
             group_descr = self.dlg.selectionGroupDescr.text()
-            in_layer_path = self.dlg.selectionInLayer.filePath()
-            checkFileExists(in_layer_path)
-            in_layer = loadVectorLayer(in_layer_path)
+            #in_layer_path = self.dlg.selectionInLayer.filePath()
+            #checkFileExists(in_layer_path)
+            #in_layer = loadVectorLayer(in_layer_path)
+            in_layer = self.dlg.selectionInLayerCombo.currentLayer()
             in_geom = getLayerSimpleGeomStr(in_layer)
             group_item = groups.GroupItem(group,group_descr,in_geom)
             groups.groupsModel.addItem(group_item)
@@ -271,9 +275,11 @@ class SelectionConnector(AbstractConnector):
         
         
     def mkItemFromExpr(self):
-        in_layer_path = self.dlg.selectionInLayer.filePath()
-        checkFileExists(in_layer_path)
-        in_layer = loadVectorLayer(in_layer_path)
+        #in_layer_path = self.dlg.selectionInLayer.filePath()
+        #checkFileExists(in_layer_path)
+        #in_layer = loadVectorLayer(in_layer_path)
+        in_layer = self.dlg.selectionInLayerCombo.currentLayer()
+        in_layer_path = params.normalizePath(pathOfLayer(in_layer))
         in_geom = getLayerSimpleGeomStr(in_layer)
         expr = self.dlg.selectionExpr.expression()
         # cls = self.dlg.selectionClassName.text()
@@ -290,9 +296,11 @@ class SelectionConnector(AbstractConnector):
         
         
     def mkItemsFromField(self):
-        in_layer_path = self.dlg.selectionInLayer.filePath()
-        checkFileExists(in_layer_path)
-        in_layer = loadVectorLayer(in_layer_path)
+        #in_layer_path = self.dlg.selectionInLayer.filePath()
+        #checkFileExists(in_layer_path)
+        #in_layer = loadVectorLayer(in_layer_path)
+        in_layer = self.dlg.selectionInLayerCombo.currentLayer()
+        in_layer_path = params.normalizePath(pathOfLayer(in_layer))
         in_geom = getLayerSimpleGeomStr(in_layer)
         field_name = self.dlg.selectionField.currentField()
         if not field_name:
@@ -378,4 +386,28 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionClassCombo.hide()
         self.dlg.selectionClassName.hide()
         self.dlg.selectionClassDescr.hide()
+        
+    def switchGroupDisplay(self,checked):
+        if checked:
+            self.activateGroupDisplay()
+        else:
+            self.activateClassDisplay()
+            
+    def switchClassDisplay(self,checked):
+        if checked:
+            self.activateClassDisplay()
+        else:
+            self.activateGroupDisplay()
+            
+    def activateGroupDisplay(self):
+        self.dlg.classDisplay.setCheckState(0)
+        self.dlg.groupDisplay.setCheckState(2)
+        self.dlg.classFrame.hide()
+        self.dlg.groupFrame.show()
+        
+    def activateClassDisplay(self):
+        self.dlg.groupDisplay.setCheckState(0)
+        self.dlg.classDisplay.setCheckState(2)
+        self.dlg.groupFrame.hide()
+        self.dlg.classFrame.show()
     

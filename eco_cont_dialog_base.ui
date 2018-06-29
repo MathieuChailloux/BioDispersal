@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>944</width>
-    <height>754</height>
+    <width>939</width>
+    <height>780</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,19 +18,19 @@
     <rect>
      <x>40</x>
      <y>20</y>
-     <width>861</width>
-     <height>711</height>
+     <width>871</width>
+     <height>731</height>
     </rect>
    </property>
    <property name="focusPolicy">
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>5</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
-     <string>Paramètres</string>
+     <string>1 - Paramètres</string>
     </attribute>
     <widget class="QLabel" name="paramlabel">
      <property name="geometry">
@@ -285,7 +285,7 @@
      <property name="geometry">
       <rect>
        <x>40</x>
-       <y>470</y>
+       <y>380</y>
        <width>361</width>
        <height>131</height>
       </rect>
@@ -394,7 +394,7 @@
        <x>70</x>
        <y>50</y>
        <width>461</width>
-       <height>211</height>
+       <height>121</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -475,87 +475,6 @@
        <string>Résolution raster*</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="paramsRelPath">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>140</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="eraseExisting">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>160</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QLabel" name="useRelPathLabel">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>140</y>
-        <width>141</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Chemins de fichiers relatifs</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_107">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>160</y>
-        <width>151</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Écraser les fichiers existants</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_108">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>180</y>
-        <width>211</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Afficher l'onglet de visualisation</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="displayVisu">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>180</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Afficher l'onglet de visualisation</string>
-      </property>
-     </widget>
      <widget class="QgsProjectionSelectionWidget" name="paramsCrs">
       <property name="geometry">
        <rect>
@@ -584,16 +503,113 @@
      <property name="geometry">
       <rect>
        <x>40</x>
-       <y>270</y>
+       <y>180</y>
        <width>511</width>
-       <height>181</height>
+       <height>171</height>
       </rect>
      </property>
+    </widget>
+    <widget class="QFrame" name="options2Frame">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>50</y>
+       <width>261</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QCheckBox" name="paramsRelPath">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>10</y>
+        <width>16</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_108">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>50</y>
+        <width>211</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Afficher l'onglet de visualisation</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="eraseExisting">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>30</y>
+        <width>16</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="displayVisu">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>50</y>
+        <width>16</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Afficher l'onglet de visualisation</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_107">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>151</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Écraser les fichiers existants</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="useRelPathLabel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Chemins de fichiers relatifs</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="stTab">
     <attribute name="title">
-     <string>1 - Sous-trames</string>
+     <string>2 - Sous-trames</string>
     </attribute>
     <widget class="QFrame" name="frame_28">
      <property name="geometry">
@@ -734,15 +750,15 @@
    </widget>
    <widget class="QWidget" name="selectionTab">
     <attribute name="title">
-     <string>2 - Selection</string>
+     <string>3 - Selection</string>
     </attribute>
     <widget class="QFrame" name="frame_29">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>831</width>
-       <height>661</height>
+       <width>841</width>
+       <height>691</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -755,8 +771,8 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>420</y>
-        <width>561</width>
+        <y>430</y>
+        <width>761</width>
         <height>192</height>
        </rect>
       </property>
@@ -764,10 +780,10 @@
      <widget class="QPushButton" name="selectionRun">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>620</y>
-        <width>121</width>
-        <height>23</height>
+        <x>390</x>
+        <y>650</y>
+        <width>131</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -779,8 +795,8 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>571</width>
-        <height>401</height>
+        <width>441</width>
+        <height>411</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -1153,19 +1169,6 @@
         <string>Nouveau groupe</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="selectionRemove">
-       <property name="geometry">
-        <rect>
-         <x>370</x>
-         <y>370</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Supprimer</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="selectionFieldClassLabel">
        <property name="geometry">
         <rect>
@@ -1216,12 +1219,38 @@
         <string>Ajouter</string>
        </property>
       </widget>
+      <widget class="QCheckBox" name="groupDisplay">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>280</y>
+         <width>70</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Afficher</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="classDisplay">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>190</y>
+         <width>70</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Afficher</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QPushButton" name="selectionUp">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>450</y>
+        <y>460</y>
         <width>41</width>
         <height>31</height>
        </rect>
@@ -1234,7 +1263,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>550</y>
+        <y>560</y>
         <width>41</width>
         <height>31</height>
        </rect>
@@ -1243,11 +1272,129 @@
        <string/>
       </property>
      </widget>
+     <widget class="QPushButton" name="selectionRemove">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>630</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Supprimer</string>
+      </property>
+     </widget>
+     <widget class="QFrame" name="groupFrame">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>10</y>
+        <width>341</width>
+        <height>411</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label_111">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>0</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Groupes</string>
+       </property>
+      </widget>
+      <widget class="QTableView" name="groupsView">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>321</width>
+         <height>321</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="groupsRemove">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>370</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Supprimer</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QFrame" name="classFrame">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>10</y>
+        <width>411</width>
+        <height>371</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="classesLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>0</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Classes</string>
+       </property>
+      </widget>
+      <widget class="QTableView" name="classView">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>321</width>
+         <height>321</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="fusionTab">
     <attribute name="title">
-     <string>3 - Fusion</string>
+     <string>4 - Fusion</string>
     </attribute>
     <widget class="QFrame" name="frame_11">
      <property name="geometry">
@@ -1268,26 +1415,13 @@
       <property name="geometry">
        <rect>
         <x>330</x>
-        <y>390</y>
+        <y>360</y>
         <width>71</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
        <string>Supprimer</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="fusionAdd">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>70</y>
-        <width>51</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ajouter</string>
       </property>
      </widget>
      <widget class="QLabel" name="bufferInGroupLabel_3">
@@ -1337,7 +1471,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>190</y>
+        <y>160</y>
         <width>41</width>
         <height>31</height>
        </rect>
@@ -1350,7 +1484,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>290</y>
+        <y>260</y>
         <width>41</width>
         <height>31</height>
        </rect>
@@ -1359,47 +1493,24 @@
        <string/>
       </property>
      </widget>
-     <widget class="QComboBox" name="fusionGroup">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>70</y>
-        <width>201</width>
-        <height>22</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="bufferInGroupLabel_5">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>70</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ajouter groupe</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="fusionLoadGroups">
       <property name="geometry">
        <rect>
         <x>70</x>
-        <y>390</y>
+        <y>360</y>
         <width>111</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>Recharger groupes</string>
+       <string>Charger groupes</string>
       </property>
      </widget>
      <widget class="QTableView" name="fusionView">
       <property name="geometry">
        <rect>
         <x>70</x>
-        <y>140</y>
+        <y>110</y>
         <width>341</width>
         <height>241</height>
        </rect>
@@ -1422,7 +1533,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>110</y>
+        <y>80</y>
         <width>171</width>
         <height>16</height>
        </rect>
@@ -1442,7 +1553,7 @@
    </widget>
    <widget class="QWidget" name="frictionTab">
     <attribute name="title">
-     <string>4 - Friction</string>
+     <string>5 - Friction</string>
     </attribute>
     <widget class="QFrame" name="frame_10">
      <property name="geometry">
@@ -1467,19 +1578,6 @@
         <width>721</width>
         <height>421</height>
        </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="bufferRemove_2">
-      <property name="geometry">
-       <rect>
-        <x>670</x>
-        <y>490</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Supprimer</string>
       </property>
      </widget>
      <widget class="QPushButton" name="frictionRun">
@@ -1581,7 +1679,7 @@
    </widget>
    <widget class="QWidget" name="tab">
     <attribute name="title">
-     <string>5 - Coût cumulé</string>
+     <string>6 - Coût cumulé</string>
     </attribute>
     <widget class="QPushButton" name="costRun">
      <property name="geometry">
@@ -1788,111 +1886,6 @@
     <attribute name="title">
      <string>Visualisation</string>
     </attribute>
-    <widget class="QFrame" name="groupFrame">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>20</y>
-       <width>381</width>
-       <height>361</height>
-      </rect>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <widget class="QLabel" name="label_111">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Groupes</string>
-      </property>
-     </widget>
-     <widget class="QTableView" name="groupsView">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>361</width>
-        <height>241</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="groupsRemove">
-      <property name="geometry">
-       <rect>
-        <x>290</x>
-        <y>300</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Supprimer</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QFrame" name="classFrame">
-     <property name="geometry">
-      <rect>
-       <x>430</x>
-       <y>20</y>
-       <width>411</width>
-       <height>321</height>
-      </rect>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <widget class="QLabel" name="classesLabel">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Classes</string>
-      </property>
-     </widget>
-     <widget class="QTableView" name="classView">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>371</width>
-        <height>241</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
    </widget>
   </widget>
  </widget>

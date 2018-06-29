@@ -29,7 +29,7 @@ class CostItem(DictItem):
         utils.debug("Start runCost")
         st_name = self.dict["st_name"]
         st_item = sous_trames.getSTByName(st_name)
-        startLayer = self.dict["start_layer"]
+        startLayer = params.getOrigPath(self.dict["start_layer"])
         utils.checkFileExists(startLayer)
         startRaster = st_item.getStartLayerPath()
         params.checkInit()
@@ -37,7 +37,7 @@ class CostItem(DictItem):
         #extent_layer_path = pathOfLayer(extent_layer)
         applyRasterization(startLayer,"geom",startRaster,
                            params.getResolution(),extent_layer_path)
-        permRaster = self.dict["perm_layer"]
+        permRaster = params.getOrigPath(self.dict["perm_layer"])
         #utils.checkFileExists(permRaster)
         cost = self.dict["cost"]
         outPath = st_item.getDispersionPath(cost)#.replace("\\\\","/")
@@ -127,8 +127,8 @@ class CostConnector(AbstractConnector):
         
     def mkItem(self):
         st_name = self.dlg.costSTCombo.currentText()
-        start_layer = self.dlg.costStartLayer.filePath()
-        perm_layer = self.dlg.costPermRaster.filePath()
+        start_layer = params.normalizePath(self.dlg.costStartLayer.filePath())
+        perm_layer = params.normalizePath(self.dlg.costPermRaster.filePath())
         cost = str(self.dlg.costMaxVal.value())
         cost_item = CostItem(st_name,start_layer,perm_layer,cost)
         return cost_item

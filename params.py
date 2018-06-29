@@ -17,9 +17,29 @@ params_fields = ["extent","workspace","useRelPath","projectFile","crs"]
 
 defaultCrs = QgsCoordinateReferenceSystem("EPSG:2154")
 
-def checkInit():
+def checkWorkspaceInit():
     if not params.workspace:
         utils.user_error("Workspace parameter not initialized")
+    if not os.path.isdir(params.workspace):
+        utils.user_error("Workspace directory '" + params.workspace + "' does not exist")
+        
+
+def normalizePath(path):
+    checkWorkspaceInit()
+    if os.path.isabs(path):
+        return os.path.relpath(path,params.workspace)
+    else:
+        return path
+        
+def getOrigPath(path):
+    checkWorkspaceInit()
+    if os.path.isabs(path):
+        return path
+    else:
+        return os.path.normpath(os.path.join(params.workspace,path))
+    
+def checkInit():
+    checkWorkspaceInit()
     if not params.extentLayer:
         utils.user_error("Extent layer paramter not initialized")
     if not params.resolution:
@@ -29,21 +49,24 @@ def checkInit():
     if not params.crs.isValid():
         utils.user_error("Invalid CRS")
 
-def mkTmpPath(fname):
-    if params.tmpDir:
-        tmpFname = os.path.join(params.tmpDir,fname)
-        return tmpFname
+def mkTmpPath(fname,abs_flag=False):
+    if abs_flag:
+        if params.tmpDir:
+            tmpFname = os.path.join(params.tmpDir,fname)
+            return tmpFname
+        else:
+            utils.user_error("Workspace not set")
     else:
-        utils.user_error("Workspace not set")
+        os.path.join("tmp",fname)
         
 def getResolution():
     return params.resolution
     
 def getExtentLayer():
-    return params.extentLayer
+    return getOrigPath(params.extentLayer)
     
 def getExtentCoords():
-    extent_path = params.extentLayer
+    extent_path = getOrigPath(params.extentLayer)
     if extent_path:
         return qgsUtils.coordsOfExtentPath(extent_path)
         # extent_layer = qgsUtils.loadVectorLayer(extent_path)
@@ -70,6 +93,7 @@ class ParamsModel(QAbstractTableModel):
         QAbstractTableModel.__init__(self)
         
     def setExtentLayer(self,path):
+        path = normalizePath(path)
         self.extentLayer = path
         self.layoutChanged.emit()
         
@@ -121,10 +145,10 @@ class ParamsModel(QAbstractTableModel):
     
     def toXML(self,indent=""):
         xmlStr = indent + "<ParamsModel"
-        if self.resolution:
-            xmlStr += " resolution=\"" + str(self.resolution) + "\""
         if self.workspace:
             xmlStr += " workspace=\"" + str(self.workspace) + "\""
+        if self.resolution:
+            xmlStr += " resolution=\"" + str(self.resolution) + "\""
         if self.extentLayer:
             xmlStr += " extent=\"" + str(self.extentLayer) + "\""
         if self.useRelativePath:
@@ -178,9 +202,13 @@ class ParamsConnector:
     def initGui(self):
         #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
         self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.dlg.extentLayer.setFilter("*.shp")
         self.dlg.saveModelPath.setFilter("*.xml")
         self.dlg.loadModelPath.setFilter("*.xml")
         self.dlg.paramsCrs.setCrs(defaultCrs)
+        self.dlg.options2Frame.hide()
+        self.model.setResolution(25)
+        self.dlg.rasterResolution.setValue(25)
         #self.dlg.loadModelFrame.hide()
         
     def connectComponents(self):

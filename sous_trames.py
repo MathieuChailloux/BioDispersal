@@ -34,23 +34,23 @@ class STItem(abstract_model.DictItem):
         
     def getMergedPath(self):
         basename = self.name + "_merged.tif"
-        return params.mkTmpPath(basename)
+        return params.mkTmpPath(basename,abs_flag=True)
         
     def getRulesPath(self):
         basename = self.name + "_rules.txt"
-        return params.mkTmpPath(basename)
+        return params.mkTmpPath(basename,abs_flag=True)
         
     def getFrictionPath(self):
         basename = self.name + "_friction.tif"
-        return params.mkTmpPath(basename)
+        return params.mkTmpPath(basename,abs_flag=True)
         
     def getDispersionPath(self,cost):
         basename = self.name + "_dispersion_" + str(cost) + ".tif"
-        return params.mkTmpPath(basename)
+        return params.mkTmpPath(basename,abs_flag=True)
         
     def getStartLayerPath(self):
         basename = self.name + "_start.tif"
-        return params.mkTmpPath(basename)
+        return params.mkTmpPath(basename,abs_flag=True)
         
         
         

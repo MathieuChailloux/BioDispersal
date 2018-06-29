@@ -102,7 +102,7 @@ class ClassConnector(abstract_model.AbstractConnector):
     def __init__(self,dlg):
         self.dlg = dlg
         classModel = ClassModel()
-        super().__init__(classModel,self.dlg.classView,None,None)
+        super().__init__(classModel,self.dlg.classView,self.dlg.selectionClassAdd,None)
         
     def initGui(self):
         pass

@@ -87,6 +87,7 @@ def applyReclassProcessing(in_path,out_path,rules_file,title):
         utils.debug("End runCost")
         
 def applyReclassGdal(in_path,out_path,reclass_dict):
+    utils.debug("qgsTreatments.applyReclassGdal")
     cmd_args = ['gdal_calc.bat',
                 '-A', in_path,
                 '--outfile='+out_path]

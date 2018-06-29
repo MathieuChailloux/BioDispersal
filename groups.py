@@ -66,11 +66,11 @@ class GroupItem(abstract_model.DictItem):
 
     def getVectorPath(self):
         basename = self.name + "_vector.shp"
-        return params.mkTmpPath(basename)
+        return params.mkTmpPath(basename,True)
         
     def getRasterPath(self):
         basename = self.name + "_raster.tif"
-        return params.mkTmpPath(basename)
+        return params.mkTmpPath(basename,True)
         
     def saveVectorLayer(self):
         vector_path = self.getVectorPath()
@@ -126,6 +126,10 @@ class GroupConnector(abstract_model.AbstractConnector):
         name = self.dlg.selectionGroupName.text()
         self.dlg.selectionGroupCombo.setCurrentText(name)
         descr = self.dlg.selectionGroupDescr.text()
-        groupsItem = GroupItem(name,descr)
-        return groupsItem
-         
+        selection_in_layer = self.dlg.selectionInLayerCombo.currentLayer()
+        if selection_in_layer:
+            geom = qgsUtils.getLayerSimpleGeomStr(selection_in_layer)
+            groupsItem = GroupItem(name,descr,geom)
+            self.dlg.selectionGroupCombo.setCurrentText(name)
+            return groupsItem
+        utils.user_error("No layer selected")

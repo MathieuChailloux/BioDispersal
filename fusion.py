@@ -54,7 +54,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
         utils.debug("[loadAllGroups]")
         self.current_model = groups.copyGroupModel(groups.groupsModel)
         self.st_groups[self.current_st] = self.current_model
-        self.current_model.layoutChanged.emit()
+        #self.current_model.layoutChanged.emit()
+        self.layoutChanged.emit()
         
     def toXML(self,indent=""):
         xmlStr = indent + "<" + self.__class__.__name__ + ">\n"
@@ -169,7 +170,7 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.models = {}
         fusionModel = FusionModel()
         super().__init__(fusionModel,self.dlg.fusionView,
-                         self.dlg.fusionAdd,self.dlg.fusionRemove)
+                         None,self.dlg.fusionRemove)
                          
     def initGui(self):
         upIcon = QIcon(':plugins/eco_cont/icons/up-arrow.png')
@@ -180,7 +181,7 @@ class FusionConnector(abstract_model.AbstractConnector):
     def connectComponents(self):
         super().connectComponents()
         self.dlg.fusionST.setModel(sous_trames.stModel)
-        self.dlg.fusionGroup.setModel(groups.groupsModel)
+        #self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)
         self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
         self.dlg.fusionRun.clicked.connect(self.model.applyItems)
@@ -191,10 +192,10 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.model.setCurrentST(st)
         self.dlg.fusionView.setModel(self.model.current_model)
         
-    def mkItem(self):
-        grp = self.dlg.fusionGroup.currentText()
-        grp_item = groups.groupsModel.getGroupByName(grp)
-        return grp_item   
+    # def mkItem(self):
+        # grp = self.dlg.fusionGroup.currentText()
+        # grp_item = groups.groupsModel.getGroupByName(grp)
+        # return grp_item   
         
     # def upgradeItem(self):
         # utils.debug("upgradeItem")
