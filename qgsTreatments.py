@@ -37,7 +37,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
                   '-at',
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                   '-ts', str(width), str(height),
-                  '-ot','Int16',
+                  '-ot','Int32',
                   '-of','GTiff',
                   '-a_nodata',nodata_val]
     if field == "geom":
@@ -90,6 +90,7 @@ def applyReclassGdal(in_path,out_path,reclass_dict):
     utils.debug("qgsTreatments.applyReclassGdal")
     cmd_args = ['gdal_calc.bat',
                 '-A', in_path,
+                '--type=Int32',
                 '--outfile='+out_path]
     expr = '--calc='
     for old_cls,new_cls in reclass_dict.items():

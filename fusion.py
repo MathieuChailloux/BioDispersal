@@ -86,18 +86,21 @@ class FusionModel(abstract_model.AbstractGroupModel):
     def applyItems(self):
         res = str(params.getResolution())
         extent_coords = params.getExtentCoords()
-        for st in reversed(list(self.st_groups.keys())):
+        #for st in reversed(list(self.st_groups.keys())):
+        for st in self.st_groups.keys():
             st_item = sous_trames.getSTByName(st)
             groups = self.st_groups[st]
             utils.debug("apply fusion to " + st)
             utils.debug(str([g.dict["name"] for g in groups.items]))
-            grp_args = [g.getRasterPath() for g in groups.items]
+            grp_args = [g.getRasterPath() for g in reversed(groups.items)]
             utils.debug(str(grp_args))
             out_path = st_item.getMergedPath()
+            if os.path.isfile(out_path):
+                qgsUtils.removeRaster(out_path)
             cmd_args = ['gdal_merge.bat',
                         '-o', out_path,
                         '-of', 'GTiff',
-                        '-ot','Int16',
+                        '-ot','Int32',
                         '-n', nodata_val,
                         '-a_nodata', nodata_val]
             #cmd_args += ['-ul_lr']

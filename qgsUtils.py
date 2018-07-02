@@ -43,6 +43,12 @@ def typeIsFloat(t):
 def typeIsNumeric(t):
     return (typeIsInteger(t) or typeIsFloat(t))
 
+def removeRaster(path):
+    utils.removeFile(path)
+    aux_name = path + ".aux.xml"
+    if os.path.isfile(aux_name):
+        utils.removeFile(aux_name)
+    
 def pathOfLayer(l):
     utils.debug("pathOfLayer")
     uri = l.dataProvider().dataSourceUri()
@@ -69,13 +75,15 @@ def isRasterPath(fname):
     extension = pathlib.Path(fname).suffix
     return (extension in vector_extensions)
     
-def loadVectorLayer(fname):
+def loadVectorLayer(fname,loadProject=False):
     utils.checkFileExists(fname)
     layer = QgsVectorLayer(fname, layerNameOfPath(fname), "ogr")
     if layer == None:
         utils.user_error("Could not load layer '" + fname + "'")
     if not layer.isValid():
         utils.user_error("Invalid layer '" + fname + "'")
+    if loadProject:
+        QgsProject.instance().addMapLayer(layer)
     return layer
     
 def loadRasterLayer(fname):

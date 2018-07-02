@@ -116,7 +116,7 @@ class CostConnector(AbstractConnector):
         self.dlg.costPermRaster.lineEdit().setValue(st_friction_path)
         
     def setStartLayer(self,path):
-        layer = loadVectorLayer(path)
+        layer = loadVectorLayer(path,loadProject=True)
         self.dlg.costStartLayerCombo.setLayer(layer)
         
     def setPermRaster(self,path):
@@ -137,9 +137,15 @@ class CostConnector(AbstractConnector):
         
     def mkItem(self):
         st_name = self.dlg.costSTCombo.currentText()
-        start_layer = self.dlg.costStartLayerCombo.layer()
+        if not st_name:
+            utils.user_error("No Sous-Trame selected")
+        start_layer = self.dlg.costStartLayerCombo.currentLayer()
+        if not start_layer:
+            utils.user_error("No start layer selected")
         start_layer_path = params.normalizePath(pathOfLayer(start_layer))
-        perm_layer = self.dlg.costPermRasterCombo.layer()
+        perm_layer = self.dlg.costPermRasterCombo.currentLayer()
+        if not perm_layer:
+            utils.user_error("No permability layer selected")
         perm_layer_path = params.normalizePath(pathOfLayer(perm_layer))
         cost = str(self.dlg.costMaxVal.value())
         cost_item = CostItem(st_name,start_layer_path,perm_layer_path,cost)

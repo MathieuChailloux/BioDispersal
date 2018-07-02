@@ -54,10 +54,18 @@ class FrictionModel(abstract_model.DictModel):
         super().__init__(self,self.fields)
         
     def classExists(self,cls_name):
-        for cls in self.classes:
-            if cls.dict["name"] == cls_name:
+        # for cls in self.classes:
+            # if cls.dict["name"] == cls_name:
+        for fr in self.items:
+            if fr.dict["class"] == cls_name:
                 return True
         return False
+        
+    def getRowByClass(self,cls_name):
+        for i in self.items:
+            if i.dict["class"] == cls_name:
+                return i
+        return None
         
     def addClassItem(self,cls_item):
         new_row = {"class_descr" : cls_item.dict["descr"],
@@ -67,6 +75,8 @@ class FrictionModel(abstract_model.DictModel):
         row_item = FrictionRowItem(new_row)
         if not self.classExists(cls_item.dict["name"]):
             #self.rows.append(new_row)
+            if cls_item not in self.classes:
+                self.classes.append(cls_item)
             self.addItem(row_item)
             self.layoutChanged.emit()
         
@@ -103,6 +113,35 @@ class FrictionModel(abstract_model.DictModel):
         self.removeField(st_name)
         frictionFields.remove(st_name)
         self.layoutChanged.emit()
+        
+    def reloadClasses(self):
+        utils.debug("reloadClasses")
+        classes_to_delete = []
+        for item in self.items:
+            cls_name = item.dict["class"]
+            cls_item = classes.getClassByName(cls_name)
+            if not cls_item:
+                classes_to_delete.append(cls_name)
+                utils.debug("Removing class " + cls_name)
+            else:
+                utils.debug("Class " + cls_name + " indeed exists")
+        self.items = [fr for fr in self.items if fr.dict["class"] not in classes_to_delete]
+        self.layoutChanged.emit()
+        for cls_item in classes.classModel.items:
+            cls_name = cls_item.dict["name"]
+            cls_code = cls_item.dict["code"]
+            row_item = self.getRowByClass(cls_name)
+            if row_item:
+                if row_item.dict["code"] != cls_code:
+                    utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"
+                                + str(row_item.dict["code"]) + " to class " + cls_name)
+                    row_item.dict["code"] = cls_code
+                    self.layoutChanged.emit()
+                else:
+                    utils.debug("Class " + cls_name + " already exists")
+            else:
+                utils.debug("Reloading class " + cls_name)
+                self.addClassItem(cls_item)
         
     def createRulesFiles(self):
         utils.debug("createRulesFiles")
@@ -151,7 +190,7 @@ class FrictionModel(abstract_model.DictModel):
                                      + " and st " + st_name 
                                      + " is not an integer : '" + str(coeff) + "'")
                 reclass_dict[r.dict['code']] = r.dict[st_item.dict["name"]]
-            utils.debug(str(reclass_dict))
+            utils.debug("Reclass dict : " + str(reclass_dict))
             #utils.debug("applyReclassGdal")
             qgsTreatments.applyReclassGdal(st_merged_fname,st_friction_fname,reclass_dict)
         
@@ -230,6 +269,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         classes.classModel.classAdded.connect(catchClassAdded)
         classes.classModel.classRemoved.connect(catchClassRemoved)
         super().connectComponents()
+        self.dlg.frictionLoadClass.clicked.connect(self.model.reloadClasses)
         self.dlg.frictionRun.clicked.connect(self.model.applyItems)
         #self.dlg.frictionRun.clicked.connect(self.printCatch)
         # self.dlg.frictionSave.clicked.connect(self.saveCSV)

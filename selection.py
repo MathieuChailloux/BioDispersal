@@ -209,13 +209,13 @@ class SelectionConnector(AbstractConnector):
         
     def setInLayer(self,path):
         debug("setInLayer " + path)
-        loaded_layer = loadVectorLayer(path)
-        QgsProject.instance().addMapLayer(loaded_layer)
+        loaded_layer = loadVectorLayer(path,loadProject=True)
+        #QgsProject.instance().addMapLayer(loaded_layer)
         if loaded_layer == None:
             user_error("Could not load layer '" + path + "'")
         if not loaded_layer.isValid():
             user_error("Invalid layer '" + path + "'")
-        QgsProject.instance().addMapLayer(loaded_layer)
+        #QgsProject.instance().addMapLayer(loaded_layer)
         self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
         self.dlg.selectionExpr.setLayer(loaded_layer)
         self.dlg.selectionField.setLayer(loaded_layer)
