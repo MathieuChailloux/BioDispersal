@@ -133,8 +133,8 @@ class ParamsModel(QAbstractTableModel):
         return self.fromXMLDict(dict)
     
     def fromXMLDict(self,dict):
-        if "workspace" in dict:
-            self.setWorkspace(dict["workspace"])
+        # if "workspace" in dict:
+            # self.setWorkspace(dict["workspace"])
         if "extent" in dict:
             self.setExtentLayer(dict["extent"])
         if "resolution" in dict:
@@ -145,8 +145,8 @@ class ParamsModel(QAbstractTableModel):
     
     def toXML(self,indent=""):
         xmlStr = indent + "<ParamsModel"
-        if self.workspace:
-            xmlStr += " workspace=\"" + str(self.workspace) + "\""
+        # if self.workspace:
+            # xmlStr += " workspace=\"" + str(self.workspace) + "\""
         if self.resolution:
             xmlStr += " resolution=\"" + str(self.resolution) + "\""
         if self.extentLayer:

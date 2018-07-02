@@ -128,8 +128,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
         # if row > 0:
             # self.swapItems(row -1, row)
         
-    def downgradeElem(self,idx):
-        row = idx.row()
+    def downgradeElem(self,row):
+        #row = idx.row()
         utils.debug("downgradeElem " + str(row))
         if row < len(self.current_model.items) - 1:
             self.swapItems(row, row + 1)

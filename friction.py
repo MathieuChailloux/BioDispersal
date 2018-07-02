@@ -128,20 +128,28 @@ class FrictionModel(abstract_model.DictModel):
         self.items = [fr for fr in self.items if fr.dict["class"] not in classes_to_delete]
         self.layoutChanged.emit()
         for cls_item in classes.classModel.items:
+            utils.debug("cls_item : " + str(cls_item.dict))
             cls_name = cls_item.dict["name"]
             cls_code = cls_item.dict["code"]
+            cls_descr = cls_item.dict["descr"]
             row_item = self.getRowByClass(cls_name)
+            utils.debug("row_item : " + str(row_item.dict))
             if row_item:
+                utils.debug("Class " + cls_name + " already exists")
                 if row_item.dict["code"] != cls_code:
                     utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"
                                 + str(row_item.dict["code"]) + " to class " + cls_name)
                     row_item.dict["code"] = cls_code
                     self.layoutChanged.emit()
-                else:
-                    utils.debug("Class " + cls_name + " already exists")
+                if row_item.dict["class_descr"] != cls_descr:
+                    utils.debug("Reassigning descr '" + str(cls_descr) + "' instead of '"
+                                + str(row_item.dict["class_descr"]) + " to class " + cls_name)
+                    row_item.dict["class_descr"] = cls_descr
+                    self.layoutChanged.emit()
             else:
                 utils.debug("Reloading class " + cls_name)
                 self.addClassItem(cls_item)
+                self.layoutChanged.emit()
         
     def createRulesFiles(self):
         utils.debug("createRulesFiles")
@@ -204,6 +212,7 @@ class FrictionModel(abstract_model.DictModel):
             writer = csv.DictWriter(f,fieldnames=self.fields,delimiter=';')
             writer.writeheader()
             for i in self.items:
+                utils.debug("writing row " + str(i.dict))
                 writer.writerow(i.dict)
                 
     @classmethod
