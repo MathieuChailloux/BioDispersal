@@ -91,6 +91,7 @@ class CostConnector(AbstractConnector):
     def __init__(self,dlg):
         self.dlg = dlg
         costModel = CostModel()
+        self.onlySelection = False
         super().__init__(costModel,self.dlg.costView,
                          self.dlg.costAdd,self.dlg.costRemove)
         #test_item = 
@@ -107,8 +108,22 @@ class CostConnector(AbstractConnector):
         self.dlg.costStartLayer.fileChanged.connect(self.setStartLayer)
         self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
         #self.dlg.costPermRasterCombo.layerChanged.connect(self.setPermRasterFromCombo)
-        self.dlg.costRun.clicked.connect(self.model.applyItems)
+        self.dlg.costRun.clicked.connect(self.applyItems)
         super().connectComponents()
+        self.dlg.costRunSelectionMode.stateChanged.connect(self.switchOnlySelection)
+        
+    def applyItems(self):
+        if self.onlySelection:
+            indexes = list(set([i.row() for i in self.view.selectedIndexes()]))
+        else:
+            indexes = range(0,len(self.model.items))
+        utils.debug(str(indexes))
+        self.model.applyItems(indexes)
+        
+    def switchOnlySelection(self):
+        new_val = not self.onlySelection
+        utils.debug("setting onlySelection to " + str(new_val))
+        self.onlySelection = new_val
         
     def switchST(self,text):
         st_item = sous_trames.getSTByName(text)

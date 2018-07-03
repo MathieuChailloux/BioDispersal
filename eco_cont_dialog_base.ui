@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
@@ -780,7 +780,7 @@
      <widget class="QPushButton" name="selectionRun">
       <property name="geometry">
        <rect>
-        <x>390</x>
+        <x>360</x>
         <y>650</y>
         <width>131</width>
         <height>31</height>
@@ -1403,6 +1403,19 @@
        </property>
       </widget>
      </widget>
+     <widget class="QCheckBox" name="selectionRunSelectionMode">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>630</y>
+        <width>241</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Appliquer seulement aux lignes sélectionnées</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="fusionTab">
@@ -1981,6 +1994,19 @@
      </property>
      <property name="text">
       <string>Supprimer</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="costRunSelectionMode">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>520</y>
+       <width>241</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Appliquer seulement aux lignes sélectionnées</string>
      </property>
     </widget>
    </widget>

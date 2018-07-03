@@ -22,17 +22,6 @@ class SelectionItem(DictItem):
                 "group" : group}
         self.is_vector = isVectorPath(in_layer)
         self.is_raster = isRasterPath(in_layer)
-        # class_item = classes.classModel.getClassByName(cls)
-        # if not class_item:
-            # class_item = classes.ClassItem(cls,class_descr,code)
-            # classes.classModel.addItem(class_item)
-            # classes.classModel.layoutChanged.emit()
-        # group_item = groups.groupsModel.getGroupByName(group)
-        # if not group_item:
-            # group_item = groups.GroupItem(group,group_descr)
-            # groups.groupsModel.addItem(group_item)
-            # groups.groupsModel.layoutChanged.emit()
-        #self.cls = cls
         super().__init__(dict)
         
     def checkItem(self):
@@ -134,10 +123,12 @@ class SelectionModel(DictModel):
         item = SelectionItem(dict["in_layer"],dict["expr"],dict["class"],dict["group"])
         return item
 
-    def applyItems(self):
+    def applyItems(self,indexes):
+        utils.debug("applyItems " + str(indexes))
         params.checkInit()
         selectionsByGroup = {}
-        for i in self.items:
+        for n in indexes:
+            i = self.items[n]
             grp = i.dict["group"]
             if grp in selectionsByGroup:
                 selectionsByGroup[grp].append(i)
@@ -145,6 +136,8 @@ class SelectionModel(DictModel):
                 selectionsByGroup[grp] = [i]
         for g, selections in selectionsByGroup.items():
             grp_item = groups.getGroupByName(g)
+            if not grp_item:
+                utils.user_error("Group '" + g + "' does not exist")
             grp_vector_path = grp_item.getVectorPath()
             if os.path.isfile(grp_vector_path):
                 removeFile(grp_vector_path)
@@ -157,6 +150,7 @@ class SelectionConnector(AbstractConnector):
     def __init__(self,dlg):
         self.dlg = dlg
         selectionModel = SelectionModel()
+        self.onlySelection = False
         super().__init__(selectionModel,self.dlg.selectionView,
                         None,self.dlg.selectionRemove)
                         
@@ -171,24 +165,38 @@ class SelectionConnector(AbstractConnector):
         
     def connectComponents(self):
         super().connectComponents()
+        # In layer
         self.dlg.selectionInLayerCombo.layerChanged.connect(self.setInLayerFromCombo)
         self.dlg.selectionInLayer.fileChanged.connect(self.setInLayer)
-        #self.dlg.selectionInLayer.fileChanged.connect(self.setInLayerField)
-        #self.dlg.selectionFieldLayerCombo.layerChanged.connect(self.setInLayerFieldFromCombo)
-        #self.dlg.selectionFieldLayer.fileChanged.connect(self.setInLayerField)
-        #self.dlg.selectionFieldAdd.clicked.connect(self.addItemsFromField)
-        self.dlg.selectionClassCombo.setModel(classes.classModel)
-        self.dlg.selectionClassCombo.currentTextChanged.connect(self.setClass)
-        self.dlg.selectionGroupCombo.setModel(groups.groupsModel)
-        #self.dlg.selectionGroupCombo.currentTextChanged.connect(self.setGroup)
-        self.dlg.selectionRun.clicked.connect(self.model.applyItems)
+        # Expr
         self.dlg.fieldSelectionMode.stateChanged.connect(self.switchFieldMode)
         self.dlg.exprSelectionMode.stateChanged.connect(self.switchExprMode)
+        # Class
+        self.dlg.selectionClassCombo.setModel(classes.classModel)
+        self.dlg.selectionClassCombo.currentTextChanged.connect(self.setClass)
+        self.dlg.classDisplay.stateChanged.connect(self.switchClassDisplay)
+        # Group
+        self.dlg.selectionGroupCombo.setModel(groups.groupsModel)
+        self.dlg.groupDisplay.stateChanged.connect(self.switchGroupDisplay)
+        # Selections
         self.dlg.selectionAdd.clicked.connect(self.addItems)
         self.dlg.selectionUp.clicked.connect(self.upgradeItem)
         self.dlg.selectionDown.clicked.connect(self.downgradeItem)
-        self.dlg.groupDisplay.stateChanged.connect(self.switchGroupDisplay)
-        self.dlg.classDisplay.stateChanged.connect(self.switchClassDisplay)
+        self.dlg.selectionRunSelectionMode.stateChanged.connect(self.switchOnlySelection)
+        self.dlg.selectionRun.clicked.connect(self.applyItems)
+        
+    def applyItems(self):
+        if self.onlySelection:
+            indexes = list(set([i.row() for i in self.view.selectedIndexes()]))
+        else:
+            indexes = range(0,len(self.model.items))
+        utils.debug(str(indexes))
+        self.model.applyItems(indexes)
+        
+    def switchOnlySelection(self):
+        new_val = not self.onlySelection
+        utils.debug("setting onlySelection to " + str(new_val))
+        self.onlySelection = new_val
         
     def setClass(self,text):
         cls_item = classes.getClassByName(text)
@@ -341,14 +349,7 @@ class SelectionConnector(AbstractConnector):
         for item in items:
             self.model.addItem(item)
             self.model.layoutChanged.emit()
-        
-    # def addItemsFromField(self):
-        # debug("[addItemsFromField]")
-        # items = self.mkItemsFromField()
-        # for i in items:
-            # self.model.addItem(i)
-        # self.model.layoutChanged.emit()
-        
+            
     def switchFieldMode(self,checked):
         if checked:
             self.activateFieldMode()

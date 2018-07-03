@@ -42,6 +42,7 @@ def checkInit():
     checkWorkspaceInit()
     if not params.extentLayer:
         utils.user_error("Extent layer paramter not initialized")
+    utils.checkFileExists(getOrigPath(params.extentLayer),"Extent layer ")
     if not params.resolution:
         utils.user_error("Resolution paramter not initialized")
     if not params.crs:
@@ -117,9 +118,9 @@ class ParamsModel(QAbstractTableModel):
         if not os.path.isdir(path):
             utils.user_error("Directory '" + path + "' does not exist")
         self.tmpDir = os.path.join(path,"tmp")
-        if not os.path.isdir(self.tmpDir):
-            os.makedirs(self.tmpDir)
-            utils.debug("Temporary directory '" + self.tmpDir + "' created")
+        #if not os.path.isdir(self.tmpDir):
+        #    os.makedirs(self.tmpDir)
+        #    utils.debug("Temporary directory '" + self.tmpDir + "' created")
             
     def setUseRelPath(self,state):
         if state:

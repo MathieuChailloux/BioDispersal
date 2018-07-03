@@ -133,8 +133,8 @@ class FrictionModel(abstract_model.DictModel):
             cls_code = cls_item.dict["code"]
             cls_descr = cls_item.dict["descr"]
             row_item = self.getRowByClass(cls_name)
-            utils.debug("row_item : " + str(row_item.dict))
             if row_item:
+                utils.debug("row_item : " + str(row_item.dict))
                 utils.debug("Class " + cls_name + " already exists")
                 if row_item.dict["code"] != cls_code:
                     utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"

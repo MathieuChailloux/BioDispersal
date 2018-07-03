@@ -229,9 +229,12 @@ class AbstractGroupModel(QAbstractTableModel):
         #        return
         #assert(False)
         
-    def applyItems(self):
+    def applyItems(self,indexes=None):
         utils.debug("[applyItems]")
-        for i in self.items:
+        if not indexes:
+            indexes = range(0,len(self.items))
+        for n in indexes:
+            i = self.items[n]
             i.applyItem()
             
     def orderItems(self,idx):
