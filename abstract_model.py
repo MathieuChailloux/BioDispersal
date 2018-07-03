@@ -146,7 +146,11 @@ class AbstractGroupModel(QAbstractTableModel):
         self.fields = fields
         #self.nb_fields = len(fields)
         self.items = []
+        self.orders = {}
         #self.field_of_idx = {f : fields.index(f) for f in fields}
+        
+    def getItems(self):
+        return self.items
         
     def getNItem(self,n):
         if n < self.rowCount():
@@ -232,7 +236,15 @@ class AbstractGroupModel(QAbstractTableModel):
             
     def orderItems(self,idx):
         utils.debug("orderItems " + str(idx))
+        if idx in self.orders:
+            order_down = self.orders[idx]
+        else:
+            order_down = True
+            self.orders[idx] = order_down
         self.items = sorted(self.items, key=lambda i: i.dict[i.idx_to_fields[idx]])
+        if not order_down:
+            self.items.reverse()
+        self.orders[idx] = not self.orders[idx]
         self.layoutChanged.emit()
         
     def upgradeElem(self,row):
@@ -344,7 +356,10 @@ class AbstractConnector:
         if nb_rows == 0:
             utils.debug("no idx selected")
         elif nb_rows == 1:
-            self.model.upgradeElem(rows[0])
+            row = rows[0]
+            if row > 0:
+                self.model.swapItems(row - 1, row)
+                self.view.selectRow(row - 1)
         else:
             utils.warn("Several rows selected, please select only one")
             
@@ -357,7 +372,10 @@ class AbstractConnector:
         if nb_rows == 0:
             utils.debug("no idx selected")
         elif nb_rows == 1:
-            self.model.downgradeElem(rows[0])
+            row = rows[0]
+            if row < len(self.model.getItems()) - 1:
+                self.model.swapItems(row, row + 1)
+                self.view.selectRow(row + 1)
         else:
             utils.warn("Several rows selected, please select only one")
         

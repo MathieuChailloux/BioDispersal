@@ -36,6 +36,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
             res += "\n"
         return res
         
+    def getItems(self):
+        return self.current_model.items
+        
     def getCurrModel(self):
         return self.st_groups[self.st_current_st]
         

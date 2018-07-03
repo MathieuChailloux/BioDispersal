@@ -209,10 +209,12 @@ class ParamsConnector:
         self.dlg.options2Frame.hide()
         self.model.setResolution(25)
         self.dlg.rasterResolution.setValue(25)
-        self.dlg.paramsView.setColumnWidth(1,50)
         #self.dlg.loadModelFrame.hide()
         
     def connectComponents(self):
+        self.dlg.paramsView.setColumnWidth(0,400)
+        self.dlg.paramsView.setColumnWidth(1,500)
+        self.dlg.paramsView.setColumnWidth(2,5600)
         self.dlg.paramsView.setModel(self.model)
         self.dlg.rasterResolution.valueChanged.connect(self.model.setResolution)
         self.dlg.extentLayer.setStorageMode(QgsFileWidget.GetFile)

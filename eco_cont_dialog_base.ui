@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
@@ -505,7 +505,7 @@
        <x>40</x>
        <y>180</y>
        <width>511</width>
-       <height>171</height>
+       <height>181</height>
       </rect>
      </property>
     </widget>
@@ -1349,8 +1349,8 @@
        <rect>
         <x>480</x>
         <y>10</y>
-        <width>411</width>
-        <height>371</height>
+        <width>361</width>
+        <height>411</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -1387,6 +1387,19 @@
          <width>321</width>
          <height>321</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="classRemove">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>370</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Supprimer</string>
        </property>
       </widget>
      </widget>

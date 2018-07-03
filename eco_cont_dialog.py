@@ -156,58 +156,11 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
     def displayVisuTab(self):
         pass
         
-    # def runCost(self):
-        # debug("Start runCost")
-        # startRaster = self.rasterDepartComboBox.currentLayer()
-        # permRaster = self.rasterPermComboBox.currentLayer()
-        # dateNow = datetime.datetime.now()
-        # debug ("startRaster = " + startRaster.name())
-        # parameters = { 'input' : permRaster,
-                        # 'start_raster' : startRaster,
-                        # 'max_cost' : 5000,
-                        # 'output' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_output.tif',
-                        #'start_coordinates' : '0,0',
-                        #'stop_coordinates' : '0,0',
-                        # 'nearest' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_nearest.tif',
-                        # 'outdir' : 'D:\MChailloux\PNRHL_QGIS\tmpLayer_movements.tif',
-                        # 'start_points' :  None,
-                        # 'stop_points' : None,
-                        # 'null_cost' : None,
-                        # 'memory' : 5000,
-                        # 'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
-                        # 'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
-                        # 'GRASS_MIN_AREA_PARAMETER' : 0,
-                        # '-k' : False,
-                        # '-n' : False,
-                        # '-r' : True,
-                        # '-i' : False,
-                        # '-b' : False}
-        #parameters = {}
-        # try:
-            # processing.run("grass7:r.cost",parameters)
-            # print ("call to r.cost successful")
-        # except Exception as e:
-            # print ("Failed to call r.cost : " + str(e))
-            # raise e
-        # finally:  
-            # debug("End runCost")
-        #grass.run_command(start_raster=startRaster,input=permRaster,max_cost=?,output=?,memory=5000)
-        
     def addGroup(self):
         self.groupTable.insertRow(0)
         
     def updateGroupVectLayer(self,layer):
         self.groupVectFieldExpr.setLayer(layer)
-        
-    # def selectEntities(self):
-        # debug("Start selectEntities")
-        # layer = self.groupVectMapLayer.currentLayer()
-        # fieldExpr = self.groupVectFieldExpr.expression()
-        # group = self.groupVectGroup.currentText()
-        # selection = layer.getFeatures(QgsFeatureRequest().setFilterExpression(fieldExpr))
-        # newLayer=QgsVectorLayer("Polygon?crs=epsg:2154", "Segment buffers", "memory")
-        # writeShapefile(layer,'D:\MChailloux\PNRHL_QGIS\\test.shp')
-        # debug("End selectEntities")
         
     def recomputeModels(self):
         self.models = {"ParamsModel" : params.params,
@@ -239,8 +192,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         self.saveModelAs(fname)
         
     def loadModel(self,fname):
-        #modelPath = self.loadModelPath.filePath()
         debug("loadModel")
         checkFileExists(fname)
         setConfigModels(self.models)
+        params.params.projectFile = fname
         parseConfig(fname)

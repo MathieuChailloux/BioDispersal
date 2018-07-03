@@ -82,6 +82,7 @@ def loadVectorLayer(fname,loadProject=False):
         utils.user_error("Could not load layer '" + fname + "'")
     if not layer.isValid():
         utils.user_error("Invalid layer '" + fname + "'")
+    layer.dataProvider().setEncoding('System')
     if loadProject:
         QgsProject.instance().addMapLayer(layer)
     return layer

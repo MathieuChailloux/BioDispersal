@@ -55,8 +55,12 @@ class SelectionItem(DictItem):
         expr = self.dict["expr"]
         class_name = self.dict["class"]
         class_item = classes.getClassByName(class_name)
+        if not class_item:
+            utils.user_error("No class named '" + class_name + "'")
         group_name = self.dict["group"]
         group_item = groups.getGroupByName(group_name)
+        if not group_item:
+            utils.user_error("No group named '" + group_name + "'")
         out_vector_layer_path = group_item.getVectorPath()
         if os.path.isfile(out_vector_layer_path):
             out_vector_layer = group_item.vectorLayer
