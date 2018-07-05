@@ -333,7 +333,7 @@ class SelectionConnector(AbstractConnector):
             class_item = classes.ClassItem(class_name,class_descr,None)
             classes.classModel.addItem(class_item)
             classes.classModel.layoutChanged.emit()
-            expr = "\"" + field_name + "\" = " + str(fv)
+            expr = "\"" + field_name + "\" = '" + str(fv) + "'"
             item = SelectionItem(in_layer_path,expr,class_name,group)#,class_descr,group_descr)
             items.append(item)
         return items
