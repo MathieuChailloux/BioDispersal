@@ -24,17 +24,16 @@
 
 import datetime
 import os.path
+import pathlib
 import sys
 import subprocess
 
 file_dir = os.path.dirname(__file__)
 sys.path.append(file_dir)
 
-debug_flag=True
-tmpDir="D:/MChailloux/tmp"
+# Log utilities
 
-# class TODOException(Exception):
-    # pass
+debug_flag=True
 
 def printDate(msg):
     print ("[" + str(datetime.datetime.now()) + "] " + msg)
@@ -61,6 +60,9 @@ def todo_error(msg):
     printDate("[Feature not yet implemented] " + msg)
     raise Exception(msg)
 
+    
+# File utils
+    
 def normPath(fname):
     return fname.replace('\\','/')
     
@@ -77,6 +79,9 @@ def writeFile(fname,str):
     with open(fname,"w",encoding="utf-8") as f:
         f.write(str)
     
+
+# Type utils
+    
 def is_number(s):
     try:
         float(s)
@@ -90,6 +95,9 @@ def is_integer(s):
         return True
     except ValueError:
         return False
+        
+        
+# Validity checkers
         
 def checkFields(ref_fields,fields):
     if ref_fields != fields:
@@ -112,6 +120,9 @@ def checkDescr(item,prefix=None):
     if not item.dict["descr"]:
         warn(prefix + " with empty name '" + str(item.dict["descr"]) + "'")
         
+
+# Subprocess utils
+        
 def executeCmd(cmd_args):
     p = subprocess.Popen(cmd_args,
                          stderr=subprocess.PIPE,
@@ -122,21 +133,3 @@ def executeCmd(cmd_args):
     if err:
         user_error(str(err))
         
-# def checkName(item,prefix=None):
-    # if prefix == None:
-        # prefix = item.__class__.name
-    # if not item.name:
-        # user_error(prefix + " with empty name '" + str(item.name) + "'")
-        
-# def checkDescr(item,prefix=None):
-    # if prefix == None:
-        # prefix = item.__class__.name
-    # if not item.dict["descr"]:
-        # user_error(prefix + " with empty name '" + str(item.name) + "'")
-    
-#def writeShapefile(layer,outfname):
-#    error = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname)
-#    if error == QgsVectorFileWriter.NoError:
-#        info("Shapefile '" + outfname + "' succesfully created")
-#    else:
-#        user_error("Unable to create shapefile '" + outfname + "' : " + str(error))

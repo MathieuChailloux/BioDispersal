@@ -1,5 +1,6 @@
 
 import os.path
+import pathlib
 
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsFileWidget
@@ -26,6 +27,11 @@ def checkWorkspaceInit():
 
 def normalizePath(path):
     checkWorkspaceInit()
+    pp = pathlib.Path(path)
+    utils.debug("path = " + str(path))
+    utils.debug("pp_str = " + str(pp))
+    #utils.debug("pp = " + str(pp))
+    path = str(pp)
     if os.path.isabs(path):
         return os.path.relpath(path,params.workspace)
     else:
