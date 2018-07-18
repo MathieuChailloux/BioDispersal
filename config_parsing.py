@@ -25,12 +25,9 @@
 from .abstract_model import *
 from .params import *
 from .sous_trames import *
-from .metagroups import *
 from .groups import *
 from .classes import *
 from .selection import *
-from .buffers import *
-from .rasterization import *
 from .cost import *
 
 from .utils import *
