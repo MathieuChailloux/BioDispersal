@@ -33,7 +33,10 @@ from .qgsTreatments import *
 cost_fields = ["st_name","start_layer","perm_layer","cost"]
 
 # CostItem implements DictItem and contains below fields :
-#   - 'st_name' : 
+#   - 'st_name' : sous-trame name
+#   - 'start_layer' : vector layer containing starting points
+#   - 'perm_layer' : raster layer containing cost for each pixel
+#   - 'cost' : maximal cost
 class CostItem(DictItem):
 
     def __init__(self,st_name,start_layer,perm_layer,cost):
@@ -91,8 +94,6 @@ class CostConnector(AbstractConnector):
         self.onlySelection = False
         super().__init__(costModel,self.dlg.costView,
                          self.dlg.costAdd,self.dlg.costRemove)
-        #test_item = 
-        #self.raster_model.
         
     def initGui(self):
         self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)

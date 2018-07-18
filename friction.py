@@ -12,10 +12,13 @@ import params
 import abstract_model
 import qgsTreatments
 
+# Friction connector is global so that it can be relinked if model is reloaded.
+# Model can be reloaded through CSV and project file
 frictionConnector = None
 frictionModel = None
 frictionFields = ["class_descr","class","code"]
 
+# Signal handlers to update sous-trames and classes in frictionModel
 @pyqtSlot()
 def catchSTAdded(st_item):
     utils.debug("stAdded " + st_item.dict["name"])
@@ -39,11 +42,13 @@ class FrictionRowItem(abstract_model.DictItem):
     def __init__(self,dict):
         super().__init__(dict)
     
+    # Adds an entry by sous-trame (columns in table view)
     def addSTCols(self,defaultVal):
         for st in sous_trames.getSTList():
             self.dict[st] = defaultVal
         self.recompute()
             
+
 class FrictionModel(abstract_model.DictModel):
 
     def __init__(self):
@@ -54,8 +59,6 @@ class FrictionModel(abstract_model.DictModel):
         super().__init__(self,self.fields)
         
     def classExists(self,cls_name):
-        # for cls in self.classes:
-            # if cls.dict["name"] == cls_name:
         for fr in self.items:
             if fr.dict["class"] == cls_name:
                 return True

@@ -132,6 +132,8 @@ class ClassConnector(abstract_model.AbstractConnector):
     def connectComponents(self):
         super().connectComponents()
 
+    # Classes are created in selection tab.
+    # No code given so that it be automatically generated.
     def mkItem(self):
         name = self.dlg.selectionClassName.text()
         self.dlg.selectionClassCombo.setCurrentText(name)

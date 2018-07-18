@@ -36,7 +36,6 @@ from qgis.gui import QgsFileWidget
 
 from .utils import *
 from .qgsUtils import *
-from .metagroups import Metagroups
 import params
 import sous_trames
 import groups
@@ -69,8 +68,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         #self.connectComponents()
         
+    # Initialize plugin tabs.
+    # One tab <=> one connector.
     def initTabs(self):
-        #global params.paramsConnector, classes.classConnector
         paramsConnector = params.ParamsConnector(self)
         params.params = paramsConnector.model
         stConnector = sous_trames.STConnector(self)
@@ -84,8 +84,6 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         frictionConnector = friction.FrictionConnector(self)
         friction.frictionModel = frictionConnector.model
         costConnector = CostConnector(self)
-        #bufferConnector = BufferConnector(self,groupConnector.model)
-        #rasterizationConnector = RasterizationConnector(self)
         self.connectors = {"Params" : paramsConnector,
                            "ST" : stConnector,
                            "Group" : groupsConnector,
@@ -95,27 +93,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                            "Friction" : frictionConnector,
                            "Cost" : costConnector}
         self.recomputeModels()
-        #self.visuTab = 
-        # self.tabs = [paramsConnector,
-                     # stConnector,
-                     # groupsConnector,
-                     # classConnector,
-                     # self.selectionConnector,
-                     # self.fusionConnector,
-                     # self.frictionConnector,
-                     # self.costConnector]
-                     #bufferConnector,
-                     #rasterizationConnector]
-        # self.models = {"ParamsModel" : paramsConnector.model,
-                        # "STModel" : stConnector.model,
-                        # "GroupModel" : groupsConnector.model,
-                        # "ClassModel" : classConnector.model,
-                        # "SelectionModel" : selectionConnector.model,
-                        # "FusionModel" : fusionConnector.model,
-                        # "FrictionModel" : frictionConnector.model,
-                        # "CostModel" : costConnector.model}
         
-        
+    # Initialize Graphic elements for each tab
+    # TODO : resize
     def initGui(self):
         self.geometry = self.geometry()
         self.x = self.x()
@@ -131,34 +111,21 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
             tab.initGui()
         self.treatmentsFrame.hide()
         
+    # Connect view and model components for each tab
     def connectComponents(self):
         for k, tab in self.connectors.items():
             tab.connectComponents()
-        #self.buttonAddGroup.clicked.connect(self.addGroup)
-        #self.groupVectMapLayer.layerChanged.connect(self.updateGroupVectLayer)
-        #self.groupVectRun.clicked.connect(self.selectEntities)
-        #self.runButton.clicked.connect(self.runCost)
         # Main tab connectors
         self.saveModelPath.fileChanged.connect(self.saveModelAs)
         self.saveProjectButton.clicked.connect(self.saveModel)
         self.loadModelPath.fileChanged.connect(self.loadModel)
-        # self.saveModelButton.clicked.connect(self.saveModel)
-        # self.loadModelButton.clicked.connect(self.loadModel)
         self.saveModelPath.setStorageMode(QgsFileWidget.SaveFile)
         self.loadModelPath.setStorageMode(QgsFileWidget.GetFile)
         
     def onResize(self,event):
         new_size = event.size()
         
-    def displayVisuTab(self):
-        pass
-        
-    def addGroup(self):
-        self.groupTable.insertRow(0)
-        
-    def updateGroupVectLayer(self,layer):
-        self.groupVectFieldExpr.setLayer(layer)
-        
+    # Recompute self.models in case they have been reloaded
     def recomputeModels(self):
         self.models = {"ParamsModel" : params.params,
                         "STModel" : sous_trames.stModel,
@@ -169,6 +136,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                         "FrictionModel" : friction.frictionModel,
                         "CostModel" : self.connectors["Cost"].model}
         
+    # Return XML string describing project
     def toXML(self):
         xmlStr = "<ModelConfig>\n"
         for k, m in self.models.items():
@@ -177,17 +145,20 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         debug("Final xml : \n" + xmlStr)
         return xmlStr
 
+    # Save project to 'fname'
     def saveModelAs(self,fname):
         self.recomputeModels()
         xmlStr = self.toXML()
         params.params.projectFile = fname
         writeFile(fname,xmlStr)
         
+    # Save project to projectFile if existing
     def saveModel(self):
         fname = params.params.projectFile
         checkFileExists(fname,"Project ")
         self.saveModelAs(fname)
         
+    # Load project from 'fname' if existing
     def loadModel(self,fname):
         debug("loadModel")
         checkFileExists(fname)
