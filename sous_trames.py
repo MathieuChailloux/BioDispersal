@@ -65,6 +65,11 @@ class STItem(abstract_model.DictItem):
         st_path = self.getSTPath()
         return os.path.join(st_path,basename)
         
+    def getDispersionTmpPath(self,cost):
+        basename = self.name + "_dispersion_" + str(cost) + "_tmp.tif"
+        st_path = self.getSTPath()
+        return os.path.join(st_path,basename)
+        
     def getStartLayerPath(self):
         basename = self.name + "_start.tif"
         st_path = self.getSTPath()

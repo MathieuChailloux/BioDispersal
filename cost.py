@@ -65,8 +65,12 @@ class CostItem(DictItem):
                            params.getResolution(),extent_layer_path)
         permRaster = params.getOrigPath(self.dict["perm_layer"])
         cost = self.dict["cost"]
+        tmpPath = st_item.getDispersionTmpPath(cost)
         outPath = st_item.getDispersionPath(cost)
-        applyRCost(startRaster,permRaster,cost,outPath)
+        applyRCost(startRaster,permRaster,cost,tmpPath)
+        applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
+        os.remove(tmpPath)
+        utils.debug("End runCost")
             
     def checkItem(self):
         pass

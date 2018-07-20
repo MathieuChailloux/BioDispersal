@@ -133,3 +133,11 @@ def executeCmd(cmd_args):
     if err:
         user_error(str(err))
         
+def executeCmdAsScript(cmd_args):
+    debug("executeCmdAsScript")
+    new_args = [sys.executable] + cmd_args
+    debug(str(new_args))
+    ret = subprocess.call(new_args)
+    debug("return code = " + str(ret))
+    
+        

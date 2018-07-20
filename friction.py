@@ -203,7 +203,7 @@ class FrictionModel(abstract_model.DictModel):
                 reclass_dict[r.dict['code']] = r.dict[st_item.dict["name"]]
             utils.debug("Reclass dict : " + str(reclass_dict))
             #utils.debug("applyReclassGdal")
-            qgsTreatments.applyReclassGdal(st_merged_fname,st_friction_fname,reclass_dict)
+            qgsTreatments.applyReclassGdalFromDict(st_merged_fname,st_friction_fname,reclass_dict)
         
     def applyItems(self):
         #self.applyReclass()
