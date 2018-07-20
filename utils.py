@@ -131,7 +131,10 @@ def executeCmd(cmd_args):
     debug(str(p.args))
     info(str(out))
     if err:
-        user_error(str(err))
+        if "invalid value encountered in less" in str(err):
+            warn(str(err))
+        else:
+            user_error(str(err))
         
 def executeCmdAsScript(cmd_args):
     debug("executeCmdAsScript")

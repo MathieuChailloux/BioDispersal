@@ -107,9 +107,10 @@ def applyGdalCalc(in_path,out_path,expr):
     utils.debug("qgsTreatments.applyReclassGdal(" + str(expr) + ")")
     cmd_args = ['gdal_calc.bat',
                 '-A', in_path,
-                '--type=Int32',
-                '--outfile='+out_path]
-    expr_opt = '--calc=\"' + expr + "\""
+                #'--type=Int32',
+                '--outfile='+out_path,
+                '--NoDataValue='+nodata_val]
+    expr_opt = '--calc=' + expr
     cmd_args.append(expr_opt)
     utils.executeCmd(cmd_args)
     res_layer = qgsUtils.loadRasterLayer(out_path)
@@ -119,7 +120,7 @@ def applyGdalCalc(in_path,out_path,expr):
 # in output raster 'out_path'.
 def applyFilterGdalFromMaxVal(in_path,out_path,max_val):
     utils.debug("qgsTreatments.applyReclassGdalFromMaxVal(" + str(max_val) + ")")
-    expr = 'A*(A<=' + str(max_val) + ')' #*(A>=0)'
+    expr = 'A*(less_equal(A,' + str(max_val) + '))*(less_equal(0,A))+(less(A,0))*A'
     applyGdalCalc(in_path,out_path,expr)
     # utils.executeCmdAsScript(cmd_args)
     # res_layer = qgsUtils.loadRasterLayer(out_path)
@@ -132,7 +133,7 @@ def applyReclassGdalFromDict(in_path,out_path,reclass_dict):
     utils.debug("qgsTreatments.applyReclassGdalFromDict(" + str(reclass_dict) + ")")
     expr = ''
     for old_cls,new_cls in reclass_dict.items():
-        if expr != '--calc=':
+        if expr != '':
             expr += '+'
         expr += str(new_cls) + '*(A==' + str(old_cls)+ ')'
     applyGdalCalc(in_path,out_path,expr)
