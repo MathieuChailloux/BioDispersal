@@ -176,8 +176,13 @@ def writeShapefile(layer,outfname):
         utils.user_error("Unable to create shapefile '" + outfname + "' : " + str(error_msg))
         
 def coordsOfExtentPath(extent_path):
-    extent_layer = loadVectorLayer(extent_path)
-    extent = extent_layer.extent()
+    if isVectorPath(extent_path):
+        layer = loadVectorLayer(extent_path)
+    elif isRasterPath(extent_path):
+        layer = loadRasterLayer(extent_path)
+    else:
+        utils.user_error("Unexpected format for extent path '" + str(extent_path))
+    extent = layer.extent()
     x_min = extent.xMinimum()
     x_max = extent.xMaximum()
     y_min = extent.yMinimum()

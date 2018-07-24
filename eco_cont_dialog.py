@@ -109,7 +109,6 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.tabWidget.setGeometry(self.x + step_x, self.y + step_y, new_w, new_h)
         for k, tab in self.connectors.items():
             tab.initGui()
-        self.treatmentsFrame.hide()
         
     # Connect view and model components for each tab
     def connectComponents(self):

@@ -51,236 +51,6 @@
       <string>Paramètres</string>
      </property>
     </widget>
-    <widget class="QFrame" name="treatmentsFrame">
-     <property name="geometry">
-      <rect>
-       <x>610</x>
-       <y>340</y>
-       <width>201</width>
-       <height>211</height>
-      </rect>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <widget class="QLabel" name="paramlabel_4">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>121</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Lancer traitements</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="runGroupCB">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>30</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_24">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>30</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Groups</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_35">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>50</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Metagroups</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="runMetagroupCB">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>50</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_36">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>70</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Sélection</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="runSelectionCB">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>70</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_37">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>90</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Tampons</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="runTamponCB">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>90</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_38">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>110</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Rasterization</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="runRasterizationCB">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>110</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_39">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>130</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Friction</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="runFrictionCB">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>130</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_40">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>150</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Coût cumulé</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="runCostCB">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>150</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>180</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Run</string>
-      </property>
-     </widget>
-    </widget>
     <widget class="QFrame" name="frame_9">
      <property name="geometry">
       <rect>
@@ -509,102 +279,15 @@
       </rect>
      </property>
     </widget>
-    <widget class="QFrame" name="options2Frame">
+    <widget class="QgsExtentGroupBox" name="mExtentGroupBox">
      <property name="geometry">
       <rect>
-       <x>560</x>
-       <y>50</y>
-       <width>261</width>
-       <height>71</height>
+       <x>540</x>
+       <y>40</y>
+       <width>300</width>
+       <height>139</height>
       </rect>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <widget class="QCheckBox" name="paramsRelPath">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>10</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_108">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>50</y>
-        <width>211</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Afficher l'onglet de visualisation</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="eraseExisting">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>30</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="displayVisu">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>50</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Afficher l'onglet de visualisation</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_107">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>30</y>
-        <width>151</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Écraser les fichiers existants</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="useRelPathLabel">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>10</y>
-        <width>141</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Chemins de fichiers relatifs</string>
-      </property>
-     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="stTab">
@@ -2013,6 +1696,18 @@
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qgis.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QgsExtentGroupBox</class>
+   <extends>QgsCollapsibleGroupBox</extends>
+   <header>qgis.gui</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>

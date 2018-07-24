@@ -209,14 +209,12 @@ class ParamsConnector:
     def initGui(self):
         #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
         self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-        self.dlg.extentLayer.setFilter("*.shp")
+        self.dlg.extentLayer.setFilter("*.shp;*.tif")
         self.dlg.saveModelPath.setFilter("*.xml")
         self.dlg.loadModelPath.setFilter("*.xml")
         self.dlg.paramsCrs.setCrs(defaultCrs)
-        self.dlg.options2Frame.hide()
         self.model.setResolution(25)
         self.dlg.rasterResolution.setValue(25)
-        #self.dlg.loadModelFrame.hide()
         
     def connectComponents(self):
         self.dlg.paramsView.setColumnWidth(0,400)
@@ -228,7 +226,7 @@ class ParamsConnector:
         self.dlg.extentLayer.fileChanged.connect(self.model.setExtentLayer)
         self.dlg.workspace.setStorageMode(QgsFileWidget.GetDirectory)
         self.dlg.workspace.fileChanged.connect(self.model.setWorkspace)
-        self.dlg.paramsRelPath.stateChanged.connect(self.model.setUseRelPath)
+        #self.dlg.paramsRelPath.stateChanged.connect(self.model.setUseRelPath)
         self.dlg.paramsCrs.crsChanged.connect(self.model.setCrs)
         self.model.layoutChanged.emit()
         
