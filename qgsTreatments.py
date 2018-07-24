@@ -109,7 +109,8 @@ def applyGdalCalc(in_path,out_path,expr):
                 '-A', in_path,
                 #'--type=Int32',
                 '--outfile='+out_path,
-                '--NoDataValue='+nodata_val]
+                '--NoDataValue='+nodata_val,
+                '--overwrite']
     expr_opt = '--calc=' + expr
     cmd_args.append(expr_opt)
     utils.executeCmd(cmd_args)
@@ -120,7 +121,9 @@ def applyGdalCalc(in_path,out_path,expr):
 # in output raster 'out_path'.
 def applyFilterGdalFromMaxVal(in_path,out_path,max_val):
     utils.debug("qgsTreatments.applyReclassGdalFromMaxVal(" + str(max_val) + ")")
-    expr = 'A*(less_equal(A,' + str(max_val) + '))*(less_equal(0,A))+(less(A,0))*A'
+    expr = ('(A*less_equal(A,' + str(max_val) + ')*less_equal(0,A))'
+        + '+(' + str(nodata_val) + '*less(' + str(max_val) + ',A))'
+        + '+(' + str(nodata_val) + '*less(A,0))')
     applyGdalCalc(in_path,out_path,expr)
     # utils.executeCmdAsScript(cmd_args)
     # res_layer = qgsUtils.loadRasterLayer(out_path)

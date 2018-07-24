@@ -46,8 +46,7 @@ def typeIsNumeric(t):
 def removeRaster(path):
     utils.removeFile(path)
     aux_name = path + ".aux.xml"
-    if os.path.isfile(aux_name):
-        utils.removeFile(aux_name)
+    utils.removeFile(aux_name)
     
 def pathOfLayer(l):
     utils.debug("pathOfLayer")

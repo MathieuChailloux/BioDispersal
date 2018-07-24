@@ -69,7 +69,7 @@ class CostItem(DictItem):
         outPath = st_item.getDispersionPath(cost)
         applyRCost(startRaster,permRaster,cost,tmpPath)
         applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
-        #2removeRaster(tmpPath)
+        removeRaster(tmpPath)
         utils.debug("End runCost")
             
     def checkItem(self):
