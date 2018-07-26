@@ -81,6 +81,25 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
         res_layer = qgsUtils.loadRasterLayer(out_path)
         QgsProject.instance().addMapLayer(res_layer)
         
+
+# Apply raster calculator from expression 'expr'.
+# Calculation is made on a single file and a signled band renamed 'A'.
+# Output format is Integer32.
+def applyResampleProcessing(in_path,out_path):
+    utils.debug("qgsTreatments.applyResampleProcessing")
+    parameters = {'input' : in_path,
+                   'output' : out_path,
+                   '--overwrite' : True}
+    feedback = QgsProcessingFeedback()
+    try:
+        processing.run("grass7:r.resample",parameters,feedback=feedback)
+        utils.debug ("call to r.cost successful")
+    except Exception as e:
+        utils.warn ("Failed to call r.reclass : " + str(e))
+        raise e
+    finally:
+        utils.debug("End resample")
+        
 # TO TEST
 def applyReclassProcessing(in_path,out_path,rules_file,title):
     parameters = {'input' : in_path,
@@ -98,7 +117,7 @@ def applyReclassProcessing(in_path,out_path,rules_file,title):
         utils.warn ("Failed to call r.reclass : " + str(e))
         raise e
     finally:
-        utils.debug("End runCost")
+        utils.debug("End reclass")
         
 # Apply raster calculator from expression 'expr'.
 # Calculation is made on a single file and a signled band renamed 'A'.

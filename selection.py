@@ -61,6 +61,16 @@ class SelectionItem(DictItem):
             self.applyRasterItem()
         else:
             user_error("Unkown format for file '" + str(self.dict["in_layer"]))
+            
+    def applyRasterItem(self):
+        in_layer_path = params.getOrigPath(self.dict["in_layer"])
+        checkFileExists(in_layer_path)
+        out_path = group_item.getRasterPath()
+        resampling_mode = self.dict["expr"]
+        if resampling_mode == "Plus proche voisin":
+            applyResampleProcessing(in_layer_path,out_path)
+        else:
+            internal_error("Unexpected resampling mode '" + str(resampling_mode) + "'")
         
     # Selection is performed in 3 steps :
     #   1) creates group layer (group_vector.shp) if not existing with below fields :
@@ -168,9 +178,15 @@ class SelectionModel(DictModel):
             grp_vector_path = grp_item.getVectorPath()
             if os.path.isfile(grp_vector_path):
                 removeFile(grp_vector_path)
+            from_raster = False
             for s in selections:
-                s.applyVectorItem()
-            grp_item.applyRasterizationItem()
+                s.applyItem()
+                if s.is_raster:
+                    from_raster = True
+                    if len(selections) > 1:
+                        utils.user_error("Several selections in group '" + g +"'")
+            if not from_raster:
+                grp_item.applyRasterizationItem()
         
 class SelectionConnector(AbstractConnector):
 
@@ -188,19 +204,25 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionDown.setIcon(downIcon)
         self.activateFieldMode()
         self.activateClassDisplay()
-        self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        self.activateVectorMode()
+        self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.All)
+        self.dlg.selectionResampleCombo.addItem("Plus proche voisin")
+        self.dlg.selectionResampleCombo.addItem("Bilinéaire")
+        self.dlg.selectionResampleCombo.addItem("Bicubique")
         
     def connectComponents(self):
         super().connectComponents()
         # In layer
+        self.dlg.selectionLayerFormatVector.stateChanged.connect(self.switchVectorMode)
+        self.dlg.selectionLayerFormatRaster.stateChanged.connect(self.switchRasterMode)
         self.dlg.selectionInLayerCombo.layerChanged.connect(self.setInLayerFromCombo)
         self.dlg.selectionInLayer.fileChanged.connect(self.setInLayer)
-        # Expr
+        # Selection mode
         self.dlg.fieldSelectionMode.stateChanged.connect(self.switchFieldMode)
         self.dlg.exprSelectionMode.stateChanged.connect(self.switchExprMode)
         # Class
-        self.dlg.selectionClassCombo.setModel(classes.classModel)
-        self.dlg.selectionClassCombo.currentTextChanged.connect(self.setClass)
+        # self.dlg.selectionClassCombo.setModel(classes.classModel)
+        # self.dlg.selectionClassCombo.currentTextChanged.connect(self.setClass)
         self.dlg.classDisplay.stateChanged.connect(self.switchClassDisplay)
         # Group
         self.dlg.selectionGroupCombo.setModel(groups.groupsModel)
@@ -345,6 +367,52 @@ class SelectionConnector(AbstractConnector):
             self.model.addItem(item)
             self.model.layoutChanged.emit()
             
+    # Vector / raster modes
+    
+    def switchVectorMode(self,checked):
+        if checked:
+            self.activateVectorMode()
+        else:
+            self.activateRasterMode()
+            
+    def switchRasterMode(self,checked):
+        if checked:
+            self.activateRasterMode()
+        else:
+            self.activateVectorMode()
+        
+    def activateVectorMode(self):
+        utils.debug("activateVectorMode")
+        self.dlg.selectionLayerFormatRaster.setCheckState(0)
+        self.dlg.selectionLayerFormatVector.setCheckState(2)
+        self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        self.dlg.selectionResampleLabel.hide()
+        self.dlg.selectionResampleCombo.hide()
+        self.dlg.selectionModeLabel.show()
+        if self.dlg.fieldSelectionMode.isChecked():
+            self.activateFieldMode()
+        elif self.dlg.exprSelectionMode.isChecked():
+            self.activateExprMode()
+        else:
+            utils.internal_error("Unexpected checkbox state")
+            
+    def activateRasterMode(self):
+        utils.debug("activateRasterMode")
+        self.dlg.selectionLayerFormatVector.setCheckState(0)
+        self.dlg.selectionLayerFormatRaster.setCheckState(2)
+        self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.dlg.selectionResampleLabel.show()
+        self.dlg.selectionResampleCombo.show()
+        self.dlg.selectionModeLabel.hide()
+        self.dlg.selectionField.hide()
+        self.dlg.selectionFieldLabel.hide()
+        self.dlg.selectionExpr.hide()
+        self.dlg.selectionExprLabel.hide()
+            
+        
+            
+    # Field / expression modes
+            
     def switchFieldMode(self,checked):
         if checked:
             self.activateFieldMode()
@@ -358,34 +426,38 @@ class SelectionConnector(AbstractConnector):
             self.activateFieldMode()
         
     def activateExprMode(self):
+        utils.debug("activateExprMode")
         self.dlg.fieldSelectionMode.setCheckState(0)
         self.dlg.exprSelectionMode.setCheckState(2)
         self.dlg.selectionField.hide()
         self.dlg.selectionFieldLabel.hide()
         self.dlg.selectionExpr.show()
         self.dlg.selectionExprLabel.show()
-        self.dlg.selectionFieldClassLabel.hide()
-        self.dlg.selectionClassAddLabel.show()
-        self.dlg.selectionClassAdd.show()
-        self.dlg.selectionClassNewLabel.show()
-        self.dlg.selectionClassCombo.show()
-        self.dlg.selectionClassName.show()
-        self.dlg.selectionClassDescr.show()
+        # self.dlg.selectionFieldClassLabel.hide()
+        # self.dlg.selectionClassAddLabel.show()
+        # self.dlg.selectionClassAdd.show()
+        # self.dlg.selectionClassNewLabel.show()
+        # self.dlg.selectionClassCombo.show()
+        # self.dlg.selectionClassName.show()
+        # self.dlg.selectionClassDescr.show()
         
     def activateFieldMode(self):
+        utils.debug("activateFieldMode")
         self.dlg.exprSelectionMode.setCheckState(0)
         self.dlg.fieldSelectionMode.setCheckState(2)
         self.dlg.selectionExpr.hide()
         self.dlg.selectionExprLabel.hide()
         self.dlg.selectionField.show()
         self.dlg.selectionFieldLabel.show()
-        self.dlg.selectionFieldClassLabel.show()
-        self.dlg.selectionClassAddLabel.hide()
-        self.dlg.selectionClassAdd.hide()
-        self.dlg.selectionClassNewLabel.hide()
-        self.dlg.selectionClassCombo.hide()
-        self.dlg.selectionClassName.hide()
-        self.dlg.selectionClassDescr.hide()
+        # self.dlg.selectionFieldClassLabel.show()
+        # self.dlg.selectionClassAddLabel.hide()
+        # self.dlg.selectionClassAdd.hide()
+        # self.dlg.selectionClassNewLabel.hide()
+        # self.dlg.selectionClassCombo.hide()
+        # self.dlg.selectionClassName.hide()
+        # self.dlg.selectionClassDescr.hide()
+        
+    # Groups / class display
         
     def switchGroupDisplay(self,checked):
         if checked:
@@ -410,4 +482,5 @@ class SelectionConnector(AbstractConnector):
         self.dlg.classDisplay.setCheckState(2)
         self.dlg.groupFrame.hide()
         self.dlg.classFrame.show()
+        self.dlg.classView.show()
     

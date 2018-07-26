@@ -124,7 +124,9 @@ class ClassConnector(abstract_model.AbstractConnector):
         self.dlg = dlg
         classModel = ClassModel()
         super().__init__(classModel,self.dlg.classView,
-                         self.dlg.selectionClassAdd,self.dlg.classRemove)
+                         None,None)
+        # super().__init__(classModel,self.dlg.classView,
+                         # self.dlg.selectionClassAdd,self.dlg.classRemove)
         
     def initGui(self):
         pass
