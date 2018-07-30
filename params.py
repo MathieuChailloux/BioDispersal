@@ -2,7 +2,7 @@
 import os.path
 import pathlib
 
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem, QgsRectangle
 from qgis.gui import QgsFileWidget
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
 from PyQt5.QtWidgets import QAbstractItemView
@@ -85,6 +85,12 @@ def getExtentCoords():
         # return [str(x_min),str(y_min),str(x_max),str(y_max)]
     else:
         utils.user_error("Extent layer not initialized")
+        
+def getExtentRectangle():
+    coords = getExtentCoords()
+    rect = QgsRectangle(float(coords[0]),float(coords[1]),
+                        float(coords[2]),float(coords[3]))
+    return rect
         
 #class ParamsModel(abstract_model.AbstractGroupModel):
 class ParamsModel(QAbstractTableModel):

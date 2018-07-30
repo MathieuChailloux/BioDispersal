@@ -45,7 +45,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
     utils.debug("applyRasterization")
     in_layer = qgsUtils.loadVectorLayer(in_path)
     if extent_path:
-        extent_layer = qgsUtils.loadVectorLayer(extent_path)
+        extent_layer = qgsUtils.loadLayer(extent_path)
         extent = extent_layer.extent()
     else:
         in_layer = qgsUtils.loadVectorLayer(in_path)
@@ -89,7 +89,10 @@ def applyResampleProcessing(in_path,out_path):
     utils.debug("qgsTreatments.applyResampleProcessing")
     parameters = {'input' : in_path,
                    'output' : out_path,
-                   '--overwrite' : True}
+                   '--overwrite' : True,
+                   'GRASS_REGION_CELLSIZE_PARAMETER' : 50,
+                   'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
+                   'GRASS_MIN_AREA_PARAMETER' : 0}
     feedback = QgsProcessingFeedback()
     try:
         processing.run("grass7:r.resample",parameters,feedback=feedback)
@@ -99,6 +102,38 @@ def applyResampleProcessing(in_path,out_path):
         raise e
     finally:
         utils.debug("End resample")
+        
+# 
+def applyWarpGdal(in_path,out_path,resampling_mode,crs=None,resolution=None,extent_path=None,load_flag=False):
+    utils.debug("qgsTreatments.applyWarpGdal")
+    in_layer = qgsUtils.loadRasterLayer(in_path)
+    if extent_path:
+        extent_layer = qgsUtils.loadLayer(extent_path)
+        extent = extent_layer.extent()
+    else:
+        in_layer = qgsUtils.loadLayer(in_path)
+        extent = in_layer.extent()
+    x_min = extent.xMinimum()
+    x_max = extent.xMaximum()
+    y_min = extent.yMinimum()
+    y_max = extent.yMaximum()
+    if not resolution:
+        utils.warn("Setting rasterization resolution to 25")
+        resolution = 25
+    width = int((x_max - x_min) / float(resolution))
+    height = int((y_max - y_min) / float(resolution))
+    cmd_args = ['gdalwarp',
+                '-t_srs',crs.authid(),
+                '-te',str(x_min),str(y_min),str(x_max),str(y_max),
+                '-ts', str(width), str(height),
+                '-dstnodata',nodata_val,
+                '-overwrite',
+                in_path,
+                out_path]
+    utils.executeCmd(cmd_args)
+    if load_flag:
+        res_layer = qgsUtils.loadRasterLayer(out_path)
+        QgsProject.instance().addMapLayer(res_layer)
         
 # TO TEST
 def applyReclassProcessing(in_path,out_path,rules_file,title):

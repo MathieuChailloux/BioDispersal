@@ -33,6 +33,11 @@ from .qgsTreatments import *
 
 selection_fields = ["in_layer","expr","class","group"]
 
+resampling_assoc = {"Plus proche voisin" : "near",
+                    "Moyenne" : "mean",
+                    "Bilinéaire" : "bilinear",
+                    "Bicubique" : "bicubic"}
+
 # SelectionItem implements DictItem and contains below fields :
 #   - 'in_layer' : input layer from which features are selected
 #   - 'expr' : expression on which selection is performerd
@@ -65,12 +70,36 @@ class SelectionItem(DictItem):
     def applyRasterItem(self):
         in_layer_path = params.getOrigPath(self.dict["in_layer"])
         checkFileExists(in_layer_path)
+        group_name = self.dict["group"]
+        group_item = groups.getGroupByName(group_name)
+        tmp_path = group_item.getRasterTmpPath()
         out_path = group_item.getRasterPath()
-        resampling_mode = self.dict["expr"]
-        if resampling_mode == "Plus proche voisin":
-            applyResampleProcessing(in_layer_path,out_path)
-        else:
-            internal_error("Unexpected resampling mode '" + str(resampling_mode) + "'")
+        mode = self.dict["expr"]
+        resampling_mode = resampling_assoc[mode]
+        params.checkInit()
+        crs = params.params.crs
+        resolution = params.getResolution()
+        extent_path = params.getExtentLayer()
+        applyWarpGdal(in_layer_path,tmp_path,resampling_mode,crs,resolution,extent_path)
+        #if resampling_mode == "Plus proche voisin":
+        #    applyResampleProcessing(in_layer_path,tmp_path)
+        #else:
+        #    internal_error("Unexpected resampling mode '" + str(resampling_mode) + "'")
+        create_classes = True
+        if create_classes:
+            tmp_layer = loadRasterLayer(tmp_path)
+            dp = tmp_layer.dataProvider()
+            extent_rect = params.getExtentRectangle()
+            width = dp.stepWidth()
+            height = dp.stepHeight()
+            block = dp.block(1,extent_rect,width,height)
+            #width = block.width()
+            #height = block.height()
+            values = set()
+            for i in range(width):
+                for j in range(height):
+                    values.add(block.value(i,j))
+        utils.debug("values = " + str(values))
         
     # Selection is performed in 3 steps :
     #   1) creates group layer (group_vector.shp) if not existing with below fields :
@@ -207,6 +236,7 @@ class SelectionConnector(AbstractConnector):
         self.activateVectorMode()
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.All)
         self.dlg.selectionResampleCombo.addItem("Plus proche voisin")
+        self.dlg.selectionResampleCombo.addItem("Moyenne")
         self.dlg.selectionResampleCombo.addItem("Bilinéaire")
         self.dlg.selectionResampleCombo.addItem("Bicubique")
         
@@ -269,16 +299,13 @@ class SelectionConnector(AbstractConnector):
         
     def setInLayer(self,path):
         debug("setInLayer " + path)
-        loaded_layer = loadVectorLayer(path,loadProject=True)
-        if loaded_layer == None:
-            user_error("Could not load layer '" + path + "'")
-        if not loaded_layer.isValid():
-            user_error("Invalid layer '" + path + "'")
+        loaded_layer = loadLayer(path,loadProject=True)
         self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
-        self.dlg.selectionExpr.setLayer(loaded_layer)
-        self.dlg.selectionField.setLayer(loaded_layer)
-        debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
-        debug(str(self.dlg.selectionField.layer().fields().names()))
+        if self.dlg.selectionLayerFormatVector.isChecked():
+            self.dlg.selectionExpr.setLayer(loaded_layer)
+            self.dlg.selectionField.setLayer(loaded_layer)
+            debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
+            debug(str(self.dlg.selectionField.layer().fields().names()))
         
     def setInLayerField(self,path):
         debug("[setInLayerField]")
@@ -293,7 +320,10 @@ class SelectionConnector(AbstractConnector):
         if not group_item:
             group_descr = self.dlg.selectionGroupDescr.text()
             in_layer = self.dlg.selectionInLayerCombo.currentLayer()
-            in_geom = getLayerSimpleGeomStr(in_layer)
+            if self.dlg.selectionLayerFormatVector.isChecked():
+                in_geom = getLayerSimpleGeomStr(in_layer)
+            else:
+                in_geom = "Raster"
             group_item = groups.GroupItem(group,group_descr,in_geom)
             groups.groupsModel.addItem(group_item)
             groups.groupsModel.layoutChanged.emit()
@@ -301,16 +331,30 @@ class SelectionConnector(AbstractConnector):
         
         
     def getOrCreateClass(self):
-        cls = self.dlg.selectionClassCombo.currentText()
+        #cls = self.dlg.selectionClassCombo.currentText()
+        cls = self.dlg.selectionGroupCombo.currentText()
         if not cls:
             user_error("No class selected")
         class_item = classes.getClassByName(cls)
         if not class_item:
-            class_descr = self.dlg.selectionClassName.text()
+            #class_descr = self.dlg.selectionClassName.text()
+            class_descr = ""
             class_item = classes.ClassItem(cls,class_descr,None)
             classes.classModel.addItem(class_item)
             classes.classModel.layoutChanged.emit()
         return class_item
+        
+    def mkItemFromRaster(self):
+        in_layer = self.dlg.selectionInLayerCombo.currentLayer()
+        in_layer_path = params.normalizePath(pathOfLayer(in_layer))
+        expr = self.dlg.selectionResampleCombo.currentText()
+        grp_item = self.getOrCreateGroup()
+        #grp_item.checkGeom(expr)
+        grp_name = grp_item.dict["name"]
+        class_item = self.getOrCreateClass()
+        cls_name = class_item.dict["name"]
+        selection = SelectionItem(in_layer_path,expr,cls_name,grp_name)
+        return selection
         
         
     def mkItemFromExpr(self):
@@ -357,10 +401,15 @@ class SelectionConnector(AbstractConnector):
         
     def addItems(self):
         debug("[addItemsFromField]")
-        if self.dlg.fieldSelectionMode.checkState() == 0:
-            items = [self.mkItemFromExpr()]
-        elif self.dlg.fieldSelectionMode.checkState() == 2:
-            items = self.mkItemsFromField()
+        if self.dlg.selectionLayerFormatVector.isChecked():
+            if self.dlg.fieldSelectionMode.isChecked() == 0:
+                items = [self.mkItemFromExpr()]
+            elif self.dlg.exprSelectionMode.isChecked():
+                items = self.mkItemsFromField()
+            else:
+                assert False
+        elif self.dlg.selectionLayerFormatRaster.isChecked():
+            items = [self.mkItemFromRaster()]
         else:
             assert False
         for item in items:

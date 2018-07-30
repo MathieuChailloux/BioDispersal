@@ -86,12 +86,27 @@ def loadVectorLayer(fname,loadProject=False):
         QgsProject.instance().addMapLayer(layer)
     return layer
     
-def loadRasterLayer(fname):
+def loadRasterLayer(fname,loadProject=False):
     utils.checkFileExists(fname)
     rlayer = QgsRasterLayer(fname, layerNameOfPath(fname))
     if not rlayer.isValid():
         utils.internal_error("Invalid raster layer '" + fname + "'")
+    if loadProject:
+        QgsProject.instance().addMapLayer(rlayer)
     return rlayer
+    
+def loadLayer(fname,loadProject=False):
+    if isVectorPath(fname):
+        loaded_layer = loadVectorLayer(fname,loadProject)
+    elif isRasterPath(fname):
+        loaded_layer = loadRasterLayer(fname,loadProject)
+    else:
+        user_error("Unexpected layer format for file " + str(fname))
+    if loaded_layer == None:
+        user_error("Could not load layer '" + path + "'")
+    if not loaded_layer.isValid():
+        user_error("Invalid layer '" + path + "'")
+    return loaded_layer
     
 def getLoadedLayerByName(name):
     layers = QgsProject.instance().mapLayersByName('my layer name')
@@ -176,12 +191,7 @@ def writeShapefile(layer,outfname):
         utils.user_error("Unable to create shapefile '" + outfname + "' : " + str(error_msg))
         
 def coordsOfExtentPath(extent_path):
-    if isVectorPath(extent_path):
-        layer = loadVectorLayer(extent_path)
-    elif isRasterPath(extent_path):
-        layer = loadRasterLayer(extent_path)
-    else:
-        utils.user_error("Unexpected format for extent path '" + str(extent_path))
+    layer = loadLayer(extent_path)
     extent = layer.extent()
     x_min = extent.xMinimum()
     x_max = extent.xMaximum()

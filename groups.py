@@ -86,6 +86,11 @@ class GroupItem(abstract_model.DictItem):
         grp_path = self.getGroupPath()
         return os.path.join(grp_path,basename)
         
+    def getRasterTmpPath(self):
+        basename = self.name + "_raster_tmp.tif"
+        grp_path = self.getGroupPath()
+        return os.path.join(grp_path,basename)
+        
     def saveVectorLayer(self):
         vector_path = self.getVectorPath()
         qgsUtils.writeShapefile(self.vectorLayer,vector_path)
@@ -142,7 +147,10 @@ class GroupConnector(abstract_model.AbstractConnector):
         descr = self.dlg.selectionGroupDescr.text()
         selection_in_layer = self.dlg.selectionInLayerCombo.currentLayer()
         if selection_in_layer:
-            geom = qgsUtils.getLayerSimpleGeomStr(selection_in_layer)
+            if self.dlg.selectionLayerFormatVector.isChecked():
+                geom = qgsUtils.getLayerSimpleGeomStr(selection_in_layer)
+            else:
+                geom = "Raster"
             groupsItem = GroupItem(name,descr,geom)
             self.dlg.selectionGroupCombo.setCurrentText(name)
             return groupsItem
