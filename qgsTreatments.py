@@ -103,7 +103,7 @@ def applyResampleProcessing(in_path,out_path):
     finally:
         utils.debug("End resample")
         
-# 
+# TODO
 def applyWarpGdal(in_path,out_path,resampling_mode,crs=None,resolution=None,extent_path=None,load_flag=False):
     utils.debug("qgsTreatments.applyWarpGdal")
     in_layer = qgsUtils.loadRasterLayer(in_path)
@@ -132,6 +132,8 @@ def applyWarpGdal(in_path,out_path,resampling_mode,crs=None,resolution=None,exte
                 '-overwrite',
                 in_path,
                 out_path]
+    if resampling_mode:
+        cmd_args += ['-r',resampling_mode]
     utils.executeCmd(cmd_args)
     if load_flag:
         res_layer = qgsUtils.loadRasterLayer(out_path)

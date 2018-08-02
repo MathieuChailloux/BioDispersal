@@ -99,6 +99,9 @@ class SelectionItem(DictItem):
             for i in range(width):
                 for j in range(height):
                     values.add(block.value(i,j))
+            for v in values:
+                class_name = group_name + "_" + str(v)
+                
         utils.debug("values = " + str(values))
         
     # Selection is performed in 3 steps :
