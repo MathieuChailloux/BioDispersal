@@ -122,7 +122,9 @@ def applyWarpGdal(in_path,out_path,resampling_mode,crs=None,resolution=None,exte
         resolution = 25
     width = int((x_max - x_min) / float(resolution))
     height = int((y_max - y_min) / float(resolution))
+    in_crs = qgsUtils.getLayerCrsStr(in_layer)
     cmd_args = ['gdalwarp',
+                '-s_srs',in_crs,
                 '-t_srs',crs.authid(),
                 '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                 '-ts', str(width), str(height),
