@@ -56,15 +56,15 @@ def checkInit():
     if not params.crs.isValid():
         utils.user_error("Invalid CRS")
 
-def mkTmpPath(fname,abs_flag=False):
-    if abs_flag:
-        if params.tmpDir:
-            tmpFname = os.path.join(params.tmpDir,fname)
-            return tmpFname
-        else:
-            utils.user_error("Workspace not set")
-    else:
-        os.path.join("tmp",fname)
+# def mkTmpPath(fname,abs_flag=False):
+    # if abs_flag:
+        # if params.tmpDir:
+            # tmpFname = os.path.join(params.tmpDir,fname)
+            # return tmpFname
+        # else:
+            # utils.user_error("Workspace not set")
+    # else:
+        # os.path.join("tmp",fname)
         
 def getResolution():
     return params.resolution
@@ -86,11 +86,28 @@ def getExtentCoords():
     else:
         utils.user_error("Extent layer not initialized")
         
+def equalsParamsExtent(path):
+    params_coords = getExtentCoords()
+    path_coords = qgsUtils.coordsOfExtentPath(path)
+    return (params_coords == path_coords)
+        
 def getExtentRectangle():
     coords = getExtentCoords()
     rect = QgsRectangle(float(coords[0]),float(coords[1]),
                         float(coords[2]),float(coords[3]))
     return rect
+    
+def normalizeRaster(path,resampling_mode="near"):
+    if equalsParamsExtent(path):
+        return path
+    else:
+        if not new_path:
+            new_path = qgsUtils.mkTmpRasterpath(path)
+        crs = params.params.crs
+        resolution = params.getResolution()
+        extent_path = params.getExtentLayer()
+        applyWarpGdal(path,new_path,resampling_mode,crs,resolution,extent_path)
+        return new_path
         
 #class ParamsModel(abstract_model.AbstractGroupModel):
 class ParamsModel(QAbstractTableModel):

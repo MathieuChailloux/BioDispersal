@@ -42,6 +42,7 @@ import groups
 from .selection import SelectionConnector
 from .fusion import FusionConnector
 import friction
+from .ponderation import PonderationConnector
 from .cost import CostConnector
 from .config_parsing import *
 
@@ -83,6 +84,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         fusionConnector = FusionConnector(self)
         frictionConnector = friction.FrictionConnector(self)
         friction.frictionModel = frictionConnector.model
+        ponderationConnector = PonderationConnector(self)
         costConnector = CostConnector(self)
         self.connectors = {"Params" : paramsConnector,
                            "ST" : stConnector,
@@ -91,6 +93,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                            "Selection" : selectionConnector,
                            "Fusion" : fusionConnector,
                            "Friction" : frictionConnector,
+                           "Ponderation" : ponderationConnector,
                            "Cost" : costConnector}
         self.recomputeModels()
         

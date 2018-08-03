@@ -80,6 +80,14 @@ def writeFile(fname,str):
     with open(fname,"w",encoding="utf-8") as f:
         f.write(str)
     
+# Path utils
+
+def mkTmpRasterPath(path,extension):
+    return (os.path.splitext(path)[0] + "_tmp" + extension)
+    
+def fromTmpRasterPath(tmp_path):
+    bn, extension = os.path.splitext(path)
+    return (bn[:-4] + extension)
 
 # Type utils
     

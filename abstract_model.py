@@ -373,9 +373,10 @@ class AbstractConnector:
     # This function build model item from view and is called by addItem
     @abstractmethod
     def mkItem(self):
-        utils.todo_error("mkItem not implemented")
+        utils.todo_error(" [" + self.__class__.__name__ + "] mkItem not implemented")
         
     def addItem(self):
+        utils.debug("AbstractConnector.addItem")
         item = self.mkItem()
         self.model.addItem(item)
         self.model.layoutChanged.emit()
