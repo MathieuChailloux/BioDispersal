@@ -5,7 +5,7 @@ import pathlib
 from qgis.core import QgsCoordinateReferenceSystem, QgsRectangle
 from qgis.gui import QgsFileWidget
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
-from PyQt5.QtWidgets import QAbstractItemView, QFileDialog
+from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
 import utils
 import qgsUtils
@@ -264,9 +264,9 @@ class ParamsConnector:
         self.dlg.rasterResolution.setValue(25)
         
     def connectComponents(self):
-        self.dlg.paramsView.setColumnWidth(0,400)
-        self.dlg.paramsView.setColumnWidth(1,500)
-        self.dlg.paramsView.setColumnWidth(2,5600)
+        # self.dlg.paramsView.setColumnWidth(0,400)
+        # self.dlg.paramsView.setColumnWidth(1,500)
+        # self.dlg.paramsView.setColumnWidth(2,5600)
         self.dlg.paramsView.setModel(self.model)
         self.dlg.rasterResolution.valueChanged.connect(self.model.setResolution)
         self.dlg.extentLayer.setStorageMode(QgsFileWidget.GetFile)
@@ -275,6 +275,8 @@ class ParamsConnector:
         self.dlg.workspace.fileChanged.connect(self.model.setWorkspace)
         #self.dlg.paramsRelPath.stateChanged.connect(self.model.setUseRelPath)
         self.dlg.paramsCrs.crsChanged.connect(self.model.setCrs)
+        header = self.dlg.paramsView.horizontalHeader()     
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
         self.model.layoutChanged.emit()
         
         
