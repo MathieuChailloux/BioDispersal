@@ -93,7 +93,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                            "Selection" : selectionConnector,
                            "Fusion" : fusionConnector,
                            "Friction" : frictionConnector,
-                           "Ponderation" : ponderationConnector,
+                           #"Ponderation" : ponderationConnector,
                            "Cost" : costConnector}
         self.recomputeModels()
         
@@ -112,6 +112,17 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         #self.tabWidget.setGeometry(self.x + step_x, self.y + step_y, new_w, new_h)
         for k, tab in self.connectors.items():
             tab.initGui()
+        saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
+        saveAsIcon = QIcon(':plugins/eco_cont/icons/save-as.png')
+        loadIcon = QIcon(':plugins/eco_cont/icons/folder.svg')
+        self.openProject.setIcon(loadIcon)
+        self.saveProject.setIcon(saveIcon)
+        self.saveProjectAs.setIcon(saveAsIcon)
+        self.openProject.setToolTip("Ouvrir projet BioDispersal")
+        self.saveProject.setToolTip("Sauvegarder le projet")
+        self.saveProjectAs.setToolTip("Sauvegarder le projet sous")
+        self.projectFrame.hide()
+        self.pluginTabs.removeTab(5)
         
     # Connect view and model components for each tab
     def connectComponents(self):
@@ -119,8 +130,11 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
             tab.connectComponents()
         # Main tab connectors
         self.saveModelPath.fileChanged.connect(self.saveModelAs)
+        self.saveProjectAs.clicked.connect(self.saveModelAsAction)
         self.saveProjectButton.clicked.connect(self.saveModel)
+        self.saveProject.clicked.connect(self.saveModel)
         self.loadModelPath.fileChanged.connect(self.loadModel)
+        self.openProject.clicked.connect(self.loadModelAction)
         self.saveModelPath.setStorageMode(QgsFileWidget.SaveFile)
         self.loadModelPath.setStorageMode(QgsFileWidget.GetFile)
         
@@ -154,16 +168,26 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         params.params.projectFile = fname
         writeFile(fname,xmlStr)
         
+    def saveModelAsAction(self):
+        fname = params.openFileDialog(parent=self,msg="Sauvegarder le projet sous",filter="*.xml")
+        if fname:
+            self.loadModel(fname)
+        
     # Save project to projectFile if existing
     def saveModel(self):
         fname = params.params.projectFile
         checkFileExists(fname,"Project ")
         self.saveModelAs(fname)
-        
+   
     # Load project from 'fname' if existing
     def loadModel(self,fname):
-        debug("loadModel")
+        debug("loadModel " + str(fname))
         checkFileExists(fname)
         setConfigModels(self.models)
         params.params.projectFile = fname
         parseConfig(fname)
+        
+    def loadModelAction(self):
+        fname = params.openFileDialog(parent=self,msg="Ouvrir le projet",filter="*.xml")
+        if fname:
+            self.loadModel(fname)

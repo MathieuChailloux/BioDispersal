@@ -5,7 +5,7 @@ import pathlib
 from qgis.core import QgsCoordinateReferenceSystem, QgsRectangle
 from qgis.gui import QgsFileWidget
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
-from PyQt5.QtWidgets import QAbstractItemView
+from PyQt5.QtWidgets import QAbstractItemView, QFileDialog
 
 import utils
 import qgsUtils
@@ -108,6 +108,30 @@ def normalizeRaster(path,resampling_mode="near"):
         extent_path = params.getExtentLayer()
         applyWarpGdal(path,new_path,resampling_mode,crs,resolution,extent_path)
         return new_path
+        
+def openFileDialog(parent,msg="",filter=""):
+    checkWorkspaceInit()
+    fname, filter = QFileDialog.getOpenFileName(parent,
+                                                caption=msg,
+                                                directory=params.workspace,
+                                                filter=filter)
+    return fname
+    
+# def openDirDialog(parent,msg="",filter=""):
+    # checkWorkspaceInit()
+    # fname, filter = QFileDialog.getExistingDirectory(parent,
+                                                    # caption=msg,
+                                                    # directory=params.workspace,
+                                                    # filter=filter)
+    # return fname
+    
+def saveFileDialog(parent,msg="",filter=""):
+    checkWorkspaceInit()
+    fname, filter = QFileDialog.getSaveFileName(parent,
+                                                caption=msg,
+                                                directory=params.workspace,
+                                                filter=filter)
+    return fname
         
 #class ParamsModel(abstract_model.AbstractGroupModel):
 class ParamsModel(QAbstractTableModel):

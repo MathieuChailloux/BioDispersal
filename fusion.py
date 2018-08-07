@@ -181,8 +181,17 @@ class FusionConnector(abstract_model.AbstractConnector):
     def initGui(self):
         upIcon = QIcon(':plugins/eco_cont/icons/up-arrow.png')
         downIcon = QIcon(':plugins/eco_cont/icons/down-arrow.png')
+        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
+        reloadIcon = QIcon(':plugins/eco_cont/icons/refresh.svg')
+        minusIcon = QIcon(':plugins/eco_cont/icons/minus.svg')
+        deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
         self.dlg.fusionUp.setIcon(upIcon)
         self.dlg.fusionDown.setIcon(downIcon)
+        self.dlg.fusionRun.setIcon(runIcon)
+        self.dlg.fusionLoadGroups.setIcon(reloadIcon)
+        self.dlg.fusionLoadGroups.setToolTip("Recharger tous les groupes")
+        self.dlg.fusionRemove.setIcon(deleteIcon)
+        self.dlg.fusionRemove.setToolTip("Supprimer les groupes sélectionnés")
                          
     def connectComponents(self):
         super().connectComponents()

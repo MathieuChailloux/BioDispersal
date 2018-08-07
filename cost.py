@@ -23,6 +23,8 @@
 """
 import processing
 
+from PyQt5.QtGui import QIcon
+
 import utils
 import params
 from .qgsUtils import *
@@ -100,6 +102,14 @@ class CostConnector(AbstractConnector):
                          self.dlg.costAdd,self.dlg.costRemove)
         
     def initGui(self):
+        downloadIcon = QIcon(':plugins/eco_cont/icons/download.svg')
+        saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
+        deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
+        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
+        self.dlg.costAdd.setIcon(saveIcon)
+        self.dlg.costRun.setIcon(runIcon)
+        self.dlg.costRemove.setIcon(deleteIcon)
+        self.dlg.costRemove.setToolTip("Supprimer les dispersions sélectionnées")
         self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.dlg.costPermRasterCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         #self.dlg.rasterView.resize(self.dlg.width / 1.5, self.dlg.height / 3.5)

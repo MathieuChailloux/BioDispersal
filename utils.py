@@ -67,6 +67,8 @@ def normPath(fname):
     return fname.replace('\\','/')
     
 def checkFileExists(fname,prefix=""):
+    if not fname:
+        user_error(prefix + " File not selected")
     if not (os.path.isfile(fname)):
         user_error(prefix + "File '" + fname + "' does not exist")
         

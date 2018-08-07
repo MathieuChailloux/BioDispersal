@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
+from PyQt5.QtGui import QIcon
 #from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 #from .utils import *
 import params
@@ -116,7 +117,12 @@ class STConnector(abstract_model.AbstractConnector):
                          self.dlg.stAdd,self.dlg.stRemove)
         
     def initGui(self):
-        self.dlg.stFilter.hide()
+        add = QIcon(':plugins/eco_cont/icons/add.svg')
+        minus = QIcon(':plugins/eco_cont/icons/minus.svg')
+        self.dlg.stAdd.setIcon(add)
+        self.dlg.stAdd.setToolTip("Ajouter sous-trame")
+        self.dlg.stRemove.setIcon(minus)
+        self.dlg.stRemove.setToolTip("Supprimer les sous-trames sélectionnées")
         #self.dlg.stView.setColumnWidth(0,25)
         #self.dlg.stView.setColumnWidth(1,50)
         #self.dlg.stView.setColumnWidth(2,100)

@@ -232,8 +232,21 @@ class SelectionConnector(AbstractConnector):
     def initGui(self):
         upIcon = QIcon(':plugins/eco_cont/icons/up-arrow.png')
         downIcon = QIcon(':plugins/eco_cont/icons/down-arrow.png')
+        saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
+        downloadIcon = QIcon(':plugins/eco_cont/icons/download.svg')
+        deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
+        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
         self.dlg.selectionUp.setIcon(upIcon)
         self.dlg.selectionDown.setIcon(downIcon)
+        self.dlg.selectionAdd.setIcon(saveIcon)
+        self.dlg.selectionGroupAdd.setToolTip("Ajouter un nouveau groupe")
+        self.dlg.classRemove.setIcon(deleteIcon)
+        self.dlg.classRemove.setToolTip("Supprimer les classes sélectionnées")
+        self.dlg.groupsRemove.setIcon(deleteIcon)
+        self.dlg.groupsRemove.setToolTip("Supprimer les groupes sélectionnés")
+        self.dlg.selectionRemove.setIcon(deleteIcon)
+        self.dlg.selectionRemove.setToolTip("Supprimer les sélections")
+        self.dlg.selectionRun.setIcon(runIcon)
         self.activateFieldMode()
         self.activateClassDisplay()
         self.activateVectorMode()
@@ -405,7 +418,7 @@ class SelectionConnector(AbstractConnector):
     def addItems(self):
         debug("[addItemsFromField]")
         if self.dlg.selectionLayerFormatVector.isChecked():
-            if self.dlg.fieldSelectionMode.isChecked() == 0:
+            if self.dlg.fieldSelectionMode.isChecked():
                 items = [self.mkItemFromExpr()]
             elif self.dlg.exprSelectionMode.isChecked():
                 items = self.mkItemsFromField()

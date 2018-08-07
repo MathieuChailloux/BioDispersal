@@ -44,8 +44,18 @@ class PondIvalItem(abstract_model.DictItem):
             internal_error("No match for ponderation interval item in string '" + s + "'")
         
     def toGdalCalcExpr(self):
-        s = "(" + str(self.dict["low_bound"]) + " less"
+        s = "(B*A*less_equal(" + str(self.dict["low_bound"]) + ",A)"
+        s += "*less(A," + str(self.dict["up_bound"]) + ")"
+        return s
         # TODO : function in qgsTreatments
+        
+    # def check(self,other):
+        # if (self.dict["up_bound"] <= other.dict["low_bound"]):
+            # return -1
+        # elif (self.dict["low_bound"] >= other.dict["up_bound"]):
+            # return 1
+        # else:
+            # user_error("Overlapping intervals : " + str(self) + " vs " + str(other))
         
         
 class PondIvalModel(abstract_model.DictModel):
@@ -70,11 +80,28 @@ class PondIvalModel(abstract_model.DictModel):
             res.addItem(ival)
         return res
         
+        
+    def checkItems(i1,i2):
+        if (i1.dict["up_bound"] <= i2.dict["low_bound"]):
+            return -1
+        elif (i1.dict["low_bound"] >= i2.dict["up_bound"]):
+            return 1
+        else:
+            user_error("Overlapping intervals : " + str(i1) + " vs " + str(i2))
+        
     def checkModel(self):
-        pass
+        n = len(self.items)
+        for i1 in range(0,n):
+            for i2 in range(i1+1,n):
+                self.checkItems(i1,i2)
         
     def toGdalCalcExpr(self):
-        pass
+        s = ""
+        for ival in self.items:
+            if ival != "":
+                s+= " + "
+            s += ival.toGdalCalcExpr()
+        s+= "+A"
         
         
 class PondIvalConnector(abstract_model.AbstractConnector):
