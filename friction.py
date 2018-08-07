@@ -324,7 +324,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         frictionModel.layoutChanged.emit()
         
     def loadCSVAction(self):
-        fname = params.openFileDialog(parent=self,
+        fname = params.openFileDialog(parent=self.dlg,
                                       msg="Ouvrir le tableau de friction",
                                       filter="*.csv")
         if fname:
@@ -335,7 +335,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         self.model.saveCSV(fname)
      
     def saveCSVAction(self):
-        fname = params.saveFileDialog(parent=self,
+        fname = params.saveFileDialog(parent=self.dlg,
                                       msg="Sauvegarder le tableau de friction sous",
                                       filter="*.csv")
         if fname:

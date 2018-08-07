@@ -248,7 +248,7 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionRemove.setToolTip("Supprimer les sélections")
         self.dlg.selectionRun.setIcon(runIcon)
         self.activateFieldMode()
-        self.activateClassDisplay()
+        self.activateGroupDisplay()
         self.activateVectorMode()
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.All)
         self.dlg.selectionResampleCombo.addItem("Plus proche voisin")

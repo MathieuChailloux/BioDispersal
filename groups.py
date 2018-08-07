@@ -152,6 +152,10 @@ class GroupConnector(abstract_model.AbstractConnector):
             else:
                 geom = "Raster"
             groupsItem = GroupItem(name,descr,geom)
-            self.dlg.selectionGroupCombo.setCurrentText(name)
             return groupsItem
         utils.user_error("No layer selected")
+        
+    def addItem(self,item):
+        super().addItem()
+        self.dlg.selectionGroupCombo.setCurrentIndex(len(self.model.items)-1)
+        
