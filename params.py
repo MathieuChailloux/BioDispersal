@@ -56,6 +56,11 @@ def checkInit():
     if not params.crs.isValid():
         utils.user_error("Invalid CRS")
 
+def getPathFromLayerCombo(combo):
+    layer = combo.currentLayer()
+    layer_path = normalizePath(qgsUtils.pathOfLayer(layer))
+    return layer_path
+        
 # def mkTmpPath(fname,abs_flag=False):
     # if abs_flag:
         # if params.tmpDir:
@@ -116,14 +121,6 @@ def openFileDialog(parent,msg="",filter=""):
                                                 directory=params.workspace,
                                                 filter=filter)
     return fname
-    
-# def openDirDialog(parent,msg="",filter=""):
-    # checkWorkspaceInit()
-    # fname, filter = QFileDialog.getExistingDirectory(parent,
-                                                    # caption=msg,
-                                                    # directory=params.workspace,
-                                                    # filter=filter)
-    # return fname
     
 def saveFileDialog(parent,msg="",filter=""):
     checkWorkspaceInit()

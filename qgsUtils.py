@@ -118,6 +118,9 @@ def getLoadedLayerByName(name):
         utils.user_error("Several layers named '" + name + "' found")
     else:
         return layers[0]
+        
+        
+# LAYER PARAMETERS
 
 def getLayerCrsStr(layer):
     return str(layer.crs().authid().lower())
@@ -159,6 +162,7 @@ def createLayerFromExisting(inLayer,outName,geomType=None,crs=None):
     outLayer=QgsVectorLayer(geomType + '?crs='+crs, outName, "memory")
     return outLayer
     
+# DEPRECATED
 def applyBuffer(in_layer,buffer_val,out_layer):
     utils.debug("[applyBuffer]")
     #writeShapefile(in_layer,"D:/MChailloux/tmp/tmp_buf.shp")

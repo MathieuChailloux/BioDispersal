@@ -93,7 +93,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                            "Selection" : selectionConnector,
                            "Fusion" : fusionConnector,
                            "Friction" : frictionConnector,
-                           #"Ponderation" : ponderationConnector,
+                           "Ponderation" : ponderationConnector,
                            "Cost" : costConnector}
         self.recomputeModels()
         
@@ -122,7 +122,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         self.saveProject.setToolTip("Enregistrer le projet")
         self.saveProjectAs.setToolTip("Enregistrer le projet sous")
         self.projectFrame.hide()
-        self.pluginTabs.removeTab(5)
+        #self.pluginTabs.removeTab(5)
         
     # Connect view and model components for each tab
     def connectComponents(self):

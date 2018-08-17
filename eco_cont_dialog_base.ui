@@ -26,7 +26,7 @@
     <enum>Qt::WheelFocus</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="mainTab">
     <attribute name="title">
@@ -1416,10 +1416,10 @@
     <widget class="QFrame" name="frame_6">
      <property name="geometry">
       <rect>
-       <x>60</x>
+       <x>10</x>
        <y>50</y>
-       <width>711</width>
-       <height>591</height>
+       <width>831</width>
+       <height>651</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -1447,41 +1447,12 @@
        <string>1 - Mode de pondération</string>
       </property>
      </widget>
-     <widget class="QLabel" name="pondFrictLayerLabel">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>161</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>2 - Couche de friction</string>
-      </property>
-     </widget>
-     <widget class="QgsFileWidget" name="pondFrictLayer">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>40</y>
-        <width>291</width>
-        <height>16</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QgsFileWidget" name="pondOutLayer">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>160</x>
         <y>90</y>
-        <width>291</width>
+        <width>301</width>
         <height>16</height>
        </rect>
       </property>
@@ -1502,7 +1473,7 @@
        </font>
       </property>
       <property name="text">
-       <string>4 - Couche de sortie</string>
+       <string>3 - Couche de sortie</string>
       </property>
      </widget>
      <widget class="QLabel" name="pondPondLabel">
@@ -1521,16 +1492,16 @@
        </font>
       </property>
       <property name="text">
-       <string>5 - Pondération</string>
+       <string>4 - Pondération</string>
       </property>
      </widget>
      <widget class="QFrame" name="pondIvalFrame">
       <property name="geometry">
        <rect>
-        <x>170</x>
-        <y>100</y>
-        <width>301</width>
-        <height>241</height>
+        <x>30</x>
+        <y>180</y>
+        <width>431</width>
+        <height>151</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -1542,18 +1513,18 @@
       <widget class="QTableView" name="pondIvalView">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>40</y>
-         <width>291</width>
-         <height>191</height>
+         <x>130</x>
+         <y>30</y>
+         <width>301</width>
+         <height>111</height>
         </rect>
        </property>
       </widget>
       <widget class="QToolButton" name="pondIvalPlus">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>10</y>
+         <x>130</x>
+         <y>0</y>
          <width>21</width>
          <height>21</height>
         </rect>
@@ -1565,8 +1536,8 @@
       <widget class="QToolButton" name="pondIvalMinus">
        <property name="geometry">
         <rect>
-         <x>40</x>
-         <y>10</y>
+         <x>170</x>
+         <y>0</y>
          <width>21</width>
          <height>21</height>
         </rect>
@@ -1575,56 +1546,17 @@
         <string>...</string>
        </property>
       </widget>
-     </widget>
-     <widget class="QFrame" name="pondBufferFrame">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>100</y>
-        <width>301</width>
-        <height>241</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QTableView" name="pondBufferView">
+      <widget class="QLabel" name="pondDirectLayerLabel_2">
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>40</y>
-         <width>291</width>
-         <height>191</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="pondBufferPlus">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>10</y>
-         <width>21</width>
+         <y>0</y>
+         <width>101</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="pondBufferMinus">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>10</y>
-         <width>21</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>...</string>
+        <string>Intervalles</string>
        </property>
       </widget>
      </widget>
@@ -1642,9 +1574,9 @@
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>350</y>
-        <width>441</width>
-        <height>221</height>
+        <y>320</y>
+        <width>471</width>
+        <height>301</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -1653,97 +1585,425 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QToolButton" name="toolButton_6">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>10</y>
-         <width>21</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="pondAdd">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>10</y>
-         <width>21</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="pondRemove">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>10</y>
-         <width>21</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="pondRun">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>10</y>
-         <width>21</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
       <widget class="QTableView" name="ponderationView">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>40</y>
          <width>441</width>
-         <height>181</height>
+         <height>211</height>
         </rect>
        </property>
       </widget>
+      <widget class="QPushButton" name="pondAdd">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>10</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Enregistrer pondération</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pondRun">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>260</y>
+         <width>191</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Pondérer les couches de friction</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="pondRemove">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>260</y>
+         <width>21</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
      </widget>
-     <widget class="QgsFileWidget" name="pondPondLayer">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>60</y>
-        <width>291</width>
-        <height>16</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="pondPondLayerLabel">
+     <widget class="QFrame" name="frame_8">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>60</y>
-        <width>161</width>
-        <height>16</height>
+        <y>30</y>
+        <width>451</width>
+        <height>61</height>
        </rect>
       </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
       </property>
-      <property name="text">
-       <string>3 - Couches de pondération</string>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
       </property>
+      <widget class="QgsMapLayerComboBox" name="pondFrictLayerCombo">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>20</y>
+         <width>301</width>
+         <height>16</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="pondFrictLayerLabel_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ouvrir couche</string>
+       </property>
+      </widget>
+      <widget class="QgsFileWidget" name="pondFrictLayer_2">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>40</y>
+         <width>301</width>
+         <height>16</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selectionLayerLabel_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>121</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>2 - Couche de friction</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="pondFrictLayerComboLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Sélectionner couche</string>
+       </property>
+      </widget>
+      <widget class="QFrame" name="frame_9">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>100</y>
+         <width>451</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QgsMapLayerComboBox" name="pondFrictLayerCombo_2">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>20</y>
+          <width>301</width>
+          <height>16</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="pondFrictLayerLabel_3">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Ouvrir couche</string>
+        </property>
+       </widget>
+       <widget class="QgsFileWidget" name="pondFrictLayer_3">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>40</y>
+          <width>301</width>
+          <height>16</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="selectionLayerLabel_3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>2 - Couche de friction</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="pondFrictLayerComboLabel_2">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>20</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Sélectionner couche</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QFrame" name="pondBufferFrame">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>180</y>
+        <width>431</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QTableView" name="pondBufferView">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>30</y>
+         <width>301</width>
+         <height>111</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="pondBufferPlus">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>0</y>
+         <width>21</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="pondBufferMinus">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>0</y>
+         <width>21</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="pondDirectLayerLabel_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Tampons</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QFrame" name="pondDirectFrame">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>140</y>
+        <width>451</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QgsMapLayerComboBox" name="pondDirectLayerCombo">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>0</y>
+         <width>301</width>
+         <height>16</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="pondDirectLayerLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ouvrir couche</string>
+       </property>
+      </widget>
+      <widget class="QgsFileWidget" name="pondDirectLayer">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>20</y>
+         <width>301</width>
+         <height>16</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="pondDirectLayerComboLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>0</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Sélectionner couche</string>
+       </property>
+      </widget>
+      <widget class="QFrame" name="frame_14">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>100</y>
+         <width>451</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QgsMapLayerComboBox" name="pondFrictLayerCombo_4">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>20</y>
+          <width>301</width>
+          <height>16</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="pondFrictLayerLabel_5">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Ouvrir couche</string>
+        </property>
+       </widget>
+       <widget class="QgsFileWidget" name="pondFrictLayer_5">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>40</y>
+          <width>301</width>
+          <height>16</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="selectionLayerLabel_5">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>2 - Couche de friction</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="pondFrictLayerComboLabel_4">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>20</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Sélectionner couche</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </widget>
    </widget>
@@ -2086,32 +2346,32 @@
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsfieldcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsfieldexpressionwidget.h</header>
   </customwidget>
   <customwidget>
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsfilewidget.h</header>
   </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsprojectionselectionwidget.h</header>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

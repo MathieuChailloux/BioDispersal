@@ -10,7 +10,7 @@ from PyQt5.QtGui import QIcon
 
 
 
-ponderation_fields = ["mode","friction","ponderation","out_layer","expr"]
+ponderation_fields = ["mode","friction","ponderation","out_layer"]
 
 pond_ival_fields = ["low_bound","up_bound","pond_value"]
 pond_buffer_fields = [""]
@@ -29,7 +29,11 @@ class PondIvalItem(abstract_model.DictItem):
     def __str__(self):
         s = "([" + str(self.dict["low_bound"]) + ","
         s += str(self.dict["up_bound"]) + "],"
-        s += str(self.dict["low_bound"]) + ")"
+        s += str(self.dict["pond_value"]) + ")"
+        return s
+        
+    def toIvalStr(self):
+        s = str(self.dict["low_bound"])+ " - " + str(self.dict["up_bound"])
         return s
         
     @classmethod
@@ -42,20 +46,39 @@ class PondIvalItem(abstract_model.DictItem):
             return cls(lb,ub,pv)
         else:
             internal_error("No match for ponderation interval item in string '" + s + "'")
+            
+    def checkItem(self):
+        if (self.dict["low_bound"] > self.dict["up_bound"]):
+            utils.user_error("Ill-formed interval : " + str(self))
+            
+    def checkOverlap(self,other):
+        if (self.dict["up_bound"] <= other.dict["low_bound"]):
+            return -1
+        elif (self.dict["low_bound"] >= other.dict["up_bound"]):
+            return 1
+        else:
+            user_error("Overlapping intervals : " + str(self) + " vs " + str(other))
         
+class PondValueIvalItem(PondIvalItem):
+
+    def __init__(self,lb=0.0,ub=0.0,pv=1.0):
+        super().__init__(lb,ub,pv)
+
     def toGdalCalcExpr(self):
-        s = "(B*A*less_equal(" + str(self.dict["low_bound"]) + ",A)"
+        s = "(" + str(self.dict["pond_value"])
+        s += "*A*less_equal(" + str(self.dict["low_bound"]) + ",A)"
         s += "*less(A," + str(self.dict["up_bound"]) + ")"
         return s
         # TODO : function in qgsTreatments
         
-    # def check(self,other):
-        # if (self.dict["up_bound"] <= other.dict["low_bound"]):
-            # return -1
-        # elif (self.dict["low_bound"] >= other.dict["up_bound"]):
-            # return 1
-        # else:
-            # user_error("Overlapping intervals : " + str(self) + " vs " + str(other))
+class PondBufferIvalItem(PondIvalItem):
+
+    def __init__(self,lb=0.0,ub=0.0,pv=1.0):
+        super().__init__(lb,ub,pv)
+
+    def toGdalCalcExpr(self,idx):
+        s = "(A=" + str(idx) + ")*" + str(self.dict["pond_value"])
+        return s
         
         
 class PondIvalModel(abstract_model.DictModel):
@@ -70,16 +93,6 @@ class PondIvalModel(abstract_model.DictModel):
                 s += " - "
             s += str(i)
         return s
-        
-    @classmethod
-    def fromStr(cls,s):
-        res = cls()
-        ivals = str.split('-')
-        for ival_str in ivals:
-            ival = PondIvalItem.fromStr(ival_str)
-            res.addItem(ival)
-        return res
-        
         
     def checkItems(i1,i2):
         if (i1.dict["up_bound"] <= i2.dict["low_bound"]):
@@ -101,14 +114,42 @@ class PondIvalModel(abstract_model.DictModel):
             if ival != "":
                 s+= " + "
             s += ival.toGdalCalcExpr()
-        s+= "+A"
+        return s
+        
+class PondValueIvalModel(PondIvalModel):
+
+    def __init__(self):
+        super().__init__()
+        
+    @classmethod
+    def fromStr(cls,s):
+        res = cls()
+        ivals = str.split('-')
+        for ival_str in ivals:
+            ival = PondValueIvalItem.fromStr(ival_str.strip())
+            res.addItem(ival)
+        return res
+        
+class PondBufferIvalModel(PondIvalModel):
+
+    def __init__(self):
+        super().__init__()
+        
+    @classmethod
+    def fromStr(cls,s):
+        res = cls()
+        ivals = str.split('-')
+        for ival_str in ivals:
+            ival = PondBufferIvalItem.fromStr(ival_str)
+            res.addItem(ival)
+        return res
         
         
-class PondIvalConnector(abstract_model.AbstractConnector):
+class PondValueIvalConnector(abstract_model.AbstractConnector):
     
     def __init__(self,dlg):
         self.dlg = dlg
-        pondIvalModel = PondIvalModel()
+        pondIvalModel = PondValueIvalModel()
         super().__init__(pondIvalModel,self.dlg.pondIvalView,
                          self.dlg.pondIvalPlus,self.dlg.pondIvalMinus)
                          
@@ -119,13 +160,14 @@ class PondIvalConnector(abstract_model.AbstractConnector):
         super().connectComponents()
         
     def mkItem(self):
-        return PondIvalItem()
+        item = PondValueIvalItem()
+        return item
         
-class PondBufferConnector(abstract_model.AbstractConnector):
+class PondBufferIvalConnector(abstract_model.AbstractConnector):
     
     def __init__(self,dlg):
         self.dlg = dlg
-        pondBufferModel = PondIvalModel()
+        pondBufferModel = PondBufferIvalModel()
         super().__init__(pondBufferModel,self.dlg.pondBufferView,
                          self.dlg.pondBufferPlus,self.dlg.pondBufferMinus)
                          
@@ -136,7 +178,8 @@ class PondBufferConnector(abstract_model.AbstractConnector):
         super().connectComponents()
         
     def mkItem(self):
-        return PondIvalItem()
+        item = PondBufferIvalModel()
+        return item
         
 # class PondBufferItem(abstract_model.DictItem):
 
@@ -175,17 +218,26 @@ class PonderationItem(abstract_model.DictItem):
         out_layer_path = self.dict["out_layer"]
         self.applyPonderation(friction_layer_path,ponderation_layer_path,out_layer_path)
         
-    def applyItemIntervals(self):
+    def applyItemValueIvals(self):
         friction_layer_path = self.dict["friction_layer"]
-        ponderation_layer_path = self.dict["ponderation_layer"]
+        #ponderation_layer_path = self.dict["ponderation_layer"]
         out_layer_path = self.dict["out_layer"]
-        expr = self.dict["expr"]
-        ival_model = PondIvalModel(expr)
+        expr = self.dict["ponderation"]
+        checkFileExists(friction_layer_path)
+        ival_model = PondValueIvalModel.fromStr(expr)
+        gdalc_calc_expr = ival_model.toGdalCalcExpr()
+        applyGdalCalc(friction_layer_path,out_layer_path)
         
         
-    def applyItemBuffer(self):
-        # TODO
-        assert(False)
+    def applyItemBufferIvals(self):
+        friction_layer_path = self.dict["friction_layer"]
+        #ponderation_layer_path = self.dict["ponderation_layer"]
+        out_layer_path = self.dict["out_layer"]
+        expr = self.dict["ponderation"]
+        checkFileExists(friction_layer_path)
+        ival_model = PondBufferIvalModel.fromStr(expr)
+        gdalc_calc_expr = ival_model.toGdalCalcExpr()
+        applyGdalCalc(friction_layer_path,out_layer_path)
         
 
 class PonderationModel(abstract_model.DictModel):
@@ -196,7 +248,7 @@ class PonderationModel(abstract_model.DictModel):
     @staticmethod
     def mkItemFromDict(dict):
         checkFields(selection_fields,dict.keys())
-        item = SelectionItem(dict["in_layer"],dict["mode"],dict["out_layer"],dict["ponderation"])
+        item = PonderationItem(dict)
         return item
         
     def mkItem(self):
@@ -214,12 +266,21 @@ class PonderationConnector(abstract_model.AbstractConnector):
     def initGui(self):
         plusIcon = QIcon(':plugins/eco_cont/icons/plus.png')
         minusIcon = QIcon(':plugins/eco_cont/icons/minus.png')
+        saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
+        deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
+        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
         self.dlg.pondIvalPlus.setIcon(plusIcon)
+        self.dlg.pondIvalPlus.setToolTip("Ajouter un nouvel intervalle")
         self.dlg.pondIvalMinus.setIcon(minusIcon)
+        self.dlg.pondIvalMinus.setToolTip("Supprimer l'intervalle sélectionné")
         self.dlg.pondBufferPlus.setIcon(plusIcon)
+        self.dlg.pondBufferPlus.setToolTip("Ajouter un nouvel intervalle")
         self.dlg.pondBufferMinus.setIcon(minusIcon)
-        self.dlg.pondAdd.setIcon(plusIcon)
-        self.dlg.pondRemove.setIcon(minusIcon)
+        self.dlg.pondBufferMinus.setToolTip("Supprimer l'intervalle sélectionné")
+        self.dlg.pondAdd.setIcon(saveIcon)
+        self.dlg.pondRemove.setIcon(deleteIcon)
+        self.dlg.pondRemove.setToolTip("Supprimer les pondérations sélectionnées")
+        self.dlg.pondRun.setIcon(runIcon)
         self.dlg.pondModeCombo.addItem("Direct")
         self.dlg.pondModeCombo.addItem("Intervalles")
         self.dlg.pondModeCombo.addItem("Tampons")
@@ -229,11 +290,28 @@ class PonderationConnector(abstract_model.AbstractConnector):
     def connectComponents(self):
         super().connectComponents()
         self.dlg.pondRun.clicked.connect(self.model.applyItems)
-        self.ivalConnector = PondIvalConnector(self.dlg)
-        self.ivalConnector.connectComponents()
-        self.bufferConnector = PondBufferConnector(self.dlg)
+        self.valueConnector = PondValueIvalConnector(self.dlg)
+        self.valueConnector.connectComponents()
+        self.bufferConnector = PondBufferIvalConnector(self.dlg)
         self.bufferConnector.connectComponents()
         self.dlg.pondModeCombo.currentTextChanged.connect(self.switchPondMode)
+    
+    def mkItem(self):
+        mode = self.dlg.pondModeCombo.currentText()
+        if not mode:
+            utils.user_error("No ponderation mode selected")
+        friction_layer_path = params.getPathFromLayerCombo(self.dlg.pondFrictLayerCombo)
+        out_path = self.dlg.pondOutLayer.filePath()
+        if mode == "Direct":
+            pond =  params.getPathFromLayerCombo(self.dlg.pondDirectLayerCombo)
+        elif mode == "Intervalles":
+            pond = str(self.valueConnector.model)
+        elif mode == "Tampons":
+            pond = str(self.bufferConnector.model)
+        else:
+            internal_error("Unexpected ponderation mode '" + str(mode) + "'")
+        item = PonderationItem(mode,friction_layer_path,pond,out_path)
+        return item
     
     def switchPondMode(self,mode):
         if mode == "Direct":
@@ -248,21 +326,21 @@ class PonderationConnector(abstract_model.AbstractConnector):
     
     def activateDirectMode(self):
         debug("activateDirectMode")
+        self.dlg.pondDirectFrame.show()
         self.dlg.pondBufferFrame.hide()
         self.dlg.pondIvalFrame.hide()
-        self.dlg.pondPondLabel.hide()
         
     def activateIvalMode(self):
         debug("activateIvalMode")
-        self.dlg.pondIvalFrame.hide()
-        self.dlg.pondBufferFrame.show()
-        self.dlg.pondPondLabel.show()
+        self.dlg.pondIvalFrame.show()
+        self.dlg.pondBufferFrame.hide()
+        self.dlg.pondDirectFrame.hide()
         
     def activateBufferMode(self):
         debug("activateBufferMode")
-        self.dlg.pondBufferFrame.hide()
-        self.dlg.pondIvalFrame.show()
-        self.dlg.pondPondLabel.show()
+        self.dlg.pondBufferFrame.show()
+        self.dlg.pondIvalFrame.hide()
+        self.dlg.pondDirectFrame.hide()
     
     
     
