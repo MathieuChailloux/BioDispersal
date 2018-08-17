@@ -118,9 +118,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         self.openProject.setIcon(loadIcon)
         self.saveProject.setIcon(saveIcon)
         self.saveProjectAs.setIcon(saveAsIcon)
-        self.openProject.setToolTip("Ouvrir projet BioDispersal")
-        self.saveProject.setToolTip("Sauvegarder le projet")
-        self.saveProjectAs.setToolTip("Sauvegarder le projet sous")
+        self.openProject.setToolTip("Ouvrir un projet BioDispersal")
+        self.saveProject.setToolTip("Enregistrer le projet")
+        self.saveProjectAs.setToolTip("Enregistrer le projet sous")
         self.projectFrame.hide()
         self.pluginTabs.removeTab(5)
         

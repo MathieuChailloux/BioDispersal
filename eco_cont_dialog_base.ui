@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>919</width>
-    <height>769</height>
+    <width>891</width>
+    <height>767</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QTabWidget" name="pluginTabs">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>10</x>
      <y>30</y>
      <width>871</width>
      <height>731</height>
@@ -2045,7 +2045,7 @@
   <widget class="QPushButton" name="openProject">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>10</x>
      <y>0</y>
      <width>31</width>
      <height>31</height>
@@ -2058,7 +2058,7 @@
   <widget class="QPushButton" name="saveProject">
    <property name="geometry">
     <rect>
-     <x>70</x>
+     <x>40</x>
      <y>0</y>
      <width>31</width>
      <height>31</height>
@@ -2071,7 +2071,7 @@
   <widget class="QPushButton" name="saveProjectAs">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>70</x>
      <y>0</y>
      <width>31</width>
      <height>31</height>

@@ -423,9 +423,9 @@ class SelectionConnector(AbstractConnector):
         debug("[addItemsFromField]")
         if self.dlg.selectionLayerFormatVector.isChecked():
             if self.dlg.fieldSelectionMode.isChecked():
-                items = [self.mkItemFromExpr()]
-            elif self.dlg.exprSelectionMode.isChecked():
                 items = self.mkItemsFromField()
+            elif self.dlg.exprSelectionMode.isChecked():
+                items = [self.mkItemFromExpr()]
             else:
                 assert False
         elif self.dlg.selectionLayerFormatRaster.isChecked():
