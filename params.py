@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
 import utils
 import qgsUtils
+import qgsTreatments
 import abstract_model
 
 
@@ -27,6 +28,8 @@ def checkWorkspaceInit():
 
 def normalizePath(path):
     checkWorkspaceInit()
+    if not path:
+        utils.user_error("Empty path")
     pp = pathlib.Path(path)
     utils.debug("path = " + str(path))
     utils.debug("pp_str = " + str(pp))
@@ -39,7 +42,9 @@ def normalizePath(path):
         
 def getOrigPath(path):
     checkWorkspaceInit()
-    if os.path.isabs(path):
+    if path == "":
+        utils.user_error("Empty path")
+    elif os.path.isabs(path):
         return path
     else:
         return os.path.normpath(os.path.join(params.workspace,path))
@@ -106,12 +111,14 @@ def normalizeRaster(path,resampling_mode="near"):
     if equalsParamsExtent(path):
         return path
     else:
-        if not new_path:
-            new_path = qgsUtils.mkTmpRasterpath(path)
-        crs = params.params.crs
-        resolution = params.getResolution()
-        extent_path = params.getExtentLayer()
-        applyWarpGdal(path,new_path,resampling_mode,crs,resolution,extent_path)
+        #if not new_path:
+        utils.debug("Diff coords : '" + str(getExtentCoords())
+               + "' vs '" + str(qgsUtils.coordsOfExtentPath(path)))
+        new_path = utils.mkTmpPath(path)
+        crs = params.crs
+        resolution = getResolution()
+        extent_path = getExtentLayer()
+        qgsTreatments.applyWarpGdal(path,new_path,resampling_mode,crs,resolution,extent_path)
         return new_path
         
 def openFileDialog(parent,msg="",filter=""):

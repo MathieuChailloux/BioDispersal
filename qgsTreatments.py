@@ -205,14 +205,19 @@ def applyReclassGdalFromDict(in_path,out_path,reclass_dict):
     
 # Applies ponderation on 'in_path1' according to 'in_path2' values.
 # Result stored in 'out_path'.
-def applyPonderationGdal(in_path1,in_path2,out_path):
-    utils.debug("qgsTreatments.applyReclassGdal(" + str(expr) + ")")
+def applyPonderationGdal(in_path1,in_path2,out_path,pos_values=False):
+    utils.debug("qgsTreatments.applyPonderationGdal")
     cmd_args = ['gdal_calc.bat',
                 '-A', in_path1,
                 '-B', in_path2,
-                '--type=Int32',
+                #'--type=Int32',
+                '--NoDataValue='+nodata_val,
+                '--overwrite',
                 '--outfile='+out_path]
-    expr_opt = '--calc=A*B'
+    if pos_values:
+        expr_opt = '--calc=A*B*less_equal(0,A)*less_equal(0,B)'
+    else:
+        expr_opt = '--calc=A*B'
     cmd_args.append(expr_opt)
     utils.executeCmd(cmd_args)
     res_layer = qgsUtils.loadRasterLayer(out_path)

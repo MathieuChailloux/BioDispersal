@@ -1673,7 +1673,7 @@
         <string>Ouvrir couche</string>
        </property>
       </widget>
-      <widget class="QgsFileWidget" name="pondFrictLayer_2">
+      <widget class="QgsFileWidget" name="pondFrictLayer">
        <property name="geometry">
         <rect>
          <x>150</x>
@@ -1862,7 +1862,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QFrame" name="pondDirectFrame">
+     <widget class="QFrame" name="pondLayerFrame">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -1877,7 +1877,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QgsMapLayerComboBox" name="pondDirectLayerCombo">
+      <widget class="QgsMapLayerComboBox" name="pondLayerCombo">
        <property name="geometry">
         <rect>
          <x>150</x>
@@ -1887,7 +1887,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="pondDirectLayerLabel">
+      <widget class="QLabel" name="pondLayerLabel">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -1900,7 +1900,7 @@
         <string>Ouvrir couche</string>
        </property>
       </widget>
-      <widget class="QgsFileWidget" name="pondDirectLayer">
+      <widget class="QgsFileWidget" name="pondLayer">
        <property name="geometry">
         <rect>
          <x>150</x>
@@ -1910,7 +1910,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="pondDirectLayerComboLabel">
+      <widget class="QLabel" name="pondLayerComboLabel">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -2346,32 +2346,32 @@
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgsfieldcombobox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsfieldexpressionwidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>
-   <header>qgsfilewidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgsmaplayercombobox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsprojectionselectionwidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgsspinbox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources/>

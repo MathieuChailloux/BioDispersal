@@ -96,6 +96,7 @@ def loadRasterLayer(fname,loadProject=False):
     return rlayer
     
 def loadLayer(fname,loadProject=False):
+    utils.checkFileExists(fname)
     if isVectorPath(fname):
         loaded_layer = loadVectorLayer(fname,loadProject)
     elif isRasterPath(fname):

@@ -1,21 +1,24 @@
 
 import re
 
+from qgis.core import QgsMapLayerProxyModel
+from qgis.gui import QgsFileWidget
+from PyQt5.QtGui import QIcon
+
 from .utils import *
+from .qgsUtils import *
 from .qgsTreatments import *
 import params
 import abstract_model
 
-from PyQt5.QtGui import QIcon
 
 
-
-ponderation_fields = ["mode","friction","ponderation","out_layer"]
+ponderation_fields = ["mode","friction","ponderation","intervals","out_layer"]
 
 pond_ival_fields = ["low_bound","up_bound","pond_value"]
 pond_buffer_fields = [""]
 
-float_re="\d+\.\d+"
+float_re="\d+(?:\.\d+)?"
 ival_re = "\(\[(" + float_re + "),(" + float_re + ")\],(" + float_re + ")\)"
 
 class PondIvalItem(abstract_model.DictItem):
@@ -40,9 +43,9 @@ class PondIvalItem(abstract_model.DictItem):
     def fromStr(cls,s):
         match = re.search(ival_re,s)
         if match:
-            lb = match.group(1)
-            ub = match.group(2)
-            pv = match.group(3)
+            lb = float(match.group(1))
+            ub = float(match.group(2))
+            pv = float(match.group(3))
             return cls(lb,ub,pv)
         else:
             internal_error("No match for ponderation interval item in string '" + s + "'")
@@ -67,7 +70,7 @@ class PondValueIvalItem(PondIvalItem):
     def toGdalCalcExpr(self):
         s = "(" + str(self.dict["pond_value"])
         s += "*A*less_equal(" + str(self.dict["low_bound"]) + ",A)"
-        s += "*less(A," + str(self.dict["up_bound"]) + ")"
+        s += "*less(A," + str(self.dict["up_bound"]) + "))"
         return s
         # TODO : function in qgsTreatments
         
@@ -77,7 +80,7 @@ class PondBufferIvalItem(PondIvalItem):
         super().__init__(lb,ub,pv)
 
     def toGdalCalcExpr(self,idx):
-        s = "(A=" + str(idx) + ")*" + str(self.dict["pond_value"])
+        s = "(A=" + str(idx) + ")*" + str(self.dict["pond_value"])+")"
         return s
         
         
@@ -94,7 +97,7 @@ class PondIvalModel(abstract_model.DictModel):
             s += str(i)
         return s
         
-    def checkItems(i1,i2):
+    def checkItems(self,i1,i2):
         if (i1.dict["up_bound"] <= i2.dict["low_bound"]):
             return -1
         elif (i1.dict["low_bound"] >= i2.dict["up_bound"]):
@@ -106,12 +109,14 @@ class PondIvalModel(abstract_model.DictModel):
         n = len(self.items)
         for i1 in range(0,n):
             for i2 in range(i1+1,n):
-                self.checkItems(i1,i2)
+                item1 = self.getNItem(i1)
+                item2 = self.getNItem(i2)
+                self.checkItems(item1,item2)
         
     def toGdalCalcExpr(self):
         s = ""
         for ival in self.items:
-            if ival != "":
+            if s != "":
                 s+= " + "
             s += ival.toGdalCalcExpr()
         return s
@@ -124,7 +129,9 @@ class PondValueIvalModel(PondIvalModel):
     @classmethod
     def fromStr(cls,s):
         res = cls()
-        ivals = str.split('-')
+        utils.debug("PondValueIvalModel.fromStr(" + str(s) +")")
+        ivals = s.split('-')
+        utils.debug("ivals = " + str(ivals))
         for ival_str in ivals:
             ival = PondValueIvalItem.fromStr(ival_str.strip())
             res.addItem(ival)
@@ -200,9 +207,9 @@ class PonderationItem(abstract_model.DictItem):
         if mode == "Direct":
             self.applyItemDirect()
         elif mode == "Intervalles":
-            self.applyIntervals()
+            self.applyItemValueIvals()
         elif mode == "Tampon":
-            self.applyBuffer()
+            self.applyItemBufferIvals()
         else:
             user_error("Unexpected ponderation mode '" + str(mode) + "'")
             
@@ -210,34 +217,44 @@ class PonderationItem(abstract_model.DictItem):
         checkFileExists(layer1)
         checkFileExists(layer2)
         layer2_norm = params.normalizeRaster(layer2)
-        applyPonderationGdal(layer1,layer2_norm,out_layer)
+        if os.path.isfile(out_layer):
+            removeRaster(out_layer)
+        applyPonderationGdal(layer1,layer2_norm,out_layer,pos_values=False)
             
     def applyItemDirect(self):
-        friction_layer_path = self.dict["friction_layer"]
-        ponderation_layer_path = self.dict["ponderation_layer"]
-        out_layer_path = self.dict["out_layer"]
+        friction_layer_path = params.getOrigPath(self.dict["friction"])
+        ponderation_layer_path = params.getOrigPath(self.dict["ponderation"])
+        out_layer_path = params.getOrigPath(self.dict["out_layer"])
         self.applyPonderation(friction_layer_path,ponderation_layer_path,out_layer_path)
         
     def applyItemValueIvals(self):
-        friction_layer_path = self.dict["friction_layer"]
-        #ponderation_layer_path = self.dict["ponderation_layer"]
-        out_layer_path = self.dict["out_layer"]
-        expr = self.dict["ponderation"]
-        checkFileExists(friction_layer_path)
-        ival_model = PondValueIvalModel.fromStr(expr)
+        friction_layer_path = params.getOrigPath(self.dict["friction"])
+        friction_norm_path = params.normalizeRaster(friction_layer_path)
+        pond_layer_path = params.getOrigPath(self.dict["ponderation"])
+        pond_norm_path = params.normalizeRaster(pond_layer_path)
+        out_layer_path = params.getOrigPath(self.dict["out_layer"])
+        tmp_path = mkTmpPath(out_layer_path)
+        ivals = self.dict["intervals"]
+        ival_model = PondValueIvalModel.fromStr(ivals)
+        ival_model.checkModel()
         gdalc_calc_expr = ival_model.toGdalCalcExpr()
-        applyGdalCalc(friction_layer_path,out_layer_path)
+        applyGdalCalc(pond_norm_path,tmp_path,gdalc_calc_expr)
+        self.applyPonderation(friction_norm_path,tmp_path,out_layer_path)
         
         
     def applyItemBufferIvals(self):
-        friction_layer_path = self.dict["friction_layer"]
-        #ponderation_layer_path = self.dict["ponderation_layer"]
-        out_layer_path = self.dict["out_layer"]
-        expr = self.dict["ponderation"]
-        checkFileExists(friction_layer_path)
-        ival_model = PondBufferIvalModel.fromStr(expr)
+        friction_layer_path = params.getOrigPath(self.dict["friction"])
+        friction_norm_path = params.normalizeRaster(friction_layer_path)
+        pond_layer_path = params.getOrigPath(self.dict["ponderation"])
+        pond_norm_path = params.normalizeRaster(pond_layer_path)
+        out_layer_path = params.getOrigPath(self.dict["out_layer"])
+        tmp_path = mkTmpPath(out_layer_path)
+        ivals = self.dict["intervals"]
+        ival_model = PondBufferIvalModel.fromStr(ivals)
+        ival_model.checkModel()
         gdalc_calc_expr = ival_model.toGdalCalcExpr()
-        applyGdalCalc(friction_layer_path,out_layer_path)
+        applyGdalCalc(pond_norm_path,tmp_path,gdalc_calc_expr)
+        self.applyPonderation(friction_norm_path,tmp_path,out_layer_path)
         
 
 class PonderationModel(abstract_model.DictModel):
@@ -269,6 +286,11 @@ class PonderationConnector(abstract_model.AbstractConnector):
         saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
         deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
         runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
+        self.dlg.pondFrictLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.dlg.pondOutLayer.setStorageMode(QgsFileWidget.SaveFile)
+        self.dlg.pondOutLayer.setFilter("*.tif")
+        self.dlg.pondLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.dlg.pondLayer.setStorageMode(QgsFileWidget.GetFile)
         self.dlg.pondIvalPlus.setIcon(plusIcon)
         self.dlg.pondIvalPlus.setToolTip("Ajouter un nouvel intervalle")
         self.dlg.pondIvalMinus.setIcon(minusIcon)
@@ -301,16 +323,25 @@ class PonderationConnector(abstract_model.AbstractConnector):
         if not mode:
             utils.user_error("No ponderation mode selected")
         friction_layer_path = params.getPathFromLayerCombo(self.dlg.pondFrictLayerCombo)
-        out_path = self.dlg.pondOutLayer.filePath()
+        pond_layer_path = params.getPathFromLayerCombo(self.dlg.pondLayerCombo)
+        out_path = params.normalizePath(self.dlg.pondOutLayer.filePath())
+        if not out_path:
+            user_error("No output path selected for ponderation")
         if mode == "Direct":
-            pond =  params.getPathFromLayerCombo(self.dlg.pondDirectLayerCombo)
+            ivals =  ""
         elif mode == "Intervalles":
-            pond = str(self.valueConnector.model)
+            ivals = str(self.valueConnector.model)
         elif mode == "Tampons":
-            pond = str(self.bufferConnector.model)
+            ivals = str(self.bufferConnector.model)
         else:
             internal_error("Unexpected ponderation mode '" + str(mode) + "'")
-        item = PonderationItem(mode,friction_layer_path,pond,out_path)
+        dict = { "mode" : mode,
+                 "friction" : friction_layer_path,
+                 "ponderation" : pond_layer_path,
+                 "intervals" : ivals,
+                 "out_layer" : out_path
+                }
+        item = PonderationItem(dict)
         return item
     
     def switchPondMode(self,mode):
@@ -326,7 +357,7 @@ class PonderationConnector(abstract_model.AbstractConnector):
     
     def activateDirectMode(self):
         debug("activateDirectMode")
-        self.dlg.pondDirectFrame.show()
+        #self.dlg.pondLayerFrame.show()
         self.dlg.pondBufferFrame.hide()
         self.dlg.pondIvalFrame.hide()
         
@@ -334,13 +365,13 @@ class PonderationConnector(abstract_model.AbstractConnector):
         debug("activateIvalMode")
         self.dlg.pondIvalFrame.show()
         self.dlg.pondBufferFrame.hide()
-        self.dlg.pondDirectFrame.hide()
+        #self.dlg.pondLayerFrame.hide()
         
     def activateBufferMode(self):
         debug("activateBufferMode")
         self.dlg.pondBufferFrame.show()
         self.dlg.pondIvalFrame.hide()
-        self.dlg.pondDirectFrame.hide()
+        #self.dlg.pondLayerFrame.hide()
     
     
     
