@@ -28,6 +28,7 @@ from .sous_trames import *
 from .groups import *
 from .classes import *
 from .selection import *
+from .ponderation import *
 from .cost import *
 
 from .utils import *
@@ -39,6 +40,7 @@ mk_item = {
     "GroupModel" : GroupModel.mkItemFromDict,
     "ClassModel" : ClassModel.mkItemFromDict,
     "SelectionModel" : SelectionModel.mkItemFromDict,
+    "PonderationModel" : PonderationModel.mkItemFromDict,
     "CostModel" : CostModel.mkItemFromDict
 }
 

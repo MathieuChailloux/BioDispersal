@@ -13,7 +13,7 @@ import abstract_model
 
 
 
-ponderation_fields = ["mode","friction","ponderation","intervals","out_layer"]
+ponderation_fields = ["mode","intervals","friction","ponderation","out_layer"]
 
 pond_ival_fields = ["low_bound","up_bound","pond_value"]
 pond_buffer_fields = [""]
@@ -67,7 +67,7 @@ class PondValueIvalItem(PondIvalItem):
     def __init__(self,lb=0.0,ub=0.0,pv=1.0):
         super().__init__(lb,ub,pv)
 
-    def toGdalCalcExpr(self):
+    def toGdalCalcExpr(self,idx):
         s = "(" + str(self.dict["pond_value"])
         s += "*A*less_equal(" + str(self.dict["low_bound"]) + ",A)"
         s += "*less(A," + str(self.dict["up_bound"]) + "))"
@@ -80,7 +80,7 @@ class PondBufferIvalItem(PondIvalItem):
         super().__init__(lb,ub,pv)
 
     def toGdalCalcExpr(self,idx):
-        s = "(A=" + str(idx) + ")*" + str(self.dict["pond_value"])+")"
+        s = "(A==" + str(idx+2) + ")*" + str(self.dict["pond_value"])
         return s
         
         
@@ -106,6 +106,7 @@ class PondIvalModel(abstract_model.DictModel):
             user_error("Overlapping intervals : " + str(i1) + " vs " + str(i2))
         
     def checkModel(self):
+        utils.debug("Checking model")
         n = len(self.items)
         for i1 in range(0,n):
             for i2 in range(i1+1,n):
@@ -115,10 +116,11 @@ class PondIvalModel(abstract_model.DictModel):
         
     def toGdalCalcExpr(self):
         s = ""
-        for ival in self.items:
+        for i in range(0,len(self.items)):
+            ival = self.getNItem(i)
             if s != "":
                 s+= " + "
-            s += ival.toGdalCalcExpr()
+            s += ival.toGdalCalcExpr(i)
         return s
         
 class PondValueIvalModel(PondIvalModel):
@@ -141,16 +143,62 @@ class PondBufferIvalModel(PondIvalModel):
 
     def __init__(self):
         super().__init__()
+        self.max_val = None
+        
+    # def checkNotEmpty(self):
+        # if len(self.items) == 0:
+            # internal_error("Empty buffer model")
         
     @classmethod
     def fromStr(cls,s):
         res = cls()
-        ivals = str.split('-')
+        utils.debug("PondBufferIvalModel.fromStr(" + str(s) +")")
+        ivals = s.split('-')
         for ival_str in ivals:
             ival = PondBufferIvalItem.fromStr(ival_str)
             res.addItem(ival)
         return res
         
+    def toDistances(self):
+        nb_items = len(self.items)
+        self.checkNotEmpty()
+        distances = [i.dict["up_bound"] for i in self.items]
+        #distances.append(self.items[-1].dict["up_bound"])
+        return distances
+        
+    def toGdalCalcExpr(self):
+        expr = super().toGdalCalcExpr()
+        if not self.max_val:
+            internal_error("No max value for buffer model")
+        #expr += " + less(" + str(self.max_val) + ",A)"
+        expr += " + (A==1)"
+        return expr
+        
+    def addItem(self,item):
+        ub = item.dict["up_bound"]
+        if not self.max_val or ub > self.max_val:
+            self.max_val = ub
+        super().addItem(item)
+        
+    def checkModel(self):
+        self.checkNotEmpty()
+        nb_items = len(self.items)
+        if nb_items > 1:
+            for i in range(0,nb_items-1):
+                item = self.items[i]
+                succ = self.items[i+1]
+                item_ub = item.dict["up_bound"]
+                succ_lb = succ.dict["low_bound"]
+                if item_ub != succ_lb:
+                    utils.user_error("Buffer model values are not continuous : '"
+                                     + str(item_ub) + "' is not equal to '" + str(succ_lb) + "'")
+                                     
+    def toReclassDict(self):
+        nb_itmes = len(self.items)
+        res = {}
+        for i in range(0,nb_items):
+            res[i+2] = self.items[i]["pond_value"]
+        return res
         
 class PondValueIvalConnector(abstract_model.AbstractConnector):
     
@@ -185,7 +233,7 @@ class PondBufferIvalConnector(abstract_model.AbstractConnector):
         super().connectComponents()
         
     def mkItem(self):
-        item = PondBufferIvalModel()
+        item = PondBufferIvalItem()
         return item
         
 # class PondBufferItem(abstract_model.DictItem):
@@ -208,17 +256,17 @@ class PonderationItem(abstract_model.DictItem):
             self.applyItemDirect()
         elif mode == "Intervalles":
             self.applyItemValueIvals()
-        elif mode == "Tampon":
+        elif mode == "Tampons":
             self.applyItemBufferIvals()
         else:
-            user_error("Unexpected ponderation mode '" + str(mode) + "'")
+            internal_error("Unexpected ponderation mode '" + str(mode) + "'")
             
     def applyPonderation(self,layer1,layer2,out_layer):
         checkFileExists(layer1)
         checkFileExists(layer2)
         layer2_norm = params.normalizeRaster(layer2)
-        if os.path.isfile(out_layer):
-            removeRaster(out_layer)
+        # if os.path.isfile(out_layer):
+            # removeRaster(out_layer)
         applyPonderationGdal(layer1,layer2_norm,out_layer,pos_values=False)
             
     def applyItemDirect(self):
@@ -246,15 +294,35 @@ class PonderationItem(abstract_model.DictItem):
         friction_layer_path = params.getOrigPath(self.dict["friction"])
         friction_norm_path = params.normalizeRaster(friction_layer_path)
         pond_layer_path = params.getOrigPath(self.dict["ponderation"])
-        pond_norm_path = params.normalizeRaster(pond_layer_path)
+        pond_buf_path = mkTmpPath(pond_layer_path,suffix="_buf")
+        
+        #pond_norm_path = params.normalizeRaster(pond_layer_path)
         out_layer_path = params.getOrigPath(self.dict["out_layer"])
         tmp_path = mkTmpPath(out_layer_path)
         ivals = self.dict["intervals"]
         ival_model = PondBufferIvalModel.fromStr(ivals)
         ival_model.checkModel()
-        gdalc_calc_expr = ival_model.toGdalCalcExpr()
-        applyGdalCalc(pond_norm_path,tmp_path,gdalc_calc_expr)
-        self.applyPonderation(friction_norm_path,tmp_path,out_layer_path)
+        buffer_distances = ival_model.toDistances()
+        applyRBuffer(pond_layer_path,buffer_distances,pond_buf_path)
+        gdal_calc_expr = ival_model.toGdalCalcExpr()
+        pond_buf_reclassed = mkTmpPath(pond_buf_path,suffix="_reclassed")
+        applyGdalCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
+                      more_args=['--type=Float32'],load_flag=False)
+        pond_buf_norm = mkTmpPath(pond_buf_path,suffix="_norm")
+        crs = params.params.crs
+        resolution = params.getResolution()
+        extent_path = params.getExtentLayer()
+        applyWarpGdal(pond_buf_reclassed,pond_buf_norm,'near',
+                      crs,resolution,extent_path,load_flag=False,
+                      more_args=['-ot','Float32'])
+        #pond_buf_norm_path = params.normalizeRaster(pond_buf_path)
+        #applyGdalCalc(pond_norm_path,pond_buf_norm_path,gdalc_calc_expr)
+        pond_buf_nonull = mkTmpPath(pond_buf_path,suffix="_nonull")
+        applyRNull(pond_buf_norm,1,pond_buf_nonull)
+        self.applyPonderation(friction_norm_path,pond_buf_nonull,out_layer_path)
+        removeRaster(pond_buf_path)
+        removeRaster(pond_buf_reclassed)
+        removeRaster(pond_buf_norm)
         
 
 class PonderationModel(abstract_model.DictModel):
@@ -264,12 +332,10 @@ class PonderationModel(abstract_model.DictModel):
         
     @staticmethod
     def mkItemFromDict(dict):
-        checkFields(selection_fields,dict.keys())
+        checkFields(ponderation_fields,dict.keys())
         item = PonderationItem(dict)
         return item
         
-    def mkItem(self):
-        assert(False)
         
 class PonderationConnector(abstract_model.AbstractConnector):
 

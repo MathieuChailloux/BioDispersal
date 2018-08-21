@@ -150,6 +150,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
                         "SelectionModel" : self.connectors["Selection"].model,
                         "FusionModel" : self.connectors["Fusion"].model,
                         "FrictionModel" : friction.frictionModel,
+                        "PonderationModel" : self.connectors["Ponderation"].model,
                         "CostModel" : self.connectors["Cost"].model}
         
     # Return XML string describing project
@@ -169,7 +170,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         writeFile(fname,xmlStr)
         
     def saveModelAsAction(self):
-        fname = params.openFileDialog(parent=self,msg="Sauvegarder le projet sous",filter="*.xml")
+        fname = params.saveFileDialog(parent=self,msg="Sauvegarder le projet sous",filter="*.xml")
         if fname:
             self.loadModel(fname)
         

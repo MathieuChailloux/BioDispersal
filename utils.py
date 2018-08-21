@@ -84,9 +84,9 @@ def writeFile(fname,str):
     
 # Path utils
 
-def mkTmpPath(path):
+def mkTmpPath(path,suffix="_tmp"):
     bn,extension = os.path.splitext(path)
-    return (bn + "_tmp" + extension)
+    return (bn + suffix + extension)
     
 def fromTmpPath(tmp_path):
     bn, extension = os.path.splitext(path)

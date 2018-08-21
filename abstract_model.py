@@ -185,6 +185,10 @@ class AbstractGroupModel(QAbstractTableModel):
         self.items = []
         self.orders = {}
         
+    def checkNotEmpty(self):
+        if len(self.items) == 0:
+            utils.internal_error("Empty buffer model")
+        
     def getItems(self):
         return self.items
         
