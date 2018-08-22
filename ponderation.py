@@ -4,6 +4,7 @@ import re
 from qgis.core import QgsMapLayerProxyModel
 from qgis.gui import QgsFileWidget
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QVBoxLayout
 
 from .utils import *
 from .qgsUtils import *
@@ -374,6 +375,10 @@ class PonderationConnector(abstract_model.AbstractConnector):
         self.dlg.pondModeCombo.addItem("Tampons")
         self.dlg.pondModeCombo.setCurrentText("Direct")
         self.activateDirectMode()
+        layout = QVBoxLayout()
+        layout.addWidget(self.dlg.frame_6)
+        layout.addStretch()
+        #self.dlg.pluginTabs.setLayout(layout)
         
     def connectComponents(self):
         super().connectComponents()

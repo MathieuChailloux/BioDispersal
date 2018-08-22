@@ -30,6 +30,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import processing
+from processing.gui import AlgorithmDialog
 from qgis.core import *
 from qgis.gui import *
 from qgis.gui import QgsFileWidget
@@ -49,10 +50,11 @@ from .config_parsing import *
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
     
-class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
+class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(EcologicalContinuityDialog, self).__init__(parent)
+        #super().__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -100,6 +102,11 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
     # Initialize Graphic elements for each tab
     # TODO : resize
     def initGui(self):
+        #scrollArea = QtWidgets.QScrollArea()
+        #layout = QtWidgets.QVBoxLayout(self)
+        #self.setLayout(layout)
+        #layout.addWidget(self.scrollArea)
+        #self.scrollArea.setWidgetResizable(True)
         self.geometry = self.geometry()
         self.x = self.x()
         self.y = self.y()
@@ -192,3 +199,52 @@ class EcologicalContinuityDialog(QtWidgets.QDialog, FORM_CLASS):
         fname = params.openFileDialog(parent=self,msg="Ouvrir le projet",filter="*.xml")
         if fname:
             self.loadModel(fname)
+            
+            
+class BioDispersalDialog(QgsProcessingAlgorithmDialogBase):
+
+    def __init__(self):
+        super().__init__()
+        self.eco_dlg = EcologicalContinuityDialog()
+        #self.tabWidget().removeTab(0)
+        nb_tabs = self.eco_dlg.pluginTabs.count()
+        for n in range(0,nb_tabs):
+            n_widget = self.eco_dlg.pluginTabs.widget(0)
+            n_text = self.eco_dlg.pluginTabs.tabText(0)
+            self.tabWidget().insertTab(n,n_widget,n_text)
+        w1 = self.eco_dlg.mainTab
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidget(w1)
+        self.tabWidget().insertTab(0,scroll_area,"test_scroll")
+        #self.setMainWidget(self.eco_dlg)
+        #self.setMainWidget(self.eco_dlg.pluginTabs)
+        #self.tabWidget().insertTab(0,EcologicalContinuityDialog(),"test")scroll = QtGui.QScrollableArea()
+        # mw = self.tabWidget().widget(0)
+        # fw1 = QgsFileWidget(parent=mw)
+        # fw2 = QgsFileWidget(parent=mw)
+        # fw3 = QgsFileWidget(parent=mw)
+        # fw4 = QgsFileWidget(parent=mw)
+        # tn = QtWidgets.QLineEdit(parent=mw)
+        # fw5 = QgsFileWidget(parent=mw)
+        # fw2.setMinimumHeight(100)
+        # fw2.setMaximumHeight(200)
+        # fw3.setMinimumHeight(200)
+        # fw3.setMaximumHeight(300)
+        # fw4.setMinimumHeight(300)
+        # fw4.setMaximumHeight(400)
+        # scroll = QtWidgets.QScrollArea()
+        # scroll.setWidget(mw)
+        # scroll.setWidgetResizable(True)
+        # scroll.setFixedHeight(400)
+        # layout = QVBoxLayout(self)
+        # layout.addWidget
+        # layout.addWidget(scroll)
+        # scrollArea = QtWidgets.QScrollArea()
+        # layout = QVBoxLayout()
+        # mw.setLayout(layout)
+        # scrollArea.setWidget(self.tabWidget())
+        # scrollArea.setWidgetResizable(True)
+        
+        
+    
+        

@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .eco_cont_dialog import EcologicalContinuityDialog
+from .eco_cont_dialog import EcologicalContinuityDialog, BioDispersalDialog
 import os.path
 
 class EcologicalContinuity:
@@ -61,7 +61,8 @@ class EcologicalContinuity:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = EcologicalContinuityDialog()
+        #self.dlg = EcologicalContinuityDialog()
+        self.dlg = BioDispersalDialog()
 
         # Declare instance attributes
         self.actions = []
@@ -171,9 +172,9 @@ class EcologicalContinuity:
             
         self.iface.mainWindow()
             
-        self.dlg.initTabs()
-        self.dlg.initGui()
-        self.dlg.connectComponents()
+        self.dlg.eco_dlg.initTabs()
+        self.dlg.eco_dlg.initGui()
+        self.dlg.eco_dlg.connectComponents()
 
 
     def unload(self):
@@ -194,7 +195,12 @@ class EcologicalContinuity:
         #self.dlg.runButton.clicked.connect(self.dlg.runCost)
         #self.dlg.connectComponents()
         # show the dialog
+        self.dlg = BioDispersalDialog()
+        self.dlg.eco_dlg.initTabs()
+        self.dlg.eco_dlg.initGui()
+        self.dlg.eco_dlg.connectComponents()
         self.dlg.show()
+        print(str(self.dlg))
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
