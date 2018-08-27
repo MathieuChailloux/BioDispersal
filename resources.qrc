@@ -19,5 +19,14 @@
         <file>icons/save-as.png</file>
         <file>icons/refresh.svg</file>
         <file>icons/folder.svg</file>
+        <file>icons/mActionAdd.svg</file>
+        <file>icons/mActionDeleteSelected.svg</file>
+        <file>icons/mActionEditCopy.svg</file>
+        <file>icons/mActionFileOpen.svg</file>
+        <file>icons/mActionFileSave.svg</file>
+        <file>icons/mActionFileSaveAs.svg</file>
+        <file>icons/mActionRefresh.svg</file>
+        <file>icons/mActionRemove.svg</file>
+        <file>icons/iconClearConsole.svg</file>
     </qresource>
 </RCC>

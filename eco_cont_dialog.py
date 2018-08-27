@@ -47,10 +47,10 @@ from .ponderation import PonderationConnector
 from .cost import CostConnector
 from .config_parsing import *
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
+#FORM_CLASS, _ = uic.loadUiType(os.path.join(
+#    os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
     
-class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS):
+class EcologicalContinuityDialog(QtWidgets.QDialog):#,FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(EcologicalContinuityDialog, self).__init__(parent)
@@ -214,8 +214,14 @@ class BioDispersalDialog(QgsProcessingAlgorithmDialogBase):
             self.tabWidget().insertTab(n,n_widget,n_text)
         w1 = self.eco_dlg.mainTab
         scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWindowFlags(Qt.FramelessWindowHint)
+        scroll_area.setAttribute(Qt.WA_TranslucentBackground)
         scroll_area.setWidget(w1)
-        self.tabWidget().insertTab(0,scroll_area,"test_scroll")
+        self.tabWidget().insertTab(1,scroll_area,"test_scroll")
+        # w1 = self.tabWidget()
+        # scroll_area = QtWidgets.QScrollArea()
+        # scroll_area.setWidget(w1)
+        # self.addWidget(scroll_area)
         #self.setMainWidget(self.eco_dlg)
         #self.setMainWidget(self.eco_dlg.pluginTabs)
         #self.tabWidget().insertTab(0,EcologicalContinuityDialog(),"test")scroll = QtGui.QScrollableArea()
@@ -246,5 +252,21 @@ class BioDispersalDialog(QgsProcessingAlgorithmDialogBase):
         # scrollArea.setWidgetResizable(True)
         
         
+
+FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'test_dialog.ui'))
     
+#from test_dialog import Ui_TestDialog
+
+class TestDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
+    def __init__(self, parent=None):
+        """Constructor."""
+        super(TestDialog, self).__init__(parent)
+        self.setupUi(self)
+        
+class ProcessingDialog(QgsProcessingAlgorithmDialogBase):
+
+    def __init__(self,parent=None):
+        super(QgsProcessingAlgorithmDialogBase, self).__init__(parent)
+        
         
