@@ -142,15 +142,8 @@ class STConnector(abstract_model.AbstractConnector):
                          self.dlg.stAdd,self.dlg.stRemove)
         
     def initGui(self):
-        add = QIcon(':plugins/eco_cont/icons/add.svg')
-        minus = QIcon(':plugins/eco_cont/icons/minus.svg')
-        self.dlg.stAdd.setIcon(add)
         self.dlg.stAdd.setToolTip("Ajouter sous-trame")
-        self.dlg.stRemove.setIcon(minus)
         self.dlg.stRemove.setToolTip("Supprimer les sous-trames sélectionnées")
-        #self.dlg.stView.setColumnWidth(0,25)
-        #self.dlg.stView.setColumnWidth(1,50)
-        #self.dlg.stView.setColumnWidth(2,100)
         
     def connectComponents(self):
         super().connectComponents()

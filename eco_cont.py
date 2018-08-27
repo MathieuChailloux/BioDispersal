@@ -61,9 +61,9 @@ class EcologicalContinuity:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        #self.dlg = EcologicalContinuityDialog()
+        self.dlg = EcologicalContinuityDialog()
         #self.dlg = BioDispersalDialog()
-        self.dlg = TestDialog()
+        #self.dlg = TestDialog()
 
         # Declare instance attributes
         self.actions = []
@@ -173,9 +173,9 @@ class EcologicalContinuity:
             
         self.iface.mainWindow()
             
-        #self.dlg.eco_dlg.initTabs()
-        #self.dlg.eco_dlg.initGui()
-        #self.dlg.eco_dlg.connectComponents()
+        self.dlg.initTabs()
+        self.dlg.initGui()
+        self.dlg.connectComponents()
 
 
     def unload(self):
@@ -196,11 +196,12 @@ class EcologicalContinuity:
         #self.dlg.runButton.clicked.connect(self.dlg.runCost)
         #self.dlg.connectComponents()
         # show the dialog
-        self.dlg = TestDialog()
+        self.dlg = EcologicalContinuityDialog()
+        #self.dlg = TestDialog()
         #self.dlg = BioDispersalDialog()
-        #self.dlg.eco_dlg.initTabs()
-        #self.dlg.eco_dlg.initGui()
-        #self.dlg.eco_dlg.connectComponents()
+        self.dlg.initTabs()
+        self.dlg.initGui()
+        self.dlg.connectComponents()
         self.dlg.show()
         print(str(self.dlg))
         # Run the dialog event loop

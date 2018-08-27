@@ -74,6 +74,26 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="2">
+           <widget class="QToolButton" name="saveProject">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QToolButton" name="openProject">
             <property name="sizePolicy">
@@ -100,6 +120,19 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="3">
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>790</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="0" column="1">
            <widget class="QToolButton" name="saveProjectAs">
             <property name="sizePolicy">
@@ -120,40 +153,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QToolButton" name="saveProject">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <spacer name="horizontalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>790</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="0" colspan="4" alignment="Qt::AlignTop">
+          <item row="1" column="0" colspan="4">
            <widget class="QTabWidget" name="mTabWidget">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -720,7 +720,7 @@
                            </widget>
                           </item>
                           <item row="3" column="0">
-                           <widget class="QLabel" name="selectionExprLabel_3">
+                           <widget class="QLabel" name="selectionOpenLayerLabel">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                               <horstretch>0</horstretch>
@@ -755,7 +755,7 @@
                            </widget>
                           </item>
                           <item row="2" column="0">
-                           <widget class="QLabel" name="selectionExprLabel_2">
+                           <widget class="QLabel" name="selectionLayerLabel_5">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                               <horstretch>0</horstretch>
@@ -861,11 +861,11 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QStackedWidget" name="stackedWidget_5">
+                           <widget class="QStackedWidget" name="stackSelectionMode">
                             <property name="currentIndex">
-                             <number>1</number>
+                             <number>0</number>
                             </property>
-                            <widget class="QWidget" name="page_9">
+                            <widget class="QWidget" name="stackSelectionModeVect">
                              <layout class="QHBoxLayout" name="horizontalLayout_24">
                               <item>
                                <widget class="QLabel" name="selectionModeLabel">
@@ -908,7 +908,7 @@
                               </item>
                              </layout>
                             </widget>
-                            <widget class="QWidget" name="page_10">
+                            <widget class="QWidget" name="stackSelectionModeRaster">
                              <layout class="QHBoxLayout" name="horizontalLayout_25">
                               <item>
                                <widget class="QLabel" name="selectionResampleLabel">
@@ -944,7 +944,7 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QStackedWidget" name="stackedWidget_6">
+                           <widget class="QStackedWidget" name="stackSelectionExprField">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                               <horstretch>0</horstretch>
@@ -960,7 +960,7 @@
                             <property name="currentIndex">
                              <number>0</number>
                             </property>
-                            <widget class="QWidget" name="page_11">
+                            <widget class="QWidget" name="stackSelectionExpr">
                              <layout class="QHBoxLayout" name="horizontalLayout_26">
                               <item>
                                <widget class="QLabel" name="selectionExprLabel">
@@ -993,10 +993,10 @@
                               </item>
                              </layout>
                             </widget>
-                            <widget class="QWidget" name="page_12">
+                            <widget class="QWidget" name="stackSelectionField">
                              <layout class="QHBoxLayout" name="horizontalLayout_27">
                               <item>
-                               <widget class="QLabel" name="selectionFieldLabel_4">
+                               <widget class="QLabel" name="selectionFieldLabel">
                                 <property name="minimumSize">
                                  <size>
                                   <width>0</width>
@@ -1009,7 +1009,7 @@
                                </widget>
                               </item>
                               <item>
-                               <widget class="QgsFieldComboBox" name="selectionField_3">
+                               <widget class="QgsFieldComboBox" name="selectionField">
                                 <property name="sizePolicy">
                                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                   <horstretch>0</horstretch>
@@ -1224,7 +1224,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QStackedWidget" name="stackedWidget">
+                     <widget class="QStackedWidget" name="stackGroupClass">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                         <horstretch>0</horstretch>
@@ -1238,9 +1238,9 @@
                        </size>
                       </property>
                       <property name="currentIndex">
-                       <number>0</number>
+                       <number>1</number>
                       </property>
-                      <widget class="QWidget" name="page">
+                      <widget class="QWidget" name="stackGroup">
                        <layout class="QGridLayout" name="gridLayout_12">
                         <item row="0" column="0">
                          <widget class="QFrame" name="groupFrame">
@@ -1362,7 +1362,7 @@
                         </item>
                        </layout>
                       </widget>
-                      <widget class="QWidget" name="page_2">
+                      <widget class="QWidget" name="stackClass">
                        <layout class="QGridLayout" name="gridLayout_13">
                         <item row="0" column="0">
                          <widget class="QFrame" name="classFrame">
@@ -2081,6 +2081,19 @@
                    </layout>
                   </widget>
                  </item>
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QCheckBox" name="fusionRunOnlySelection">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>25</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Fusionner seulement la sous-trame courante</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QFrame" name="frame_7">
                    <property name="sizePolicy">
@@ -2303,6 +2316,19 @@
                    </property>
                   </widget>
                  </item>
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QCheckBox" name="frictRunOnlySelection">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>25</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Appliquer seulement aux sous-trames sélectionnées</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QFrame" name="frame_15">
                    <property name="sizePolicy">
@@ -2314,7 +2340,7 @@
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>16</height>
+                     <height>25</height>
                     </size>
                    </property>
                    <property name="frameShape">
@@ -2324,6 +2350,21 @@
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_11">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
                     <item>
                      <widget class="QPushButton" name="frictionRun">
                       <property name="sizePolicy">
@@ -2344,100 +2385,6 @@
                       <property name="icon">
                        <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QFrame" name="frictionFileFrame">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>60</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QFormLayout" name="formLayout">
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="frictionSaveLabel">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>13</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>Enregistrer le tableau sous</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QgsFileWidget" name="frictionCsvFile">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>100</width>
-                        <height>13</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <widget class="QLabel" name="frictionLoadLabel">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>13</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>Ouvrir le tableau</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1">
-                     <widget class="QgsFileWidget" name="frictionLoadFile">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>100</width>
-                        <height>13</height>
-                       </size>
                       </property>
                      </widget>
                     </item>
@@ -2823,7 +2770,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QStackedWidget" name="stackedWidget_2">
+                  <widget class="QStackedWidget" name="stackPond">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
@@ -2837,9 +2784,9 @@
                     </size>
                    </property>
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
-                   <widget class="QWidget" name="page_3">
+                   <widget class="QWidget" name="stackPondIval">
                     <layout class="QGridLayout" name="gridLayout_20">
                      <item row="0" column="0">
                       <widget class="QFrame" name="pondIvalFrame">
@@ -2959,9 +2906,9 @@
                      </item>
                     </layout>
                    </widget>
-                   <widget class="QWidget" name="page_4">
+                   <widget class="QWidget" name="stackPondBuffer">
                     <layout class="QGridLayout" name="gridLayout_21">
-                     <item row="0" column="0">
+                     <item row="1" column="0">
                       <widget class="QFrame" name="pondBufferFrame">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -3022,7 +2969,7 @@
                           </property>
                           <property name="sizeHint" stdset="0">
                            <size>
-                            <width>197</width>
+                            <width>702</width>
                             <height>20</height>
                            </size>
                           </property>
@@ -3054,7 +3001,7 @@
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_13">
-                    <item alignment="Qt::AlignHCenter">
+                    <item>
                      <widget class="QFrame" name="frame_32">
                       <property name="frameShape">
                        <enum>QFrame::StyledPanel</enum>
@@ -3117,17 +3064,14 @@
                        <enum>QFrame::Raised</enum>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_19">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
                        <property name="leftMargin">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <property name="topMargin">
                         <number>0</number>
                        </property>
                        <property name="rightMargin">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <property name="bottomMargin">
                         <number>0</number>
@@ -3142,6 +3086,19 @@
                            <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                          </property>
                         </widget>
+                       </item>
+                       <item>
+                        <spacer name="horizontalSpacer_23">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>568</width>
+                           <height>28</height>
+                          </size>
+                         </property>
+                        </spacer>
                        </item>
                        <item>
                         <spacer name="horizontalSpacer_14">
@@ -3160,6 +3117,77 @@
                         </spacer>
                        </item>
                        <item>
+                        <widget class="QCheckBox" name="pondRunOnlySelection">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>16</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string>Appliquer seulement aux lignes sélectionnées</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <spacer name="horizontalSpacer_15">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>600</width>
+                           <height>21</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_35">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>25</height>
+                       </size>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_21">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
                         <widget class="QPushButton" name="pondRun">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3175,19 +3203,6 @@
                            <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                          </property>
                         </widget>
-                       </item>
-                       <item>
-                        <spacer name="horizontalSpacer_15">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
                        </item>
                       </layout>
                      </widget>
@@ -3711,7 +3726,7 @@
                      </spacer>
                     </item>
                     <item>
-                     <widget class="QCheckBox" name="costRunSelectionMode">
+                     <widget class="QCheckBox" name="costRunOnlySelection">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                         <horstretch>0</horstretch>

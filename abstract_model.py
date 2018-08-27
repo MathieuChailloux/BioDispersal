@@ -358,11 +358,15 @@ class DictModel(AbstractGroupModel):
 # AbstractConnector connects a view and a model
 class AbstractConnector:
 
-    def __init__(self,model,view,addButton,removeButton):
+    def __init__(self,model,view,addButton=None,removeButton=None,
+                 runButton=None,selectionCheckbox=None):
         self.model = model
         self.view = view
         self.addButton = addButton
         self.removeButton = removeButton
+        self.onlySelection = False
+        self.runButton = runButton
+        self.selectionCheckbox = selectionCheckbox
         
     # If addButton given, it is connected to addItem function
     # If removeButton given, it is connected to removeItems function
@@ -372,12 +376,33 @@ class AbstractConnector:
             self.addButton.clicked.connect(self.addItem)
         if self.removeButton:
             self.removeButton.clicked.connect(self.removeItems)
+        if self.runButton:
+            self.runButton.clicked.connect(self.applyItems)
+        if self.selectionCheckbox:
+            self.selectionCheckbox.stateChanged.connect(self.switchOnlySelection)
         self.view.horizontalHeader().sectionClicked.connect(self.model.orderItems)
+                
+    def switchOnlySelection(self):
+        new_val = not self.onlySelection
+        utils.debug("setting onlySelection to " + str(new_val))
+        self.onlySelection = new_val
         
     # This function build model item from view and is called by addItem
     @abstractmethod
     def mkItem(self):
         utils.todo_error(" [" + self.__class__.__name__ + "] mkItem not implemented")
+        
+    def getSelectedIndexes(self):
+        if self.onlySelection:
+            indexes = list(set([i.row() for i in self.view.selectedIndexes()]))
+        else:
+            indexes = range(0,len(self.model.items))
+        return indexes
+        
+    def applyItems(self):
+        indexes = self.getSelectedIndexes()
+        utils.debug("applyItems to indexes " + str(indexes))
+        self.model.applyItems(indexes)
         
     def addItem(self):
         utils.debug("AbstractConnector.addItem")

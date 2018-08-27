@@ -72,6 +72,8 @@ class CostItem(DictItem):
         applyRCost(startRaster,permRaster,cost,tmpPath)
         applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
         removeRaster(tmpPath)
+        res_layer = qgsUtils.loadRasterLayer(outPath)
+        QgsProject.instance().addMapLayer(outPath)
         utils.debug("End runCost")
             
     def checkItem(self):
@@ -99,20 +101,13 @@ class CostConnector(AbstractConnector):
         costModel = CostModel()
         self.onlySelection = False
         super().__init__(costModel,self.dlg.costView,
-                         self.dlg.costAdd,self.dlg.costRemove)
+                         self.dlg.costAdd,self.dlg.costRemove,
+                         self.dlg.costRun,self.dlg.costRunOnlySelection)
         
     def initGui(self):
-        downloadIcon = QIcon(':plugins/eco_cont/icons/download.svg')
-        saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
-        deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
-        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
-        self.dlg.costAdd.setIcon(saveIcon)
-        self.dlg.costRun.setIcon(runIcon)
-        self.dlg.costRemove.setIcon(deleteIcon)
         self.dlg.costRemove.setToolTip("Supprimer les dispersions sélectionnées")
         self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.dlg.costPermRasterCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        #self.dlg.rasterView.resize(self.dlg.width / 1.5, self.dlg.height / 3.5)
         
     def connectComponents(self):
         self.dlg.costSTCombo.setModel(sous_trames.stModel)
@@ -120,22 +115,22 @@ class CostConnector(AbstractConnector):
         self.dlg.costStartLayer.fileChanged.connect(self.setStartLayer)
         self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
         #self.dlg.costPermRasterCombo.layerChanged.connect(self.setPermRasterFromCombo)
-        self.dlg.costRun.clicked.connect(self.applyItems)
+        #self.dlg.costRun.clicked.connect(self.applyItems)
         super().connectComponents()
-        self.dlg.costRunSelectionMode.stateChanged.connect(self.switchOnlySelection)
+        # self.dlg.costRunSelectionMode.stateChanged.connect(self.switchOnlySelection)
         
-    def applyItems(self):
-        if self.onlySelection:
-            indexes = list(set([i.row() for i in self.view.selectedIndexes()]))
-        else:
-            indexes = range(0,len(self.model.items))
-        utils.debug(str(indexes))
-        self.model.applyItems(indexes)
+    # def applyItems(self):
+        # if self.onlySelection:
+            # indexes = list(set([i.row() for i in self.view.selectedIndexes()]))
+        # else:
+            # indexes = range(0,len(self.model.items))
+        # utils.debug(str(indexes))
+        # self.model.applyItems(indexes)
         
-    def switchOnlySelection(self):
-        new_val = not self.onlySelection
-        utils.debug("setting onlySelection to " + str(new_val))
-        self.onlySelection = new_val
+    # def switchOnlySelection(self):
+        # new_val = not self.onlySelection
+        # utils.debug("setting onlySelection to " + str(new_val))
+        # self.onlySelection = new_val
         
     def switchST(self,text):
         st_item = sous_trames.getSTByName(text)

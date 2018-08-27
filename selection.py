@@ -82,10 +82,6 @@ class SelectionItem(DictItem):
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
         applyWarpGdal(in_layer_path,tmp_path,resampling_mode,crs,resolution,extent_path)
-        #if resampling_mode == "Plus proche voisin":
-        #    applyResampleProcessing(in_layer_path,tmp_path)
-        #else:
-        #    internal_error("Unexpected resampling mode '" + str(resampling_mode) + "'")
         create_classes = True
         if create_classes:
             tmp_layer = loadRasterLayer(tmp_path)
@@ -94,8 +90,6 @@ class SelectionItem(DictItem):
             width = dp.stepWidth()
             height = dp.stepHeight()
             block = dp.block(1,extent_rect,width,height)
-            #width = block.width()
-            #height = block.height()
             values = set()
             for i in range(width):
                 for j in range(height):
@@ -231,26 +225,13 @@ class SelectionConnector(AbstractConnector):
                         None,self.dlg.selectionRemove)
                         
     def initGui(self):
-        upIcon = QIcon(':plugins/eco_cont/icons/up-arrow.png')
-        downIcon = QIcon(':plugins/eco_cont/icons/down-arrow.png')
-        saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
-        downloadIcon = QIcon(':plugins/eco_cont/icons/download.svg')
-        deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
-        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
-        self.dlg.selectionUp.setIcon(upIcon)
-        self.dlg.selectionDown.setIcon(downIcon)
-        self.dlg.selectionAdd.setIcon(saveIcon)
         self.dlg.selectionGroupAdd.setToolTip("Ajouter un nouveau groupe")
-        self.dlg.classRemove.setIcon(deleteIcon)
         self.dlg.classRemove.setToolTip("Supprimer les classes sélectionnées")
-        self.dlg.groupsRemove.setIcon(deleteIcon)
         self.dlg.groupsRemove.setToolTip("Supprimer les groupes sélectionnés")
-        self.dlg.selectionRemove.setIcon(deleteIcon)
         self.dlg.selectionRemove.setToolTip("Supprimer les sélections")
-        self.dlg.selectionRun.setIcon(runIcon)
+        self.activateVectorMode()
         self.activateFieldMode()
         self.activateGroupDisplay()
-        self.activateVectorMode()
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.All)
         self.dlg.selectionResampleCombo.addItem("Plus proche voisin")
         self.dlg.selectionResampleCombo.addItem("Moyenne")
@@ -351,13 +332,11 @@ class SelectionConnector(AbstractConnector):
         
         
     def getOrCreateClass(self):
-        #cls = self.dlg.selectionClassCombo.currentText()
         cls = self.dlg.selectionGroupCombo.currentText()
         if not cls:
             user_error("No class selected")
         class_item = classes.getClassByName(cls)
         if not class_item:
-            #class_descr = self.dlg.selectionClassName.text()
             class_descr = ""
             class_item = classes.ClassItem(cls,class_descr,None)
             classes.classModel.addItem(class_item)
@@ -455,28 +434,32 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionLayerFormatRaster.setCheckState(0)
         self.dlg.selectionLayerFormatVector.setCheckState(2)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
-        self.dlg.selectionResampleLabel.hide()
-        self.dlg.selectionResampleCombo.hide()
-        self.dlg.selectionModeLabel.show()
-        if self.dlg.fieldSelectionMode.isChecked():
-            self.activateFieldMode()
-        elif self.dlg.exprSelectionMode.isChecked():
-            self.activateExprMode()
-        else:
-            utils.internal_error("Unexpected checkbox state")
+        self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeVect)
+        self.dlg.stackSelectionExprField.show()
+        # self.dlg.selectionResampleLabel.hide()
+        # self.dlg.selectionResampleCombo.hide()
+        # self.dlg.selectionModeLabel.show()
+        # if self.dlg.fieldSelectionMode.isChecked():
+            # self.activateFieldMode()
+        # elif self.dlg.exprSelectionMode.isChecked():
+            # self.activateExprMode()
+        # else:
+            # utils.internal_error("Unexpected checkbox state")
             
     def activateRasterMode(self):
         utils.debug("activateRasterMode")
         self.dlg.selectionLayerFormatVector.setCheckState(0)
         self.dlg.selectionLayerFormatRaster.setCheckState(2)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        self.dlg.selectionResampleLabel.show()
-        self.dlg.selectionResampleCombo.show()
-        self.dlg.selectionModeLabel.hide()
-        self.dlg.selectionField.hide()
-        self.dlg.selectionFieldLabel.hide()
-        self.dlg.selectionExpr.hide()
-        self.dlg.selectionExprLabel.hide()
+        self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeRaster)
+        self.dlg.stackSelectionExprField.hide()
+        # self.dlg.selectionResampleLabel.show()
+        # self.dlg.selectionResampleCombo.show()
+        # self.dlg.selectionModeLabel.hide()
+        # self.dlg.selectionField.hide()
+        # self.dlg.selectionFieldLabel.hide()
+        # self.dlg.selectionExpr.hide()
+        # self.dlg.selectionExprLabel.hide()
             
         
             
@@ -498,10 +481,13 @@ class SelectionConnector(AbstractConnector):
         utils.debug("activateExprMode")
         self.dlg.fieldSelectionMode.setCheckState(0)
         self.dlg.exprSelectionMode.setCheckState(2)
-        self.dlg.selectionField.hide()
-        self.dlg.selectionFieldLabel.hide()
-        self.dlg.selectionExpr.show()
-        self.dlg.selectionExprLabel.show()
+        self.dlg.stackSelectionExprField.setCurrentWidget(self.dlg.stackSelectionExpr)
+        # SEP
+        # self.dlg.selectionField.hide()
+        # self.dlg.selectionFieldLabel.hide()
+        # self.dlg.selectionExpr.show()
+        # self.dlg.selectionExprLabel.show()
+        # SEP
         # self.dlg.selectionFieldClassLabel.hide()
         # self.dlg.selectionClassAddLabel.show()
         # self.dlg.selectionClassAdd.show()
@@ -514,10 +500,13 @@ class SelectionConnector(AbstractConnector):
         utils.debug("activateFieldMode")
         self.dlg.exprSelectionMode.setCheckState(0)
         self.dlg.fieldSelectionMode.setCheckState(2)
-        self.dlg.selectionExpr.hide()
-        self.dlg.selectionExprLabel.hide()
-        self.dlg.selectionField.show()
-        self.dlg.selectionFieldLabel.show()
+        self.dlg.stackSelectionExprField.setCurrentWidget(self.dlg.stackSelectionField)
+        # SEP
+        # self.dlg.selectionExpr.hide()
+        # self.dlg.selectionExprLabel.hide()
+        # self.dlg.selectionField.show()
+        # self.dlg.selectionFieldLabel.show()
+        # SEP
         # self.dlg.selectionFieldClassLabel.show()
         # self.dlg.selectionClassAddLabel.hide()
         # self.dlg.selectionClassAdd.hide()
@@ -543,13 +532,15 @@ class SelectionConnector(AbstractConnector):
     def activateGroupDisplay(self):
         self.dlg.classDisplay.setCheckState(0)
         self.dlg.groupDisplay.setCheckState(2)
-        self.dlg.classFrame.hide()
-        self.dlg.groupFrame.show()
+        self.dlg.stackGroupClass.setCurrentWidget(self.dlg.stackGroup)
+        # self.dlg.classFrame.hide()
+        # self.dlg.groupFrame.show()
         
     def activateClassDisplay(self):
         self.dlg.groupDisplay.setCheckState(0)
         self.dlg.classDisplay.setCheckState(2)
-        self.dlg.groupFrame.hide()
-        self.dlg.classFrame.show()
-        self.dlg.classView.show()
+        self.dlg.stackGroupClass.setCurrentWidget(self.dlg.stackClass)
+        # self.dlg.groupFrame.hide()
+        # self.dlg.classFrame.show()
+        # self.dlg.classView.show()
     

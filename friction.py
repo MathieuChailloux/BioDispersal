@@ -2,7 +2,7 @@
 import csv
 import os
 
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QModelIndex
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 from qgis.gui import QgsFileWidget
@@ -181,8 +181,9 @@ class FrictionModel(abstract_model.DictModel):
             st_friction_fname = st_item.getFrictionPath()
             qgsTreatments.applyReclassProcessing(st_merged_fname,st_friction_fname,st_rules_fname,st_name)
         
-    def applyReclassGdal(self):
+    def applyReclassGdal(self,indexes):
         utils.debug("friction.applyReclassGdal")
+        st_list = [self.sous_trames[i-3] for i in indexes]
         for st_item in self.sous_trames:
             st_merged_fname = st_item.getMergedPath()
             utils.checkFileExists(st_merged_fname)
@@ -207,10 +208,10 @@ class FrictionModel(abstract_model.DictModel):
             #utils.debug("applyReclassGdal")
             qgsTreatments.applyReclassGdalFromDict(st_merged_fname,st_friction_fname,reclass_dict)
         
-    def applyItems(self):
+    def applyItems(self,indexes):
         #self.applyReclass()
         utils.debug("applyItems")
-        self.applyReclassGdal()
+        self.applyReclassGdal(indexes)
         
     def saveCSV(self,fname):
         with open(fname,"w", newline='') as f:
@@ -265,29 +266,13 @@ class FrictionConnector(abstract_model.AbstractConnector):
         super().__init__(frictionModel,self.dlg.frictionView,None,None)
         
     def initGui(self):
-        reloadIcon = QIcon(':plugins/eco_cont/icons/refresh.svg')
-        saveAsIcon = QIcon(':plugins/eco_cont/icons/save-as.png')
-        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
-        openIcon = QIcon(':plugins/eco_cont/icons/folder.svg')
-        self.dlg.frictionLoadClass.setIcon(reloadIcon)
         self.dlg.frictionLoadClass.setToolTip("Recharger toutes les classes de friction")
-        self.dlg.frictionSave.setIcon(saveAsIcon)
         self.dlg.frictionSave.setToolTip("Enregistrer le tableau de friction sous")
-        self.dlg.frictionLoad.setIcon(openIcon)
         self.dlg.frictionLoad.setToolTip("Ouvrir le tableau de friction")
-        self.dlg.frictionRun.setIcon(runIcon)
-        self.dlg.frictionCsvFile.setStorageMode(QgsFileWidget.SaveFile)
-        self.dlg.frictionCsvFile.setFilter("*.csv")
-        self.dlg.frictionLoadFile.setStorageMode(QgsFileWidget.GetFile)
-        self.dlg.frictionLoadFile.setFilter("*.csv")
-        self.dlg.frictionFileFrame.hide()
         
     @pyqtSlot()
     def internCatchGroupAdded(grp):
         utils.debug("groupAdded2 " + grp)
-        
-    def printCatch(self):
-        utils.debug("frictionRun catched")
         
     def connectComponents(self):
         sous_trames.stModel.stAdded.connect(catchSTAdded)
@@ -297,14 +282,16 @@ class FrictionConnector(abstract_model.AbstractConnector):
         super().connectComponents()
         self.dlg.frictionLoadClass.clicked.connect(self.model.reloadClasses)
         self.dlg.frictionRun.clicked.connect(self.model.applyItems)
-        #self.dlg.frictionRun.clicked.connect(self.printCatch)
-        # self.dlg.frictionSave.clicked.connect(self.saveCSV)
-        # self.dlg.frictionLoad.clicked.connect(self.loadCSV)
-        self.dlg.frictionCsvFile.fileChanged.connect(self.saveCSV)
-        self.dlg.frictionLoadFile.fileChanged.connect(self.loadCSV)
         #sous_trames.stModel.groupAdded.connect(self.internCatchGroupAdded)
         self.dlg.frictionSave.clicked.connect(self.saveCSVAction)
         self.dlg.frictionLoad.clicked.connect(self.loadCSVAction)
+        
+    def getSelectedIndexes(self):
+        if self.onlySelection:
+            indexes = list(set([i.column() for i in self.view.selectedIndexes()]))
+        else:
+            indexes = range(0,len(self.model.items))
+        return indexes
         
     def testSave(self):
         fname = QFileDialog.getOpenFileName()
@@ -312,13 +299,11 @@ class FrictionConnector(abstract_model.AbstractConnector):
         
     def loadCSV(self,fname):
         global frictionModel, frictionFields
-        #fname = self.dlg.frictionLoadFile.filePath()
         utils.checkFileExists(fname)
         new_model = self.model.fromCSV(fname)
         self.model = new_model
         frictionModel = new_model
         frictionFields = new_model.fields
-        #self.view.setModel(self.model)
         self.connectComponents()
         self.model.layoutChanged.emit()
         frictionModel.layoutChanged.emit()
@@ -331,7 +316,6 @@ class FrictionConnector(abstract_model.AbstractConnector):
             self.loadCSV(fname)
         
     def saveCSV(self,fname):
-        #fname = self.dlg.frictionCsvFile.filePath()
         self.model.saveCSV(fname)
      
     def saveCSVAction(self):

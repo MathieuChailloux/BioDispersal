@@ -33,7 +33,6 @@ def normalizePath(path):
     pp = pathlib.Path(path)
     utils.debug("path = " + str(path))
     utils.debug("pp_str = " + str(pp))
-    #utils.debug("pp = " + str(pp))
     path = str(pp)
     if os.path.isabs(path):
         return os.path.relpath(path,params.workspace)
@@ -66,16 +65,6 @@ def getPathFromLayerCombo(combo):
     layer_path = normalizePath(qgsUtils.pathOfLayer(layer))
     return layer_path
         
-# def mkTmpPath(fname,abs_flag=False):
-    # if abs_flag:
-        # if params.tmpDir:
-            # tmpFname = os.path.join(params.tmpDir,fname)
-            # return tmpFname
-        # else:
-            # utils.user_error("Workspace not set")
-    # else:
-        # os.path.join("tmp",fname)
-        
 def getResolution():
     return params.resolution
     
@@ -86,13 +75,6 @@ def getExtentCoords():
     extent_path = getOrigPath(params.extentLayer)
     if extent_path:
         return qgsUtils.coordsOfExtentPath(extent_path)
-        # extent_layer = qgsUtils.loadVectorLayer(extent_path)
-        # extent = extent_layer.extent()
-        # x_min = extent.xMinimum()
-        # x_max = extent.xMaximum()
-        # y_min = extent.yMinimum()
-        # y_max = extent.yMaximum()
-        # return [str(x_min),str(y_min),str(x_max),str(y_max)]
     else:
         utils.user_error("Extent layer not initialized")
         
@@ -155,9 +137,6 @@ class ParamsModel(QAbstractTableModel):
         self.extentLayer = path
         self.layoutChanged.emit()
         
-        #self.extentLayerPath = path
-        #self.extentLayer = qgsUtils.loadVectorLayer(self.extentLayerPath)
-        
     def setResolution(self,resolution):
         self.resolution = resolution
         self.layoutChanged.emit()
@@ -174,10 +153,7 @@ class ParamsModel(QAbstractTableModel):
         utils.debug("Workspace directory set to '" + path)
         if not os.path.isdir(path):
             utils.user_error("Directory '" + path + "' does not exist")
-        self.tmpDir = os.path.join(path,"tmp")
-        #if not os.path.isdir(self.tmpDir):
-        #    os.makedirs(self.tmpDir)
-        #    utils.debug("Temporary directory '" + self.tmpDir + "' created")
+        #self.tmpDir = os.path.join(path,"tmp")
             
     def setUseRelPath(self,state):
         if state:
@@ -191,8 +167,9 @@ class ParamsModel(QAbstractTableModel):
         return self.fromXMLDict(dict)
     
     def fromXMLDict(self,dict):
-        # if "workspace" in dict:
-            # self.setWorkspace(dict["workspace"])
+        if "workspace" in dict:
+            if os.path.isdir(dict["workspace"]):
+                self.setWorkspace(dict["workspace"])
         if "extent" in dict:
             self.setExtentLayer(dict["extent"])
         if "resolution" in dict:
@@ -203,8 +180,8 @@ class ParamsModel(QAbstractTableModel):
     
     def toXML(self,indent=""):
         xmlStr = indent + "<ParamsModel"
-        # if self.workspace:
-            # xmlStr += " workspace=\"" + str(self.workspace) + "\""
+        if self.workspace:
+            xmlStr += " workspace=\"" + str(self.workspace) + "\""
         if self.resolution:
             xmlStr += " resolution=\"" + str(self.resolution) + "\""
         if self.extentLayer:
@@ -261,32 +238,22 @@ class ParamsConnector:
         #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
         self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.dlg.extentLayer.setFilter("*.shp;*.tif")
-        self.dlg.saveModelPath.setFilter("*.xml")
-        self.dlg.loadModelPath.setFilter("*.xml")
         self.dlg.paramsCrs.setCrs(defaultCrs)
         self.model.setResolution(25)
         self.dlg.rasterResolution.setValue(25)
         
     def connectComponents(self):
-        # self.dlg.paramsView.setColumnWidth(0,400)
-        # self.dlg.paramsView.setColumnWidth(1,500)
-        # self.dlg.paramsView.setColumnWidth(2,5600)
         self.dlg.paramsView.setModel(self.model)
         self.dlg.rasterResolution.valueChanged.connect(self.model.setResolution)
         self.dlg.extentLayer.setStorageMode(QgsFileWidget.GetFile)
         self.dlg.extentLayer.fileChanged.connect(self.model.setExtentLayer)
         self.dlg.workspace.setStorageMode(QgsFileWidget.GetDirectory)
         self.dlg.workspace.fileChanged.connect(self.model.setWorkspace)
-        #self.dlg.paramsRelPath.stateChanged.connect(self.model.setUseRelPath)
         self.dlg.paramsCrs.crsChanged.connect(self.model.setCrs)
         header = self.dlg.paramsView.horizontalHeader()     
         header.setSectionResizeMode(0, QHeaderView.Stretch)
         self.model.layoutChanged.emit()
         
-        
-# def initParams(dlg):
-    # global params
-    # paramsModel = ParamsConnector()
     
 def normPath(p):
     if params.useRelativePath:

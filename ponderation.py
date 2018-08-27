@@ -73,7 +73,6 @@ class PondValueIvalItem(PondIvalItem):
         s += "*A*less_equal(" + str(self.dict["low_bound"]) + ",A)"
         s += "*less(A," + str(self.dict["up_bound"]) + "))"
         return s
-        # TODO : function in qgsTreatments
         
 class PondBufferIvalItem(PondIvalItem):
 
@@ -164,14 +163,12 @@ class PondBufferIvalModel(PondIvalModel):
         nb_items = len(self.items)
         self.checkNotEmpty()
         distances = [i.dict["up_bound"] for i in self.items]
-        #distances.append(self.items[-1].dict["up_bound"])
         return distances
         
     def toGdalCalcExpr(self):
         expr = super().toGdalCalcExpr()
         if not self.max_val:
             internal_error("No max value for buffer model")
-        #expr += " + less(" + str(self.max_val) + ",A)"
         expr += " + (A==1)"
         return expr
         
@@ -224,6 +221,7 @@ class PondBufferIvalConnector(abstract_model.AbstractConnector):
     def __init__(self,dlg):
         self.dlg = dlg
         pondBufferModel = PondBufferIvalModel()
+        self.onlySelection = False
         super().__init__(pondBufferModel,self.dlg.pondBufferView,
                          self.dlg.pondBufferPlus,self.dlg.pondBufferMinus)
                          
@@ -236,14 +234,6 @@ class PondBufferIvalConnector(abstract_model.AbstractConnector):
     def mkItem(self):
         item = PondBufferIvalItem()
         return item
-        
-# class PondBufferItem(abstract_model.DictItem):
-
-    # def __init__(self):
-        # dict = {"low_bound": 0,
-                # "up_bound" : 0,
-                # "pond_value" : 1}
-        # super().__init__(dict)
         
 
 class PonderationItem(abstract_model.DictItem):
@@ -344,45 +334,29 @@ class PonderationConnector(abstract_model.AbstractConnector):
         self.dlg = dlg
         ponderationModel = PonderationModel()
         super().__init__(ponderationModel,self.dlg.ponderationView,
-                        self.dlg.pondAdd,self.dlg.pondRemove)
-        
+                        self.dlg.pondAdd,self.dlg.pondRemove,
+                        self.dlg.pondRun,self.dlg.pondRunOnlySelection)
         
     def initGui(self):
-        plusIcon = QIcon(':plugins/eco_cont/icons/plus.png')
-        minusIcon = QIcon(':plugins/eco_cont/icons/minus.png')
-        saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
-        deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
-        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
         self.dlg.pondFrictLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.pondOutLayer.setStorageMode(QgsFileWidget.SaveFile)
         self.dlg.pondOutLayer.setFilter("*.tif")
         self.dlg.pondLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.pondLayer.setStorageMode(QgsFileWidget.GetFile)
-        self.dlg.pondIvalPlus.setIcon(plusIcon)
         self.dlg.pondIvalPlus.setToolTip("Ajouter un nouvel intervalle")
-        self.dlg.pondIvalMinus.setIcon(minusIcon)
         self.dlg.pondIvalMinus.setToolTip("Supprimer l'intervalle sélectionné")
-        self.dlg.pondBufferPlus.setIcon(plusIcon)
         self.dlg.pondBufferPlus.setToolTip("Ajouter un nouvel intervalle")
-        self.dlg.pondBufferMinus.setIcon(minusIcon)
         self.dlg.pondBufferMinus.setToolTip("Supprimer l'intervalle sélectionné")
-        self.dlg.pondAdd.setIcon(saveIcon)
-        self.dlg.pondRemove.setIcon(deleteIcon)
         self.dlg.pondRemove.setToolTip("Supprimer les pondérations sélectionnées")
-        self.dlg.pondRun.setIcon(runIcon)
         self.dlg.pondModeCombo.addItem("Direct")
         self.dlg.pondModeCombo.addItem("Intervalles")
         self.dlg.pondModeCombo.addItem("Tampons")
         self.dlg.pondModeCombo.setCurrentText("Direct")
         self.activateDirectMode()
-        layout = QVBoxLayout()
-        layout.addWidget(self.dlg.frame_6)
-        layout.addStretch()
-        #self.dlg.pluginTabs.setLayout(layout)
         
     def connectComponents(self):
         super().connectComponents()
-        self.dlg.pondRun.clicked.connect(self.model.applyItems)
+        #self.dlg.pondRun.clicked.connect(self.model.applyItems)
         self.valueConnector = PondValueIvalConnector(self.dlg)
         self.valueConnector.connectComponents()
         self.bufferConnector = PondBufferIvalConnector(self.dlg)
@@ -428,21 +402,17 @@ class PonderationConnector(abstract_model.AbstractConnector):
     
     def activateDirectMode(self):
         debug("activateDirectMode")
-        #self.dlg.pondLayerFrame.show()
-        self.dlg.pondBufferFrame.hide()
-        self.dlg.pondIvalFrame.hide()
+        self.dlg.stackPond.hide()
         
     def activateIvalMode(self):
         debug("activateIvalMode")
-        self.dlg.pondIvalFrame.show()
-        self.dlg.pondBufferFrame.hide()
-        #self.dlg.pondLayerFrame.hide()
+        self.dlg.stackPond.show()
+        self.dlg.stackPond.setCurrentWidget(self.dlg.stackPondIval)
         
     def activateBufferMode(self):
         debug("activateBufferMode")
-        self.dlg.pondBufferFrame.show()
-        self.dlg.pondIvalFrame.hide()
-        #self.dlg.pondLayerFrame.hide()
+        self.dlg.stackPond.show()
+        self.dlg.stackPond.setCurrentWidget(self.dlg.stackPondBuffer)
     
     
     

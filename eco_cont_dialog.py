@@ -49,8 +49,11 @@ from .config_parsing import *
 
 #FORM_CLASS, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
+
+FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'test_dialog.ui'))
     
-class EcologicalContinuityDialog(QtWidgets.QDialog):#,FORM_CLASS):
+class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
     def __init__(self, parent=None):
         """Constructor."""
         super(EcologicalContinuityDialog, self).__init__(parent)
@@ -102,33 +105,16 @@ class EcologicalContinuityDialog(QtWidgets.QDialog):#,FORM_CLASS):
     # Initialize Graphic elements for each tab
     # TODO : resize
     def initGui(self):
-        #scrollArea = QtWidgets.QScrollArea()
-        #layout = QtWidgets.QVBoxLayout(self)
-        #self.setLayout(layout)
-        #layout.addWidget(self.scrollArea)
-        #self.scrollArea.setWidgetResizable(True)
         self.geometry = self.geometry()
         self.x = self.x()
         self.y = self.y()
         self.width = self.width()
         self.height = self.height()
-        step_x = self.width * 0.1
-        step_y = self.height * 0.1
-        new_w = self.width * 0.8
-        new_h = self.height * 0.8
-        #self.tabWidget.setGeometry(self.x + step_x, self.y + step_y, new_w, new_h)
         for k, tab in self.connectors.items():
             tab.initGui()
-        saveIcon = QIcon(':plugins/eco_cont/icons/save.png')
-        saveAsIcon = QIcon(':plugins/eco_cont/icons/save-as.png')
-        loadIcon = QIcon(':plugins/eco_cont/icons/folder.svg')
-        self.openProject.setIcon(loadIcon)
-        self.saveProject.setIcon(saveIcon)
-        self.saveProjectAs.setIcon(saveAsIcon)
         self.openProject.setToolTip("Ouvrir un projet BioDispersal")
         self.saveProject.setToolTip("Enregistrer le projet")
         self.saveProjectAs.setToolTip("Enregistrer le projet sous")
-        self.projectFrame.hide()
         #self.pluginTabs.removeTab(5)
         
     # Connect view and model components for each tab
@@ -136,14 +122,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog):#,FORM_CLASS):
         for k, tab in self.connectors.items():
             tab.connectComponents()
         # Main tab connectors
-        self.saveModelPath.fileChanged.connect(self.saveModelAs)
         self.saveProjectAs.clicked.connect(self.saveModelAsAction)
-        self.saveProjectButton.clicked.connect(self.saveModel)
         self.saveProject.clicked.connect(self.saveModel)
-        self.loadModelPath.fileChanged.connect(self.loadModel)
         self.openProject.clicked.connect(self.loadModelAction)
-        self.saveModelPath.setStorageMode(QgsFileWidget.SaveFile)
-        self.loadModelPath.setStorageMode(QgsFileWidget.GetFile)
         
     def onResize(self,event):
         new_size = event.size()
@@ -218,43 +199,8 @@ class BioDispersalDialog(QgsProcessingAlgorithmDialogBase):
         scroll_area.setAttribute(Qt.WA_TranslucentBackground)
         scroll_area.setWidget(w1)
         self.tabWidget().insertTab(1,scroll_area,"test_scroll")
-        # w1 = self.tabWidget()
-        # scroll_area = QtWidgets.QScrollArea()
-        # scroll_area.setWidget(w1)
-        # self.addWidget(scroll_area)
-        #self.setMainWidget(self.eco_dlg)
-        #self.setMainWidget(self.eco_dlg.pluginTabs)
-        #self.tabWidget().insertTab(0,EcologicalContinuityDialog(),"test")scroll = QtGui.QScrollableArea()
-        # mw = self.tabWidget().widget(0)
-        # fw1 = QgsFileWidget(parent=mw)
-        # fw2 = QgsFileWidget(parent=mw)
-        # fw3 = QgsFileWidget(parent=mw)
-        # fw4 = QgsFileWidget(parent=mw)
-        # tn = QtWidgets.QLineEdit(parent=mw)
-        # fw5 = QgsFileWidget(parent=mw)
-        # fw2.setMinimumHeight(100)
-        # fw2.setMaximumHeight(200)
-        # fw3.setMinimumHeight(200)
-        # fw3.setMaximumHeight(300)
-        # fw4.setMinimumHeight(300)
-        # fw4.setMaximumHeight(400)
-        # scroll = QtWidgets.QScrollArea()
-        # scroll.setWidget(mw)
-        # scroll.setWidgetResizable(True)
-        # scroll.setFixedHeight(400)
-        # layout = QVBoxLayout(self)
-        # layout.addWidget
-        # layout.addWidget(scroll)
-        # scrollArea = QtWidgets.QScrollArea()
-        # layout = QVBoxLayout()
-        # mw.setLayout(layout)
-        # scrollArea.setWidget(self.tabWidget())
-        # scrollArea.setWidgetResizable(True)
         
         
-
-FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'test_dialog.ui'))
     
 #from test_dialog import Ui_TestDialog
 

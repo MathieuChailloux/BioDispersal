@@ -17,7 +17,6 @@ from .qgsTreatments import *
 from .config_parsing import *
 
 fusion_fields = ["name","descr"]
-#fusionConnector = None
         
 class FusionModel(abstract_model.AbstractGroupModel):
     
@@ -74,7 +73,6 @@ class FusionModel(abstract_model.AbstractGroupModel):
         eraseFlag = xmlUtils.getNbChildren(root) > 0
         if eraseFlag:
             pass#self.items = []
-        #fusion_model = cls() 
         for st_root in root:
             st_name = st_root.attrib["name"]
             self.current_st = st_name
@@ -84,7 +82,6 @@ class FusionModel(abstract_model.AbstractGroupModel):
                     utils.internal_error("Could not parse group model for " + st_name)
                 self.st_groups[st_name] = grp_model
                 self.current_model = grp_model
-        #return fusion_model
         
     def applyItems(self):
         res = str(params.getResolution())
@@ -175,22 +172,13 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.dlg = dlg
         self.models = {}
         fusionModel = FusionModel()
+        self.onlySelection = False
         super().__init__(fusionModel,self.dlg.fusionView,
-                         None,self.dlg.fusionRemove)
+                         None,self.dlg.fusionRemove,
+                         self.dlg.fusionRun,self.dlg.fusionRunOnlySelection)
                          
     def initGui(self):
-        upIcon = QIcon(':plugins/eco_cont/icons/up-arrow.png')
-        downIcon = QIcon(':plugins/eco_cont/icons/down-arrow.png')
-        runIcon = QIcon(':plugins/eco_cont/icons/play.svg')
-        reloadIcon = QIcon(':plugins/eco_cont/icons/refresh.svg')
-        minusIcon = QIcon(':plugins/eco_cont/icons/minus.svg')
-        deleteIcon = QIcon(':plugins/eco_cont/icons/delete.svg')
-        self.dlg.fusionUp.setIcon(upIcon)
-        self.dlg.fusionDown.setIcon(downIcon)
-        self.dlg.fusionRun.setIcon(runIcon)
-        self.dlg.fusionLoadGroups.setIcon(reloadIcon)
         self.dlg.fusionLoadGroups.setToolTip("Recharger tous les groupes")
-        self.dlg.fusionRemove.setIcon(deleteIcon)
         self.dlg.fusionRemove.setToolTip("Supprimer les groupes sélectionnés")
                          
     def connectComponents(self):
@@ -199,7 +187,7 @@ class FusionConnector(abstract_model.AbstractConnector):
         #self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)
         self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
-        self.dlg.fusionRun.clicked.connect(self.model.applyItems)
+        #self.dlg.fusionRun.clicked.connect(self.model.applyItems)
         self.dlg.fusionUp.clicked.connect(self.upgradeItem)
         self.dlg.fusionDown.clicked.connect(self.downgradeItem)
         
@@ -207,57 +195,3 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.model.setCurrentST(st)
         self.dlg.fusionView.setModel(self.model.current_model)
         
-    # def mkItem(self):
-        # grp = self.dlg.fusionGroup.currentText()
-        # grp_item = groups.groupsModel.getGroupByName(grp)
-        # return grp_item   
-        
-    # def upgradeItem(self):
-        # utils.debug("upgradeItem")
-        # indices = self.view.selectedIndexes()
-        # nb_indices = len(indices)
-        # if nb_indices == 0:
-            # utils.debug("no idx selected")
-        # elif nb_indices == 1:
-            # self.model.upgradeElem(indices[0])
-        # else:
-            # utils.warn("Several indices selected, please select only one")
-            
-    # def downgradeItem(self):
-        # utils.debug("downgradeItem")
-        # indices = self.view.selectedIndexes()
-        # nb_indices = len(indices)
-        # if nb_indices == 0:
-            # utils.debug("no idx selected")
-        # elif nb_indices == 1:
-            # self.model.downgradeElem(indices[0])
-        # else:
-            # utils.warn("Several indices selected, please select only one")
-        
-# class FusionConnector:
-    
-    # def __init__(self,dlg):
-        # self.dlg = dlg
-        # self.models = {}
-        # fusionModel = FusionModel()
-        # super().__init__(fusionModel,self.dlg.fusionView,
-        #                 self.dlg.fusionAdd,self.dlg.fusionRemove)
-                         
-    # def initGui(self):
-        # pass
-                         
-    # def connectComponents(self):
-        # super().connectComponents()
-        # self.dlg.fusionST.setModel(sous_trames.stModel)
-        # self.dlg.fusionGroup.setModel(groups.groupsModel)
-        # self.dlg.fusionST.currentTextChanged.connect(self.changeST)
-        # self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
-        
-    # def changeST(self,st):
-        # self.model.setCurrentST(st)
-        # self.dlg.fusionView.setModel(self.model.current_model)
-        
-    # def mkItem(self):
-        # grp = self.dlg.fusionGroup.currentText()
-        # grp_item = groups.groupsModel.getGroupByName(grp)
-        # return grp_item
