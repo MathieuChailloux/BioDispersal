@@ -140,7 +140,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         self.openProject.clicked.connect(self.loadModelAction)
         
     def initLog(self):
-        utils.print_func = self.txtLog.insertPlainText
+        utils.print_func = self.txtLog.append
         
     def onResize(self,event):
         new_size = event.size()

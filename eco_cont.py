@@ -207,9 +207,19 @@ class EcologicalContinuity:
         self.dlg.show()
         print(str(self.dlg))
         # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            pass
+        try:
+            result = self.dlg.exec_()
+            # See if OK was pressed
+            #if result:
+                # Do something useful here - delete the line containing pass and
+                # substitute with your code.
+                #pass
+        except CustomException:
+            self.dlg.mTabWidget.setCurrentWidget(self.dlg.logTab)
+        except Exception as e:
+            printDate("[Unknown error] " + str(e))
+            self.dlg.mTabWidget.setCurrentWidget(self.dlg.logTab)
+            raise e
+        except:
+            printDate("caught")
+            

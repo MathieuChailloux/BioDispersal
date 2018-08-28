@@ -83,10 +83,18 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 self.st_groups[st_name] = grp_model
                 self.current_model = grp_model
         
-    def applyItems(self):
+    def applyItems(self,indexes):
+        utils.info("Applying merge")
+        progress.progressConnector.clear()
         res = str(params.getResolution())
         extent_coords = params.getExtentCoords()
         #for st in reversed(list(self.st_groups.keys())):
+        nb_st = len(self.st_groups)
+        if nb_st == 0:
+            progress_step = 0
+        else:
+            progress_step = 100.0 / nb_st
+        curr_progress = 0
         for st in self.st_groups.keys():
             st_item = sous_trames.getSTByName(st)
             groups = self.st_groups[st]
@@ -109,13 +117,17 @@ class FusionModel(abstract_model.AbstractGroupModel):
             cmd_args = cmd_args + grp_args
             p = subprocess.Popen(cmd_args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             out,err = p.communicate()
-            utils.debug(str(p.args))
+            utils.debug("Arguments : " + str(p.args))
             utils.info(str(out))
             if err:
                 utils.user_error(str(err))
             else:
                 res_layer = qgsUtils.loadRasterLayer(out_path)
                 QgsProject.instance().addMapLayer(res_layer)
+                curr_progress += progress_step
+                progress.progressConnector.progressSignal.emit(curr_progress)
+        progress.progressConnector.progressEnd.emit()
+        utils.info("Merge succesfully applied")
             
     # def updateItems(self,i1,i2):
         # k = self.current_st

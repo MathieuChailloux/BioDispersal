@@ -192,7 +192,7 @@ class SelectionModel(DictModel):
         utils.debug("applyItems " + str(indexes))
         params.checkInit()
         selectionsByGroup = {}
-        progress.progressConnector.progressSignal.emit(50)
+        progress.progressConnector.clear()
         for n in indexes:
             i = self.items[n]
             grp = i.dict["group"]
@@ -200,6 +200,12 @@ class SelectionModel(DictModel):
                 selectionsByGroup[grp].append(i)
             else:
                 selectionsByGroup[grp] = [i]
+        nb_items = len(indexes)
+        if nb_items == 0:
+            progress_step = 0
+        else:
+            progress_step = 100.0 / nb_items
+        curr_progress = 0
         for g, selections in selectionsByGroup.items():
             grp_item = groups.getGroupByName(g)
             if not grp_item:
@@ -210,12 +216,15 @@ class SelectionModel(DictModel):
             from_raster = False
             for s in selections:
                 s.applyItem()
+                curr_progress += progress_step
+                progress.progressConnector.progressSignal.emit(curr_progress)
                 if s.is_raster:
                     from_raster = True
                     if len(selections) > 1:
                         utils.user_error("Several selections in group '" + g +"'")
             if not from_raster:
                 grp_item.applyRasterizationItem()
+        progress.progressConnector.progressEnd.emit()
         
 class SelectionConnector(AbstractConnector):
 

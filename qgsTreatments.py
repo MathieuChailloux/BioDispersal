@@ -94,7 +94,8 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
     p = subprocess.Popen(parameters,stderr=subprocess.PIPE)
     out,err = p.communicate()
     utils.debug(str(p.args))
-    utils.info(str(out))
+    if out:
+        utils.info(str(out))
     if err:
         utils.user_error(str(err))
     elif load_flag:

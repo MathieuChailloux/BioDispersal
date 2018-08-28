@@ -34,6 +34,13 @@ progressConnector = None
 def catchProgress(n):
     utils.debug("Setting progress bar value to '" + str(n) + "'")
     progressConnector.dlg.progressBar.setValue(n)
+    
+@pyqtSlot()
+def catchProgressEnd():
+    utils.debug("Progress End")
+    progressConnector.dlg.progressBar.setValue(100)
+    progressConnector.dlg.mTabWidget.setCurrentWidget(progressConnector.dlg.logTab)
+    progressConnector.dlg.txtLog.verticalScrollBar().setValue(progressConnector.dlg.txtLog.verticalScrollBar().maximum())
 
 class ProgressConnector(QObject):
 
@@ -47,10 +54,14 @@ class ProgressConnector(QObject):
     def initGui(self):
         pass
         
+    def clear(self):
+        self.progressSignal.emit(0)
+        
     @pyqtSlot(int)
     def catchProgressVal(self,val):
         self.dlg.progressBar.setValue(val)
         
     def connectComponents(self):
         self.progressSignal.connect(catchProgress)
+        self.progressEnd.connect(catchProgressEnd)
         #qgsUtils.progressBarValueChanged.connect(catchClassRemoved)

@@ -34,11 +34,20 @@ if file_dir not in sys.path:
 
 # Log utilities
 
+def printLine(msg):
+    print(msg + "\n")
+
 debug_flag=False
-print_func = print
+print_func = printLine
+
+class CustomException(Exception):
+
+    def __init__(self, message):
+        super().__init__(message)
+
 
 def printDate(msg):
-    print_func ("[" + str(datetime.datetime.now()) + "] " + msg + "\n")
+    print_func ("[" + str(datetime.datetime.now()) + "] " + msg)
     
 def debug(msg):
     if debug_flag:
@@ -52,15 +61,15 @@ def warn(msg):
     
 def user_error(msg):
     printDate("[user error] " + msg)
-    raise Exception(msg)
+    raise CustomException(msg)
     
 def internal_error(msg):
     printDate("[internal error] " + msg)
-    raise Exception(msg)
+    raise CustomException(msg)
     
 def todo_error(msg):
     printDate("[Feature not yet implemented] " + msg)
-    raise Exception(msg)
+    raise CustomException(msg)
 
     
 # File utils
@@ -143,7 +152,8 @@ def executeCmd(cmd_args):
                          stdout=subprocess.PIPE)
     out,err = p.communicate()
     debug(str(p.args))
-    info(str(out))
+    if out:
+        info(str(out))
     if err:
         if "invalid value encountered in less" in str(err):
             warn(str(err))

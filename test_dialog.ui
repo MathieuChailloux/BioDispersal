@@ -1766,7 +1766,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="tab">
+            <widget class="QWidget" name="fusionTab">
              <attribute name="title">
               <string>4 - Fusion</string>
              </attribute>
@@ -2220,7 +2220,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="tab_2">
+            <widget class="QWidget" name="frictionTab">
              <attribute name="title">
               <string>5 - Friction</string>
              </attribute>
@@ -2246,7 +2246,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="frame_10">
+               <widget class="QFrame" name="frictionFrame">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -2255,7 +2255,7 @@
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_11">
                  <item>
-                  <widget class="QFrame" name="frame_14">
+                  <widget class="QFrame" name="frictionButtonsFrame">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -2453,7 +2453,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="tab_3">
+            <widget class="QWidget" name="pondTab">
              <attribute name="title">
               <string>6 - Pondération</string>
              </attribute>
@@ -3351,7 +3351,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="tab_7">
+            <widget class="QWidget" name="dispersionTab">
              <attribute name="title">
               <string>7 - Dispersion</string>
              </attribute>
@@ -3954,7 +3954,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="tab_6">
+            <widget class="QWidget" name="logTab">
              <attribute name="title">
               <string>Journal</string>
              </attribute>
