@@ -31,6 +31,7 @@ import params
 import classes
 import groups
 from .qgsTreatments import *
+import progress
 
 selection_fields = ["in_layer","expr","class","group"]
 
@@ -191,6 +192,7 @@ class SelectionModel(DictModel):
         utils.debug("applyItems " + str(indexes))
         params.checkInit()
         selectionsByGroup = {}
+        progress.progressConnector.progressSignal.emit(50)
         for n in indexes:
             i = self.items[n]
             grp = i.dict["group"]

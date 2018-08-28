@@ -78,6 +78,7 @@ class ClassItem(abstract_model.DictItem):
 class ClassModel(abstract_model.DictModel):
 
     classAdded = pyqtSignal('PyQt_PyObject')
+    classAdded2 = pyqtSignal()
     classRemoved = pyqtSignal('PyQt_PyObject')
     
     def __init__(self):
@@ -111,6 +112,7 @@ class ClassModel(abstract_model.DictModel):
     def addItem(self,item):
         super().addItem(item)
         self.classAdded.emit(item)
+        self.classAdded2.emit()
          
     def removeItems(self,indexes):
         names = [self.items[idx.row()].dict["name"] for idx in indexes]

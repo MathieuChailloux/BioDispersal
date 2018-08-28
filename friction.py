@@ -271,8 +271,8 @@ class FrictionConnector(abstract_model.AbstractConnector):
         self.dlg.frictionLoad.setToolTip("Ouvrir le tableau de friction")
         
     @pyqtSlot()
-    def internCatchGroupAdded(grp):
-        utils.debug("groupAdded2 " + grp)
+    def internCatchClassAdded(self):
+        utils.debug("internClassAdded " )
         
     def connectComponents(self):
         sous_trames.stModel.stAdded.connect(catchSTAdded)
@@ -282,7 +282,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         super().connectComponents()
         self.dlg.frictionLoadClass.clicked.connect(self.model.reloadClasses)
         self.dlg.frictionRun.clicked.connect(self.model.applyItems)
-        #sous_trames.stModel.groupAdded.connect(self.internCatchGroupAdded)
+        #classes.classModel.classAdded2.connect(self.internCatchClassAdded)
         self.dlg.frictionSave.clicked.connect(self.saveCSVAction)
         self.dlg.frictionLoad.clicked.connect(self.loadCSVAction)
         

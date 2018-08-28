@@ -29,7 +29,7 @@ from qgis.core import *
 #from .utils import *
 import utils
 import pathlib
-from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import QVariant, pyqtSignal
 
 def typeIsInteger(t):
     return (t == QVariant.Int
@@ -203,3 +203,4 @@ def coordsOfExtentPath(extent_path):
     y_min = extent.yMinimum()
     y_max = extent.yMaximum()
     return [str(x_min),str(y_min),str(x_max),str(y_max)]
+    
