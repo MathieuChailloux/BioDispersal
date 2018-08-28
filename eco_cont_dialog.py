@@ -35,7 +35,11 @@ from qgis.core import *
 from qgis.gui import *
 from qgis.gui import QgsFileWidget
 
-from .utils import *
+file_dir = os.path.dirname(__file__)
+if file_dir not in sys.path:
+    sys.path.append(file_dir)
+
+import utils
 from .qgsUtils import *
 import params
 import sous_trames
@@ -126,6 +130,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         self.saveProject.clicked.connect(self.saveModel)
         self.openProject.clicked.connect(self.loadModelAction)
         
+    def initLog(self):
+        utils.print_func = self.txtLog.insertPlainText
+        
     def onResize(self,event):
         new_size = event.size()
         
@@ -147,7 +154,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         for k, m in self.models.items():
             xmlStr += m.toXML() + "\n"
         xmlStr += "</ModelConfig>\n"
-        debug("Final xml : \n" + xmlStr)
+        utils.debug("Final xml : \n" + xmlStr)
         return xmlStr
 
     # Save project to 'fname'
@@ -155,7 +162,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         self.recomputeModels()
         xmlStr = self.toXML()
         params.params.projectFile = fname
-        writeFile(fname,xmlStr)
+        utils.writeFile(fname,xmlStr)
         
     def saveModelAsAction(self):
         fname = params.saveFileDialog(parent=self,msg="Sauvegarder le projet sous",filter="*.xml")
@@ -165,13 +172,13 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
     # Save project to projectFile if existing
     def saveModel(self):
         fname = params.params.projectFile
-        checkFileExists(fname,"Project ")
+        utils.checkFileExists(fname,"Project ")
         self.saveModelAs(fname)
    
     # Load project from 'fname' if existing
     def loadModel(self,fname):
         debug("loadModel " + str(fname))
-        checkFileExists(fname)
+        utils.checkFileExists(fname)
         setConfigModels(self.models)
         params.params.projectFile = fname
         parseConfig(fname)

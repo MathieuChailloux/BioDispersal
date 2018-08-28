@@ -68,7 +68,7 @@ class ClassItem(abstract_model.DictItem):
     def checkItem(self):
         utils.checkName(self,prefix="Class")
         if not self.dict["descr"]:
-            utils.warn("Class '" + self.name + " with empty description")
+            utils.warn("Class '" + self.name + "' with empty description")
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])

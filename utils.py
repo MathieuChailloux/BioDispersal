@@ -29,14 +29,16 @@ import sys
 import subprocess
 
 file_dir = os.path.dirname(__file__)
-sys.path.append(file_dir)
+if file_dir not in sys.path:
+    sys.path.append(file_dir)
 
 # Log utilities
 
-debug_flag=True
+debug_flag=False
+print_func = print
 
 def printDate(msg):
-    print ("[" + str(datetime.datetime.now()) + "] " + msg)
+    print_func ("[" + str(datetime.datetime.now()) + "] " + msg + "\n")
     
 def debug(msg):
     if debug_flag:

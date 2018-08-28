@@ -202,6 +202,7 @@ class EcologicalContinuity:
         self.dlg.initTabs()
         self.dlg.initGui()
         self.dlg.connectComponents()
+        self.dlg.initLog()
         self.dlg.show()
         print(str(self.dlg))
         # Run the dialog event loop

@@ -51,10 +51,12 @@ def setConfigModels(model_dict):
     config_models = model_dict
 
 def parseConfig(config_file):
+    info("Parsing configuration from file '" + str(config_file) + "'")
     tree = ET.parse(config_file)
     root = tree.getroot()
     for model in root:
         parseModel(model)
+    info("Configuration parsing successful")
 
 # Parse model from XML root.
 # Updates models stored in 'config_models'.
