@@ -188,6 +188,7 @@ class EcologicalContinuity:
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
+        print_func = print
         del self.toolbar
 
 

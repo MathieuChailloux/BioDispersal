@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1233</width>
+    <width>1234</width>
     <height>867</height>
    </rect>
   </property>
@@ -20,6 +20,9 @@
    <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>3</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
@@ -41,6 +44,9 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <property name="spacing">
+       <number>3</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -69,8 +75,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>898</width>
-           <height>768</height>
+           <width>902</width>
+           <height>777</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
@@ -82,11 +88,14 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Enregistrer le projet BioDispersal</string>
+            </property>
             <property name="text">
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="resources.qrc">
               <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
             </property>
             <property name="autoRaise">
@@ -108,11 +117,14 @@
               <height>0</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Ouvrir un projet BioDispersal</string>
+            </property>
             <property name="text">
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="resources.qrc">
               <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
             </property>
             <property name="autoRaise">
@@ -141,11 +153,14 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Enregistrer le projet BioDispersal sous</string>
+            </property>
             <property name="text">
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="resources.qrc">
               <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
             </property>
             <property name="autoRaise">
@@ -224,6 +239,16 @@
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QGridLayout" name="gridLayout">
+                    <item row="4" column="1">
+                     <widget class="QgsProjectionSelectionWidget" name="paramsCrs">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                     </widget>
+                    </item>
                     <item row="3" column="1">
                      <widget class="QgsSpinBox" name="rasterResolution">
                       <property name="sizePolicy">
@@ -234,29 +259,6 @@
                       </property>
                       <property name="maximum">
                        <number>999999</number>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="0">
-                     <widget class="QLabel" name="label_47">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>Projection*</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="1">
-                     <widget class="QgsFileWidget" name="extentLayer">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
                       </property>
                      </widget>
                     </item>
@@ -273,6 +275,19 @@
                       </property>
                      </widget>
                     </item>
+                    <item row="4" column="0">
+                     <widget class="QLabel" name="label_47">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>Projection*</string>
+                      </property>
+                     </widget>
+                    </item>
                     <item row="3" column="0">
                      <widget class="QLabel" name="label_46">
                       <property name="sizePolicy">
@@ -286,8 +301,8 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="4" column="1">
-                     <widget class="QgsProjectionSelectionWidget" name="paramsCrs">
+                    <item row="2" column="1">
+                     <widget class="QgsFileWidget" name="extentLayer">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                         <horstretch>0</horstretch>
@@ -327,7 +342,7 @@
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
-                     <height>200</height>
+                     <height>190</height>
                     </size>
                    </property>
                   </widget>
@@ -480,12 +495,15 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip">
+                       <string>Ajouter la sous-trame</string>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset>
-                        <normaloff>:/plugins/eco_cont/icons/mActionAdd.svg</normaloff>:/plugins/eco_cont/icons/mActionAdd.svg</iconset>
+                       <iconset resource="resources.qrc">
+                        <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                       </property>
                       <property name="autoRaise">
                        <bool>true</bool>
@@ -506,12 +524,15 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip">
+                       <string>Supprimer les sous-trames sélectionnées</string>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset>
-                        <normaloff>:/plugins/eco_cont/icons/mActionRemove.svg</normaloff>:/plugins/eco_cont/icons/mActionRemove.svg</iconset>
+                       <iconset resource="resources.qrc">
+                        <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                       </property>
                       <property name="autoRaise">
                        <bool>true</bool>
@@ -1212,7 +1233,7 @@
                              <string>Enregistrer sélection</string>
                             </property>
                             <property name="icon">
-                             <iconset>
+                             <iconset resource="resources.qrc">
                               <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                             </property>
                            </widget>
@@ -1238,7 +1259,7 @@
                        </size>
                       </property>
                       <property name="currentIndex">
-                       <number>1</number>
+                       <number>0</number>
                       </property>
                       <widget class="QWidget" name="stackGroup">
                        <layout class="QGridLayout" name="gridLayout_12">
@@ -1345,11 +1366,14 @@
                                <height>10</height>
                               </size>
                              </property>
+                             <property name="toolTip">
+                              <string>Supprimer les groupes sélectionnées</string>
+                             </property>
                              <property name="text">
                               <string/>
                              </property>
                              <property name="icon">
-                              <iconset>
+                              <iconset resource="resources.qrc">
                                <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                              </property>
                              <property name="autoRaise">
@@ -1454,11 +1478,14 @@
                                <verstretch>0</verstretch>
                               </sizepolicy>
                              </property>
+                             <property name="toolTip">
+                              <string>Supprimer les classes sélectionnées</string>
+                             </property>
                              <property name="text">
                               <string/>
                              </property>
                              <property name="icon">
-                              <iconset>
+                              <iconset resource="resources.qrc">
                                <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                              </property>
                              <property name="autoRaise">
@@ -1585,7 +1612,7 @@
                           <string>Lancer les sélections</string>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="resources.qrc">
                            <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                          </property>
                         </widget>
@@ -1638,11 +1665,14 @@
                            <height>25</height>
                           </size>
                          </property>
+                         <property name="toolTip">
+                          <string>Promouvoir la sélection</string>
+                         </property>
                          <property name="text">
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="resources.qrc">
                            <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
                          </property>
                          <property name="autoRaise">
@@ -1664,11 +1694,14 @@
                            <height>25</height>
                           </size>
                          </property>
+                         <property name="toolTip">
+                          <string>Rétrograder la sélection</string>
+                         </property>
                          <property name="text">
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="resources.qrc">
                            <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
                          </property>
                          <property name="autoRaise">
@@ -1687,11 +1720,14 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="toolTip">
+                       <string>Supprimer les lignes sélectionnées</string>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -1896,11 +1932,14 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip">
+                       <string>Supprimer la couche sélectionnée</string>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -1925,11 +1964,14 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip">
+                       <string>Recharger les couches</string>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -2021,11 +2063,14 @@
                            <height>50</height>
                           </size>
                          </property>
+                         <property name="toolTip">
+                          <string>Promouvoir la couche</string>
+                         </property>
                          <property name="text">
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="resources.qrc">
                            <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
                          </property>
                          <property name="autoRaise">
@@ -2053,11 +2098,14 @@
                            <height>50</height>
                           </size>
                          </property>
+                         <property name="toolTip">
+                          <string>Rétrograder la couche</string>
+                         </property>
                          <property name="text">
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="resources.qrc">
                            <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
                          </property>
                          <property name="autoRaise">
@@ -2139,7 +2187,7 @@
                        <string>Fusionner</string>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                       </property>
                      </widget>
@@ -2241,11 +2289,14 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="toolTip">
+                     <string>Recharger les classes</string>
+                    </property>
                     <property name="text">
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="resources.qrc">
                       <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
                     </property>
                     <property name="autoRaise">
@@ -2267,11 +2318,14 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="toolTip">
+                     <string>Ouvrir un tableau de friction</string>
+                    </property>
                     <property name="text">
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="resources.qrc">
                       <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
                     </property>
                     <property name="autoRaise">
@@ -2293,11 +2347,14 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="toolTip">
+                     <string>Enregistrer le tableau de friction sous</string>
+                    </property>
                     <property name="text">
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="resources.qrc">
                       <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
                     </property>
                     <property name="autoRaise">
@@ -2383,7 +2440,7 @@
                        <string>Produire les couches de friction</string>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                       </property>
                      </widget>
@@ -2432,8 +2489,8 @@
                    <property name="frameShadow">
                     <enum>QFrame::Raised</enum>
                    </property>
-                   <layout class="QGridLayout" name="gridLayout_18">
-                    <item row="0" column="0" colspan="2">
+                   <layout class="QGridLayout" name="gridLayout_2">
+                    <item row="0" column="0">
                      <widget class="QLabel" name="pondMode">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -2458,7 +2515,7 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="0" column="2">
+                    <item row="0" column="1">
                      <widget class="QComboBox" name="pondModeCombo">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -2493,118 +2550,7 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="2" column="1" colspan="2">
-                     <widget class="QgsMapLayerComboBox" name="pondFrictLayerCombo">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>100</width>
-                        <height>13</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="0">
-                     <widget class="QLabel" name="pondFrictLayerLabel_2">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>13</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>Ouvrir couche</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="1" colspan="2">
-                     <widget class="QgsFileWidget" name="pondFrictLayer">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>13</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="0">
-                     <widget class="QLabel" name="pondOutLayerLabel">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>16</height>
-                       </size>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>3 - Couche de sortie</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="1" colspan="2">
-                     <widget class="QgsFileWidget" name="pondOutLayer">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>100</width>
-                        <height>16</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="5" column="0" colspan="2">
-                     <widget class="QLabel" name="pondPondLabel">
-                      <property name="font">
-                       <font>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>4 - Pondération</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="6" column="1" colspan="2">
-                     <widget class="QgsMapLayerComboBox" name="pondLayerCombo"/>
-                    </item>
-                    <item row="7" column="1" colspan="2">
-                     <widget class="QgsFileWidget" name="pondLayer"/>
-                    </item>
-                    <item row="2" column="0">
+                    <item row="2" column="0" alignment="Qt::AlignLeft">
                      <widget class="QFrame" name="frame_29">
                       <property name="frameShape">
                        <enum>QFrame::StyledPanel</enum>
@@ -2614,7 +2560,7 @@
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_14">
                        <property name="spacing">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <property name="leftMargin">
                         <number>0</number>
@@ -2666,6 +2612,142 @@
                       </layout>
                      </widget>
                     </item>
+                    <item row="2" column="1">
+                     <widget class="QgsMapLayerComboBox" name="pondFrictLayerCombo">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>100</width>
+                        <height>13</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="0">
+                     <widget class="QFrame" name="frame_36">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_22">
+                       <property name="spacing">
+                        <number>3</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <spacer name="horizontalSpacer_26">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeType">
+                          <enum>QSizePolicy::Fixed</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>15</width>
+                           <height>13</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="pondFrictLayerLabel">
+                         <property name="text">
+                          <string>Ouvrir couche</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <widget class="QgsFileWidget" name="pondFrictLayer">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>13</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="0">
+                     <widget class="QLabel" name="pondOutLayerLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>16</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>3 - Couche de sortie</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="1">
+                     <widget class="QgsFileWidget" name="pondOutLayer">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>100</width>
+                        <height>16</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="0">
+                     <widget class="QLabel" name="pondPondLabel">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>4 - Pondération</string>
+                      </property>
+                     </widget>
+                    </item>
                     <item row="6" column="0">
                      <widget class="QFrame" name="frame_30">
                       <property name="frameShape">
@@ -2676,7 +2758,7 @@
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_16">
                        <property name="spacing">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <property name="leftMargin">
                         <number>0</number>
@@ -2716,6 +2798,9 @@
                       </layout>
                      </widget>
                     </item>
+                    <item row="6" column="1">
+                     <widget class="QgsMapLayerComboBox" name="pondLayerCombo"/>
+                    </item>
                     <item row="7" column="0">
                      <widget class="QFrame" name="frame_31">
                       <property name="frameShape">
@@ -2726,7 +2811,7 @@
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_17">
                        <property name="spacing">
-                        <number>0</number>
+                        <number>3</number>
                        </property>
                        <property name="leftMargin">
                         <number>0</number>
@@ -2741,7 +2826,7 @@
                         <number>0</number>
                        </property>
                        <item>
-                        <spacer name="horizontalSpacer_10">
+                        <spacer name="horizontalSpacer_24">
                          <property name="orientation">
                           <enum>Qt::Horizontal</enum>
                          </property>
@@ -2766,6 +2851,9 @@
                       </layout>
                      </widget>
                     </item>
+                    <item row="7" column="1">
+                     <widget class="QgsFileWidget" name="pondLayer"/>
+                    </item>
                    </layout>
                   </widget>
                  </item>
@@ -2784,7 +2872,7 @@
                     </size>
                    </property>
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="stackPondIval">
                     <layout class="QGridLayout" name="gridLayout_20">
@@ -2840,12 +2928,15 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip">
+                           <string>Ajouter un intervalle</string>
+                          </property>
                           <property name="text">
                            <string>...</string>
                           </property>
                           <property name="icon">
-                           <iconset>
-                            <normaloff>:/plugins/eco_cont/icons/mActionAdd.svg</normaloff>:/plugins/eco_cont/icons/mActionAdd.svg</iconset>
+                           <iconset resource="resources.qrc">
+                            <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                           </property>
                           <property name="autoRaise">
                            <bool>true</bool>
@@ -2860,12 +2951,15 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip">
+                           <string>Supprimer l'intervalle sélectionné</string>
+                          </property>
                           <property name="text">
                            <string>...</string>
                           </property>
                           <property name="icon">
-                           <iconset>
-                            <normaloff>:/plugins/eco_cont/icons/mActionRemove.svg</normaloff>:/plugins/eco_cont/icons/mActionRemove.svg</iconset>
+                           <iconset resource="resources.qrc">
+                            <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                           </property>
                           <property name="autoRaise">
                            <bool>true</bool>
@@ -2935,7 +3029,7 @@
                         <property name="bottomMargin">
                          <number>0</number>
                         </property>
-                        <item row="0" column="0">
+                        <item row="0" column="1">
                          <widget class="QLabel" name="pondDirectLayerLabel_3">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -2948,21 +3042,41 @@
                           </property>
                          </widget>
                         </item>
-                        <item row="0" column="1">
+                        <item row="0" column="2">
                          <widget class="QToolButton" name="pondBufferPlus">
+                          <property name="toolTip">
+                           <string>Ajouter un nouveau tampon</string>
+                          </property>
                           <property name="text">
                            <string>...</string>
                           </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="2">
-                         <widget class="QToolButton" name="pondBufferMinus">
-                          <property name="text">
-                           <string>...</string>
+                          <property name="icon">
+                           <iconset resource="resources.qrc">
+                            <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
+                          </property>
+                          <property name="autoRaise">
+                           <bool>true</bool>
                           </property>
                          </widget>
                         </item>
                         <item row="0" column="3">
+                         <widget class="QToolButton" name="pondBufferMinus">
+                          <property name="toolTip">
+                           <string>Supprimer le tampon sélectionné</string>
+                          </property>
+                          <property name="text">
+                           <string>...</string>
+                          </property>
+                          <property name="icon">
+                           <iconset resource="resources.qrc">
+                            <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
+                          </property>
+                          <property name="autoRaise">
+                           <bool>true</bool>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="4">
                          <spacer name="horizontalSpacer_11">
                           <property name="orientation">
                            <enum>Qt::Horizontal</enum>
@@ -2975,7 +3089,7 @@
                           </property>
                          </spacer>
                         </item>
-                        <item row="1" column="1" colspan="3">
+                        <item row="1" column="2" colspan="3">
                          <widget class="QTableView" name="pondBufferView">
                           <property name="minimumSize">
                            <size>
@@ -2984,6 +3098,22 @@
                            </size>
                           </property>
                          </widget>
+                        </item>
+                        <item row="0" column="0">
+                         <spacer name="horizontalSpacer_10">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>15</width>
+                            <height>13</height>
+                           </size>
+                          </property>
+                         </spacer>
                         </item>
                        </layout>
                       </widget>
@@ -3037,7 +3167,7 @@
                           <string>Enregistrer pondération</string>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="resources.qrc">
                            <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                          </property>
                         </widget>
@@ -3078,12 +3208,18 @@
                        </property>
                        <item>
                         <widget class="QToolButton" name="pondRemove">
+                         <property name="toolTip">
+                          <string>Supprimer les lignes sélectionnées</string>
+                         </property>
                          <property name="text">
                           <string>...</string>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="resources.qrc">
                            <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
+                         </property>
+                         <property name="autoRaise">
+                          <bool>true</bool>
                          </property>
                         </widget>
                        </item>
@@ -3199,7 +3335,7 @@
                           <string>Pondérer les couches de friction</string>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="resources.qrc">
                            <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                          </property>
                         </widget>
@@ -3645,7 +3781,7 @@
                        <string>Enregistrer dispersion</string>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                       </property>
                      </widget>
@@ -3700,12 +3836,18 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip">
+                       <string>Supprimer les lignes sélectionnées</string>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
+                      </property>
+                      <property name="autoRaise">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -3799,7 +3941,7 @@
                        <string>Lancer la modélisation</string>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="resources.qrc">
                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                       </property>
                      </widget>
@@ -3858,15 +4000,35 @@
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QToolButton" name="mButtonSaveLog">
+                 <widget class="QToolButton" name="debugButton">
                   <property name="toolTip">
-                   <string>Save Log to File</string>
+                   <string>Activer le mode debug</string>
                   </property>
                   <property name="text">
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="resources.qrc">
+                    <normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</iconset>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="autoRaise">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="logSaveAs">
+                  <property name="toolTip">
+                   <string>Enregistrer le journal sous</string>
+                  </property>
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resources.qrc">
                     <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                   </property>
                   <property name="autoRaise">
@@ -3875,32 +4037,15 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QToolButton" name="mButtonCopyLog">
+                 <widget class="QToolButton" name="logClear">
                   <property name="toolTip">
-                   <string>Copy Log to Clipboard</string>
+                   <string>Effacer le journal</string>
                   </property>
                   <property name="text">
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset>
-                    <normaloff>:/plugins/eco_cont/icons/mActionEditCopy.svg</normaloff>:/plugins/eco_cont/icons/mActionEditCopy.svg</iconset>
-                  </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QToolButton" name="mButtonClearLog">
-                  <property name="toolTip">
-                   <string>Clear Log</string>
-                  </property>
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                  <property name="icon">
-                   <iconset>
+                   <iconset resource="resources.qrc">
                     <normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</iconset>
                   </property>
                   <property name="autoRaise">

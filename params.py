@@ -150,7 +150,7 @@ class ParamsModel(QAbstractTableModel):
         
     def setWorkspace(self,path):
         self.workspace = path
-        utils.debug("Workspace directory set to '" + path)
+        utils.info("Workspace directory set to '" + path)
         if not os.path.isdir(path):
             utils.user_error("Directory '" + path + "' does not exist")
         #self.tmpDir = os.path.join(path,"tmp")

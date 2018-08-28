@@ -28,5 +28,10 @@
         <file>icons/mActionRefresh.svg</file>
         <file>icons/mActionRemove.svg</file>
         <file>icons/iconClearConsole.svg</file>
+        <file>icons/symbologyAdd.svg</file>
+        <file>icons/symbologyRemove.svg</file>
+        <file>icons/debug_icon/mAction.svg</file>
+        <file>icons/debug_icon/mActionAnnotation.svg</file>
+        <file>icons/debug_icon/mActionContextHelp.png</file>
     </qresource>
 </RCC>

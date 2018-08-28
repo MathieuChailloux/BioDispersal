@@ -50,12 +50,15 @@ import friction
 from .ponderation import PonderationConnector
 from .cost import CostConnector
 from .config_parsing import *
+from .log import LogConnector
 
 #FORM_CLASS, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
 
 FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'test_dialog.ui'))
+    
+#from test_dialog import Ui_TestDialog
     
 class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
     def __init__(self, parent=None):
@@ -95,6 +98,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         friction.frictionModel = frictionConnector.model
         ponderationConnector = PonderationConnector(self)
         costConnector = CostConnector(self)
+        logConnector = LogConnector(self)
         self.connectors = {"Params" : paramsConnector,
                            "ST" : stConnector,
                            "Group" : groupsConnector,
@@ -103,7 +107,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
                            "Fusion" : fusionConnector,
                            "Friction" : frictionConnector,
                            "Ponderation" : ponderationConnector,
-                           "Cost" : costConnector}
+                           "Cost" : costConnector,
+                           "Log" : logConnector}
         self.recomputeModels()
         
     # Initialize Graphic elements for each tab
