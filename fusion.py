@@ -89,12 +89,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
         res = str(params.getResolution())
         extent_coords = params.getExtentCoords()
         #for st in reversed(list(self.st_groups.keys())):
-        nb_st = len(self.st_groups)
-        if nb_st == 0:
-            progress_step = 0
-        else:
-            progress_step = 100.0 / nb_st
-        curr_progress = 0
+        progress_section = progress.ProgressSection("Fusion",len(self.st_groups))
+        progress_section.start_section()
         for st in self.st_groups.keys():
             st_item = sous_trames.getSTByName(st)
             groups = self.st_groups[st]
@@ -124,9 +120,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
             else:
                 res_layer = qgsUtils.loadRasterLayer(out_path)
                 QgsProject.instance().addMapLayer(res_layer)
-                curr_progress += progress_step
-                progress.progressConnector.progressSignal.emit(curr_progress)
-        progress.progressConnector.progressEnd.emit()
+                progress_section.next_step()
+        progress_section.end_section()
         utils.info("Merge succesfully applied")
             
     # def updateItems(self,i1,i2):

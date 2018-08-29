@@ -25,6 +25,7 @@
 import utils
 import qgsUtils
 import params
+import time
 
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
 
@@ -77,7 +78,7 @@ class ProgressSection(utils.Section):
             self.step = 100.0 / nb_steps
         
     def start_section(self):
-        super().start_section
+        super().start_section()
         self.curr_step = 0
         progressConnector.clear()
         

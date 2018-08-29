@@ -191,11 +191,12 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         xmlStr = self.toXML()
         params.params.projectFile = fname
         utils.writeFile(fname,xmlStr)
+        utils.info("BioDispersal model saved into file '" + fname + "'")
         
     def saveModelAsAction(self):
         fname = params.saveFileDialog(parent=self,msg="Sauvegarder le projet sous",filter="*.xml")
         if fname:
-            self.loadModel(fname)
+            self.saveModelAs(fname)
         
     # Save project to projectFile if existing
     def saveModel(self):
@@ -210,6 +211,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         setConfigModels(self.models)
         params.params.projectFile = fname
         parseConfig(fname)
+        utils.info("BioDispersal model loaded from file '" + fname + "'")
         
     def loadModelAction(self):
         fname = params.openFileDialog(parent=self,msg="Ouvrir le projet",filter="*.xml")

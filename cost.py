@@ -74,7 +74,7 @@ class CostItem(DictItem):
         applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
         removeRaster(tmpPath)
         res_layer = qgsUtils.loadRasterLayer(outPath)
-        QgsProject.instance().addMapLayer(outPath)
+        QgsProject.instance().addMapLayer(res_layer)
         utils.debug("End runCost")
             
     def checkItem(self):

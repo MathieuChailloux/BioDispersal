@@ -114,7 +114,7 @@ class FrictionModel(abstract_model.DictModel):
             self.layoutChanged.emit()
         
     def removeSTFromName(self,st_name):
-        utils.debug("removeSTFromName " + st_name)
+        utils.debug("removeSTFromName " + str(st_name))
         self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] != st_name]
         self.removeField(st_name)
         frictionFields.remove(st_name)
@@ -128,7 +128,7 @@ class FrictionModel(abstract_model.DictModel):
             cls_item = classes.getClassByName(cls_name)
             if not cls_item:
                 classes_to_delete.append(cls_name)
-                utils.debug("Removing class " + cls_name)
+                utils.debug("Removing class " + str(cls_name))
             else:
                 utils.debug("Class " + cls_name + " indeed exists")
         self.items = [fr for fr in self.items if fr.dict["class"] not in classes_to_delete]
@@ -141,7 +141,7 @@ class FrictionModel(abstract_model.DictModel):
             row_item = self.getRowByClass(cls_name)
             if row_item:
                 utils.debug("row_item : " + str(row_item.dict))
-                utils.debug("Class " + cls_name + " already exists")
+                utils.debug("Class " + str(cls_name) + " already exists")
                 if row_item.dict["code"] != cls_code:
                     utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"
                                 + str(row_item.dict["code"]) + " to class " + cls_name)
@@ -161,7 +161,7 @@ class FrictionModel(abstract_model.DictModel):
         utils.debug("createRulesFiles")
         for st_item in self.sous_trames:
             st_name = st_item.dict["name"]
-            utils.debug("createRulesFiles " + st_name)
+            utils.debug("createRulesFiles " + str(st_name))
             st_rules_fname = st_item.getRulesPath()
             with open(st_rules_fname,"w") as f:
                 for i in self.items:
@@ -174,7 +174,7 @@ class FrictionModel(abstract_model.DictModel):
         self.createRulesFiles()
         for st_item in self.sous_trames:
             st_name = st_item.dict["name"]
-            utils.debug("applyReclass " + st_name)
+            utils.debug("applyReclass " + str(st_name))
             st_rules_fname = st_item.getRulesPath()
             utils.checkFileExists(st_rules_fname)
             st_merged_fname = st_item.getMergedPath()
@@ -184,7 +184,9 @@ class FrictionModel(abstract_model.DictModel):
         
     def applyReclassGdal(self,indexes):
         utils.debug("friction.applyReclassGdal")
-        st_list = [self.sous_trames[i-3] for i in indexes]
+        utils.debug("indexes = " + str(indexes))
+        utils.debug("sous_trames = " + str(self.sous_trames))
+        st_list = [self.sous_trames[i-3] for i in indexes if i >=3]
         nb_steps = len(st_list)
         progress_section = progress.ProgressSection("Friction",nb_steps)
         progress_section.start_section()
@@ -206,7 +208,7 @@ class FrictionModel(abstract_model.DictModel):
                 if not utils.is_integer(coeff):
                     class_name = r.dict['class']
                     utils.user_error("Friction coefficient for class " + class_name
-                                     + " and st " + st_name 
+                                     + " and st " + str(st_name)
                                      + " is not an integer : '" + str(coeff) + "'")
                 reclass_dict[r.dict['code']] = r.dict[st_item.dict["name"]]
             utils.debug("Reclass dict : " + str(reclass_dict))
@@ -288,7 +290,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         classes.classModel.classRemoved.connect(catchClassRemoved)
         super().connectComponents()
         self.dlg.frictionLoadClass.clicked.connect(self.model.reloadClasses)
-        self.dlg.frictionRun.clicked.connect(self.model.applyItems)
+        self.dlg.frictionRun.clicked.connect(self.applyItems)
         #classes.classModel.classAdded2.connect(self.internCatchClassAdded)
         self.dlg.frictionSave.clicked.connect(self.saveCSVAction)
         self.dlg.frictionLoad.clicked.connect(self.loadCSVAction)
@@ -297,8 +299,13 @@ class FrictionConnector(abstract_model.AbstractConnector):
         if self.onlySelection:
             indexes = list(set([i.column() for i in self.view.selectedIndexes()]))
         else:
-            indexes = range(0,len(self.model.items))
+            indexes = range(3,len(self.model.sous_trames) + 3)
         return indexes
+        
+    # def applyItems(self):
+        # indexes = self.getSelectedIndexes()
+        # utils.debug("applyItems to indexes " + str(indexes))
+        # self.model.applyItems(indexes)
         
     def testSave(self):
         fname = QFileDialog.getOpenFileName()
@@ -330,5 +337,5 @@ class FrictionConnector(abstract_model.AbstractConnector):
                                       msg="Sauvegarder le tableau de friction sous",
                                       filter="*.csv")
         if fname:
-            self.loadCSV(fname)
+            self.saveCSV(fname)
         

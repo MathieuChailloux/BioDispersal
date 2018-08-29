@@ -78,7 +78,7 @@ class Section:
         self.title = title
         self.prefix = prefix
             
-    def begin_section(self):
+    def start_section(self):
         self.start_time = time.time()
         info(self.prefix + " Start " + self.title)
     
