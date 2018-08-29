@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 from .utils import *
 from .qgsUtils import *
 from .qgsTreatments import *
+import progress
 import params
 import abstract_model
 
@@ -327,6 +328,18 @@ class PonderationModel(abstract_model.DictModel):
         item = PonderationItem(dict)
         return item
         
+    def applyItems(self,indexes):
+        utils.debug("[applyItems]")
+        if not indexes:
+            internal_error("No indexes in Ponderation applyItems")
+        progress_section = progress.ProgressSection("Ponderation",len(indexes))
+        progress_section.start_section()
+        for n in indexes:
+            i = self.items[n]
+            i.applyItem()
+            progress_section.next_step()
+        progress_section.end_section()
+            
         
 class PonderationConnector(abstract_model.AbstractConnector):
 

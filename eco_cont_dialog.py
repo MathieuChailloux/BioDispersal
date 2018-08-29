@@ -24,6 +24,8 @@
 
 import os
 import sys
+import traceback
+from io import StringIO
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
@@ -130,6 +132,22 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         self.saveProjectAs.setToolTip("Enregistrer le projet sous")
         #self.pluginTabs.removeTab(5)
         
+    def bioDispHook(self,excType, excValue, tracebackobj):
+        if excType == utils.CustomException:
+            pass
+        else:
+            tbinfofile = StringIO()
+            traceback.print_tb(tracebackobj, None, tbinfofile)
+            tbinfofile.seek(0)
+            tbinfo = tbinfofile.read()
+            errmsg = str(excType) + "," + str(excValue)
+            separator = '-' * 80
+            sections = [separator, errmsg, separator]
+            msg = '\n'.join(sections)
+            final_msg = tbinfo + msg
+            utils.print_func(final_msg)
+        self.mTabWidget.setCurrentWidget(self.logTab)
+        
     # Connect view and model components for each tab
     def connectComponents(self):
         for k, tab in self.connectors.items():
@@ -138,6 +156,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         self.saveProjectAs.clicked.connect(self.saveModelAsAction)
         self.saveProject.clicked.connect(self.saveModel)
         self.openProject.clicked.connect(self.loadModelAction)
+        sys.excepthook = self.bioDispHook
         
     def initLog(self):
         utils.print_func = self.txtLog.append

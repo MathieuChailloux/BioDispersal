@@ -28,6 +28,7 @@ from PyQt5.QtGui import QIcon
 import utils
 import params
 from .qgsUtils import *
+import progress
 import sous_trames
 from .abstract_model import *
 from .qgsTreatments import *
@@ -90,6 +91,17 @@ class CostModel(DictModel):
         item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],dict["cost"])
         return item
         
+    def applyItems(self,indexes):
+        utils.debug("[applyItems]")
+        if not indexes:
+            internal_error("No indexes in Cost applyItems")
+        progress_section = progress.ProgressSection("Cost",len(indexes))
+        progress_section.start_section()
+        for n in indexes:
+            i = self.items[n]
+            i.applyItem()
+            progress_section.next_step()
+        progress_section.end_section()
         
     def fromXMLRoot(self,root):
         pass

@@ -54,7 +54,9 @@ class STItem(abstract_model.DictItem):
         super().__init__(dict)
         
     def checkItem(self):
-        pass
+        utils.debug(self.dict["name"])
+        if self.dict["name"] == "":
+            utils.user_error("Empty sous-trame name")
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
@@ -116,10 +118,6 @@ class STModel(abstract_model.DictModel):
         utils.checkFields(st_fields,dict.keys())
         item = STItem(dict["name"],dict["descr"])
         return item
-        
-    def addItem(self,item):
-        super().addItem(item)
-        self.stAdded.emit(item)
         
     def addItem(self,item):
         super().addItem(item)

@@ -27,6 +27,7 @@ import os.path
 import pathlib
 import sys
 import subprocess
+import time
 
 file_dir = os.path.dirname(__file__)
 if file_dir not in sys.path:
@@ -71,6 +72,22 @@ def todo_error(msg):
     printDate("[Feature not yet implemented] " + msg)
     raise CustomException(msg)
 
+class Section:
+
+    def __init__(self,title,prefix=">>>>"):
+        self.title = title
+        self.prefix = prefix
+            
+    def begin_section(self):
+        self.start_time = time.time()
+        info(self.prefix + " Start " + self.title)
+    
+    def end_section(self):
+        info(self.prefix + " End " + self.title)
+        self.end_time = time.time()
+        diff_time = self.end_time - self.start_time
+        info(self.title + " finished in " + str(diff_time) + " seconds")
+    
     
 # File utils
     

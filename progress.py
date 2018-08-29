@@ -65,3 +65,27 @@ class ProgressConnector(QObject):
         self.progressSignal.connect(catchProgress)
         self.progressEnd.connect(catchProgressEnd)
         #qgsUtils.progressBarValueChanged.connect(catchClassRemoved)
+        
+class ProgressSection(utils.Section):
+
+    def __init__(self,title,nb_steps):
+        super().__init__(title)
+        self.curr_step = 0
+        if nb_steps <= 0:
+            utils.warn("Nothing to do")
+        else:
+            self.step = 100.0 / nb_steps
+        
+    def start_section(self):
+        super().start_section
+        self.curr_step = 0
+        progressConnector.clear()
+        
+    def next_step(self):
+        self.curr_step += self.step
+        progressConnector.progressSignal.emit(self.curr_step)
+        
+    def end_section(self):
+        super().end_section()
+        progressConnector.progressEnd.emit()
+        

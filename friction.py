@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QFileDialog
 from qgis.gui import QgsFileWidget
 
 import utils
+import progress
 import sous_trames
 import classes
 import params
@@ -184,7 +185,11 @@ class FrictionModel(abstract_model.DictModel):
     def applyReclassGdal(self,indexes):
         utils.debug("friction.applyReclassGdal")
         st_list = [self.sous_trames[i-3] for i in indexes]
-        for st_item in self.sous_trames:
+        nb_steps = len(st_list)
+        progress_section = progress.ProgressSection("Friction",nb_steps)
+        progress_section.start_section()
+        #for st_item in self.sous_trames:
+        for st_item in st_list:
             st_merged_fname = st_item.getMergedPath()
             utils.checkFileExists(st_merged_fname)
             st_friction_fname = st_item.getFrictionPath()
@@ -207,6 +212,8 @@ class FrictionModel(abstract_model.DictModel):
             utils.debug("Reclass dict : " + str(reclass_dict))
             #utils.debug("applyReclassGdal")
             qgsTreatments.applyReclassGdalFromDict(st_merged_fname,st_friction_fname,reclass_dict)
+            progress_section.next_step()
+        progress_section.end_section()
         
     def applyItems(self,indexes):
         #self.applyReclass()
