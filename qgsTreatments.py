@@ -80,7 +80,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
     width = int((x_max - x_min) / float(resolution))
     height = int((y_max - y_min) / float(resolution))
     parameters = ['gdal_rasterize',
-                  '-at',
+                  #'-at',
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                   '-ts', str(width), str(height),
                   '-ot','Int32',
@@ -184,7 +184,7 @@ def applyReclassProcessing(in_path,out_path,rules_file,title):
 # Apply raster calculator from expression 'expr'.
 # Calculation is made on a single file and a signled band renamed 'A'.
 # Output format is Integer32.
-def applyGdalCalc(in_path,out_path,expr,more_args=[],load_flag=False):
+def applyGdalCalc(in_path,out_path,expr,load_flag=False,more_args=[]):
     utils.debug("qgsTreatments.applyGdalCalc(" + str(expr) + ")")
     if os.path.isfile(out_path):
         qgsUtils.removeRaster(out_path)
@@ -204,12 +204,12 @@ def applyGdalCalc(in_path,out_path,expr,more_args=[],load_flag=False):
         
 # Filters input raster 'in_path' to keep values inferior to 'max_val' 
 # in output raster 'out_path'.
-def applyFilterGdalFromMaxVal(in_path,out_path,max_val):
+def applyFilterGdalFromMaxVal(in_path,out_path,max_val,load_flag=False):
     utils.debug("qgsTreatments.applyReclassGdalFromMaxVal(" + str(max_val) + ")")
     expr = ('(A*less_equal(A,' + str(max_val) + ')*less_equal(0,A))'
         + '+(' + str(nodata_val) + '*less(' + str(max_val) + ',A))'
         + '+(' + str(nodata_val) + '*less(A,0))')
-    applyGdalCalc(in_path,out_path,expr)
+    applyGdalCalc(in_path,out_path,expr,load_flag)
     # utils.executeCmdAsScript(cmd_args)
     # res_layer = qgsUtils.loadRasterLayer(out_path)
     # QgsProject.instance().addMapLayer(res_layer)
@@ -217,14 +217,14 @@ def applyFilterGdalFromMaxVal(in_path,out_path,max_val):
 # Applies reclassification from 'in_path' to 'out_path' according to 'reclass_dict'.
 # Dictionary contains associations of type {old_val -> new_val}.
 # Pixels of value 'old_val' are set to 'new_val' value.
-def applyReclassGdalFromDict(in_path,out_path,reclass_dict):
+def applyReclassGdalFromDict(in_path,out_path,reclass_dict,load_flag=False):
     utils.debug("qgsTreatments.applyReclassGdalFromDict(" + str(reclass_dict) + ")")
     expr = ''
     for old_cls,new_cls in reclass_dict.items():
         if expr != '':
             expr += '+'
         expr += str(new_cls) + '*(A==' + str(old_cls)+ ')'
-    applyGdalCalc(in_path,out_path,expr)
+    applyGdalCalc(in_path,out_path,expr,load_flag)
     # cmd_args.append(expr)
     # utils.executeCmd(cmd_args)
     # res_layer = qgsUtils.loadRasterLayer(out_path)

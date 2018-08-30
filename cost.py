@@ -60,7 +60,7 @@ class CostItem(DictItem):
         st_name = self.dict["st_name"]
         st_item = sous_trames.getSTByName(st_name)
         startLayer = params.getOrigPath(self.dict["start_layer"])
-        utils.checkFileExists(startLayer,"Dispersion Start Layer ")
+        params.checkFileExists(startLayer,"Dispersion Start Layer ")
         startRaster = st_item.getStartLayerPath()
         params.checkInit()
         extent_layer_path = params.getExtentLayer()
@@ -97,6 +97,7 @@ class CostModel(DictModel):
             internal_error("No indexes in Cost applyItems")
         progress_section = progress.ProgressSection("Cost",len(indexes))
         progress_section.start_section()
+        utils.checkInit()
         for n in indexes:
             i = self.items[n]
             i.applyItem()

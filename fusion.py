@@ -1,9 +1,11 @@
 
 import copy
 import subprocess
+import os.path
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import QModelIndex
+from qgis.core import QgsProject
+from PyQt5.QtCore import QModelIndex, pyqtSlot
 from PyQt5.QtGui import QIcon
 
 import abstract_model
@@ -13,10 +15,16 @@ import qgsUtils
 import params
 import sous_trames
 import groups
-from .qgsTreatments import *
-from .config_parsing import *
+import progress
+import qgsTreatments
+import config_parsing
 
+fusionModel = None
 fusion_fields = ["name","descr"]
+        
+@pyqtSlot()
+def catchSTRemoved(name):
+    fusionModel.removeSTFromName(name)
         
 class FusionModel(abstract_model.AbstractGroupModel):
     
@@ -54,10 +62,13 @@ class FusionModel(abstract_model.AbstractGroupModel):
         
     def loadAllGroups(self):
         utils.debug("[loadAllGroups]")
-        self.current_model = groups.copyGroupModel(groups.groupsModel)
-        self.st_groups[self.current_st] = self.current_model
-        #self.current_model.layoutChanged.emit()
-        self.layoutChanged.emit()
+        if self.current_st:
+            self.current_model = groups.copyGroupModel(groups.groupsModel)
+            self.st_groups[self.current_st] = self.current_model
+            #self.current_model.layoutChanged.emit()
+            self.layoutChanged.emit()
+        else:
+            utils.user_error("No sous-trame selected")
         
     def toXML(self,indent=""):
         xmlStr = indent + "<" + self.__class__.__name__ + ">\n"
@@ -77,7 +88,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             st_name = st_root.attrib["name"]
             self.current_st = st_name
             for grp in st_root:
-                grp_model = parseModel(grp,True)
+                grp_model = config_parsing.parseModel(grp,True)
                 if not grp_model:
                     utils.internal_error("Could not parse group model for " + st_name)
                 self.st_groups[st_name] = grp_model
@@ -86,6 +97,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
     def applyItems(self,indexes):
         utils.info("Applying merge")
         progress.progressConnector.clear()
+        params.checkInit()
         res = str(params.getResolution())
         extent_coords = params.getExtentCoords()
         #for st in reversed(list(self.st_groups.keys())):
@@ -105,22 +117,23 @@ class FusionModel(abstract_model.AbstractGroupModel):
                         '-o', out_path,
                         '-of', 'GTiff',
                         '-ot','Int32',
-                        '-n', nodata_val,
-                        '-a_nodata', nodata_val]
+                        '-n', qgsTreatments.nodata_val,
+                        '-a_nodata', qgsTreatments.nodata_val]
             #cmd_args += ['-ul_lr']
             #cmd_args += extent_coords
             #cmd_args += ['-ps',res,res]
             cmd_args = cmd_args + grp_args
+            utils.executeCmd(cmd_args)
             p = subprocess.Popen(cmd_args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-            out,err = p.communicate()
-            utils.debug("Arguments : " + str(p.args))
-            utils.info(str(out))
-            if err:
-                utils.user_error(str(err))
-            else:
-                res_layer = qgsUtils.loadRasterLayer(out_path)
-                QgsProject.instance().addMapLayer(res_layer)
-                progress_section.next_step()
+            # out,err = p.communicate()
+            # utils.debug("Arguments : " + str(p.args))
+            # utils.info(str(out))
+            # if err:
+                # utils.user_error(str(err))
+            # else:
+            res_layer = qgsUtils.loadRasterLayer(out_path)
+            QgsProject.instance().addMapLayer(res_layer)
+            progress_section.next_step()
         progress_section.end_section()
         utils.info("Merge succesfully applied")
             
@@ -134,6 +147,12 @@ class FusionModel(abstract_model.AbstractGroupModel):
         # utils.debug("upgradeElem " + str(row))
         # if row > 0:
             # self.swapItems(row -1, row)
+            
+            
+    def removeSTFromName(self,name):
+        st_groups = self.st_groups.pop(name,None)
+        if not st_groups:
+            utils.warn("Deleting sous-trame '" + name + "' in fusion model but could not find it")
         
     def downgradeElem(self,row):
         #row = idx.row()
@@ -190,6 +209,7 @@ class FusionConnector(abstract_model.AbstractConnector):
                          
     def connectComponents(self):
         super().connectComponents()
+        sous_trames.stModel.stRemoved.connect(catchSTRemoved)
         self.dlg.fusionST.setModel(sous_trames.stModel)
         #self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)

@@ -299,7 +299,7 @@ class PonderationItem(abstract_model.DictItem):
         gdal_calc_expr = ival_model.toGdalCalcExpr()
         pond_buf_reclassed = mkTmpPath(pond_buf_path,suffix="_reclassed")
         applyGdalCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
-                      more_args=['--type=Float32'],load_flag=False)
+                      load_flag=False,more_args=['--type=Float32'])
         pond_buf_norm = mkTmpPath(pond_buf_path,suffix="_norm")
         crs = params.params.crs
         resolution = params.getResolution()
@@ -334,6 +334,7 @@ class PonderationModel(abstract_model.DictModel):
             internal_error("No indexes in Ponderation applyItems")
         progress_section = progress.ProgressSection("Ponderation",len(indexes))
         progress_section.start_section()
+        params.checkInit()
         for n in indexes:
             i = self.items[n]
             i.applyItem()

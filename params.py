@@ -134,14 +134,17 @@ class ParamsModel(QAbstractTableModel):
         
     def setExtentLayer(self,path):
         path = normalizePath(path)
+        utils.info("Setting extent layer to " + str(path))
         self.extentLayer = path
         self.layoutChanged.emit()
         
     def setResolution(self,resolution):
+        utils.info("Setting resolution to " + str(resolution))
         self.resolution = resolution
         self.layoutChanged.emit()
         
     def setCrs(self,crs):
+        utils.info("Setting extent CRS to " + str(crs))
         self.crs = crs
         self.layoutChanged.emit()
         
@@ -164,6 +167,7 @@ class ParamsModel(QAbstractTableModel):
     
     def fromXMLRoot(self,root):
         dict = root.attrib
+        utils.debug("params dict = " + str(dict))
         return self.fromXMLDict(dict)
     
     def fromXMLDict(self,dict):
@@ -253,11 +257,4 @@ class ParamsConnector:
         header = self.dlg.paramsView.horizontalHeader()     
         header.setSectionResizeMode(0, QHeaderView.Stretch)
         self.model.layoutChanged.emit()
-        
-    
-def normPath(p):
-    if params.useRelativePath:
-        return os.path.relpath(p,params.workspace)
-    else:
-        return p
         

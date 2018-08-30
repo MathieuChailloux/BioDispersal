@@ -126,7 +126,7 @@ class ClassConnector(abstract_model.AbstractConnector):
         self.dlg = dlg
         classModel = ClassModel()
         super().__init__(classModel,self.dlg.classView,
-                         None,None)
+                         None,self.dlg.classRemove)
         # super().__init__(classModel,self.dlg.classView,
                          # self.dlg.selectionClassAdd,self.dlg.classRemove)
         

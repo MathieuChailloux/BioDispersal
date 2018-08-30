@@ -45,9 +45,10 @@ import utils
 from .qgsUtils import *
 import params
 import sous_trames
+import classes
 import groups
 from .selection import SelectionConnector
-from .fusion import FusionConnector
+import fusion
 import friction
 from .ponderation import PonderationConnector
 from .cost import CostConnector
@@ -96,7 +97,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         classConnector = classes.ClassConnector(self)
         classes.classModel = classConnector.model
         selectionConnector = SelectionConnector(self)
-        fusionConnector = FusionConnector(self)
+        fusionConnector = fusion.FusionConnector(self)
+        fusion.fusionModel = fusionConnector.model
         frictionConnector = friction.FrictionConnector(self)
         friction.frictionModel = frictionConnector.model
         ponderationConnector = PonderationConnector(self)
@@ -147,6 +149,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
             final_msg = tbinfo + msg
             utils.print_func(final_msg)
         self.mTabWidget.setCurrentWidget(self.logTab)
+        progress.progressConnector.clear()
         
     # Connect view and model components for each tab
     def connectComponents(self):
@@ -171,7 +174,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
                         "GroupModel" : groups.groupsModel,
                         "ClassModel" : classes.classModel,
                         "SelectionModel" : self.connectors["Selection"].model,
-                        "FusionModel" : self.connectors["Fusion"].model,
+                        "FusionModel" : fusion.fusionModel,
                         "FrictionModel" : friction.frictionModel,
                         "PonderationModel" : self.connectors["Ponderation"].model,
                         "CostModel" : self.connectors["Cost"].model}
@@ -206,7 +209,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
    
     # Load project from 'fname' if existing
     def loadModel(self,fname):
-        debug("loadModel " + str(fname))
+        utils.debug("loadModel " + str(fname))
         utils.checkFileExists(fname)
         setConfigModels(self.models)
         params.params.projectFile = fname

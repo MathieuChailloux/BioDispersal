@@ -211,7 +211,6 @@ class SelectionModel(DictModel):
             from_raster = False
             for s in selections:
                 s.applyItem()
-                curr_progress += progress_step
                 progress_section.next_step()
                 if s.is_raster:
                     from_raster = True

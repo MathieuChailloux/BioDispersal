@@ -22,27 +22,27 @@
  ***************************************************************************/
 """
 
-from .abstract_model import *
-from .params import *
-from .sous_trames import *
-from .groups import *
-from .classes import *
-from .selection import *
-from .ponderation import *
-from .cost import *
+# from .abstract_model import *
+# from .params import *
+# from .sous_trames import *
+# from .groups import *
+# from .classes import *
+# from .selection import *
+# from .ponderation import *
+# from .cost import *
 
-from .utils import *
+import utils
 
 import xml.etree.ElementTree as ET
 
-mk_item = {
-    "STModel" : STModel.mkItemFromDict,
-    "GroupModel" : GroupModel.mkItemFromDict,
-    "ClassModel" : ClassModel.mkItemFromDict,
-    "SelectionModel" : SelectionModel.mkItemFromDict,
-    "PonderationModel" : PonderationModel.mkItemFromDict,
-    "CostModel" : CostModel.mkItemFromDict
-}
+# mk_item = {
+    # "STModel" : STModel.mkItemFromDict,
+    # "GroupModel" : GroupModel.mkItemFromDict,
+    # "ClassModel" : ClassModel.mkItemFromDict,
+    # "SelectionModel" : SelectionModel.mkItemFromDict,
+    # "PonderationModel" : PonderationModel.mkItemFromDict,
+    # "CostModel" : CostModel.mkItemFromDict
+# }
 
 config_models = None
 
@@ -51,12 +51,12 @@ def setConfigModels(model_dict):
     config_models = model_dict
 
 def parseConfig(config_file):
-    info("Parsing configuration from file '" + str(config_file) + "'")
+    utils.info("Parsing configuration from file '" + str(config_file) + "'")
     tree = ET.parse(config_file)
     root = tree.getroot()
     for model in root:
         parseModel(model)
-    info("Configuration parsing successful")
+    utils.info("Configuration parsing successful")
 
 # Parse model from XML root.
 # Updates models stored in 'config_models'.
@@ -64,24 +64,25 @@ def parseConfig(config_file):
 def parseModel(model_root,new_model=False):
     global config_models, mk_item
     model_tag = model_root.tag
-    debug("parseModel " + str(model_tag))
+    utils.debug("parseModel " + str(model_tag))
     if model_tag not in config_models:
-        user_error("Unknown Model '" + model_tag + "'")
+        utils.user_error("Unknown Model '" + model_tag + "'")
     if new_model:
         if model_tag == "GroupModel":
             model = GroupModel()
         else:
-            internal_error("Parse new model for " + model_tag + " not yet implemented")
+            utils.internal_error("Parse new model for " + model_tag + " not yet implemented")
     else:
         model = config_models[model_tag]
-    if model_tag in mk_item:
+    try:
+        model.fromXMLRoot(model_root)
+    except AttributeError:
         for item in model_root:
             dict = item.attrib
             fields = dict.keys()
-            item = mk_item[model_tag](dict)
+            item = model.mkItemFromDict(dict)
             model.addItem(item)
-    else:
-        model.fromXMLRoot(model_root)
-    model.layoutChanged.emit()
-    return model
+    finally:
+        model.layoutChanged.emit()
+        return model
         
