@@ -55,7 +55,7 @@ class FrictionRowItem(abstract_model.DictItem):
 class FrictionModel(abstract_model.DictModel):
 
     def __init__(self):
-        self.defaultVal = 100
+        self.defaultVal = None
         self.classes = []
         self.sous_trames = []
         self.fields = ["class_descr","class","code"]

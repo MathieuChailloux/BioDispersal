@@ -95,7 +95,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset>
               <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
             </property>
             <property name="autoRaise">
@@ -124,7 +124,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset>
               <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
             </property>
             <property name="autoRaise">
@@ -160,7 +160,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset>
               <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
             </property>
             <property name="autoRaise">
@@ -342,8 +342,23 @@
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
-                     <height>190</height>
+                     <height>180</height>
                     </size>
+                   </property>
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="dragEnabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="alternatingRowColors">
+                    <bool>false</bool>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectItems</enum>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
@@ -502,7 +517,7 @@
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -531,7 +546,7 @@
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -568,6 +583,12 @@
                    </property>
                    <property name="sizeAdjustPolicy">
                     <enum>QAbstractScrollArea::AdjustIgnored</enum>
+                   </property>
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -979,7 +1000,7 @@
                              </size>
                             </property>
                             <property name="currentIndex">
-                             <number>0</number>
+                             <number>1</number>
                             </property>
                             <widget class="QWidget" name="stackSelectionExpr">
                              <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1001,6 +1022,22 @@
                                  <string>Expression</string>
                                 </property>
                                </widget>
+                              </item>
+                              <item>
+                               <spacer name="horizontalSpacer_25">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                 <enum>QSizePolicy::Fixed</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>40</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
                               </item>
                               <item>
                                <widget class="QgsFieldExpressionWidget" name="selectionExpr">
@@ -1028,6 +1065,22 @@
                                  <string>Champ</string>
                                 </property>
                                </widget>
+                              </item>
+                              <item>
+                               <spacer name="horizontalSpacer_27">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                 <enum>QSizePolicy::Fixed</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>50</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
                               </item>
                               <item>
                                <widget class="QgsFieldComboBox" name="selectionField">
@@ -1233,7 +1286,7 @@
                              <string>Enregistrer sélection</string>
                             </property>
                             <property name="icon">
-                             <iconset resource="resources.qrc">
+                             <iconset>
                               <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                             </property>
                            </widget>
@@ -1373,7 +1426,7 @@
                               <string/>
                              </property>
                              <property name="icon">
-                              <iconset resource="resources.qrc">
+                              <iconset>
                                <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                              </property>
                              <property name="autoRaise">
@@ -1485,7 +1538,7 @@
                               <string/>
                              </property>
                              <property name="icon">
-                              <iconset resource="resources.qrc">
+                              <iconset>
                                <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                              </property>
                              <property name="autoRaise">
@@ -1612,7 +1665,7 @@
                           <string>Lancer les sélections</string>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset>
                            <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                          </property>
                         </widget>
@@ -1627,6 +1680,12 @@
                         <width>300</width>
                         <height>100</height>
                        </size>
+                      </property>
+                      <property name="alternatingRowColors">
+                       <bool>true</bool>
+                      </property>
+                      <property name="selectionBehavior">
+                       <enum>QAbstractItemView::SelectRows</enum>
                       </property>
                      </widget>
                     </item>
@@ -1672,7 +1731,7 @@
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset>
                            <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
                          </property>
                          <property name="autoRaise">
@@ -1701,7 +1760,7 @@
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset>
                            <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
                          </property>
                          <property name="autoRaise">
@@ -1727,7 +1786,7 @@
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -1939,7 +1998,7 @@
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -1971,7 +2030,7 @@
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -2070,7 +2129,7 @@
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset>
                            <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
                          </property>
                          <property name="autoRaise">
@@ -2105,7 +2164,7 @@
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset>
                            <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
                          </property>
                          <property name="autoRaise">
@@ -2123,6 +2182,21 @@
                         <width>300</width>
                         <height>200</height>
                        </size>
+                      </property>
+                      <property name="editTriggers">
+                       <set>QAbstractItemView::NoEditTriggers</set>
+                      </property>
+                      <property name="dragEnabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="alternatingRowColors">
+                       <bool>true</bool>
+                      </property>
+                      <property name="selectionBehavior">
+                       <enum>QAbstractItemView::SelectRows</enum>
+                      </property>
+                      <property name="sortingEnabled">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -2187,7 +2261,7 @@
                        <string>Fusionner</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                       </property>
                      </widget>
@@ -2296,7 +2370,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="resources.qrc">
+                     <iconset>
                       <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
                     </property>
                     <property name="autoRaise">
@@ -2325,7 +2399,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="resources.qrc">
+                     <iconset>
                       <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
                     </property>
                     <property name="autoRaise">
@@ -2354,7 +2428,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="resources.qrc">
+                     <iconset>
                       <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
                     </property>
                     <property name="autoRaise">
@@ -2370,6 +2444,9 @@
                      <width>350</width>
                      <height>200</height>
                     </size>
+                   </property>
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -2440,7 +2517,7 @@
                        <string>Produire les couches de friction</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                       </property>
                      </widget>
@@ -2918,6 +2995,9 @@
                             <height>100</height>
                            </size>
                           </property>
+                          <property name="dragEnabled">
+                           <bool>true</bool>
+                          </property>
                          </widget>
                         </item>
                         <item row="0" column="2">
@@ -2935,7 +3015,7 @@
                            <string>...</string>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                           </property>
                           <property name="autoRaise">
@@ -2958,7 +3038,7 @@
                            <string>...</string>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                           </property>
                           <property name="autoRaise">
@@ -3051,7 +3131,7 @@
                            <string>...</string>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                           </property>
                           <property name="autoRaise">
@@ -3068,7 +3148,7 @@
                            <string>...</string>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                           </property>
                           <property name="autoRaise">
@@ -3167,7 +3247,7 @@
                           <string>Enregistrer pondération</string>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset>
                            <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                          </property>
                         </widget>
@@ -3182,6 +3262,21 @@
                         <width>300</width>
                         <height>100</height>
                        </size>
+                      </property>
+                      <property name="editTriggers">
+                       <set>QAbstractItemView::NoEditTriggers</set>
+                      </property>
+                      <property name="dragEnabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="alternatingRowColors">
+                       <bool>true</bool>
+                      </property>
+                      <property name="selectionBehavior">
+                       <enum>QAbstractItemView::SelectRows</enum>
+                      </property>
+                      <property name="sortingEnabled">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -3215,7 +3310,7 @@
                           <string>...</string>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset>
                            <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                          </property>
                          <property name="autoRaise">
@@ -3335,7 +3430,7 @@
                           <string>Pondérer les couches de friction</string>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset>
                            <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                          </property>
                         </widget>
@@ -3781,7 +3876,7 @@
                        <string>Enregistrer dispersion</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                       </property>
                      </widget>
@@ -3790,7 +3885,20 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QTableView" name="costView"/>
+                  <widget class="QTableView" name="costView">
+                   <property name="dragEnabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QFrame" name="frame_34">
@@ -3843,7 +3951,7 @@
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                       </property>
                       <property name="autoRaise">
@@ -3941,7 +4049,7 @@
                        <string>Lancer la modélisation</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset>
                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                       </property>
                      </widget>
@@ -4008,7 +4116,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="resources.qrc">
+                   <iconset>
                     <normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</iconset>
                   </property>
                   <property name="checkable">
@@ -4028,7 +4136,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="resources.qrc">
+                   <iconset>
                     <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                   </property>
                   <property name="autoRaise">
@@ -4045,7 +4153,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="resources.qrc">
+                   <iconset>
                     <normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</iconset>
                   </property>
                   <property name="autoRaise">
@@ -4152,34 +4260,34 @@
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsfieldcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsfieldexpressionwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsfilewidget.h</header>
   </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsprojectionselectionwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsspinbox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsScrollArea</class>

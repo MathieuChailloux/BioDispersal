@@ -59,6 +59,11 @@ class ClassItem(abstract_model.DictItem):
         if code == None:
             code = classModel.getFreeCode()
             utils.debug("new code = " + str(code))
+        else:
+            try:
+                code = int(code)
+            except TypeError:
+                utils.user_error("Could not build class item from code '" + str(code)+ "'")
         dict = {"name" : cls,
                 "code": code,
                 "descr" : descr}

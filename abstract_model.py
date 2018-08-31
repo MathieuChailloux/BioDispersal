@@ -265,10 +265,11 @@ class AbstractGroupModel(QAbstractTableModel):
     def removeItems(self,indexes):
         utils.debug("[removeItems] nb of items = " + str(len(self.items)))
         n = 0
-        rows = sorted([i.row() for i in indexes])
+        rows = sorted(set([i.row() for i in indexes]))
         for row in rows:
-            row -= n
-            del self.items[row]
+            roww = row - n
+            utils.debug("[removeItems] Deleting row " + str(roww))
+            del self.items[roww]
             n += 1
         self.layoutChanged.emit()
         
@@ -380,7 +381,7 @@ class AbstractConnector:
             self.runButton.clicked.connect(self.applyItems)
         if self.selectionCheckbox:
             self.selectionCheckbox.stateChanged.connect(self.switchOnlySelection)
-        self.view.horizontalHeader().sectionClicked.connect(self.model.orderItems)
+        #self.view.horizontalHeader().sectionClicked.connect(self.model.orderItems)
                 
     def switchOnlySelection(self):
         new_val = not self.onlySelection

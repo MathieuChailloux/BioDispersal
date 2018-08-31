@@ -268,7 +268,7 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionRun.clicked.connect(self.applyItems)
         #
         header = self.dlg.selectionView.horizontalHeader()     
-        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        #header.setSectionResizeMode(1, QHeaderView.Stretch)
         
     def applyItems(self):
         if self.onlySelection:
