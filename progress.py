@@ -40,8 +40,7 @@ def catchProgress(n):
 def catchProgressEnd():
     utils.debug("Progress End")
     progressConnector.dlg.progressBar.setValue(100)
-    progressConnector.dlg.mTabWidget.setCurrentWidget(progressConnector.dlg.logTab)
-    progressConnector.dlg.txtLog.verticalScrollBar().setValue(progressConnector.dlg.txtLog.verticalScrollBar().maximum())
+    progressConnector.focusLogTab()
 
 class ProgressConnector(QObject):
 
@@ -67,6 +66,10 @@ class ProgressConnector(QObject):
         self.progressEnd.connect(catchProgressEnd)
         #qgsUtils.progressBarValueChanged.connect(catchClassRemoved)
         
+    def focusLogTab(self):
+        self.dlg.mTabWidget.setCurrentWidget(self.dlg.logTab)
+        self.dlg.txtLog.verticalScrollBar().setValue(self.dlg.txtLog.verticalScrollBar().maximum())
+            
 class ProgressSection(utils.Section):
 
     def __init__(self,title,nb_steps):

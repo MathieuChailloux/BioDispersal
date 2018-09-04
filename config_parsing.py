@@ -65,24 +65,50 @@ def parseModel(model_root,new_model=False):
     global config_models, mk_item
     model_tag = model_root.tag
     utils.debug("parseModel " + str(model_tag))
+    utils.debug("config_models " + str(config_models))
     if model_tag not in config_models:
         utils.user_error("Unknown Model '" + model_tag + "'")
-    if new_model:
-        if model_tag == "GroupModel":
-            model = GroupModel()
-        else:
-            utils.internal_error("Parse new model for " + model_tag + " not yet implemented")
-    else:
-        model = config_models[model_tag]
+    # if new_model:
+        # if model_tag == "GroupModel":
+            # utils.debug("Creating new group model")
+            # utils.debug("config_models " + str(config_models))
+            # model = GroupModel()
+            # utils.debug("config_models " + str(config_models))
+        # else:
+            # utils.debug("o k ou")
+            # utils.internal_error("Parse new model for " + model_tag + " not yet implemented")
+    # else:
+        # utils.debug("model from config_models")
+        # utils.debug("config_models " + str(config_models))
+        # model = config_models[model_tag]
+        # utils.debug("config_models " + str(config_models))
+    model = config_models[model_tag]
     try:
-        model.fromXMLRoot(model_root)
+        utils.debug("cas 1")
+        utils.debug("config_models " + str(config_models))
+        if model_tag == "FusionModel":
+            model.testFunc(model_root)
+            model.fromXMLRoot(model_root)
+            utils.debug("config_models " + str(config_models))
+        else:
+            model.fromXMLRoot(model_root)
+            utils.debug("config_models " + str(config_models))
+        return model
     except AttributeError:
+        utils.debug("cas 2")
         for item in model_root:
+            utils.debug("iter")
             dict = item.attrib
             fields = dict.keys()
             item = model.mkItemFromDict(dict)
             model.addItem(item)
-    finally:
-        model.layoutChanged.emit()
         return model
+    # except Exception as e:
+        # utils.debug("cas 3")
+        # utils.debug("exn : " + str(e))
+        # raise e
+    # finally:
+        # utils.debug("finally")
+        # model.layoutChanged.emit()
+        # return model
         

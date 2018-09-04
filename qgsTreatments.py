@@ -230,9 +230,41 @@ def applyReclassGdalFromDict(in_path,out_path,reclass_dict,load_flag=False):
     # res_layer = qgsUtils.loadRasterLayer(out_path)
     # QgsProject.instance().addMapLayer(res_layer)
     
+# Creates raster 'out_path' from 'in_path1', 'in_path2' and 'expr'.
+def applyGdalCalcAB(in_path1,in_path2,out_path,expr,load_flag=False):
+    utils.debug("qgsTreatments.applyGdalCalcAB")
+    if os.path.isfile(out_path):
+        qgsUtils.removeRaster(out_path)
+    tmp_no_data_val = -1
+    nonull_p1 = utils.mkTmpPath(in_path1,suffix="nonull")
+    nonull_p2 = utils.mkTmpPath(in_path2,suffix="nonull")
+    nonull_out = utils.mkTmpPath(out_path,suffix="nonull")
+    nonull_out_tmp = utils.mkTmpPath(nonull_out,suffix="tmp")
+    applyRNull(in_path1,tmp_no_data_val,nonull_p1)
+    applyRNull(in_path2,tmp_no_data_val,nonull_p2)
+    cmd_args = ['gdal_calc.bat',
+                '-A', nonull_p1,
+                '-B', nonull_p2,
+                #'--type=Int32',
+                '--NoDataValue='+nodata_val,
+                '--overwrite',
+                '--outfile='+nonull_out]
+    expr_opt = '--calc=' + str(expr)
+    cmd_args.append(expr_opt)
+    utils.executeCmd(cmd_args)
+    reset_nodata_expr = '(A==' + str(tmp_no_data_val) + ')*' + str(nodata_val)
+    reset_nodata_expr += '+(A!=' + str(tmp_no_data_val) + ')*A'
+    applyGdalCalc(nonull_out,nonull_out_tmp,reset_nodata_expr)
+    applyRSetNull(nonull_out_tmp,nodata_val,out_path)
+    #qgsUtils.removeRaster(nonull_out)
+    #qgsUtils.removeRaster(nonull_out_tmp)
+    if load_flag:
+        res_layer = qgsUtils.loadRasterLayer(out_path)
+        QgsProject.instance().addMapLayer(res_layer)
+    
 # Applies ponderation on 'in_path1' according to 'in_path2' values.
 # Result stored in 'out_path'.
-def applyPonderationGdal(in_path1,in_path2,out_path,pos_values=False):
+def applyPonderationGdal(a_path,b_path,out_path,pos_values=False):
     utils.debug("qgsTreatments.applyPonderationGdal")
     if os.path.isfile(out_path):
         qgsUtils.removeRaster(out_path)
@@ -252,11 +284,29 @@ def applyPonderationGdal(in_path1,in_path2,out_path,pos_values=False):
     res_layer = qgsUtils.loadRasterLayer(out_path)
     QgsProject.instance().addMapLayer(res_layer)
     
+# Creates raster 'out_path' keeping maximum value from 'in_path1' and 'in_path2'.
+def applyMaxGdal(in_path1,in_path2,out_path,load_flag=False):
+    utils.debug("qgsTreatments.applyMaxGdal")
+    expr = 'B*less_equal(A,B) + A*less(B,A)'
+    applyGdalCalcAB(in_path1,in_path2,out_path,expr,load_flag)
+    
+# Creates raster 'out_path' keeping maximum value from 'in_path1' and 'in_path2'.
+def applyMinGdal(in_path1,in_path2,out_path,load_flag=False):
+    utils.debug("qgsTreatments.applyMaxGdal")
+    expr = 'A*less_equal(A,B) + B*less(B,A)'
+    applyGdalCalcAB(in_path1,in_path2,out_path,expr,load_flag)
     
 def applyRNull(in_path,new_val,out_path):
     utils.debug("applyRNull")
     parameters = { 'map' : in_path,
                    'null' : str(new_val),
+                   'output' : out_path }
+    applyProcessingAlg(parameters,"r.null")
+    
+def applyRSetNull(in_path,new_val,out_path):
+    utils.debug("applyRNull")
+    parameters = { 'map' : in_path,
+                   'setnull' : str(new_val),
                    'output' : out_path }
     applyProcessingAlg(parameters,"r.null")
         

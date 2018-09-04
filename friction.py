@@ -204,6 +204,9 @@ class FrictionModel(abstract_model.DictModel):
             for r in self.items:
                 st_name = st_item.dict["name"]
                 class_code = r.dict['code']
+                if st_name not in r.dict:
+                    utils.internal_error("Could not find sous-trame '" + str(st_name)
+                                         + "' in friction model " + str(r.dict.keys()))
                 coeff = r.dict[st_name]
                 if not utils.is_integer(coeff):
                     class_name = r.dict['class']

@@ -33,6 +33,8 @@ import sous_trames
 from .abstract_model import *
 from .qgsTreatments import *
 
+import time
+
 cost_fields = ["st_name","start_layer","perm_layer","cost"]
 
 # CostItem implements DictItem and contains below fields :
@@ -57,10 +59,11 @@ class CostItem(DictItem):
         
     def applyItem(self):
         utils.debug("Start runCost")
+        progress.progressConnector.focusLogTab()
         st_name = self.dict["st_name"]
         st_item = sous_trames.getSTByName(st_name)
         startLayer = params.getOrigPath(self.dict["start_layer"])
-        params.checkFileExists(startLayer,"Dispersion Start Layer ")
+        utils.checkFileExists(startLayer,"Dispersion Start Layer ")
         startRaster = st_item.getStartLayerPath()
         params.checkInit()
         extent_layer_path = params.getExtentLayer()
@@ -93,19 +96,19 @@ class CostModel(DictModel):
         
     def applyItems(self,indexes):
         utils.debug("[applyItems]")
+        progress.progressConnector.focusLogTab()
+        time.sleep(10)
         if not indexes:
             internal_error("No indexes in Cost applyItems")
         progress_section = progress.ProgressSection("Cost",len(indexes))
         progress_section.start_section()
-        utils.checkInit()
+        params.checkInit()
         for n in indexes:
             i = self.items[n]
             i.applyItem()
             progress_section.next_step()
         progress_section.end_section()
         
-    def fromXMLRoot(self,root):
-        pass
         
 class CostConnector(AbstractConnector):
 

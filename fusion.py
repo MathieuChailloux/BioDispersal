@@ -26,6 +26,19 @@ fusion_fields = ["name","descr"]
 def catchSTRemoved(name):
     fusionModel.removeSTFromName(name)
         
+@pyqtSlot()
+def catchSTAdded(item):
+    fusionModel.setCurrentST(item.dict["name"])
+        
+@pyqtSlot()
+def catchGroupRemoved(name):
+    for st, grp_model in st_groups.items():
+        grp_model.removeGroupFromName(name)
+        
+# @pyqtSlot()
+# def catchGroupAdded(item):
+    # fusionModel.addGroup(item.dict["name"])
+        
 class FusionModel(abstract_model.AbstractGroupModel):
     
     def __init__(self):
@@ -63,10 +76,16 @@ class FusionModel(abstract_model.AbstractGroupModel):
     def loadAllGroups(self):
         utils.debug("[loadAllGroups]")
         if self.current_st:
-            self.current_model = groups.copyGroupModel(groups.groupsModel)
-            self.st_groups[self.current_st] = self.current_model
+            utils.debug("Current st = " + str(self.current_st))
+            # self.current_model = groups.copyGroupModel(groups.groupsModel)
+            # self.current_model.layoutChanged.emit()
+            # self.st_groups[self.current_st] = self.current_model
+            self.st_groups[self.current_st] = groups.copyGroupModel(groups.groupsModel)
+            self.current_model = self.st_groups[self.current_st]
+            self.current_model.layoutChanged.emit()
             #self.current_model.layoutChanged.emit()
-            self.layoutChanged.emit()
+            #self.st_groups[self.current_st].layoutChanged.emit()
+            #self.layoutChanged.emit()
         else:
             utils.user_error("No sous-trame selected")
         
@@ -81,18 +100,40 @@ class FusionModel(abstract_model.AbstractGroupModel):
     
     def fromXMLRoot(self,root):
         #checkFields(fusion_fields,dict.keys())
-        eraseFlag = xmlUtils.getNbChildren(root) > 0
+        utils.debug("[fromXMLRoot] FusionModel")
+        # utils.debug("config_models " + str(config_parsing.config_models))
+        eraseFlag = xmlUtils.getNbChildren(root) == 0
         if eraseFlag:
+            utils.warn("Nothing to do for FusionModel")
             pass#self.items = []
         for st_root in root:
             st_name = st_root.attrib["name"]
+            utils.debug("parsing '" + str(st_name) + "' sous trame")
+            # utils.debug("config_models " + str(config_parsing.config_models))
             self.current_st = st_name
+            nb_groups = xmlUtils.getNbChildren(st_root)
+            if nb_groups == 0:
+                utils.warn("No groups for st " + str(st_name))
             for grp in st_root:
-                grp_model = config_parsing.parseModel(grp,True)
+                # utils.debug("coucou")
+                # utils.debug("config_models " + str(config_parsing.config_models))
+                #grp_model = config_parsing.parseModel(grp,new_model=True)
+                grp_model = groups.GroupModel()
+                for grp_item in grp:
+                    item = grp_model.mkItemFromDict(grp_item.attrib)
+                    grp_model.addItem(item)
                 if not grp_model:
                     utils.internal_error("Could not parse group model for " + st_name)
+                utils.debug("Setting groups for st " + str(st_name))
                 self.st_groups[st_name] = grp_model
                 self.current_model = grp_model
+                self.current_model.layoutChanged.emit()
+        self.layoutChanged.emit()
+        
+    def testFunc(self,root):
+        utils.debug("[testFunc]")
+        utils.debug("config_models " + str(config_parsing.config_models))
+        
         
     def applyItems(self,indexes):
         utils.info("Applying merge")
@@ -210,6 +251,8 @@ class FusionConnector(abstract_model.AbstractConnector):
     def connectComponents(self):
         super().connectComponents()
         sous_trames.stModel.stRemoved.connect(catchSTRemoved)
+        sous_trames.stModel.stAdded.connect(catchSTAdded)
+        groups.groupsModel.groupRemoved.connect(catchGroupRemoved)
         self.dlg.fusionST.setModel(sous_trames.stModel)
         #self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)

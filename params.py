@@ -90,15 +90,25 @@ def getExtentRectangle():
     return rect
     
 def normalizeRaster(path,resampling_mode="near"):
-    if equalsParamsExtent(path):
-        return path
-    else:
-        #if not new_path:
-        utils.debug("Diff coords : '" + str(getExtentCoords())
-               + "' vs '" + str(qgsUtils.coordsOfExtentPath(path)))
+    layer = qgsUtils.loadRasterLayer(path)
+    # extent
+    params_coords = getExtentCoords()
+    layer_coords = qgsUtils.coordsOfExtentPath(path)
+    same_extent = equalsParamsExtent(path)
+    # resolution
+    resolution = getResolution()
+    layer_res_x = layer.rasterUnitsPerPixelX()
+    layer_res_y = layer.rasterUnitsPerPixelX()
+    same_res = (layer_res_x == resolution and layer_res_y == resolution)
+    if not same_extent:
+        utils.debug("Diff coords : '" + str(params_coords) + "' vs '" + str(layer_coords))
+    if not same_res:
+        utils.debug("Diff resolution : '(" + str(resolution) + ")' vs '("
+                    + str(layer_res_x) + "," + str(layer_res_y) + ")'")
+    if not (same_extent and same_res):
         new_path = utils.mkTmpPath(path)
+        utils.warn("Normalizing raster '" + str(path)+ "' to '" + str(new_path) + "'")
         crs = params.crs
-        resolution = getResolution()
         extent_path = getExtentLayer()
         qgsTreatments.applyWarpGdal(path,new_path,resampling_mode,crs,resolution,extent_path)
         return new_path

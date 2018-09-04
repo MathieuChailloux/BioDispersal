@@ -587,6 +587,9 @@
                    <property name="editTriggers">
                     <set>QAbstractItemView::NoEditTriggers</set>
                    </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
                    <property name="sortingEnabled">
                     <bool>true</bool>
                    </property>
@@ -875,19 +878,19 @@
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_7">
                           <property name="spacing">
-                           <number>0</number>
+                           <number>6</number>
                           </property>
                           <property name="leftMargin">
-                           <number>0</number>
+                           <number>9</number>
                           </property>
                           <property name="topMargin">
-                           <number>0</number>
+                           <number>9</number>
                           </property>
                           <property name="rightMargin">
-                           <number>0</number>
+                           <number>9</number>
                           </property>
                           <property name="bottomMargin">
-                           <number>0</number>
+                           <number>9</number>
                           </property>
                           <item>
                            <widget class="QLabel" name="selectionStep2Label">
@@ -1055,9 +1058,15 @@
                              <layout class="QHBoxLayout" name="horizontalLayout_27">
                               <item>
                                <widget class="QLabel" name="selectionFieldLabel">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
                                 <property name="minimumSize">
                                  <size>
-                                  <width>0</width>
+                                  <width>80</width>
                                   <height>13</height>
                                  </size>
                                 </property>
@@ -1065,22 +1074,6 @@
                                  <string>Champ</string>
                                 </property>
                                </widget>
-                              </item>
-                              <item>
-                               <spacer name="horizontalSpacer_27">
-                                <property name="orientation">
-                                 <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                 <enum>QSizePolicy::Fixed</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>50</width>
-                                  <height>20</height>
-                                 </size>
-                                </property>
-                               </spacer>
                               </item>
                               <item>
                                <widget class="QgsFieldComboBox" name="selectionField">
@@ -1686,6 +1679,9 @@
                       </property>
                       <property name="selectionBehavior">
                        <enum>QAbstractItemView::SelectRows</enum>
+                      </property>
+                      <property name="sortingEnabled">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -2558,6 +2554,9 @@
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_14">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QFrame" name="frame_22">
                    <property name="frameShape">
@@ -2567,6 +2566,9 @@
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_2">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
                     <item row="0" column="0">
                      <widget class="QLabel" name="pondMode">
                       <property name="sizePolicy">
@@ -4260,34 +4262,34 @@
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgsfieldcombobox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsfieldexpressionwidget.h</header>
+   <header>qgis.gui</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>
-   <header>qgsfilewidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgsmaplayercombobox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsprojectionselectionwidget.h</header>
+   <header>qgis.gui</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgsspinbox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsScrollArea</class>

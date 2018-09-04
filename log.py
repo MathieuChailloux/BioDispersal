@@ -31,7 +31,7 @@ class LogConnector:
         self.dlg = dlg
     
     def initGui(self):
-        pass
+        self.dlg.debugButton.setChecked(utils.debug_flag)
     
     def connectComponents(self):
         self.dlg.debugButton.clicked.connect(self.switchDebugMode)

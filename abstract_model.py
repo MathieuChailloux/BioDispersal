@@ -197,6 +197,8 @@ class AbstractGroupModel(QAbstractTableModel):
             return self.items[n]
         else:
             utils.internal_error("[" + self.__class__.__name__ + "] Unexpected index " + str(n))
+            return None
+            #utils.internal_error("[" + self.__class__.__name__ + "] Unexpected index " + str(n))
         
     def rowCount(self,parent=QModelIndex()):
         return len(self.items)
@@ -221,6 +223,8 @@ class AbstractGroupModel(QAbstractTableModel):
             return QVariant()
         row = index.row()
         item = self.getNItem(row)
+        if not item:
+            return QVariant()
         val = item.getNField(index.column())
         if role != Qt.DisplayRole:
             return QVariant()
@@ -343,7 +347,10 @@ class DictModel(AbstractGroupModel):
         utils.debug("removeField " + fieldname)
         for i in self.items:
             utils.debug(str(i.dict.items()))
-            del i.dict[fieldname]
+            if fieldname not in i.dict:
+                utils.warn("Could not delete field '" + str(fieldname))
+            else:
+                del i.dict[fieldname]
             i.recompute()
         self.fields.remove(fieldname)
         self.layoutChanged.emit()

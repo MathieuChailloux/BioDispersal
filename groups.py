@@ -1,7 +1,7 @@
 import os
 
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex
+from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
 from qgis.gui import QgsFileWidget
 import abstract_model
 import utils
@@ -108,6 +108,9 @@ class GroupItem(abstract_model.DictItem):
         
 class GroupModel(abstract_model.DictModel):
 
+    groupAdded = pyqtSignal('PyQt_PyObject')
+    groupRemoved = pyqtSignal('PyQt_PyObject')
+
     def __init__(self):
         super().__init__(self,groups_fields)
         
@@ -123,7 +126,20 @@ class GroupModel(abstract_model.DictModel):
                 return i
         None
         #utils.internal_error("Could not find groups '" + name + "'")
-         
+             
+    def addItem(self,item):
+        super().addItem(item)
+        self.groupAdded.emit(item)
+        
+    def removeItems(self,indexes):
+        names = [self.items[idx.row()].dict["name"] for idx in indexes]
+        super().removeItems(indexes)
+        for n in names:
+            self.groupRemoved.emit(n)
+            
+    def removeGroupFromName(self,name):
+        self.items = [item for item in self.items if item.dict["name"] != name]
+        self.layoutChanged.emit()
 
 class GroupConnector(abstract_model.AbstractConnector):
 

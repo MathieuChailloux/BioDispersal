@@ -244,12 +244,21 @@ class PonderationItem(abstract_model.DictItem):
         
     def applyItem(self):
         mode = self.dict["mode"]
+        friction_layer_path = params.getOrigPath(self.dict["friction"])
+        friction_norm_path = params.normalizeRaster(friction_layer_path)
+        pond_layer_path = params.getOrigPath(self.dict["ponderation"])
+        pond_norm_path = params.normalizeRaster(pond_layer_path)
+        out_layer_path = params.getOrigPath(self.dict["out_layer"])
         if mode == "Direct":
-            self.applyItemDirect()
+            self.applyItemDirect(friction_norm_path,pond_norm_path,out_layer_path)
         elif mode == "Intervalles":
-            self.applyItemValueIvals()
+            self.applyItemValueIvals(friction_norm_path,pond_norm_path,out_layer_path)
         elif mode == "Tampons":
-            self.applyItemBufferIvals()
+            self.applyItemBufferIvals(friction_norm_path,pond_norm_path,out_layer_path)
+        elif mode == "Maximum":
+            self.applyMax(friction_norm_path,pond_norm_path,out_layer_path)
+        elif mode == "Minimum":
+            self.applyMin(friction_norm_path,pond_norm_path,out_layer_path)
         else:
             internal_error("Unexpected ponderation mode '" + str(mode) + "'")
             
@@ -261,36 +270,36 @@ class PonderationItem(abstract_model.DictItem):
             # removeRaster(out_layer)
         applyPonderationGdal(layer1,layer2_norm,out_layer,pos_values=False)
             
-    def applyItemDirect(self):
-        friction_layer_path = params.getOrigPath(self.dict["friction"])
-        ponderation_layer_path = params.getOrigPath(self.dict["ponderation"])
-        out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        self.applyPonderation(friction_layer_path,ponderation_layer_path,out_layer_path)
+    def applyItemDirect(self,friction_path,pond_path,out_path):
+        # friction_layer_path = params.getOrigPath(self.dict["friction"])
+        # ponderation_layer_path = params.getOrigPath(self.dict["ponderation"])
+        # out_layer_path = params.getOrigPath(self.dict["out_layer"])
+        self.applyPonderation(friction_path,ponderation_path,out_path)
         
-    def applyItemValueIvals(self):
-        friction_layer_path = params.getOrigPath(self.dict["friction"])
-        friction_norm_path = params.normalizeRaster(friction_layer_path)
-        pond_layer_path = params.getOrigPath(self.dict["ponderation"])
-        pond_norm_path = params.normalizeRaster(pond_layer_path)
-        out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        tmp_path = mkTmpPath(out_layer_path)
+    def applyItemValueIvals(self,friction_path,pond_path,out_path):
+        # friction_layer_path = params.getOrigPath(self.dict["friction"])
+        # friction_norm_path = params.normalizeRaster(friction_layer_path)
+        # pond_layer_path = params.getOrigPath(self.dict["ponderation"])
+        # pond_norm_path = params.normalizeRaster(pond_layer_path)
+        # out_layer_path = params.getOrigPath(self.dict["out_layer"])
+        tmp_path = mkTmpPath(out_path)
         ivals = self.dict["intervals"]
         ival_model = PondValueIvalModel.fromStr(ivals)
         ival_model.checkModel()
         gdalc_calc_expr = ival_model.toGdalCalcExpr()
-        applyGdalCalc(pond_norm_path,tmp_path,gdalc_calc_expr)
-        self.applyPonderation(friction_norm_path,tmp_path,out_layer_path)
+        applyGdalCalc(pond_path,tmp_path,gdalc_calc_expr)
+        self.applyPonderation(friction_path,tmp_path,out_path)
         
         
-    def applyItemBufferIvals(self):
-        friction_layer_path = params.getOrigPath(self.dict["friction"])
-        friction_norm_path = params.normalizeRaster(friction_layer_path)
-        pond_layer_path = params.getOrigPath(self.dict["ponderation"])
-        pond_buf_path = mkTmpPath(pond_layer_path,suffix="_buf")
-        
+    def applyItemBufferIvals(self,friction_path,pond_path,out_path):
+        # friction_layer_path = params.getOrigPath(self.dict["friction"])
+        # friction_norm_path = params.normalizeRaster(friction_layer_path)
+        # pond_layer_path = params.getOrigPath(self.dict["ponderation"])
+        # pond_buf_path = mkTmpPath(pond_layer_path,suffix="_buf")
         #pond_norm_path = params.normalizeRaster(pond_layer_path)
-        out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        tmp_path = mkTmpPath(out_layer_path)
+        #out_layer_path = params.getOrigPath(self.dict["out_layer"])
+        pond_buf_path = mkTmpPath(pond_path,suffix="_buf")
+        tmp_path = mkTmpPath(out_path)
         ivals = self.dict["intervals"]
         ival_model = PondBufferIvalModel.fromStr(ivals)
         ival_model.checkModel()
@@ -311,10 +320,24 @@ class PonderationItem(abstract_model.DictItem):
         #applyGdalCalc(pond_norm_path,pond_buf_norm_path,gdalc_calc_expr)
         pond_buf_nonull = mkTmpPath(pond_buf_path,suffix="_nonull")
         applyRNull(pond_buf_norm,1,pond_buf_nonull)
-        self.applyPonderation(friction_norm_path,pond_buf_nonull,out_layer_path)
+        self.applyPonderation(friction_path,pond_buf_nonull,out_path)
         removeRaster(pond_buf_path)
         removeRaster(pond_buf_reclassed)
         removeRaster(pond_buf_norm)
+        
+    def applyMax(self,layer1,layer2,out_layer):
+        # checkFileExists(layer1)
+        # checkFileExists(layer2)
+        # layer1_norm = params.normalizeRaster(layer1)
+        # layer2_norm = params.normalizeRaster(layer2)
+        applyMaxGdal(layer1,layer2,out_layer,load_flag=True)
+        
+    def applyMin(self,layer1,layer2,out_layer):
+        # checkFileExists(layer1)
+        # checkFileExists(layer2)
+        # layer1_norm = params.normalizeRaster(layer1)
+        # layer2_norm = params.normalizeRaster(layer2)
+        applyMinGdal(layer1,layer2,out_layer,load_flag=True)
         
 
 class PonderationModel(abstract_model.DictModel):
@@ -365,6 +388,8 @@ class PonderationConnector(abstract_model.AbstractConnector):
         self.dlg.pondModeCombo.addItem("Direct")
         self.dlg.pondModeCombo.addItem("Intervalles")
         self.dlg.pondModeCombo.addItem("Tampons")
+        self.dlg.pondModeCombo.addItem("Maximum")
+        self.dlg.pondModeCombo.addItem("Minimum")
         self.dlg.pondModeCombo.setCurrentText("Direct")
         self.activateDirectMode()
         
@@ -386,7 +411,7 @@ class PonderationConnector(abstract_model.AbstractConnector):
         out_path = params.normalizePath(self.dlg.pondOutLayer.filePath())
         if not out_path:
             user_error("No output path selected for ponderation")
-        if mode == "Direct":
+        if mode in ["Direct","Maximum","Minimum"]:
             ivals =  ""
         elif mode == "Intervalles":
             ivals = str(self.valueConnector.model)
@@ -404,7 +429,7 @@ class PonderationConnector(abstract_model.AbstractConnector):
         return item
     
     def switchPondMode(self,mode):
-        if mode == "Direct":
+        if mode in ["Direct","Maximum","Minimum"]:
             self.activateDirectMode()
         elif mode == "Intervalles":
             self.activateIvalMode()
