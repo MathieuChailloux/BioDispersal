@@ -102,6 +102,7 @@ def parseModel(model_root,new_model=False):
             fields = dict.keys()
             item = model.mkItemFromDict(dict)
             model.addItem(item)
+        model.layoutChanged.emit()
         return model
     # except Exception as e:
         # utils.debug("cas 3")

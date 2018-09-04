@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QFileDialog
 from qgis.gui import QgsFileWidget
 
 import utils
+import qgsUtils
 import progress
 import sous_trames
 import classes
@@ -195,11 +196,8 @@ class FrictionModel(abstract_model.DictModel):
             st_merged_fname = st_item.getMergedPath()
             utils.checkFileExists(st_merged_fname)
             st_friction_fname = st_item.getFrictionPath()
-            if os.path.isfile(st_friction_fname):
-                os.remove(st_friction_fname)
-                aux_name = st_friction_fname + ".aux.xml"
-                if os.path.isfile(aux_name):
-                    os.remove(aux_name)
+            utils.debug("st_friction_fname = " + str(st_friction_fname))
+            qgsUtils.removeRaster(st_friction_fname)
             reclass_dict = {}
             for r in self.items:
                 st_name = st_item.dict["name"]

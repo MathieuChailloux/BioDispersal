@@ -32,7 +32,8 @@ def catchSTAdded(item):
         
 @pyqtSlot()
 def catchGroupRemoved(name):
-    for st, grp_model in st_groups.items():
+    global fusionModel
+    for st, grp_model in fusionModel.st_groups.items():
         grp_model.removeGroupFromName(name)
         
 # @pyqtSlot()
@@ -128,6 +129,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 self.st_groups[st_name] = grp_model
                 self.current_model = grp_model
                 self.current_model.layoutChanged.emit()
+                grp_model.layoutChanged.emit()
         self.layoutChanged.emit()
         
     def testFunc(self,root):
