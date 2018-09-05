@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>BioDispersal</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -44,6 +44,12 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
       <item row="0" column="0">
        <widget class="QSplitter" name="splitter">
         <property name="sizePolicy">
@@ -73,8 +79,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>857</width>
-            <height>669</height>
+            <width>863</width>
+            <height>704</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -84,6 +90,9 @@
            </sizepolicy>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
            <item row="0" column="0">
             <widget class="QToolButton" name="openProject">
              <property name="sizePolicy">
@@ -4240,16 +4249,6 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="mButtonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
