@@ -36,9 +36,9 @@ import progress
 selection_fields = ["in_layer","expr","class","group"]
 
 resampling_assoc = {"Plus proche voisin" : "near",
-                    "Moyenne" : "mean",
+                    "Moyenne" : "average",
                     "Bilinéaire" : "bilinear",
-                    "Bicubique" : "bicubic"}
+                    "Cubique" : "cubic"}
 
 # SelectionItem implements DictItem and contains below fields :
 #   - 'in_layer' : input layer from which features are selected
@@ -74,7 +74,7 @@ class SelectionItem(DictItem):
         checkFileExists(in_layer_path)
         group_name = self.dict["group"]
         group_item = groups.getGroupByName(group_name)
-        tmp_path = group_item.getRasterTmpPath()
+        #tmp_path = group_item.getRasterTmpPath()
         out_path = group_item.getRasterPath()
         mode = self.dict["expr"]
         resampling_mode = resampling_assoc[mode]
@@ -82,23 +82,23 @@ class SelectionItem(DictItem):
         crs = params.params.crs
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
-        applyWarpGdal(in_layer_path,tmp_path,resampling_mode,crs,resolution,extent_path)
-        create_classes = True
-        if create_classes:
-            tmp_layer = loadRasterLayer(tmp_path)
-            dp = tmp_layer.dataProvider()
-            extent_rect = params.getExtentRectangle()
-            width = dp.stepWidth()
-            height = dp.stepHeight()
-            block = dp.block(1,extent_rect,width,height)
-            values = set()
-            for i in range(width):
-                for j in range(height):
-                    values.add(block.value(i,j))
-            for v in values:
-                class_name = group_name + "_" + str(v)
+        applyWarpGdal(in_layer_path,out_path,resampling_mode,crs,resolution,extent_path,True)
+        # create_classes = True
+        # if create_classes:
+            # tmp_layer = loadRasterLayer(out_path)
+            # dp = tmp_layer.dataProvider()
+            # extent_rect = params.getExtentRectangle()
+            # width = dp.stepWidth()
+            # height = dp.stepHeight()
+            # block = dp.block(1,extent_rect,width,height)
+            # values = set()
+            # for i in range(width):
+                # for j in range(height):
+                    # values.add(block.value(i,j))
+            # for v in values:
+                # class_name = group_name + "_" + str(v)
                 
-        utils.debug("values = " + str(values))
+        # utils.debug("values = " + str(values))
         
     # Selection is performed in 3 steps :
     #   1) creates group layer (group_vector.shp) if not existing with below fields :
@@ -241,7 +241,7 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionResampleCombo.addItem("Plus proche voisin")
         self.dlg.selectionResampleCombo.addItem("Moyenne")
         self.dlg.selectionResampleCombo.addItem("Bilinéaire")
-        self.dlg.selectionResampleCombo.addItem("Bicubique")
+        self.dlg.selectionResampleCombo.addItem("Cubique")
         
     def connectComponents(self):
         super().connectComponents()
