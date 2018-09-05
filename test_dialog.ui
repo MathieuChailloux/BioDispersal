@@ -351,6 +351,9 @@
                </item>
                <item row="2" column="0" colspan="2">
                 <widget class="QTableView" name="paramsView">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
@@ -581,7 +584,7 @@
                      <enum>QAbstractScrollArea::AdjustIgnored</enum>
                     </property>
                     <property name="editTriggers">
-                     <set>QAbstractItemView::NoEditTriggers</set>
+                     <set>QAbstractItemView::DoubleClicked|QAbstractItemView::SelectedClicked</set>
                     </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>

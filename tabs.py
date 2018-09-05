@@ -67,7 +67,6 @@ class TabConnector:
         self.loadNTab(0)
         
     def loadNTab(self,n):
-        utils.debug_flag = True
         utils.debug("[loadNTab] " + str(n))
         nb_tabs = len(self.tabs)
         if n >= nb_tabs:

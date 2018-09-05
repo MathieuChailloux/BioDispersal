@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
+from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
 #from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
@@ -130,6 +130,13 @@ class STModel(abstract_model.DictModel):
         for n in names:
             utils.debug("stRemoved " + str(n))
             self.stRemoved.emit(n)
+            
+    def flags(self, index):
+        if index.column() == 0:
+            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        else:
+            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        return flags
         
 class STConnector(abstract_model.AbstractConnector):
 

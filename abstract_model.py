@@ -226,7 +226,7 @@ class AbstractGroupModel(QAbstractTableModel):
         if not item:
             return QVariant()
         val = item.getNField(index.column())
-        if role != Qt.DisplayRole:
+        if role not in [Qt.DisplayRole,Qt.EditRole]:
             return QVariant()
         elif row < self.rowCount():
             return(QVariant(val))
