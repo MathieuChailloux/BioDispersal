@@ -80,7 +80,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
     width = int((x_max - x_min) / float(resolution))
     height = int((y_max - y_min) / float(resolution))
     parameters = ['gdal_rasterize',
-                  #'-at',
+                  '-at',
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                   '-ts', str(width), str(height),
                   '-ot','Int32',

@@ -102,7 +102,6 @@ class CostModel(DictModel):
     def applyItems(self,indexes):
         utils.debug("[applyItems]")
         progress.progressConnector.focusLogTab()
-        time.sleep(10)
         if not indexes:
             internal_error("No indexes in Cost applyItems")
         progress_section = progress.ProgressSection("Cost",len(indexes))
