@@ -208,10 +208,11 @@ class FrictionModel(abstract_model.DictModel):
                 coeff = r.dict[st_name]
                 if not utils.is_integer(coeff):
                     class_name = r.dict['class']
-                    utils.user_error("Friction coefficient for class " + class_name
+                    utils.warn("Friction coefficient for class " + class_name
                                      + " and st " + str(st_name)
                                      + " is not an integer : '" + str(coeff) + "'")
-                reclass_dict[r.dict['code']] = r.dict[st_item.dict["name"]]
+                else:
+                    reclass_dict[r.dict['code']] = r.dict[st_item.dict["name"]]
             utils.debug("Reclass dict : " + str(reclass_dict))
             #utils.debug("applyReclassGdal")
             qgsTreatments.applyReclassGdalFromDict(st_merged_fname,st_friction_fname,
@@ -232,6 +233,7 @@ class FrictionModel(abstract_model.DictModel):
             for i in self.items:
                 utils.debug("writing row " + str(i.dict))
                 writer.writerow(i.dict)
+        utils.info("Friction saved to file '" + str(fname) + "'")
                 
     @classmethod
     def fromCSV(cls,fname):
@@ -310,22 +312,25 @@ class FrictionConnector(abstract_model.AbstractConnector):
         # utils.debug("applyItems to indexes " + str(indexes))
         # self.model.applyItems(indexes)
         
-    def testSave(self):
-        fname = QFileDialog.getOpenFileName()
-        self.saveCSV(fname)
-        
     def loadCSV(self,fname):
         global frictionModel, frictionFields
         utils.checkFileExists(fname)
         new_model = self.model.fromCSV(fname)
-        self.model = new_model
-        frictionModel = new_model
-        frictionFields = new_model.fields
-        self.connectComponents()
-        self.model.layoutChanged.emit()
+        self.model.items = new_model.items
+        self.model.fields = new_model.fields
+        frictionModel = self.model
+        frictionFields = self.model.fields
+        # self.model = new_model
+        # frictionModel = new_model
+        # frictionFields = new_model.fields
+        # utils.debug("frictionFields = " + str(new_model.fields))
+        #self.connectComponents()
+        #self.model.layoutChanged.emit()
         frictionModel.layoutChanged.emit()
+        utils.info("Friction loaded from '" + str(fname))
         
     def loadCSVAction(self):
+        utils.debug("loadCSVAction " + str(self))
         fname = params.openFileDialog(parent=self.dlg,
                                       msg="Ouvrir le tableau de friction",
                                       filter="*.csv")
@@ -336,6 +341,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         self.model.saveCSV(fname)
      
     def saveCSVAction(self):
+        utils.debug("saveCSVAction")
         fname = params.saveFileDialog(parent=self.dlg,
                                       msg="Sauvegarder le tableau de friction sous",
                                       filter="*.csv")

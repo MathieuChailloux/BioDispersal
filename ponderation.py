@@ -71,8 +71,8 @@ class PondValueIvalItem(PondIvalItem):
 
     def toGdalCalcExpr(self,idx):
         s = "(" + str(self.dict["pond_value"])
-        s += "*A*less_equal(" + str(self.dict["low_bound"]) + ",A)"
-        s += "*less(A," + str(self.dict["up_bound"]) + "))"
+        s += "*A*less_equal(" + str(self.dict["low_bound"]) + ",B)"
+        s += "*less(B," + str(self.dict["up_bound"]) + "))"
         return s
         
 class PondBufferIvalItem(PondIvalItem):
@@ -282,13 +282,13 @@ class PonderationItem(abstract_model.DictItem):
         # pond_layer_path = params.getOrigPath(self.dict["ponderation"])
         # pond_norm_path = params.normalizeRaster(pond_layer_path)
         # out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        tmp_path = mkTmpPath(out_path)
+        #tmp_path = mkTmpPath(out_path)
         ivals = self.dict["intervals"]
         ival_model = PondValueIvalModel.fromStr(ivals)
         ival_model.checkModel()
         gdalc_calc_expr = ival_model.toGdalCalcExpr()
-        applyGdalCalc(pond_path,tmp_path,gdalc_calc_expr)
-        self.applyPonderation(friction_path,tmp_path,out_path)
+        applyGdalCalcAB_ANull(friction_path,pond_path,out_path,gdalc_calc_expr,load_flag=True)
+        #self.applyPonderation(friction_path,tmp_path,out_path)
         
         
     def applyItemBufferIvals(self,friction_path,pond_path,out_path):
@@ -304,7 +304,7 @@ class PonderationItem(abstract_model.DictItem):
         ival_model = PondBufferIvalModel.fromStr(ivals)
         ival_model.checkModel()
         buffer_distances = ival_model.toDistances()
-        applyRBuffer(pond_layer_path,buffer_distances,pond_buf_path)
+        applyRBuffer(pond_path,buffer_distances,pond_buf_path)
         gdal_calc_expr = ival_model.toGdalCalcExpr()
         pond_buf_reclassed = mkTmpPath(pond_buf_path,suffix="_reclassed")
         applyGdalCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
@@ -324,6 +324,7 @@ class PonderationItem(abstract_model.DictItem):
         removeRaster(pond_buf_path)
         removeRaster(pond_buf_reclassed)
         removeRaster(pond_buf_norm)
+        removeRaster(pond_buf_nonull)
         
     def applyMax(self,layer1,layer2,out_layer):
         # checkFileExists(layer1)

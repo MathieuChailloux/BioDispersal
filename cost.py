@@ -35,7 +35,7 @@ from .qgsTreatments import *
 
 import time
 
-cost_fields = ["st_name","start_layer","perm_layer","cost"]
+cost_fields = ["st_name","start_layer","perm_layer","cost","out_layer"]
 
 # CostItem implements DictItem and contains below fields :
 #   - 'st_name' : sous-trame name
@@ -44,11 +44,12 @@ cost_fields = ["st_name","start_layer","perm_layer","cost"]
 #   - 'cost' : maximal cost
 class CostItem(DictItem):
 
-    def __init__(self,st_name,start_layer,perm_layer,cost):
+    def __init__(self,st_name,start_layer,perm_layer,cost,out_layer):
         dict = {"st_name" : st_name,
                 "start_layer" : start_layer,
                 "perm_layer" : perm_layer,
-                "cost" : cost}
+                "cost" : cost,
+                "out_layer" : out_layer}
         super().__init__(dict)
         
     def equals(self,other):
@@ -72,7 +73,10 @@ class CostItem(DictItem):
         permRaster = params.getOrigPath(self.dict["perm_layer"])
         cost = self.dict["cost"]
         tmpPath = st_item.getDispersionTmpPath(cost)
-        outPath = st_item.getDispersionPath(cost)
+        #outPath = st_item.getDispersionPath(cost)
+        outPath = params.getOrigPath(self.dict["out_layer"])
+        if os.path.isfile(outPath):
+            removeRaster(outPath)
         applyRCost(startRaster,permRaster,cost,tmpPath)
         applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
         removeRaster(tmpPath)
@@ -91,7 +95,8 @@ class CostModel(DictModel):
     @staticmethod
     def mkItemFromDict(dict):
         utils.checkFields(cost_fields,dict.keys())
-        item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],dict["cost"])
+        item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
+                        dict["cost"],dict["out_layer"])
         return item
         
     def applyItems(self,indexes):
@@ -123,7 +128,11 @@ class CostConnector(AbstractConnector):
     def initGui(self):
         self.dlg.costRemove.setToolTip("Supprimer les dispersions sélectionnées")
         self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        self.dlg.costStartLayer.setFilter("*.shp")
         self.dlg.costPermRasterCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.dlg.costPermRaster.setFilter("*.tif")
+        self.dlg.costOutLayer.setFilter("*.tif")
+        self.dlg.costOutLayer.setStorageMode(QgsFileWidget.SaveFile)
         
     def connectComponents(self):
         self.dlg.costSTCombo.setModel(sous_trames.stModel)
@@ -186,6 +195,7 @@ class CostConnector(AbstractConnector):
             utils.user_error("No permability layer selected")
         perm_layer_path = params.normalizePath(pathOfLayer(perm_layer))
         cost = str(self.dlg.costMaxVal.value())
-        cost_item = CostItem(st_name,start_layer_path,perm_layer_path,cost)
+        out_layer_path = params.normalizePath(self.dlg.costOutLayer.filePath())
+        cost_item = CostItem(st_name,start_layer_path,perm_layer_path,cost,out_layer_path)
         return cost_item
         

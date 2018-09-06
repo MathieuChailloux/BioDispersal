@@ -74,7 +74,8 @@ class ArrayItem(AbstractGroupItem):
         if n < self.nb_fields:
             return self.arr[n]
         else:
-            utils.internal_error("getNField(" + str(n) + ") out of bounds : " + str(nb_fields))
+            utils.warn("getNField(" + str(n) + ") out of bounds : " + str(nb_fields))
+            return None
             #assert false
             
     def updateNField(self,n,value):
@@ -113,7 +114,9 @@ class DictItem(AbstractGroupItem):
         else:
             utils.debug("getNField " + str(n))
             utils.debug("item fields = " + str(self.dict.keys()))
-            utils.internal_error("Accessing " + str(n) + " field < " + str(self.nb_fields))
+            utils.warn("getNField(" + str(n) + ") out of bounds : " + str(nb_fields))
+            return None
+            #utils.internal_error("Accessing " + str(n) + " field >= " + str(self.nb_fields))
             
     def updateNField(self,n,value):
         if n < self.nb_fields:

@@ -230,16 +230,34 @@ def applyReclassGdalFromDict(in_path,out_path,reclass_dict,load_flag=False):
     # res_layer = qgsUtils.loadRasterLayer(out_path)
     # QgsProject.instance().addMapLayer(res_layer)
     
+def applyGdalCalcAB_ANull(in_path1,in_path2,out_path,expr,load_flag=False):
+    utils.debug("qgsTreatments.applyGdalCalcAB")
+    if os.path.isfile(out_path):
+        qgsUtils.removeRaster(out_path)
+    cmd_args = ['gdal_calc.bat',
+                '-A', in_path1,
+                '-B', in_path2,
+                #'--type=Int32',
+                '--NoDataValue='+nodata_val,
+                '--overwrite',
+                '--outfile='+out_path]
+    expr_opt = '--calc=' + str(expr)
+    cmd_args.append(expr_opt)
+    utils.executeCmd(cmd_args)
+    if load_flag:
+        res_layer = qgsUtils.loadRasterLayer(out_path)
+        QgsProject.instance().addMapLayer(res_layer)
+    
 # Creates raster 'out_path' from 'in_path1', 'in_path2' and 'expr'.
 def applyGdalCalcAB(in_path1,in_path2,out_path,expr,load_flag=False):
     utils.debug("qgsTreatments.applyGdalCalcAB")
     if os.path.isfile(out_path):
         qgsUtils.removeRaster(out_path)
     tmp_no_data_val = -1
-    nonull_p1 = utils.mkTmpPath(in_path1,suffix="nonull")
-    nonull_p2 = utils.mkTmpPath(in_path2,suffix="nonull")
-    nonull_out = utils.mkTmpPath(out_path,suffix="nonull")
-    nonull_out_tmp = utils.mkTmpPath(nonull_out,suffix="tmp")
+    nonull_p1 = utils.mkTmpPath(in_path1,suffix="_nonull")
+    nonull_p2 = utils.mkTmpPath(in_path2,suffix="_nonull")
+    nonull_out = utils.mkTmpPath(out_path,suffix="_nonull")
+    nonull_out_tmp = utils.mkTmpPath(nonull_out,suffix="_tmp")
     applyRNull(in_path1,tmp_no_data_val,nonull_p1)
     applyRNull(in_path2,tmp_no_data_val,nonull_p2)
     cmd_args = ['gdal_calc.bat',
@@ -256,8 +274,12 @@ def applyGdalCalcAB(in_path1,in_path2,out_path,expr,load_flag=False):
     reset_nodata_expr += '+(A!=' + str(tmp_no_data_val) + ')*A'
     applyGdalCalc(nonull_out,nonull_out_tmp,reset_nodata_expr)
     applyRSetNull(nonull_out_tmp,nodata_val,out_path)
-    #qgsUtils.removeRaster(nonull_out)
-    #qgsUtils.removeRaster(nonull_out_tmp)
+    remove_tmp_flag = not utils.debug_flag
+    if remove_tmp_flag:
+        qgsUtils.removeRaster(nonull_p1)
+        qgsUtils.removeRaster(nonull_p2)
+        qgsUtils.removeRaster(nonull_out)
+        qgsUtils.removeRaster(nonull_out_tmp)
     if load_flag:
         res_layer = qgsUtils.loadRasterLayer(out_path)
         QgsProject.instance().addMapLayer(res_layer)
@@ -269,8 +291,8 @@ def applyPonderationGdal(a_path,b_path,out_path,pos_values=False):
     if os.path.isfile(out_path):
         qgsUtils.removeRaster(out_path)
     cmd_args = ['gdal_calc.bat',
-                '-A', in_path1,
-                '-B', in_path2,
+                '-A', a_path,
+                '-B', b_path,
                 #'--type=Int32',
                 '--NoDataValue='+nodata_val,
                 '--overwrite',
