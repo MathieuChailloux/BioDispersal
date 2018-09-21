@@ -190,7 +190,7 @@ def applyGdalCalc(in_path,out_path,expr,load_flag=False,more_args=[]):
         qgsUtils.removeRaster(out_path)
     cmd_args = ['gdal_calc.bat',
                 '-A', in_path,
-                #'--type=Int32',
+                '--type=Int32',
                 '--outfile='+out_path,
                 '--NoDataValue='+nodata_val,
                 '--overwrite']
@@ -209,7 +209,7 @@ def applyFilterGdalFromMaxVal(in_path,out_path,max_val,load_flag=False):
     expr = ('(A*less_equal(A,' + str(max_val) + ')*less_equal(0,A))'
         + '+(' + str(nodata_val) + '*less(' + str(max_val) + ',A))'
         + '+(' + str(nodata_val) + '*less(A,0))')
-    applyGdalCalc(in_path,out_path,expr,load_flag)
+    applyGdalCalc(in_path,out_path,expr,load_flag,more_args=['--type=Float32'])
     # utils.executeCmdAsScript(cmd_args)
     # res_layer = qgsUtils.loadRasterLayer(out_path)
     # QgsProject.instance().addMapLayer(res_layer)
@@ -314,7 +314,7 @@ def applyMaxGdal(in_path1,in_path2,out_path,load_flag=False):
     
 # Creates raster 'out_path' keeping maximum value from 'in_path1' and 'in_path2'.
 def applyMinGdal(in_path1,in_path2,out_path,load_flag=False):
-    utils.debug("qgsTreatments.applyMaxGdal")
+    utils.debug("qgsTreatments.applyMinGdal")
     expr = 'A*less_equal(A,B) + B*less(B,A)'
     applyGdalCalcAB(in_path1,in_path2,out_path,expr,load_flag)
     

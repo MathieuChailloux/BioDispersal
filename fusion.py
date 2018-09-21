@@ -149,6 +149,11 @@ class FusionModel(abstract_model.AbstractGroupModel):
         for st in self.st_groups.keys():
             st_item = sous_trames.getSTByName(st)
             groups = self.st_groups[st]
+            if not groups.items:
+                utils.warn("No layer for group for subnetwork '" + str(st) + "', ignoring.")
+                continue
+            else:
+                utils.info("groups = " + str(groups.items))
             utils.debug("apply fusion to " + st)
             utils.debug(str([g.dict["name"] for g in groups.items]))
             grp_args = [g.getRasterPath() for g in reversed(groups.items)]

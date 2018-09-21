@@ -94,9 +94,16 @@ class CostModel(DictModel):
     
     @staticmethod
     def mkItemFromDict(dict):
-        utils.checkFields(cost_fields,dict.keys())
-        item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
-                        dict["cost"],dict["out_layer"])
+        if "out_layer" in dict:
+            utils.checkFields(cost_fields,dict.keys())
+            item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
+                            dict["cost"],dict["out_layer"])
+        else:
+            st_name = dict["st_name"]
+            st_item = sous_trames.getSTByName(st_name)
+            out_path = st_item.getDispersionPath(dict["cost"])
+            item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
+                            dict["cost"],out_path)
         return item
         
     def applyItems(self,indexes):
@@ -134,13 +141,13 @@ class CostConnector(AbstractConnector):
         self.dlg.costOutLayer.setStorageMode(QgsFileWidget.SaveFile)
         
     def connectComponents(self):
+        super().connectComponents()
         self.dlg.costSTCombo.setModel(sous_trames.stModel)
         #self.dlg.costStartLayerCombo.layerChanged.connect(self.setStartLayerFromCombo)
         self.dlg.costStartLayer.fileChanged.connect(self.setStartLayer)
         self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
         #self.dlg.costPermRasterCombo.layerChanged.connect(self.setPermRasterFromCombo)
         #self.dlg.costRun.clicked.connect(self.applyItems)
-        super().connectComponents()
         # self.dlg.costRunSelectionMode.stateChanged.connect(self.switchOnlySelection)
         
     # def applyItems(self):
@@ -166,7 +173,7 @@ class CostConnector(AbstractConnector):
         self.dlg.costStartLayerCombo.setLayer(layer)
         
     def setPermRaster(self,path):
-        layer = loadRasterLayer(path)
+        layer = loadRasterLayer(path,loadProject=True)
         self.dlg.costPermRasterCombo.setLayer(layer)
         
     def setStartLayerFromCombo(self,layer):

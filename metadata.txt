@@ -10,8 +10,8 @@
 name=BioDispersal
 qgisMinimumVersion=3.0
 description=Computes ecological continuities based on environments permeability
-version=2.0
-author=IRSTEA
+version=1.3
+author=Chailloux Mathieu, IRSTEA, UMR TETIS
 email=mathieu.chailloux@irstea.fr
 
 about=This plugin computes ecological continuities based on environments permeability.
