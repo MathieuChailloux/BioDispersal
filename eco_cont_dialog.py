@@ -147,11 +147,11 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
             traceback.print_tb(tracebackobj, None, tbinfofile)
             tbinfofile.seek(0)
             tbinfo = tbinfofile.read()
-            errmsg = str(excType) + "," + str(excValue)
+            errmsg = str(excType) + " : " + str(excValue)
             separator = '-' * 80
             sections = [separator, errmsg, separator]
             msg = '\n'.join(sections)
-            final_msg = tbinfo + msg
+            final_msg = tbinfo + utils.mkBoldRed(msg)
             utils.print_func(final_msg)
         self.mTabWidget.setCurrentWidget(self.logTab)
         progress.progressConnector.clear()

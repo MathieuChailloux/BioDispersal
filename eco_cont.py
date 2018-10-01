@@ -197,6 +197,8 @@ class EcologicalContinuity:
         utils.print_func = print
         sys.excepthook = qgis_excepthook
         if self.dlg:
+            utils.info("unload")
+            self.dlg.connectors["Group"].disconnectComponents()
             self.dlg.initializeGlobals()
         del self.toolbar
 

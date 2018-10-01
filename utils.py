@@ -60,16 +60,22 @@ def info(msg):
 def warn(msg):
     printDate("<font color=\"orange\">[warn] " + msg + "</font>")
     
+def mkBoldRed(msg):
+    return "<b><font color=\"red\">" + msg + "</font></b>"
+    
+def error_msg(msg,prefix):
+    printDate(mkBoldRed("[" + prefix + "] " + msg))
+    
 def user_error(msg):
-    printDate("<b><font color=\"red\">[user error] " + msg + "</font></b>")
+    error_msg(msg,"user error")
     raise CustomException(msg)
     
 def internal_error(msg):
-    printDate("<b><font color=\"red\">[internal error] " + msg + "</font>")
+    error_msg(msg,"internal error")
     raise CustomException(msg)
     
 def todo_error(msg):
-    printDate("<b><font color=\"red\">[Feature not yet implemented] " + msg + "</font>")
+    error_msg(msg,"Feature not yet implemented")
     raise CustomException(msg)
 
 class Section:
@@ -158,7 +164,11 @@ def checkDescr(item,prefix=None):
     if prefix == None:
         prefix = item.__class__.name
     if not item.dict["descr"]:
-        warn(prefix + " with empty name '" + str(item.dict["descr"]) + "'")
+        if "name" in item.dict:
+            name = " " + str(item.dict["name"])
+        else:
+            name = " "
+        warn(prefix + name + " with empty description")
         
 
 # Subprocess utils

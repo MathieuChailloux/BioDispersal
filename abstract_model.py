@@ -199,9 +199,10 @@ class AbstractGroupModel(QAbstractTableModel):
         if n < self.rowCount():
             return self.items[n]
         else:
-            utils.internal_error("[" + self.__class__.__name__ + "] Unexpected index " + str(n))
+            utils.warn("[" + self.__class__.__name__ + "] Unexpected index " + str(n))
             return None
-            #utils.internal_error("[" + self.__class__.__name__ + "] Unexpected index " + str(n))
+            # utils.internal_error("[" + self.__class__.__name__ + "] Unexpected index " + str(n))
+            # return None
         
     def rowCount(self,parent=QModelIndex()):
         return len(self.items)
@@ -392,6 +393,15 @@ class AbstractConnector:
         if self.selectionCheckbox:
             self.selectionCheckbox.stateChanged.connect(self.switchOnlySelection)
         #self.view.horizontalHeader().sectionClicked.connect(self.model.orderItems)
+        
+    def disconnectComponents(self):
+        if self.addButton:
+            self.addButton.disconnect()
+        if self.removeButton:
+            self.removeButton.disconnect()
+        if self.runButton:
+            self.runButton.disconnect()
+        
                 
     def switchOnlySelection(self):
         new_val = not self.onlySelection

@@ -156,6 +156,7 @@ class GroupConnector(abstract_model.AbstractConnector):
         
     def connectComponents(self):
         super().connectComponents()
+        self.dlg.selectionGroupCombo.currentTextChanged.connect(self.setGroupName)
 
     def mkItem(self):
         name = self.dlg.selectionGroupName.text()
@@ -174,4 +175,10 @@ class GroupConnector(abstract_model.AbstractConnector):
     def addItem(self,item):
         super().addItem()
         self.dlg.selectionGroupCombo.setCurrentIndex(len(self.model.items)-1)
+        
+    def setGroupName(self,text):
+        utils.debug("setGroupName " + str(text))
+        grp_item = getGroupByName(text)
+        self.dlg.selectionGroupName.setText(grp_item.dict["name"])
+        self.dlg.selectionGroupDescr.setText(grp_item.dict["descr"])
         
