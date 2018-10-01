@@ -66,7 +66,7 @@ class EcologicalContinuity:
 
         # Create the dialog (after translation) and keep reference
         self.dlg = EcologicalContinuityDialog()
-        utils.print_func("init")
+        utils.debug("init")
         #self.dlg = BioDispersalDialog()
         #self.dlg = TestDialog()
 
@@ -167,7 +167,7 @@ class EcologicalContinuity:
         return action
 
     def initGui(self):
-        utils.print_func("initGui")
+        utils.debug("initGui")
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/eco_cont/icons/cerf.png'
@@ -202,7 +202,7 @@ class EcologicalContinuity:
 
 
     def run(self):
-        utils.print_func("run")
+        utils.debug("run")
         """Run method that performs all the real work"""
         #self.dlg.runButton.clicked.connect(self.dlg.runCost)
         #self.dlg.connectComponents()

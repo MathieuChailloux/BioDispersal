@@ -58,18 +58,18 @@ def info(msg):
     printDate("[info] " + msg)
     
 def warn(msg):
-    printDate("[warn] " + msg)
+    printDate("<font color=\"orange\">[warn] " + msg + "</font>")
     
 def user_error(msg):
-    printDate("[user error] " + msg)
+    printDate("<b><font color=\"red\">[user error] " + msg + "</font></b>")
     raise CustomException(msg)
     
 def internal_error(msg):
-    printDate("[internal error] " + msg)
+    printDate("<b><font color=\"red\">[internal error] " + msg + "</font>")
     raise CustomException(msg)
     
 def todo_error(msg):
-    printDate("[Feature not yet implemented] " + msg)
+    printDate("<b><font color=\"red\">[Feature not yet implemented] " + msg + "</font>")
     raise CustomException(msg)
 
 class Section:
