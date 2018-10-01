@@ -34,7 +34,7 @@ import params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
 class_fields = ["name","code","descr"]
-classConnector = None
+#classConnector = None
 classModel = None
 
 def getClassLayer(grp):

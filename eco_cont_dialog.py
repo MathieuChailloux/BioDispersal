@@ -125,12 +125,14 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
     # Initialize Graphic elements for each tab
     # TODO : resize
     def initGui(self):
+        utils.print_func("initGuiDlg")
         self.geometry = self.geometry()
         self.x = self.x()
         self.y = self.y()
         self.width = self.width()
         self.height = self.height()
         for k, tab in self.connectors.items():
+            utils.print_func("initGuiDlgItem " + str(k))
             tab.initGui()
         self.openProject.setToolTip("Ouvrir un projet BioDispersal")
         self.saveProject.setToolTip("Enregistrer le projet")
@@ -163,6 +165,15 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         self.saveProject.clicked.connect(self.saveModel)
         self.openProject.clicked.connect(self.loadModelAction)
         sys.excepthook = self.bioDispHook
+        
+    def initializeGlobals(self):
+        groups.groupsModel = None
+        classes.classModel = None
+        classes.class_fields = ["name","code","descr"]
+        sous_trames.stModel = None
+        fusion.fusionModel = None
+        friction.frictionModel = None
+        friction.frictionFields = ["class_descr","class","code"]
         
     def initLog(self):
         utils.print_func = self.txtLog.append

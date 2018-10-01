@@ -234,8 +234,6 @@ class SelectionConnector(AbstractConnector):
         self.dlg.classRemove.setToolTip("Supprimer les classes sélectionnées")
         self.dlg.groupsRemove.setToolTip("Supprimer les groupes sélectionnés")
         self.dlg.selectionRemove.setToolTip("Supprimer les sélections")
-        self.activateVectorMode()
-        self.activateFieldMode()
         self.activateGroupDisplay()
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.All)
         self.dlg.selectionResampleCombo.addItem("Plus proche voisin")
@@ -268,6 +266,8 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionRun.clicked.connect(self.applyItems)
         #
         header = self.dlg.selectionView.horizontalHeader()     
+        self.activateVectorMode()
+        self.activateFieldMode()
         #header.setSectionResizeMode(1, QHeaderView.Stretch)
         
     def applyItems(self):
@@ -442,15 +442,6 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionInLayer.setFilter("*.shp")
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeVect)
         self.dlg.stackSelectionExprField.show()
-        # self.dlg.selectionResampleLabel.hide()
-        # self.dlg.selectionResampleCombo.hide()
-        # self.dlg.selectionModeLabel.show()
-        # if self.dlg.fieldSelectionMode.isChecked():
-            # self.activateFieldMode()
-        # elif self.dlg.exprSelectionMode.isChecked():
-            # self.activateExprMode()
-        # else:
-            # utils.internal_error("Unexpected checkbox state")
             
     def activateRasterMode(self):
         utils.debug("activateRasterMode")
@@ -460,14 +451,6 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionInLayer.setFilter("*.tif")
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeRaster)
         self.dlg.stackSelectionExprField.hide()
-        # self.dlg.selectionResampleLabel.show()
-        # self.dlg.selectionResampleCombo.show()
-        # self.dlg.selectionModeLabel.hide()
-        # self.dlg.selectionField.hide()
-        # self.dlg.selectionFieldLabel.hide()
-        # self.dlg.selectionExpr.hide()
-        # self.dlg.selectionExprLabel.hide()
-            
         
             
     # Field / expression modes

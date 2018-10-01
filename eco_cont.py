@@ -32,6 +32,7 @@ from .eco_cont_dialog import EcologicalContinuityDialog, BioDispersalDialog, Tes
 import os.path
 import sys
 
+import utils
 from qgis.utils import qgis_excepthook
 
 class EcologicalContinuity:
@@ -65,6 +66,7 @@ class EcologicalContinuity:
 
         # Create the dialog (after translation) and keep reference
         self.dlg = EcologicalContinuityDialog()
+        utils.print_func("init")
         #self.dlg = BioDispersalDialog()
         #self.dlg = TestDialog()
 
@@ -165,6 +167,7 @@ class EcologicalContinuity:
         return action
 
     def initGui(self):
+        utils.print_func("initGui")
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/eco_cont/icons/cerf.png'
@@ -191,12 +194,15 @@ class EcologicalContinuity:
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
-        print_func = print
+        utils.print_func = print
         sys.excepthook = qgis_excepthook
+        if self.dlg:
+            self.dlg.initializeGlobals()
         del self.toolbar
 
 
     def run(self):
+        utils.print_func("run")
         """Run method that performs all the real work"""
         #self.dlg.runButton.clicked.connect(self.dlg.runCost)
         #self.dlg.connectComponents()
@@ -205,9 +211,10 @@ class EcologicalContinuity:
         #self.dlg = TestDialog()
         #self.dlg = BioDispersalDialog()
         self.dlg.initTabs()
+        self.dlg.initLog()
         self.dlg.initGui()
         self.dlg.connectComponents()
-        self.dlg.initLog()
+        #self.dlg.initLog()
         self.dlg.show()
         print(str(self.dlg))
         # Run the dialog event loop
