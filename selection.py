@@ -108,7 +108,7 @@ class SelectionItem(DictItem):
     #   2) select features
     #   3) add features to group layer
     def applyVectorItem(self):
-        debug("classModel = " + str(classes.classModel))
+        utils.debug("classModel = " + str(classes.classModel))
         in_layer_path = params.getOrigPath(self.dict["in_layer"])
         checkFileExists(in_layer_path)
         in_layer = loadVectorLayer(in_layer_path)
@@ -137,10 +137,10 @@ class SelectionItem(DictItem):
         pr = out_vector_layer.dataProvider()
         in_crs = in_layer.sourceCrs()
         out_crs = out_vector_layer.sourceCrs()
-        debug("in_crs : " + str(in_crs.description()))
-        debug("out_crs : " + str(out_crs.description()))
-        debug("in_crsid : " + str(in_crs.authid()))
-        debug("out_crsid : " + str(out_crs.authid()))
+        utils.debug("in_crs : " + str(in_crs.description()))
+        utils.debug("out_crs : " + str(out_crs.description()))
+        utils.debug("in_crsid : " + str(in_crs.authid()))
+        utils.debug("out_crsid : " + str(out_crs.authid()))
         if in_crs.authid() == out_crs.authid():
             transform_flag = False
         else:
@@ -168,7 +168,7 @@ class SelectionItem(DictItem):
             if not res:
                 internal_error("addFeature failed")
             out_vector_layer.updateExtents()
-        debug("length(feats) = " + str(tmp_cpt))
+        utils.debug("length(feats) = " + str(tmp_cpt))
         group_item.vectorLayer = out_vector_layer
         if tmp_cpt == 0:
             warn("No entity selected from '" + str(self) + "'")

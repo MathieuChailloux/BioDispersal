@@ -83,10 +83,11 @@ class FusionModel(abstract_model.AbstractGroupModel):
             # self.st_groups[self.current_st] = self.current_model
             self.st_groups[self.current_st] = groups.copyGroupModel(groups.groupsModel)
             self.current_model = self.st_groups[self.current_st]
-            self.current_model.layoutChanged.emit()
+            #self.current_model.layoutChanged.emit()
             #self.current_model.layoutChanged.emit()
             #self.st_groups[self.current_st].layoutChanged.emit()
             #self.layoutChanged.emit()
+            #self.dlg.fusionView.setModel(self.model.current_model)
         else:
             utils.user_error("No sous-trame selected")
         
@@ -263,10 +264,18 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.dlg.fusionST.setModel(sous_trames.stModel)
         #self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)
-        self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
+        #self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
+        self.dlg.fusionLoadGroups.clicked.connect(self.loadAllGroups)
         #self.dlg.fusionRun.clicked.connect(self.model.applyItems)
         self.dlg.fusionUp.clicked.connect(self.upgradeItem)
         self.dlg.fusionDown.clicked.connect(self.downgradeItem)
+        
+    def loadAllGroups(self):
+        utils.debug("connector loadAllGroups")
+        self.model.loadAllGroups()
+        self.changeST(self.model.current_st)
+        #self.model.current_model.layoutChanged.emit()
+        #self.dlg.fusionView.setModel(self.model.current_model)
         
     def changeST(self,st):
         self.model.setCurrentST(st)
