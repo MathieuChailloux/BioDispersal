@@ -78,16 +78,13 @@ class FusionModel(abstract_model.AbstractGroupModel):
         utils.debug("[loadAllGroups]")
         if self.current_st:
             utils.debug("Current st = " + str(self.current_st))
-            # self.current_model = groups.copyGroupModel(groups.groupsModel)
-            # self.current_model.layoutChanged.emit()
-            # self.st_groups[self.current_st] = self.current_model
-            self.st_groups[self.current_st] = groups.copyGroupModel(groups.groupsModel)
-            self.current_model = self.st_groups[self.current_st]
-            #self.current_model.layoutChanged.emit()
-            #self.current_model.layoutChanged.emit()
-            #self.st_groups[self.current_st].layoutChanged.emit()
-            #self.layoutChanged.emit()
-            #self.dlg.fusionView.setModel(self.model.current_model)
+            for grp_item in groups.groupsModel.items:
+                if not self.current_model.groupExists(grp_item):
+                    utils.debug("Adding group " + str(grp_item.dict["name"])
+                                + " to " + str(self.current_st))
+                    self.current_model.addItem(grp_item)
+            #self.st_groups[self.current_st] = groups.copyGroupModel(groups.groupsModel)
+            #self.current_model = self.st_groups[self.current_st]
         else:
             utils.user_error("No sous-trame selected")
         

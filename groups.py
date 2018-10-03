@@ -127,6 +127,10 @@ class GroupModel(abstract_model.DictModel):
         None
         #utils.internal_error("Could not find groups '" + name + "'")
              
+    def groupExists(self,name):
+        grp_item = self.getGroupByName(name)
+        return (grp_item != None)
+             
     def addItem(self,item):
         super().addItem(item)
         self.groupAdded.emit(item)
