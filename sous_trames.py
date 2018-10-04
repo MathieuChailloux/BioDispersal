@@ -147,8 +147,7 @@ class STConnector(abstract_model.AbstractConnector):
                          self.dlg.stAdd,self.dlg.stRemove)
         
     def initGui(self):
-        self.dlg.stAdd.setToolTip("Ajouter sous-trame")
-        self.dlg.stRemove.setToolTip("Supprimer les sous-trames sélectionnées")
+        pass
         
     def connectComponents(self):
         super().connectComponents()

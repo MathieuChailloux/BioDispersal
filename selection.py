@@ -230,10 +230,6 @@ class SelectionConnector(AbstractConnector):
                         None,self.dlg.selectionRemove)
                         
     def initGui(self):
-        self.dlg.selectionGroupAdd.setToolTip("Ajouter un nouveau groupe")
-        self.dlg.classRemove.setToolTip("Supprimer les classes sélectionnées")
-        self.dlg.groupsRemove.setToolTip("Supprimer les groupes sélectionnés")
-        self.dlg.selectionRemove.setToolTip("Supprimer les sélections")
         self.activateGroupDisplay()
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.All)
         self.dlg.selectionResampleCombo.addItem("Plus proche voisin")

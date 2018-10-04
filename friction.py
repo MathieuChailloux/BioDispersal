@@ -280,10 +280,8 @@ class FrictionConnector(abstract_model.AbstractConnector):
         super().__init__(frictionModel,self.dlg.frictionView,None,None)
         
     def initGui(self):
-        self.dlg.frictionLoadClass.setToolTip("Recharger toutes les classes de friction")
-        self.dlg.frictionSave.setToolTip("Enregistrer le tableau de friction sous")
-        self.dlg.frictionLoad.setToolTip("Ouvrir le tableau de friction")
-        
+        pass
+    
     @pyqtSlot()
     def internCatchClassAdded(self):
         utils.debug("internClassAdded " )

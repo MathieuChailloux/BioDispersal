@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .eco_cont_dialog import EcologicalContinuityDialog, BioDispersalDialog, TestDialog, ProcessingDialog
+from .eco_cont_dialog import EcologicalContinuityDialog, BioDispersalDialog
 import os.path
 import sys
 
@@ -55,7 +55,7 @@ class EcologicalContinuity:
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
-            'EcologicalContinuity_{}.qm'.format(locale))
+            'BioDispersal_{}.qm'.format(locale))
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -181,7 +181,7 @@ class EcologicalContinuity:
             
         self.dlg.initTabs()
         self.dlg.initGui()
-        self.dlg.connectComponents()
+        self.connectComponents()
 
 
     def unload(self):
@@ -202,7 +202,9 @@ class EcologicalContinuity:
             self.dlg.initializeGlobals()
         del self.toolbar
 
-
+    def connectComponents(self):
+        self.dlg.connectComponents()
+                
     def run(self):
         utils.debug("run")
         """Run method that performs all the real work"""
@@ -215,7 +217,7 @@ class EcologicalContinuity:
         self.dlg.initTabs()
         self.dlg.initLog()
         self.dlg.initGui()
-        self.dlg.connectComponents()
+        self.connectComponents()
         #self.dlg.initLog()
         self.dlg.show()
         print(str(self.dlg))

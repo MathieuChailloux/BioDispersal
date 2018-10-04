@@ -29,12 +29,12 @@ from io import StringIO
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+#from PyQt5.QtGui import *
+from PyQt5.QtCore import QTranslator, qVersion, QCoreApplication
 import processing
 from processing.gui import AlgorithmDialog
-from qgis.core import *
-from qgis.gui import *
+#from qgis.core import *
+#from qgis.gui import *
 from qgis.gui import QgsFileWidget
 
 file_dir = os.path.dirname(__file__)
@@ -60,12 +60,12 @@ import tabs
 #FORM_CLASS, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
 
-FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'test_dialog.ui'))
+#FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
+#    os.path.dirname(__file__), 'test_dialog.ui'))
     
-#from test_dialog import Ui_TestDialog
+from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
     
-class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
+class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
     def __init__(self, parent=None):
         """Constructor."""
         super(EcologicalContinuityDialog, self).__init__(parent)
@@ -80,7 +80,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         #rasterizationConnector = Rasterization(self)
         #self.tabs=[Groups(self),
         #            Metagroups(self),
-        #            VectorSelections(self),
+        #            VectorSelections(self),,n
         #            Rasterization(self)]
         #self.tabs = [self.groupConnector,metagroupConnector,rasterizationConnector]
         self.setupUi(self)
@@ -134,9 +134,6 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         for k, tab in self.connectors.items():
             utils.debug("initGuiDlgItem " + str(k))
             tab.initGui()
-        self.openProject.setToolTip("Ouvrir un projet BioDispersal")
-        self.saveProject.setToolTip("Enregistrer le projet")
-        self.saveProjectAs.setToolTip("Enregistrer le projet sous")
         #self.pluginTabs.removeTab(5)
         
     def bioDispHook(self,excType, excValue, tracebackobj):
@@ -164,6 +161,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
         self.saveProjectAs.clicked.connect(self.saveModelAsAction)
         self.saveProject.clicked.connect(self.saveModel)
         self.openProject.clicked.connect(self.loadModelAction)
+        self.langEn.clicked.connect(self.switchLangEn)
+        self.langFr.clicked.connect(self.switchLangFr)
         sys.excepthook = self.bioDispHook
         
     def initializeGlobals(self):
@@ -178,8 +177,29 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
     def initLog(self):
         utils.print_func = self.txtLog.append
         
-    def onResize(self,event):
-        new_size = event.size()
+    def switchLangEn(self):
+        plugin_dir = os.path.dirname(__file__)
+        en_path = os.path.join(plugin_dir,'i18n','BioDispersal_en.qm')
+        self.langEn.setChecked(True)
+        self.langFr.setChecked(False)
+        if os.path.exists(en_path):
+            self.translator = QTranslator()
+            self.translator.load(en_path)
+            if qVersion() > '4.3.3':
+                QCoreApplication.installTranslator(self.translator)
+        self.retranslateUi(self)
+        
+    def switchLangFr(self):
+        plugin_dir = os.path.dirname(__file__)
+        fr_path = os.path.join(plugin_dir,'i18n','BioDispersal_fr.qm')
+        self.langEn.setChecked(False)
+        self.langFr.setChecked(True)
+        if os.path.exists(fr_path):
+            self.translator = QTranslator()
+            self.translator.load(fr_path)
+            if qVersion() > '4.3.3':
+                QCoreApplication.installTranslator(self.translator)
+        self.retranslateUi(self)
         
     # Recompute self.models in case they have been reloaded
     def recomputeModels(self):
@@ -253,20 +273,3 @@ class BioDispersalDialog(QgsProcessingAlgorithmDialogBase):
         scroll_area.setAttribute(Qt.WA_TranslucentBackground)
         scroll_area.setWidget(w1)
         self.tabWidget().insertTab(1,scroll_area,"test_scroll")
-        
-        
-    
-#from test_dialog import Ui_TestDialog
-
-class TestDialog(QtWidgets.QDialog,FORM_CLASS_TEST):
-    def __init__(self, parent=None):
-        """Constructor."""
-        super(TestDialog, self).__init__(parent)
-        self.setupUi(self)
-        
-class ProcessingDialog(QgsProcessingAlgorithmDialogBase):
-
-    def __init__(self,parent=None):
-        super(QgsProcessingAlgorithmDialogBase, self).__init__(parent)
-        
-        

@@ -250,8 +250,7 @@ class FusionConnector(abstract_model.AbstractConnector):
                          self.dlg.fusionRun,self.dlg.fusionRunOnlySelection)
                          
     def initGui(self):
-        self.dlg.fusionLoadGroups.setToolTip("Recharger tous les groupes")
-        self.dlg.fusionRemove.setToolTip("Supprimer les groupes sélectionnés")
+        pass
                          
     def connectComponents(self):
         super().connectComponents()

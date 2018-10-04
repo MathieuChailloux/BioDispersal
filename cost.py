@@ -132,7 +132,6 @@ class CostConnector(AbstractConnector):
                          self.dlg.costRun,self.dlg.costRunOnlySelection)
         
     def initGui(self):
-        self.dlg.costRemove.setToolTip("Supprimer les dispersions sélectionnées")
         self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.dlg.costStartLayer.setFilter("*.shp")
         self.dlg.costPermRasterCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
