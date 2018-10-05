@@ -111,7 +111,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="resources.qrc">
                <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
              </property>
              <property name="autoRaise">
@@ -134,7 +134,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="resources.qrc">
                <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
              </property>
              <property name="autoRaise">
@@ -157,7 +157,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="resources.qrc">
                <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
              </property>
              <property name="autoRaise">
@@ -187,8 +187,8 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
-               <normaloff>icons/enFlag.svg</normaloff>icons/enFlag.svg</iconset>
+              <iconset resource="resources.qrc">
+               <normaloff>:/plugins/eco_cont/icons/enFlag.svg</normaloff>:/plugins/eco_cont/icons/enFlag.svg</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -204,8 +204,8 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset>
-               <normaloff>icons/frFlag.svg</normaloff>icons/frFlag.svg</iconset>
+              <iconset resource="resources.qrc">
+               <normaloff>:/plugins/eco_cont/icons/frFlag.svg</normaloff>:/plugins/eco_cont/icons/frFlag.svg</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -553,7 +553,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -582,7 +582,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -1318,7 +1318,7 @@
                               <string>Enregistrer sélection</string>
                              </property>
                              <property name="icon">
-                              <iconset>
+                              <iconset resource="resources.qrc">
                                <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                              </property>
                             </widget>
@@ -1458,7 +1458,7 @@
                                <string/>
                               </property>
                               <property name="icon">
-                               <iconset>
+                               <iconset resource="resources.qrc">
                                 <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                               </property>
                               <property name="autoRaise">
@@ -1570,7 +1570,7 @@
                                <string/>
                               </property>
                               <property name="icon">
-                               <iconset>
+                               <iconset resource="resources.qrc">
                                 <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                               </property>
                               <property name="autoRaise">
@@ -1697,7 +1697,7 @@
                            <string>Lancer les sélections</string>
                           </property>
                           <property name="icon">
-                           <iconset>
+                           <iconset resource="resources.qrc">
                             <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                           </property>
                          </widget>
@@ -1766,7 +1766,7 @@
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset>
+                           <iconset resource="resources.qrc">
                             <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
@@ -1795,7 +1795,7 @@
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset>
+                           <iconset resource="resources.qrc">
                             <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
@@ -1821,7 +1821,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -2033,7 +2033,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -2065,7 +2065,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -2164,7 +2164,7 @@
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset>
+                           <iconset resource="resources.qrc">
                             <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
@@ -2199,7 +2199,7 @@
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset>
+                           <iconset resource="resources.qrc">
                             <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
@@ -2296,7 +2296,7 @@
                         <string>Fusionner</string>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                        </property>
                       </widget>
@@ -2405,7 +2405,7 @@
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset>
+                      <iconset resource="resources.qrc">
                        <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
                      </property>
                      <property name="autoRaise">
@@ -2434,7 +2434,7 @@
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset>
+                      <iconset resource="resources.qrc">
                        <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
                      </property>
                      <property name="autoRaise">
@@ -2463,7 +2463,7 @@
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset>
+                      <iconset resource="resources.qrc">
                        <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
                      </property>
                      <property name="autoRaise">
@@ -2552,7 +2552,7 @@
                         <string>Produire les couches de friction</string>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                        </property>
                       </widget>
@@ -3059,7 +3059,7 @@
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset>
+                            <iconset resource="resources.qrc">
                              <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                            </property>
                            <property name="autoRaise">
@@ -3082,7 +3082,7 @@
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset>
+                            <iconset resource="resources.qrc">
                              <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                            </property>
                            <property name="autoRaise">
@@ -3175,7 +3175,7 @@
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset>
+                            <iconset resource="resources.qrc">
                              <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                            </property>
                            <property name="autoRaise">
@@ -3192,7 +3192,7 @@
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset>
+                            <iconset resource="resources.qrc">
                              <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                            </property>
                            <property name="autoRaise">
@@ -3291,7 +3291,7 @@
                            <string>Enregistrer pondération</string>
                           </property>
                           <property name="icon">
-                           <iconset>
+                           <iconset resource="resources.qrc">
                             <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                           </property>
                          </widget>
@@ -3354,7 +3354,7 @@
                            <string>...</string>
                           </property>
                           <property name="icon">
-                           <iconset>
+                           <iconset resource="resources.qrc">
                             <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                           </property>
                           <property name="autoRaise">
@@ -3474,7 +3474,7 @@
                            <string>Pondérer les couches de friction</string>
                           </property>
                           <property name="icon">
-                           <iconset>
+                           <iconset resource="resources.qrc">
                             <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                           </property>
                          </widget>
@@ -3931,7 +3931,7 @@
                         <string>Enregistrer dispersion</string>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                        </property>
                       </widget>
@@ -4006,7 +4006,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -4104,7 +4104,7 @@
                         <string>Lancer la modélisation</string>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="resources.qrc">
                          <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                        </property>
                       </widget>
@@ -4171,7 +4171,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="resources.qrc">
                      <normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</iconset>
                    </property>
                    <property name="checkable">
@@ -4191,7 +4191,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="resources.qrc">
                      <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                    </property>
                    <property name="autoRaise">
@@ -4208,7 +4208,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="resources.qrc">
                      <normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</iconset>
                    </property>
                    <property name="autoRaise">
@@ -4346,6 +4346,8 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
