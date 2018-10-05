@@ -2043,4 +2043,3 @@ class Ui_BioDispersalDialogBase(object):
 
 from qgis import gui
 from qgis.gui import QgsScrollArea
-import resources_rc
