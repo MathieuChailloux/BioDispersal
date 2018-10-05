@@ -106,7 +106,7 @@ class Ui_BioDispersalDialogBase(object):
         self.langEn = QtWidgets.QToolButton(self.scrollAreaWidgetContents_2)
         self.langEn.setText("")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("icons/enFlag.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/plugins/eco_cont/icons/enFlag.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.langEn.setIcon(icon3)
         self.langEn.setCheckable(True)
         self.langEn.setAutoRaise(True)
@@ -114,7 +114,7 @@ class Ui_BioDispersalDialogBase(object):
         self.gridLayout_6.addWidget(self.langEn, 0, 4, 1, 1)
         self.langFr = QtWidgets.QToolButton(self.scrollAreaWidgetContents_2)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("icons/frFlag.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(":/plugins/eco_cont/icons/frFlag.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.langFr.setIcon(icon4)
         self.langFr.setCheckable(True)
         self.langFr.setAutoRaise(True)
@@ -2043,3 +2043,4 @@ class Ui_BioDispersalDialogBase(object):
 
 from qgis import gui
 from qgis.gui import QgsScrollArea
+import resources_rc
