@@ -4346,8 +4346,6 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
