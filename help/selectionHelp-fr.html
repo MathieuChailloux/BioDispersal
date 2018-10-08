@@ -1,0 +1,52 @@
+  <head>
+    <meta name="qrichtext" content="1" />
+    <style type="text/css">p, li { white-space: pre-wrap;}</style>
+  </head>
+  <body style=" font-family:&apos;MS Shell Dlg 2&apos;;font-size:8.25pt;font-weight:400;font-style:normal;">
+    <p><span style=" font-size:14pt;font-weight:600;">S&eacute;lection</span></p>
+    <br />
+    <p>
+ La s&eacute;lection consiste &agrave; extraire et uniformiser les donn&eacute;es d&apos;entr&eacute;e.
+ Une s&eacute;lection s&apos;effectue depuis une couche d&apos;entr&eacute;e selon un mode et affecte un groupe et une classe au r&eacute;sultat.
+    </p>
+ <br/>
+ <p>
+ <i>Couche d&apos;entr&eacute;e</i>
+ <br/>
+   Le format (raster ou vecteur) de la couche d&apos;entr&eacute;e doit &ecirc;tre renseign&eacute;.
+ <br/>
+   La couche doit &ecirc;tre charg&eacute;e dans le projet QGIS pour &ecirc;tre s&eacute;lectionn&eacute;e.
+ <br/>
+<span style=" font-size:8pt;color:red;font-weight:600">
+   Seuls les formats Shapefile (.shp) et GeoTIFF (.tif) sont accept&eacute;s pour l&apos;instant.
+</span>
+ </p>
+ <p>
+ <i>Mode de s&eacute;lection</i>
+ <br/>
+ <ul>
+    <li>Vecteur
+        <ul>
+            <li>Par champ : les entit&eacute;s de la couches s&eacute;lectionn&eacute;es sont regroup&eacute;es selon les valeurs du champ s&eacute;lectionn&eacute;.</li>
+            <li>Par expression : s&eacute;lectionne les entit&eacute;s selon l&apos;expression renseign&eacute;e. Si l&apos;expression est vide, toutes les entit&eacute;s sont s&eacute;lectionn&eacute;es.</li>
+        </ul>
+    </li>
+    <li>Raster : le mode de r&eacute;-&eacute;chantillonage correspond &agrave; l&apos;option -r de gdalwarp.
+        <ul>
+            <li>Plus proche voisin : &agrave; s&eacute;lectionner pour une donn&eacute;e discr&egrave;te.</li>
+            <li>Moyenne : &agrave; s&eacute;lectionner pour une donn&eacute;e continue.</li>
+        </ul>
+    </li>
+ </ul>
+ </p>
+ <p>
+ <i>Groupes</i>
+ <br/>
+ Les groupes de fusion r&eacute;unissent des donn&eacute;es de th&eacute;matiques similaires (occupation du sol, routes, cours d&apos;eau…) poss&eacute;dant la m&ecirc;me g&eacute;om&eacute;trie (ponctuelle, lin&eacute;aire, surfacique ou raster)
+ </p>
+ <p>
+ <i>Classes</i>
+ <br/>
+ Les classes de friction sont automatiquement g&eacute;n&eacute;r&eacute;es par le plugin.
+ </p>
+  </body>
