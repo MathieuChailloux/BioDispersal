@@ -134,7 +134,6 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         for k, tab in self.connectors.items():
             utils.debug("initGuiDlgItem " + str(k))
             tab.initGui()
-        #self.pluginTabs.removeTab(5)
         
     def bioDispHook(self,excType, excValue, tracebackobj):
         if excType == utils.CustomException:
@@ -178,6 +177,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         utils.print_func = self.txtLog.append
         
     def switchLangEn(self):
+        utils.debug("switchLangEn")
         plugin_dir = os.path.dirname(__file__)
         en_path = os.path.join(plugin_dir,'i18n','BioDispersal_en.qm')
         self.langEn.setChecked(True)
@@ -187,13 +187,19 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             self.translator.load(en_path)
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
+            else:
+                utils.internal_error("Unexpected qVersion : " + str(qVersion()))
+        else:
+            utils.internal_error("No translation file : " + str(en_path))
         self.retranslateUi(self)
         utils.curr_language = "en"
         self.connectors["Tabs"].loadHelpFile()
         
     def switchLangFr(self):
+        utils.debug("switchLangFr")
         plugin_dir = os.path.dirname(__file__)
         fr_path = os.path.join(plugin_dir,'i18n','BioDispersal_fr.qm')
+        utils.debug("fr_path = " + str(fr_path))
         self.langEn.setChecked(False)
         self.langFr.setChecked(True)
         if os.path.exists(fr_path):
@@ -201,6 +207,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             self.translator.load(fr_path)
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
+            else:
+                utils.internal_error("Unexpected qVersion : " + str(qVersion()))
+        else:
+            utils.internal_error("No translation file : " + str(fr_path))
         self.retranslateUi(self)
         utils.curr_language = "fr"
         self.connectors["Tabs"].loadHelpFile()
