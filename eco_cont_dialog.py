@@ -188,6 +188,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
         self.retranslateUi(self)
+        utils.curr_language = "en"
+        self.connectors["Tabs"].loadHelpFile()
         
     def switchLangFr(self):
         plugin_dir = os.path.dirname(__file__)
@@ -200,6 +202,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
         self.retranslateUi(self)
+        utils.curr_language = "fr"
+        self.connectors["Tabs"].loadHelpFile()
         
     # Recompute self.models in case they have been reloaded
     def recomputeModels(self):

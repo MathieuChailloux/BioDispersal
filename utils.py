@@ -40,6 +40,7 @@ def printLine(msg):
 
 debug_flag=False
 print_func = printLine
+curr_language = "fr"
 
 class CustomException(Exception):
 

@@ -6,7 +6,7 @@
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="1894"/>
         <source>BioDispersal</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="1895"/>
@@ -46,7 +46,7 @@
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="1902"/>
         <source>Dossier de travail*</source>
-        <translation type="unfinished">Workspace</translation>
+        <translation type="unfinished">Workspace*</translation>
     </message>
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="1903"/>

@@ -35,10 +35,16 @@ class TabItem:
         self.idx = idx
         self.name = name
         self.descr = "TODO"
-        self.helpFile = os.path.join("help",helpFile + ".html")
+        self.helpFile = helpFile
         
-    def setDescr(descr):
+    def setDescr(self,descr):
         self.descr = descr
+
+    def getHelpFile(self):
+        plugin_dir = os.path.dirname(__file__)
+        help_dir = os.path.join(plugin_dir,"help")
+        helpFile = os.path.join(help_dir,self.helpFile + "-" + utils.curr_language + ".html")
+        return helpFile
         
 paramsTabItem = TabItem(0,"Paramètres","paramsHelp")
 stTabItem = TabItem(1,"Sous-trames","stHelp")
@@ -61,6 +67,7 @@ class TabConnector:
                      dispersionTabItem,
                      logTabItem]
         self.dlg = dlg
+        self.curr_tab = 0
         
     def initGui(self):
         self.dlg.textShortHelp.setOpenLinks(True)
@@ -69,18 +76,22 @@ class TabConnector:
     def loadNTab(self,n):
         utils.debug("[loadNTab] " + str(n))
         nb_tabs = len(self.tabs)
+        self.curr_tab = n
         if n >= nb_tabs:
             utils.internal_error("[loadNTab] loading " + str(n) + " tab but nb_tabs = " + str(nb_tabs))
         else:
-            tabItem = self.tabs[n]
-            curr_fname = os.path.dirname(__file__)
-            utils.debug("curr_fname = " + str(curr_fname))
-            fname = os.path.join(curr_fname,tabItem.helpFile)
-            utils.debug("fname = " + str(fname))
-            with open(fname) as f:
-                msg = f.read()
-            self.dlg.textShortHelp.setHtml(msg)
+            self.loadHelpFile()
             #utils.debug("source : " + str(self.dlg.textShortHelp.source()))
+
+    def loadHelpFile(self):
+        tabItem = self.tabs[self.curr_tab]
+        helpFile = tabItem.getHelpFile()
+        utils.debug("Help file = " + str(helpFile))
+        utils.checkFileExists(helpFile)
+        with open(helpFile) as f:
+            msg = f.read()
+        self.dlg.textShortHelp.setHtml(msg)
+        
 
             
     def connectComponents(self):
