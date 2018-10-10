@@ -53,10 +53,10 @@ class CostItem(DictItem):
         super().__init__(dict)
         
     def equals(self,other):
-        if self.dict["st_name"] == other.dict["st_name"]:
-            return False
-        elif self.dict["cost"] == other.dict["cost"]:
-            return False
+        same_start = self.dict["start_layer"] == other.dict["start_layer"]
+        same_perm = self.dict["perm_layer"] == other.dict["perm_layer"]
+        same_cost = self.dict["cost"] == other.dict["cost"]
+        return (same_start and same_perm and same_cost)
         
     def applyItem(self):
         utils.debug("Start runCost")

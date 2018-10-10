@@ -79,8 +79,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>864</width>
-            <height>698</height>
+            <width>865</width>
+            <height>706</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -111,7 +111,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources.qrc">
+              <iconset>
                <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
              </property>
              <property name="autoRaise">
@@ -134,7 +134,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources.qrc">
+              <iconset>
                <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
              </property>
              <property name="autoRaise">
@@ -157,7 +157,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources.qrc">
+              <iconset>
                <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
              </property>
              <property name="autoRaise">
@@ -187,7 +187,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources.qrc">
+              <iconset>
                <normaloff>:/plugins/eco_cont/icons/enFlag.svg</normaloff>:/plugins/eco_cont/icons/enFlag.svg</iconset>
              </property>
              <property name="checkable">
@@ -204,7 +204,7 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset resource="resources.qrc">
+              <iconset>
                <normaloff>:/plugins/eco_cont/icons/frFlag.svg</normaloff>:/plugins/eco_cont/icons/frFlag.svg</iconset>
              </property>
              <property name="checkable">
@@ -553,7 +553,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -582,7 +582,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -762,8 +762,8 @@
                              </property>
                             </widget>
                            </item>
-                           <item row="1" column="1">
-                            <widget class="QCheckBox" name="selectionLayerFormatVector">
+                           <item row="2" column="1" colspan="2">
+                            <widget class="QgsMapLayerComboBox" name="selectionInLayerCombo">
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                <horstretch>0</horstretch>
@@ -772,31 +772,9 @@
                              </property>
                              <property name="minimumSize">
                               <size>
-                               <width>0</width>
+                               <width>100</width>
                                <height>13</height>
                               </size>
-                             </property>
-                             <property name="text">
-                              <string>Vecteur</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item row="1" column="0">
-                            <widget class="QLabel" name="selectionLayerFormatLabel">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="minimumSize">
-                              <size>
-                               <width>0</width>
-                               <height>13</height>
-                              </size>
-                             </property>
-                             <property name="text">
-                              <string>Format</string>
                              </property>
                             </widget>
                            </item>
@@ -816,6 +794,25 @@
                              </property>
                              <property name="text">
                               <string>Ouvrir couche</string>
+                             </property>
+                            </widget>
+                           </item>
+                           <item row="1" column="1">
+                            <widget class="QCheckBox" name="selectionLayerFormatVector">
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <property name="minimumSize">
+                              <size>
+                               <width>0</width>
+                               <height>13</height>
+                              </size>
+                             </property>
+                             <property name="text">
+                              <string>Vecteur</string>
                              </property>
                             </widget>
                            </item>
@@ -854,19 +851,22 @@
                              </property>
                             </widget>
                            </item>
-                           <item row="2" column="1" colspan="2">
-                            <widget class="QgsMapLayerComboBox" name="selectionInLayerCombo">
+                           <item row="1" column="0">
+                            <widget class="QLabel" name="selectionLayerFormatLabel">
                              <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                <horstretch>0</horstretch>
                                <verstretch>0</verstretch>
                               </sizepolicy>
                              </property>
                              <property name="minimumSize">
                               <size>
-                               <width>100</width>
+                               <width>0</width>
                                <height>13</height>
                               </size>
+                             </property>
+                             <property name="text">
+                              <string>Format</string>
                              </property>
                             </widget>
                            </item>
@@ -912,23 +912,8 @@
                           <property name="frameShadow">
                            <enum>QFrame::Raised</enum>
                           </property>
-                          <layout class="QVBoxLayout" name="verticalLayout_7">
-                           <property name="spacing">
-                            <number>6</number>
-                           </property>
-                           <property name="leftMargin">
-                            <number>9</number>
-                           </property>
-                           <property name="topMargin">
-                            <number>9</number>
-                           </property>
-                           <property name="rightMargin">
-                            <number>9</number>
-                           </property>
-                           <property name="bottomMargin">
-                            <number>9</number>
-                           </property>
-                           <item>
+                          <layout class="QGridLayout" name="gridLayout_18">
+                           <item row="0" column="0">
                             <widget class="QLabel" name="selectionStep2Label">
                              <property name="font">
                               <font>
@@ -941,8 +926,26 @@
                              </property>
                             </widget>
                            </item>
-                           <item>
+                           <item row="1" column="0">
                             <widget class="QStackedWidget" name="stackSelectionMode">
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <property name="minimumSize">
+                              <size>
+                               <width>0</width>
+                               <height>13</height>
+                              </size>
+                             </property>
+                             <property name="maximumSize">
+                              <size>
+                               <width>16777215</width>
+                               <height>37</height>
+                              </size>
+                             </property>
                              <property name="currentIndex">
                               <number>1</number>
                              </property>
@@ -990,41 +993,56 @@
                               </layout>
                              </widget>
                              <widget class="QWidget" name="stackSelectionModeRaster">
-                              <layout class="QHBoxLayout" name="horizontalLayout_25">
+                              <layout class="QHBoxLayout" name="horizontalLayout_4">
                                <item>
-                                <widget class="QLabel" name="selectionResampleLabel">
+                                <widget class="QCheckBox" name="selectionCreateClasses">
                                  <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                                    <horstretch>0</horstretch>
                                    <verstretch>0</verstretch>
                                   </sizepolicy>
                                  </property>
                                  <property name="minimumSize">
                                   <size>
-                                   <width>127</width>
+                                   <width>0</width>
                                    <height>13</height>
                                   </size>
                                  </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>83</width>
+                                   <height>16777215</height>
+                                  </size>
+                                 </property>
+                                 <property name="layoutDirection">
+                                  <enum>Qt::RightToLeft</enum>
+                                 </property>
                                  <property name="text">
-                                  <string>Mode de ré-échantillonage</string>
+                                  <string>Créer classes</string>
                                  </property>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QComboBox" name="selectionResampleCombo">
-                                 <property name="minimumSize">
+                                <spacer name="horizontalSpacer_27">
+                                 <property name="orientation">
+                                  <enum>Qt::Horizontal</enum>
+                                 </property>
+                                 <property name="sizeType">
+                                  <enum>QSizePolicy::Expanding</enum>
+                                 </property>
+                                 <property name="sizeHint" stdset="0">
                                   <size>
-                                   <width>60</width>
-                                   <height>13</height>
+                                   <width>338</width>
+                                   <height>10</height>
                                   </size>
                                  </property>
-                                </widget>
+                                </spacer>
                                </item>
                               </layout>
                              </widget>
                             </widget>
                            </item>
-                           <item>
+                           <item row="2" column="0">
                             <widget class="QStackedWidget" name="stackSelectionExprField">
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -1038,8 +1056,14 @@
                                <height>13</height>
                               </size>
                              </property>
+                             <property name="maximumSize">
+                              <size>
+                               <width>16777215</width>
+                               <height>37</height>
+                              </size>
+                             </property>
                              <property name="currentIndex">
-                              <number>1</number>
+                              <number>2</number>
                              </property>
                              <widget class="QWidget" name="stackSelectionExpr">
                               <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1125,6 +1149,49 @@
                                    <height>13</height>
                                   </size>
                                  </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                             <widget class="QWidget" name="stackSelectionResampling">
+                              <layout class="QHBoxLayout" name="horizontalLayout_23">
+                               <item>
+                                <widget class="QLabel" name="selectionResampleLabel">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="minimumSize">
+                                  <size>
+                                   <width>127</width>
+                                   <height>13</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Mode de ré-échantillonage</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QComboBox" name="selectionResampleCombo">
+                                 <property name="minimumSize">
+                                  <size>
+                                   <width>60</width>
+                                   <height>13</height>
+                                  </size>
+                                 </property>
+                                 <item>
+                                  <property name="text">
+                                   <string>Plus proche voisin</string>
+                                  </property>
+                                 </item>
+                                 <item>
+                                  <property name="text">
+                                   <string>Moyenne</string>
+                                  </property>
+                                 </item>
                                 </widget>
                                </item>
                               </layout>
@@ -1318,7 +1385,7 @@
                               <string>Enregistrer sélection</string>
                              </property>
                              <property name="icon">
-                              <iconset resource="resources.qrc">
+                              <iconset>
                                <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                              </property>
                             </widget>
@@ -1458,7 +1525,7 @@
                                <string/>
                               </property>
                               <property name="icon">
-                               <iconset resource="resources.qrc">
+                               <iconset>
                                 <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                               </property>
                               <property name="autoRaise">
@@ -1570,7 +1637,7 @@
                                <string/>
                               </property>
                               <property name="icon">
-                               <iconset resource="resources.qrc">
+                               <iconset>
                                 <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                               </property>
                               <property name="autoRaise">
@@ -1697,7 +1764,7 @@
                            <string>Lancer les sélections</string>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                           </property>
                          </widget>
@@ -1766,7 +1833,7 @@
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
@@ -1795,7 +1862,7 @@
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
@@ -1821,7 +1888,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -2033,7 +2100,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -2065,7 +2132,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -2164,7 +2231,7 @@
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
@@ -2199,7 +2266,7 @@
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
@@ -2296,7 +2363,7 @@
                         <string>Fusionner</string>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                        </property>
                       </widget>
@@ -2405,7 +2472,7 @@
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset resource="resources.qrc">
+                      <iconset>
                        <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
                      </property>
                      <property name="autoRaise">
@@ -2434,7 +2501,7 @@
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset resource="resources.qrc">
+                      <iconset>
                        <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
                      </property>
                      <property name="autoRaise">
@@ -2463,7 +2530,7 @@
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset resource="resources.qrc">
+                      <iconset>
                        <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
                      </property>
                      <property name="autoRaise">
@@ -2552,7 +2619,7 @@
                         <string>Produire les couches de friction</string>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                        </property>
                       </widget>
@@ -3059,7 +3126,7 @@
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset resource="resources.qrc">
+                            <iconset>
                              <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                            </property>
                            <property name="autoRaise">
@@ -3082,7 +3149,7 @@
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset resource="resources.qrc">
+                            <iconset>
                              <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                            </property>
                            <property name="autoRaise">
@@ -3175,7 +3242,7 @@
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset resource="resources.qrc">
+                            <iconset>
                              <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
                            </property>
                            <property name="autoRaise">
@@ -3192,7 +3259,7 @@
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset resource="resources.qrc">
+                            <iconset>
                              <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
                            </property>
                            <property name="autoRaise">
@@ -3291,7 +3358,7 @@
                            <string>Enregistrer pondération</string>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                           </property>
                          </widget>
@@ -3354,7 +3421,7 @@
                            <string>...</string>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                           </property>
                           <property name="autoRaise">
@@ -3474,7 +3541,7 @@
                            <string>Pondérer les couches de friction</string>
                           </property>
                           <property name="icon">
-                           <iconset resource="resources.qrc">
+                           <iconset>
                             <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                           </property>
                          </widget>
@@ -3931,7 +3998,7 @@
                         <string>Enregistrer dispersion</string>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                        </property>
                       </widget>
@@ -4006,7 +4073,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
@@ -4104,7 +4171,7 @@
                         <string>Lancer la modélisation</string>
                        </property>
                        <property name="icon">
-                        <iconset resource="resources.qrc">
+                        <iconset>
                          <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
                        </property>
                       </widget>
@@ -4171,7 +4238,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="resources.qrc">
+                    <iconset>
                      <normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</iconset>
                    </property>
                    <property name="checkable">
@@ -4191,7 +4258,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="resources.qrc">
+                    <iconset>
                      <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
                    </property>
                    <property name="autoRaise">
@@ -4208,7 +4275,7 @@
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="resources.qrc">
+                    <iconset>
                      <normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</iconset>
                    </property>
                    <property name="autoRaise">
@@ -4254,18 +4321,18 @@
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;Nom étape&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Description générale&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Ceci est une description générale&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Description détaillée&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt;param1&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; : description du param 1&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt;param2&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; : description du param 2&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Nom étape&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Description générale&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est une description générale&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Description détaillée&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;param1&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; : description du param 1&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;param2&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; : description du param 2&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="openLinks">
           <bool>false</bool>

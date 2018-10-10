@@ -110,7 +110,9 @@ def normalizeRaster(path,resampling_mode="near"):
         utils.warn("Normalizing raster '" + str(path)+ "' to '" + str(new_path) + "'")
         crs = params.crs
         extent_path = getExtentLayer()
-        qgsTreatments.applyWarpGdal(path,new_path,resampling_mode,crs,resolution,extent_path)
+        qgsTreatments.applyWarpGdal(path,new_path,resampling_mode,crs,
+                                    resolution,extent_path,
+                                    load_flag=False,to_byte=False)
         return new_path
         
 def openFileDialog(parent,msg="",filter=""):

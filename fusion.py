@@ -78,7 +78,11 @@ class FusionModel(abstract_model.AbstractGroupModel):
         utils.debug("[loadAllGroups]")
         if self.current_st:
             utils.debug("Current st = " + str(self.current_st))
+            if self.current_st not in self.st_groups:
+                self.st_groups[self.current_st] = groups.copyGroupModel(groups.groupsModel)
+                self.current_model = self.st_groups[self.current_st]
             for grp_item in groups.groupsModel.items:
+                utils.debug("grp_item = " + str(grp_item))
                 if not self.current_model.groupExists(grp_item):
                     utils.debug("Adding group " + str(grp_item.dict["name"])
                                 + " to " + str(self.current_st))

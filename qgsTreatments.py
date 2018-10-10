@@ -32,7 +32,7 @@ import processing
 import utils
 import qgsUtils
 
-nodata_val = '-9999'
+nodata_val = '0'
 
 def applyProcessingAlg(parameters,alg_name):
     feedback = QgsProcessingFeedback()
@@ -127,22 +127,22 @@ def applyResampleProcessing(in_path,out_path):
 # TODO
 def applyWarpGdal(in_path,out_path,resampling_mode,
                   crs=None,resolution=None,extent_path=None,
-                  load_flag=False,more_args=[]):
+                  load_flag=False,to_byte=False):
     utils.debug("qgsTreatments.applyWarpGdal")
     in_layer = qgsUtils.loadRasterLayer(in_path)
     if extent_path:
         extent_layer = qgsUtils.loadLayer(extent_path)
         extent = extent_layer.extent()
     else:
-        in_layer = qgsUtils.loadLayer(in_path)
+        #in_layer = qgsUtils.loadLayer(in_path)
         extent = in_layer.extent()
     x_min = extent.xMinimum()
     x_max = extent.xMaximum()
     y_min = extent.yMinimum()
     y_max = extent.yMaximum()
     if not resolution:
-        utils.warn("Setting rasterization resolution to 25")
-        resolution = 25
+        resolution = in_layer.rasterUnitsPerPixelX()
+        utils.warn("Setting rasterization resolution to " + str(resolution))
     width = int((x_max - x_min) / float(resolution))
     height = int((y_max - y_min) / float(resolution))
     in_crs = qgsUtils.getLayerCrsStr(in_layer)
@@ -151,11 +151,15 @@ def applyWarpGdal(in_path,out_path,resampling_mode,
                 '-t_srs',crs.authid(),
                 '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                 '-ts', str(width), str(height),
-                '-dstnodata',nodata_val,
+                #'-dstnodata',nodata_val,
+                #'-ot','Int16',
                 '-overwrite']
     if resampling_mode:
         cmd_args += ['-r',resampling_mode]
-    cmd_args += more_args
+    if to_byte:
+        cmd_args += ['-dstnodata',nodata_val]
+        cmd_args += ['-ot','Byte']
+    #cmd_args += more_args
     cmd_args += [in_path, out_path]
     utils.executeCmd(cmd_args)
     if load_flag:

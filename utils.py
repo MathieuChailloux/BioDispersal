@@ -28,6 +28,7 @@ import pathlib
 import sys
 import subprocess
 import time
+import html
 
 file_dir = os.path.dirname(__file__)
 if file_dir not in sys.path:
@@ -53,18 +54,18 @@ def printDate(msg):
     
 def debug(msg):
     if debug_flag:
-        printDate("[debug] " + msg)
+        printDate("<font color=\"gray\">[debug] " + msg + "</font>")
     
 def info(msg):
-    printDate("[info] " + msg)
+    printDate("<font color=\"black\">[info] " + msg + "</font>")
     
 def warn(msg):
-    printDate("<font color=\"orange\">[warn] " + msg + "</font>")
+    printDate("<font color=\"orange\">[warn] " + html.escape(msg) + "</font>")
     
 def mkBoldRed(msg):
     return "<b><font color=\"red\">" + msg + "</font></b>"
     
-def error_msg(msg,prefix):
+def error_msg(msg,prefix=""):
     printDate(mkBoldRed("[" + prefix + "] " + msg))
     
 def user_error(msg):

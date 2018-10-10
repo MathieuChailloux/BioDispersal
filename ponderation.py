@@ -314,8 +314,9 @@ class PonderationItem(abstract_model.DictItem):
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
         applyWarpGdal(pond_buf_reclassed,pond_buf_norm,'near',
-                      crs,resolution,extent_path,load_flag=False,
-                      more_args=['-ot','Float32'])
+                      crs,resolution,extent_path,
+                      load_flag=False,to_byte=False)
+                      #more_args=['-ot','Float32'])
         #pond_buf_norm_path = params.normalizeRaster(pond_buf_path)
         #applyGdalCalc(pond_norm_path,pond_buf_norm_path,gdalc_calc_expr)
         pond_buf_nonull = mkTmpPath(pond_buf_path,suffix="_nonull")

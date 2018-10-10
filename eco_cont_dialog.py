@@ -136,8 +136,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             tab.initGui()
         
     def bioDispHook(self,excType, excValue, tracebackobj):
+        utils.debug("bioDispHook")
         if excType == utils.CustomException:
-            pass
+            utils.debug("Ignoring custom exception : " + str(excValue))
         else:
             tbinfofile = StringIO()
             traceback.print_tb(tracebackobj, None, tbinfofile)
@@ -147,8 +148,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             separator = '-' * 80
             sections = [separator, errmsg, separator]
             msg = '\n'.join(sections)
-            final_msg = tbinfo + utils.mkBoldRed(msg)
-            utils.print_func(final_msg)
+            final_msg = tbinfo + msg
+            utils.error_msg(final_msg,prefix="Unexpected error")
         self.mTabWidget.setCurrentWidget(self.logTab)
         progress.progressConnector.clear()
         
