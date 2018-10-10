@@ -147,7 +147,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             errmsg = str(excType) + " : " + str(excValue)
             separator = '-' * 80
             sections = [separator, errmsg, separator]
-            msg = '\n'.join(sections)
+            utils.debug(str(sections))
+            msg = "\r\n".join(sections)
+            utils.debug(str(msg))
             final_msg = tbinfo + msg
             utils.error_msg(final_msg,prefix="Unexpected error")
         self.mTabWidget.setCurrentWidget(self.logTab)

@@ -84,6 +84,7 @@ class SelectionItem(DictItem):
             user_error("Unkown format for file '" + str(self.dict["in_layer"]))
             
     def applyRasterItem(self):
+        utils.debug("applyRasterItem")
         params.checkInit()
         in_layer_path = params.getOrigPath(self.dict["in_layer"])
         checkFileExists(in_layer_path)
@@ -212,13 +213,14 @@ class SelectionModel(DictModel):
         #checkFields(selection_fields,dict.keys())
         if "expr" in dict:
             mode_val = dict["expr"]
+            if mode_val == "Raster":
+                mode = rresample
+            else:
+                mode = vexpr
         else:
             checkFields(selection_fields,dict.keys())
+            mode = dict["mode"]
             mode_val = dict["mode_val"]
-        if mode_val == "Raster":
-            mode = rresample
-        else:
-            mode = vexpr
         item = SelectionItem(dict["in_layer"],mode,mode_val,dict["class"],dict["group"])
         return item
 

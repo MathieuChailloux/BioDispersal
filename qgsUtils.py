@@ -70,9 +70,9 @@ def isVectorPath(fname):
     return (extension in vector_extensions)
     
 def isRasterPath(fname):
-    vector_extensions = [".tif"]
+    raster_extensions = [".tif"]
     extension = pathlib.Path(fname).suffix
-    return (extension in vector_extensions)
+    return (extension in raster_extensions)
     
 def loadVectorLayer(fname,loadProject=False):
     utils.checkFileExists(fname)
