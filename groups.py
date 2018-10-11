@@ -8,6 +8,7 @@ import utils
 import qgsUtils
 import params
 import qgsTreatments
+import classes
          
 groups_fields = ["name","descr","geom"]
 #groupsConnector = None
@@ -94,6 +95,21 @@ class GroupItem(abstract_model.DictItem):
     def saveVectorLayer(self):
         vector_path = self.getVectorPath()
         qgsUtils.writeShapefile(self.vectorLayer,vector_path)
+        
+    def getReclassDict(self):
+        reclass_dict = {}
+        for cls_item in classes.classModel.items:
+            group_name = self.dict["name"]
+            if cls_item.dict["group"] == group_name:
+                class_name = cls_item.dict["name"]
+                if group_name not in class_name:
+                    utils.internal_error("Inconsistent class/group : " + str(class_name) + " - " + str(group_name))
+                len_grp = len(group_name)
+                assert(len(class_name) > len_grp)
+                val = class_name[len_grp+1:]
+                reclass_dict[val] = cls_item.dict["code"]
+        assert(len(reclass_dict) > 0)
+        return reclass_dict
             
     def applyRasterizationItem(self):
         utils.debug("[applyRasterizationItem]")
@@ -104,7 +120,7 @@ class GroupItem(abstract_model.DictItem):
         params.checkInit()
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
-        qgsTreatments.applyRasterization(in_path,field,out_path,resolution,extent_path,True)
+        qgsTreatments.applyRasterization(in_path,field,out_path,resolution,extent_path,True,True)
         
 class GroupModel(abstract_model.DictModel):
 

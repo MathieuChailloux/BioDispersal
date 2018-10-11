@@ -33,7 +33,7 @@ import qgsUtils
 import params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
-class_fields = ["name","code","descr"]
+class_fields = ["name","code","descr","group"]
 #classConnector = None
 classModel = None
 
@@ -54,7 +54,7 @@ def getClassByName(class_name):
 #   - 'code' : class identifier in raster layers (automatically generated)
 class ClassItem(abstract_model.DictItem):
     
-    def __init__(self,cls,descr,code):
+    def __init__(self,cls,descr,code,group):
         utils.debug("init with code " + str(code))
         if code == None:
             code = classModel.getFreeCode()
@@ -66,7 +66,8 @@ class ClassItem(abstract_model.DictItem):
                 utils.user_error("Could not build class item from code '" + str(code)+ "'")
         dict = {"name" : cls,
                 "code": code,
-                "descr" : descr}
+                "descr" : descr,
+                "group" : group}
         self.name = cls
         super().__init__(dict)
         
@@ -92,7 +93,7 @@ class ClassModel(abstract_model.DictModel):
     @staticmethod
     def mkItemFromDict(dict):
         utils.checkFields(class_fields,dict.keys())
-        item = ClassItem(dict["name"],dict["descr"],dict["code"])
+        item = ClassItem(dict["name"],dict["descr"],dict["code"],dict["group"])
         return item
         
     def getClassByName(self,name):

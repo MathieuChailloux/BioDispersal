@@ -32,7 +32,7 @@ import processing
 import utils
 import qgsUtils
 
-nodata_val = '0'
+nodata_val = '-9999'
 
 def applyProcessingAlg(parameters,alg_name):
     feedback = QgsProcessingFeedback()
@@ -61,7 +61,7 @@ def applySelection(in_layer,expr,out_layer):
 # Resolution set to 25 if not given.
 # Extent can be given through 'extent_path'. If not, it is extracted from input layer.
 # Output raster layer is loaded in QGIS if 'load_flag' is True.
-def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,load_flag=False):
+def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,load_flag=False,to_byte=False):
     utils.debug("applyRasterization")
     in_layer = qgsUtils.loadVectorLayer(in_path)
     if extent_path:
@@ -83,9 +83,11 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
                   '-at',
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                   '-ts', str(width), str(height),
-                  '-ot','Int32',
+                  #'-ot','Int32',
                   '-of','GTiff',
                   '-a_nodata',nodata_val]
+    if to_byte:
+        parameters += ['-ot', 'Byte']
     if field == "geom":
         parameters += ['-burn', '1']
     else:
@@ -157,7 +159,7 @@ def applyWarpGdal(in_path,out_path,resampling_mode,
     if resampling_mode:
         cmd_args += ['-r',resampling_mode]
     if to_byte:
-        cmd_args += ['-dstnodata',nodata_val]
+        cmd_args += ['-dstnodata','255']
         cmd_args += ['-ot','Byte']
     #cmd_args += more_args
     cmd_args += [in_path, out_path]
@@ -376,27 +378,36 @@ def applyRCost(start_path,cost_path,cost,out_path):
     utils.checkFileExists(cost_path,"Dispersion Permeability Raster ")
     parameters = { 'input' : cost_path,
                     'start_raster' : start_path,
-                    'max_cost' : int(cost),
-                    'output' : out_path,
+                    'maxcost' : int(cost),
                     'null_cost' : None,
+                    'output' : out_path,
+                    'start_points' : None,
+                    'stop_points' : None,
+                    'start_coordinates' : None,
+                    'stop_coordinates' : None,
+                    'outir' : None,
                     'memory' : 5000,
-                    'GRASS_REGION_CELLSIZE_PARAMETER' : 25,
+                    'GRASS_MIN_AREA_PARAMETER' : 0.0001, 
+                    'GRASS_RASTER_FORMAT_META' : '',
+                    'GRASS_RASTER_FORMAT_OPT' : '',
+                    'GRASS_REGION_CELLSIZE_PARAMETER' : 0,
+                    'GRASS_REGION_PARAMETER' : None,
                     'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
-                    'GRASS_MIN_AREA_PARAMETER' : 0,
                     '-k' : False,
                     '-n' : True,
                     '-r' : True,
                     '-i' : False,
-                    '-b' : False}
+                    '-b' : False,
+                    '--overwrite' : True}
     feedback = QgsProcessingFeedback()
     utils.debug("parameters : " + str(parameters))
     try:
         processing.run("grass7:r.cost",parameters,feedback=feedback)
-        print ("call to r.cost successful")
+        utils.info ("call to r.cost successful")
         #res_layer = qgsUtils.loadRasterLayer(out_path)
         #QgsProject.instance().addMapLayer(res_layer)
     except Exception as e:
-        print ("Failed to call r.cost : " + str(e))
+        utils.info ("Failed to call r.cost : " + str(e))
         raise e
     finally:  
         utils.debug("End runCost")
