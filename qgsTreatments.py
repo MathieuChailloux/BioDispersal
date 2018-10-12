@@ -84,10 +84,11 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                   '-ts', str(width), str(height),
                   #'-ot','Int32',
-                  '-of','GTiff',
-                  '-a_nodata',nodata_val]
+                  '-a_srs','epsg:2154',
+                  '-of','GTiff']
+                  #'-a_nodata',nodata_val]
     if to_byte:
-        parameters += ['-ot', 'Byte']
+        parameters += ['-ot', 'Int16','-a_nodata',nodata_val]
     if field == "geom":
         parameters += ['-burn', '1']
     else:
@@ -159,8 +160,8 @@ def applyWarpGdal(in_path,out_path,resampling_mode,
     if resampling_mode:
         cmd_args += ['-r',resampling_mode]
     if to_byte:
-        cmd_args += ['-dstnodata','255']
-        cmd_args += ['-ot','Byte']
+        cmd_args += ['-dstnodata',nodata_val]
+        cmd_args += ['-ot','Int16']
     #cmd_args += more_args
     cmd_args += [in_path, out_path]
     utils.executeCmd(cmd_args)

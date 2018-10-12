@@ -148,9 +148,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             separator = '-' * 80
             sections = [separator, errmsg, separator]
             utils.debug(str(sections))
-            msg = "\r\n".join(sections)
+            msg = '\n'.join(sections)
             utils.debug(str(msg))
-            final_msg = tbinfo + msg
+            final_msg = tbinfo + "\n" + msg
             utils.error_msg(final_msg,prefix="Unexpected error")
         self.mTabWidget.setCurrentWidget(self.logTab)
         progress.progressConnector.clear()
@@ -165,7 +165,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         self.openProject.clicked.connect(self.loadModelAction)
         self.langEn.clicked.connect(self.switchLangEn)
         self.langFr.clicked.connect(self.switchLangFr)
-        sys.excepthook = self.bioDispHook
+        #sys.excepthook = self.bioDispHook
         
     def initializeGlobals(self):
         groups.groupsModel = None

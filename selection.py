@@ -152,7 +152,7 @@ class SelectionItem(DictItem):
             group_item.vectorLayer = out_vector_layer
             orig_field = QgsField("Origin", QVariant.String)
             class_field = QgsField("Class", QVariant.String)
-            code_field = QgsField("Code", QVariant.String)
+            code_field = QgsField("Code", QVariant.Int)
             out_vector_layer.dataProvider().addAttributes([orig_field,class_field,code_field])
             out_vector_layer.updateFields()        
         if (mode == vexpr) and mode_val:
@@ -160,17 +160,34 @@ class SelectionItem(DictItem):
         else:
             feats = in_layer.getFeatures(QgsFeatureRequest())
         pr = out_vector_layer.dataProvider()
+        in_crs = in_layer.sourceCrs()
+        out_crs = out_vector_layer.sourceCrs()
+        utils.debug("in_crs : " + str(in_crs.description()))
+        utils.debug("out_crs : " + str(out_crs.description()))
+        if in_crs.authid() == out_crs.authid():
+            transform_flag = False
+        else:
+            transform_flag = True
+            transformator = QgsCoordinateTransform(in_crs,out_crs,QgsProject.instance())
+        fields = out_vector_layer.fields()
         tmp_cpt = 0
         for f in feats:
             tmp_cpt += 1
             geom = f.geometry()
+            if transform_flag:
+                transf_res = geom.transform(transformator)#,QgsCoordinateTransform.ForwardTransform)
+                if transf_res != QgsGeometry.Success:
+                    utils.internal_error("Could not transform geometry : " + str(trasf_res))
             if mode == vfield:
-                if mode_val not in f:
+                if mode_val not in f.fields().names():
+                    utils.debug("fields = " + str(f.fields().names()))
                     utils.internal_error("No field named " + str(mode_val))
                 class_name = group_name + "_" + str(f[mode_val])
             else:
                 class_name = group_name
             class_item = classes.getClassByName(class_name)
+            new_f = QgsFeature(fields)
+            #utils.debug("new_fields = " + str(new_f.fields().names()))
             new_f.setGeometry(geom)
             new_f["Origin"] = in_layer.name()
             new_f["Class"] = class_name

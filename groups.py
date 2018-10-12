@@ -120,7 +120,8 @@ class GroupItem(abstract_model.DictItem):
         params.checkInit()
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
-        qgsTreatments.applyRasterization(in_path,field,out_path,resolution,extent_path,True,True)
+        qgsTreatments.applyRasterization(in_path,field,out_path,resolution,
+                                         extent_path,load_flag=True,to_byte=True)
         
 class GroupModel(abstract_model.DictModel):
 
