@@ -272,8 +272,11 @@ class AbstractGroupModel(QAbstractTableModel):
     # layoutChanged signal must be emitted to update view.
     def removeItems(self,indexes):
         utils.debug("[removeItems] nb of items = " + str(len(self.items)))
-        n = 0
         rows = sorted(set([i.row() for i in indexes]))
+        self.removeItemsFromRows(rows)
+        
+    def removeItemsFromRows(self,rows):
+        n = 0
         for row in rows:
             roww = row - n
             utils.debug("[removeItems] Deleting row " + str(roww))

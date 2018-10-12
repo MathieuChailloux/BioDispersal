@@ -119,6 +119,15 @@ class ClassModel(abstract_model.DictModel):
         super().addItem(item)
         self.classAdded.emit(item)
         self.classAdded2.emit()
+        
+    def removeFromGroupName(self,name):
+        indexes = []
+        cpt = 0
+        for item in self.items:
+            if item.dict["group"] == name:
+                indexes.append(cpt)
+            cpt += 1
+        self.removeItemsFromRows(indexes) 
          
     def removeItems(self,indexes):
         names = [self.items[idx.row()].dict["name"] for idx in indexes]

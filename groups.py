@@ -157,6 +157,7 @@ class GroupModel(abstract_model.DictModel):
         super().removeItems(indexes)
         for n in names:
             self.groupRemoved.emit(n)
+            classes.classModel.removeFromGroupName(n)
             
     def removeGroupFromName(self,name):
         self.items = [item for item in self.items if item.dict["name"] != name]

@@ -156,7 +156,7 @@ class ParamsModel(QAbstractTableModel):
         self.layoutChanged.emit()
         
     def setCrs(self,crs):
-        utils.info("Setting extent CRS to " + str(crs))
+        utils.info("Setting extent CRS to " + crs.description())
         self.crs = crs
         self.layoutChanged.emit()
         
