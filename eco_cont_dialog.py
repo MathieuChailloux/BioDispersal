@@ -165,7 +165,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         self.openProject.clicked.connect(self.loadModelAction)
         self.langEn.clicked.connect(self.switchLangEn)
         self.langFr.clicked.connect(self.switchLangFr)
-        #sys.excepthook = self.bioDispHook
+        sys.excepthook = self.bioDispHook
         
     def initializeGlobals(self):
         groups.groupsModel = None
