@@ -29,6 +29,7 @@ import sys
 import subprocess
 import time
 import html
+import platform
 
 file_dir = os.path.dirname(__file__)
 if file_dir not in sys.path:
@@ -42,6 +43,9 @@ def printLine(msg):
 debug_flag=False
 print_func = printLine
 curr_language = "fr"
+
+platform_sys = platform.system()
+    
 
 class CustomException(Exception):
 
@@ -99,10 +103,23 @@ class Section:
     
 # File utils
     
+#def normPath(fname):
+#    return fname.replace('\\','/')
+
 def normPath(fname):
-    return fname.replace('\\','/')
+    debug("fname : " + str(fname))
+    p = pathlib.Path(fname)
+    debug("path = " + str(path))
+    debug("pathparts = " + str(path.parts))
+    pposix = p.as_posix()
     
+
 def checkFileExists(fname,prefix=""):
+    path = pathlib.Path(fname)
+    debug("path = " + str(path))
+    debug("pathparts = " + str(path.parts))
+    if not path.exists():
+        user_error("path does not exist : " + str(path))
     if not fname:
         user_error(prefix + " File not selected")
     if not (os.path.isfile(fname)):

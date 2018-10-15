@@ -163,26 +163,18 @@ class FusionModel(abstract_model.AbstractGroupModel):
             out_path = st_item.getMergedPath()
             if os.path.isfile(out_path):
                 qgsUtils.removeRaster(out_path)
-            cmd_args = ['gdal_merge.bat',
-                        '-o', out_path,
-                        '-of', 'GTiff',
-                        '-ot','Int32',
-                        '-n', qgsTreatments.nodata_val,
-                        '-a_nodata', qgsTreatments.nodata_val]
-            #cmd_args += ['-ul_lr']
-            #cmd_args += extent_coords
-            #cmd_args += ['-ps',res,res]
-            cmd_args = cmd_args + grp_args
-            utils.executeCmd(cmd_args)
-            p = subprocess.Popen(cmd_args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-            # out,err = p.communicate()
-            # utils.debug("Arguments : " + str(p.args))
-            # utils.info(str(out))
-            # if err:
-                # utils.user_error(str(err))
-            # else:
-            res_layer = qgsUtils.loadRasterLayer(out_path)
-            QgsProject.instance().addMapLayer(res_layer)
+            qgsTreatments.applyGdalMerge(grp_args,out_path,load_flag=True)
+            #cmd_args = ['gdal_merge.bat',
+            #            '-o', out_path,
+            #            '-of', 'GTiff',
+            #            '-ot','Int32',
+            #            '-n', qgsTreatments.nodata_val,
+            #            '-a_nodata', qgsTreatments.nodata_val]
+            #cmd_args = cmd_args + grp_args
+            #utils.executeCmd(cmd_args)
+            #p = subprocess.Popen(cmd_args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            #res_layer = qgsUtils.loadRasterLayer(out_path)
+            #QgsProject.instance().addMapLayer(res_layer)
             progress_section.next_step()
         progress_section.end_section()
         utils.info("Merge succesfully applied")
