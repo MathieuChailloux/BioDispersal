@@ -88,6 +88,7 @@ class FrictionModel(abstract_model.DictModel):
             self.layoutChanged.emit()
         
     def removeClassFromName(self,name):
+        utils.debug("removeing class " + str(name) + " from friction")
         self.classes = [cls_item for cls_item in self.classes if cls_item.dict["name"] != name]
         for i in range(0,len(self.items)):
             if self.items[i].dict["class"] == name:

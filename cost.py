@@ -69,7 +69,9 @@ class CostItem(DictItem):
         params.checkInit()
         extent_layer_path = params.getExtentLayer()
         applyRasterization(startLayer,"geom",startRaster,
-                           params.getResolution(),extent_layer_path)
+                           resolution=params.getResolution(),
+                           extent_path=extent_layer_path,load_flag=False,to_byte=False,
+                           more_args=['-ot','Byte','-a_nodata','0'])
         permRaster = params.getOrigPath(self.dict["perm_layer"])
         cost = self.dict["cost"]
         tmpPath = st_item.getDispersionTmpPath(cost)
@@ -79,7 +81,7 @@ class CostItem(DictItem):
             removeRaster(outPath)
         applyRCost(startRaster,permRaster,cost,tmpPath)
         applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
-        removeRaster(tmpPath)
+        #removeRaster(tmpPath)
         res_layer = qgsUtils.loadRasterLayer(outPath)
         QgsProject.instance().addMapLayer(res_layer)
         utils.debug("End runCost")

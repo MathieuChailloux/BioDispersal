@@ -100,7 +100,15 @@ class Section:
 # File utils
     
 def normPath(fname):
-    return fname.replace('\\','/')
+    p = pathlib.Path(fname)
+    pp = p.as_posix()
+    return pp
+    #return fname.replace('\\','/')
+    
+def joinPath(p1,p2):
+    pp1 = pathlib.Path(p1)
+    res = pp1.joinpath(p2)
+    return res.as_posix()
     
 def checkFileExists(fname,prefix=""):
     if not fname:

@@ -61,7 +61,9 @@ def applySelection(in_layer,expr,out_layer):
 # Resolution set to 25 if not given.
 # Extent can be given through 'extent_path'. If not, it is extracted from input layer.
 # Output raster layer is loaded in QGIS if 'load_flag' is True.
-def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,load_flag=False,to_byte=False):
+def applyRasterization(in_path,field,out_path,resolution=None,
+                       extent_path=None,load_flag=False,to_byte=False,
+                       more_args=[]):
     utils.debug("applyRasterization")
     in_layer = qgsUtils.loadVectorLayer(in_path)
     if extent_path:
@@ -74,6 +76,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
     x_max = extent.xMaximum()
     y_min = extent.yMinimum()
     y_max = extent.yMaximum()
+    utils.debug("resolution  = " + str(resolution))
     if not resolution:
         utils.warn("Setting rasterization resolution to 25")
         resolution = 25
@@ -84,7 +87,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
                   '-ts', str(width), str(height),
                   #'-ot','Int32',
-                  '-a_srs','epsg:2154',
+                  #'-a_srs','epsg:2154',
                   '-of','GTiff']
                   #'-a_nodata',nodata_val]
     if to_byte:
@@ -93,6 +96,7 @@ def applyRasterization(in_path,field,out_path,resolution=None,extent_path=None,l
         parameters += ['-burn', '1']
     else:
         parameters += ['-a',field]
+    parameters += more_args
     parameters += [in_path,out_path]
     p = subprocess.Popen(parameters,stderr=subprocess.PIPE)
     out,err = p.communicate()

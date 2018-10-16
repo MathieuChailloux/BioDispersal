@@ -30,14 +30,13 @@ def normalizePath(path):
     checkWorkspaceInit()
     if not path:
         utils.user_error("Empty path")
-    pp = pathlib.Path(path)
-    utils.debug("path = " + str(path))
-    utils.debug("pp_str = " + str(pp))
-    path = str(pp)
-    if os.path.isabs(path):
-        return os.path.relpath(path,params.workspace)
+    norm_path = utils.normPath(path)
+    if os.path.isabs(norm_path):
+        rel_path = os.path.relpath(norm_path,params.workspace)
     else:
-        return path
+        rel_path = norm_path
+    final_path = utils.normPath(rel_path)
+    return final_path
         
 def getOrigPath(path):
     checkWorkspaceInit()
@@ -46,7 +45,7 @@ def getOrigPath(path):
     elif os.path.isabs(path):
         return path
     else:
-        return os.path.normpath(os.path.join(params.workspace,path))
+        return os.path.normpath(utils.joinPath(params.workspace,path))
     
 def checkInit():
     checkWorkspaceInit()
@@ -66,7 +65,7 @@ def getPathFromLayerCombo(combo):
     return layer_path
         
 def getResolution():
-    return params.resolution
+    return int(params.resolution)
     
 def getExtentLayer():
     return getOrigPath(params.extentLayer)
@@ -164,11 +163,11 @@ class ParamsModel(QAbstractTableModel):
         return self.crs.authid().lower()
         
     def setWorkspace(self,path):
-        self.workspace = path
-        utils.info("Workspace directory set to '" + path)
-        if not os.path.isdir(path):
-            utils.user_error("Directory '" + path + "' does not exist")
-        #self.tmpDir = os.path.join(path,"tmp")
+        norm_path = utils.normPath(path)
+        self.workspace = norm_path
+        utils.info("Workspace directory set to '" + norm_path)
+        if not os.path.isdir(norm_path):
+            utils.user_error("Directory '" + norm_path + "' does not exist")
             
     def setUseRelPath(self,state):
         if state:

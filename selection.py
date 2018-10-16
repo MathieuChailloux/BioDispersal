@@ -422,6 +422,8 @@ class SelectionConnector(AbstractConnector):
         
     def mkItem(self):
         in_layer = self.dlg.selectionInLayerCombo.currentLayer()
+        if not in_layer:
+            utils.user_error("No layer selected")
         in_layer_path = params.normalizePath(pathOfLayer(in_layer))
         expr = self.dlg.selectionExpr.expression()
         grp_item = self.getOrCreateGroup()
@@ -432,6 +434,8 @@ class SelectionConnector(AbstractConnector):
             if self.dlg.fieldSelectionMode.isChecked():
                 mode = vfield
                 mode_val = self.dlg.selectionField.currentField()
+                if not mode_val:
+                    utils.user_error("No field selected")
                 vals = self.getVectorVals(in_layer,mode_val)
                 class_names = self.getClassesFromVals(grp_name,vals)
             elif self.dlg.exprSelectionMode.isChecked():

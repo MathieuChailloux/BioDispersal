@@ -67,11 +67,11 @@ class GroupItem(abstract_model.DictItem):
 
     def getGroupPath(self):
         params.checkWorkspaceInit()
-        groups_path = os.path.join(params.params.workspace,"Groupes")
+        groups_path = utils.joinPath(params.params.workspace,"Groupes")
         if not os.path.isdir(groups_path):
             utils.info("Creating groups directory '" + groups_path + "'")
             os.makedirs(groups_path)
-        group_path = os.path.join(groups_path,self.name)
+        group_path = utils.joinPath(groups_path,self.name)
         if not os.path.isdir(group_path):
             utils.info("Creating group directory '" + group_path + "'")
             os.makedirs(group_path)
@@ -80,17 +80,17 @@ class GroupItem(abstract_model.DictItem):
     def getVectorPath(self):
         basename = self.name + "_vector.shp"
         grp_path = self.getGroupPath()
-        return os.path.join(grp_path,basename)
+        return utils.joinPath(grp_path,basename)
         
     def getRasterPath(self):
         basename = self.name + "_raster.tif"
         grp_path = self.getGroupPath()
-        return os.path.join(grp_path,basename)
+        return utils.joinPath(grp_path,basename)
         
     def getRasterTmpPath(self):
         basename = self.name + "_raster_tmp.tif"
         grp_path = self.getGroupPath()
-        return os.path.join(grp_path,basename)
+        return utils.joinPath(grp_path,basename)
         
     def saveVectorLayer(self):
         vector_path = self.getVectorPath()
