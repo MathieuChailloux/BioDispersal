@@ -64,6 +64,12 @@ def layerNameOfPath(p):
     res = os.path.splitext(bn)[0]
     return res
     
+def getVectorFilters():
+    return QgsProviderRegistry.instance().fileVectorFilters()
+    
+def getRasterFilters():
+    return QgsProviderRegistry.instance().fileRasterFilters()
+    
 def isVectorPath(fname):
     vector_extensions = [".shp"]
     extension = pathlib.Path(fname).suffix

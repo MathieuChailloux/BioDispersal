@@ -135,7 +135,7 @@ class CostConnector(AbstractConnector):
         
     def initGui(self):
         self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
-        self.dlg.costStartLayer.setFilter("*.shp")
+        self.dlg.costStartLayer.setFilter(getVectorFilters())
         self.dlg.costPermRasterCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.costPermRaster.setFilter("*.tif")
         self.dlg.costOutLayer.setFilter("*.tif")

@@ -584,7 +584,7 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionLayerFormatRaster.setCheckState(0)
         self.dlg.selectionLayerFormatVector.setCheckState(2)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
-        self.dlg.selectionInLayer.setFilter("*.shp")
+        self.dlg.selectionInLayer.setFilter(getVectorFilters())
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeVect)
         self.activateExprMode()
             
@@ -593,7 +593,7 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionLayerFormatVector.setCheckState(0)
         self.dlg.selectionLayerFormatRaster.setCheckState(2)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        self.dlg.selectionInLayer.setFilter("*.tif")
+        self.dlg.selectionInLayer.setFilter(getRasterFilters())
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeRaster)
         self.dlg.stackSelectionExprField.setCurrentWidget(self.dlg.stackSelectionResampling)
         
