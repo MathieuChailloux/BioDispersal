@@ -252,7 +252,7 @@ class ParamsConnector:
     def initGui(self):
         #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
         self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-        self.dlg.extentLayer.setFilter("*.shp;*.tif")
+        #self.dlg.extentLayer.setFilter("*.shp;*.tif")
         self.dlg.paramsCrs.setCrs(defaultCrs)
         self.model.setResolution(25)
         self.dlg.rasterResolution.setValue(25)
