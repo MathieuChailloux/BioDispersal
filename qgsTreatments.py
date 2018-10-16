@@ -33,6 +33,14 @@ import utils
 import qgsUtils
 
 nodata_val = '-9999'
+if utils.platform_sys == 'Windows':
+    gdal_calc_cmd = 'gdal_calc.bat'
+    gdal_merge_cmd = 'gdal_merge.bat'
+elif utils.platform_sys == 'Linux':
+    gdal_calc_cmd = 'gdal_calc.py'
+    gdal_merge_cmd = 'gdal_merge.py'
+else:
+    utils.internal_error("Unexpected system : " + str(utils.platform_sys))
 
 def applyProcessingAlg(parameters,alg_name):
     feedback = QgsProcessingFeedback()
@@ -199,7 +207,8 @@ def applyGdalCalc(in_path,out_path,expr,load_flag=False,more_args=[]):
     utils.debug("qgsTreatments.applyGdalCalc(" + str(expr) + ")")
     if os.path.isfile(out_path):
         qgsUtils.removeRaster(out_path)
-    cmd_args = ['gdal_calc.bat',
+    #cmd_args = ['gdal_calc.bat',
+    cmd_args = [gdal_calc_cmd,
                 '-A', in_path,
                 '--type=Int32',
                 '--outfile='+out_path,
@@ -245,7 +254,7 @@ def applyGdalCalcAB_ANull(in_path1,in_path2,out_path,expr,load_flag=False):
     utils.debug("qgsTreatments.applyGdalCalcAB")
     if os.path.isfile(out_path):
         qgsUtils.removeRaster(out_path)
-    cmd_args = ['gdal_calc.bat',
+    cmd_args = [gdal_calc_cmd,
                 '-A', in_path1,
                 '-B', in_path2,
                 #'--type=Int32',
@@ -271,7 +280,7 @@ def applyGdalCalcAB(in_path1,in_path2,out_path,expr,load_flag=False):
     nonull_out_tmp = utils.mkTmpPath(nonull_out,suffix="_tmp")
     applyRNull(in_path1,tmp_no_data_val,nonull_p1)
     applyRNull(in_path2,tmp_no_data_val,nonull_p2)
-    cmd_args = ['gdal_calc.bat',
+    cmd_args = [gdal_calc_cmd,
                 '-A', nonull_p1,
                 '-B', nonull_p2,
                 #'--type=Int32',
@@ -301,7 +310,7 @@ def applyPonderationGdal(a_path,b_path,out_path,pos_values=False):
     utils.debug("qgsTreatments.applyPonderationGdal")
     if os.path.isfile(out_path):
         qgsUtils.removeRaster(out_path)
-    cmd_args = ['gdal_calc.bat',
+    cmd_args = [gdal_calc_cmd,
                 '-A', a_path,
                 '-B', b_path,
                 #'--type=Int32',
@@ -417,4 +426,17 @@ def applyRCost(start_path,cost_path,cost,out_path):
     finally:  
         utils.debug("End runCost")
         
+        
+def applyGdalMerge(files,out_path,load_flag=False):
+    cmd_args = [gdal_merge_cmd,
+                '-o', out_path,
+                '-of', 'GTiff',
+                '-ot','Int32',
+                '-n', nodata_val,
+                '-a_nodata', nodata_val]
+    cmd_args += files
+    utils.executeCmd(cmd_args)
+    if load_flag:
+        res_layer = qgsUtils.loadRasterLayer(out_path)
+        QgsProject.instance().addMapLayer(res_layer)
         
