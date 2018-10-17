@@ -268,10 +268,11 @@ class SelectionConnector(AbstractConnector):
                         self.dlg.selectionAdd,self.dlg.selectionRemove)
                         
     def initGui(self):
+        #_translate = QtCore.QCoreApplication.translate
         self.activateGroupDisplay()
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.All)
-        #self.dlg.selectionResampleCombo.addItem("Plus proche voisin")
-        #self.dlg.selectionResampleCombo.addItem("Moyenne")
+        #self.dlg.selectionResampleCombo.addItem(_translate("BioDispersalDialogBase","Plus proche voisin"))
+        #self.dlg.selectionResampleCombo.addItem(_translate("BioDispersalDialogBase","Moyenne"))
         #self.dlg.selectionResampleCombo.addItem("Bilinéaire")
         #self.dlg.selectionResampleCombo.addItem("Cubique")
         

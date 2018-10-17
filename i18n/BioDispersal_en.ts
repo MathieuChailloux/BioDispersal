@@ -4,477 +4,507 @@
 <context>
     <name>BioDispersalDialogBase</name>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1894"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="20"/>
         <source>BioDispersal</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1895"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="108"/>
         <source>Ouvrir un projet BioDispersal</source>
-        <translation type="unfinished">Open existing BioDispersal project</translation>
+        <translation>Open existing BioDispersal project</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1896"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="131"/>
         <source>Enregistrer le projet BioDispersal sous</source>
-        <translation type="unfinished">Save BioDispersal project as</translation>
+        <translation>Save BioDispersal project as</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1897"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="154"/>
         <source>Enregistrer le projet BioDispersal</source>
-        <translation type="unfinished">Save BioDispersal project</translation>
+        <translation>Save BioDispersal project</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1898"/>
-        <source>Paramètres</source>
-        <translation type="unfinished">Parameters</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1899"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="351"/>
         <source>Couche d&apos;emprise*</source>
-        <translation type="unfinished">Extent layer*</translation>
+        <translation>Extent layer*</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1900"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="364"/>
         <source>Projection*</source>
-        <translation type="unfinished">Projection*</translation>
+        <translation>Projection*</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1901"/>
-        <source>Résolution raster*</source>
-        <translation type="unfinished">Raster resolution*</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1902"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="400"/>
         <source>Dossier de travail*</source>
-        <translation type="unfinished">Workspace*</translation>
+        <translation>Workspace*</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1903"/>
-        <source>1 - Paramètres</source>
-        <translation type="unfinished">1 - Parameters</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1904"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="440"/>
         <source>Sous-trames</source>
-        <translation type="unfinished">2 - Subnetworks</translation>
+        <translation>Subnetworks</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1905"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="468"/>
         <source>Nom</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1906"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="491"/>
         <source>Description</source>
-        <translation type="unfinished">Description</translation>
+        <translation>Description</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1907"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="550"/>
         <source>Ajouter la sous-trame</source>
-        <translation type="unfinished">Add subnetwork</translation>
+        <translation>Add subnetwork</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1908"/>
-        <source>Supprimer les sous-trames sélectionnées</source>
-        <translation type="unfinished">Delete selected subnetworks</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1909"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="421"/>
         <source>2 - Sous-trames</source>
-        <translation type="unfinished">2 - Subnetworks</translation>
+        <translation>2 - Subnetworks</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1910"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="761"/>
         <source>Raster</source>
-        <translation type="unfinished">Raster</translation>
+        <translation>Raster</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1911"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="815"/>
         <source>Vecteur</source>
-        <translation type="unfinished">Vector</translation>
+        <translation>Vector</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1912"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="869"/>
         <source>Format</source>
-        <translation type="unfinished">Format</translation>
+        <translation>Format</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1992"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3878"/>
         <source>Ouvrir couche</source>
-        <translation type="unfinished">Open layer</translation>
+        <translation>Open layer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1991"/>
-        <source>Sélectionner couche</source>
-        <translation type="unfinished">Select layer</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1915"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="894"/>
         <source>1 - Couche</source>
-        <translation type="unfinished">1 - Layer</translation>
+        <translation>1 - Layer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1916"/>
-        <source>2- Mode de sélection</source>
-        <translation type="unfinished">2 - Selection mode</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1917"/>
-        <source>Mode de sélection</source>
-        <translation type="unfinished">Selection mode</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1918"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="997"/>
         <source>Par champ</source>
-        <translation type="unfinished">By field</translation>
+        <translation>By field</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1919"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1010"/>
         <source>Par expression</source>
-        <translation type="unfinished">By expression</translation>
+        <translation>By expression</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1920"/>
-        <source>Mode de ré-échantillonage</source>
-        <translation type="unfinished">Resampling mode</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1921"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1106"/>
         <source>Expression</source>
-        <translation type="unfinished">Expression</translation>
+        <translation>Expression</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1922"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1155"/>
         <source>Champ</source>
-        <translation type="unfinished">Field</translation>
+        <translation>Field</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1923"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1267"/>
         <source>3 - Groupe</source>
-        <translation type="unfinished">3 - Group</translation>
+        <translation>3 - Group</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1924"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1286"/>
         <source>Ajouter au groupe</source>
-        <translation type="unfinished">Add to group</translation>
+        <translation>Add to group</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1925"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1321"/>
         <source>Nouveau groupe</source>
-        <translation type="unfinished">New group</translation>
+        <translation>New group</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1926"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1334"/>
         <source>[nom]</source>
-        <translation type="unfinished">[name]</translation>
+        <translation>[name]</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1927"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1347"/>
         <source>[description]</source>
-        <translation type="unfinished">[description]</translation>
+        <translation>[description]</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1928"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1369"/>
         <source>Ajouter</source>
-        <translation type="unfinished">Add</translation>
+        <translation>Add</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1929"/>
-        <source>Enregistrer sélection</source>
-        <translation type="unfinished">Save selection</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1930"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1498"/>
         <source>Groupes</source>
-        <translation type="unfinished">Groups</translation>
+        <translation>Groups</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1931"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1511"/>
         <source>Afficher classes</source>
-        <translation type="unfinished">Show classes</translation>
+        <translation>Show classes</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1932"/>
-        <source>Supprimer les groupes sélectionnées</source>
-        <translation type="unfinished">Delete selected groups</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1933"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1616"/>
         <source>Classes</source>
-        <translation type="unfinished">Classes</translation>
+        <translation>Classes</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1934"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1629"/>
         <source>Afficher groupes</source>
-        <translation type="unfinished">Show groups</translation>
+        <translation>Show groups</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1935"/>
-        <source>Supprimer les classes sélectionnées</source>
-        <translation type="unfinished">Delete selected classes</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1997"/>
-        <source>Appliquer seulement aux lignes sélectionnées</source>
-        <translation type="unfinished">Apply only to selected lines</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1937"/>
-        <source>Lancer les sélections</source>
-        <translation type="unfinished">Launch selections</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1938"/>
-        <source>Promouvoir la sélection</source>
-        <translation type="unfinished">Upgrade selection</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1939"/>
-        <source>Rétrograder la sélection</source>
-        <translation type="unfinished">Downgrade selection</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1996"/>
-        <source>Supprimer les lignes sélectionnées</source>
-        <translation type="unfinished">Delete selected lines</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1941"/>
-        <source>Sélection</source>
-        <translation type="unfinished">Selection</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1942"/>
-        <source>3 - Sélection</source>
-        <translation type="unfinished">3 - Selection</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1943"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2020"/>
         <source>Sous-trame</source>
-        <translation type="unfinished">Subnetwork</translation>
+        <translation>Subnetwork</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1944"/>
-        <source>Hiérarchiser les couches</source>
-        <translation type="unfinished">Rank layers</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1945"/>
-        <source>Supprimer la couche sélectionnée</source>
-        <translation type="unfinished">Delete selected layer</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1946"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2150"/>
         <source>Recharger les couches</source>
-        <translation type="unfinished">Reload layers</translation>
+        <translation>Reload layers</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1947"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2249"/>
         <source>Promouvoir la couche</source>
-        <translation type="unfinished">Upgrade layer</translation>
+        <translation>Upgrade layer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1948"/>
-        <source>Rétrograder la couche</source>
-        <translation type="unfinished">Downgrade layer</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1949"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2338"/>
         <source>Fusionner seulement la sous-trame courante</source>
-        <translation type="unfinished">Merge only current subnetwork</translation>
+        <translation>Merge only current subnetwork</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1950"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2384"/>
         <source>Fusionner</source>
-        <translation type="unfinished">Merge</translation>
+        <translation>Merge</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1951"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2414"/>
         <source>Fusion</source>
-        <translation type="unfinished">Merge</translation>
+        <translation>Merge</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1952"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="1953"/>
         <source>4 - Fusion</source>
-        <translation type="unfinished">4 - Merge</translation>
+        <translation>4 - Merge</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1953"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2441"/>
         <source>Friction</source>
-        <translation type="unfinished">Friction</translation>
+        <translation>Friction</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1954"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2490"/>
         <source>Recharger les classes</source>
-        <translation type="unfinished">Reload classes</translation>
+        <translation>Reload classes</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1955"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2519"/>
         <source>Ouvrir un tableau de friction</source>
-        <translation type="unfinished">Open friction from CSV file</translation>
+        <translation>Open friction from CSV file</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1956"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2548"/>
         <source>Enregistrer le tableau de friction sous</source>
-        <translation type="unfinished">Save friction as CSV file</translation>
+        <translation>Save friction as CSV file</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1957"/>
-        <source>Appliquer seulement aux sous-trames sélectionnées</source>
-        <translation type="unfinished">Apply only to selected subnetworks</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1958"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2640"/>
         <source>Produire les couches de friction</source>
-        <translation type="unfinished">Compute friction layer</translation>
+        <translation>Compute friction layer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1959"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2422"/>
         <source>5 - Friction</source>
-        <translation type="unfinished">5 - Friction</translation>
+        <translation>5 - Friction</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1960"/>
-        <source>Pondération</source>
-        <translation type="unfinished">Weighting</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1961"/>
-        <source>1 - Mode de pondération</source>
-        <translation type="unfinished">1 - Weighting mode</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1962"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2758"/>
         <source>2 - Couche de friction</source>
-        <translation type="unfinished">2 - Friction layer</translation>
+        <translation>2 - Friction layer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1965"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="2927"/>
         <source>3 - Couche de sortie</source>
-        <translation type="unfinished">3 - Output layer</translation>
+        <translation>3 - Output layer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1966"/>
-        <source>4 - Pondération</source>
-        <translation type="unfinished">4 - Weighting</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1969"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3144"/>
         <source>Ajouter un intervalle</source>
-        <translation type="unfinished">Add interval</translation>
+        <translation>Add interval</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="2005"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="4315"/>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1971"/>
-        <source>Supprimer l&apos;intervalle sélectionné</source>
-        <translation type="unfinished">Delete selected interval</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1973"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3190"/>
         <source>Intervalles</source>
-        <translation type="unfinished">Intervals</translation>
+        <translation>Intervals</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1974"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3253"/>
         <source>Tampons</source>
-        <translation type="unfinished">Buffers</translation>
+        <translation>Buffers</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1975"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3260"/>
         <source>Ajouter un nouveau tampon</source>
-        <translation type="unfinished">Add new buffer</translation>
+        <translation>Add new buffer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1977"/>
-        <source>Supprimer le tampon sélectionné</source>
-        <translation type="unfinished">Delete selected buffer</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1979"/>
-        <source>Enregistrer pondération</source>
-        <translation type="unfinished">Save weighting</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1983"/>
-        <source>Pondérer les couches de friction</source>
-        <translation type="unfinished">Apply weighting</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1984"/>
-        <source>6 - Pondération</source>
-        <translation type="unfinished">6 - Weighting</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1985"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3596"/>
         <source>Dispersion</source>
-        <translation type="unfinished">Dispersal</translation>
+        <translation>Dispersal</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1986"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3630"/>
         <source>1 - Sous-trame</source>
-        <translation type="unfinished">1 - Subnetwork</translation>
+        <translation>1 - Subnetwork</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1987"/>
-        <source>2 - Réservoirs de biodiversité</source>
-        <translation type="unfinished">2 - Start layer</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1990"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3792"/>
         <source>3 - Raster de friction</source>
-        <translation type="unfinished">3 - Friction layer</translation>
+        <translation>3 - Friction layer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1993"/>
-        <source>4 - Coût max</source>
-        <translation type="unfinished">4 - Maximal cost</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1994"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3958"/>
         <source>5 - Couche de sortie</source>
-        <translation type="unfinished">5 - Output layer</translation>
+        <translation>5 - Output layer</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1995"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="4038"/>
         <source>Enregistrer dispersion</source>
-        <translation type="unfinished">Save dispersal</translation>
+        <translation>Save dispersal</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1998"/>
-        <source>Lancer la modélisation</source>
-        <translation type="unfinished">Compute dispersals</translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="1999"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="3583"/>
         <source>7 - Dispersion</source>
-        <translation type="unfinished">7 - Dispersal</translation>
+        <translation>7 - Dispersal</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="2000"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="4275"/>
         <source>Activer le mode debug</source>
-        <translation type="unfinished">Debug mode</translation>
+        <translation>Debug mode</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="2002"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="4295"/>
         <source>Enregistrer le journal sous</source>
-        <translation type="unfinished">Save log as</translation>
+        <translation>Save log as</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="2004"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="4312"/>
         <source>Effacer le journal</source>
-        <translation type="unfinished">Clear log</translation>
+        <translation>Clear log</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="2006"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="4229"/>
         <source>Journal</source>
-        <translation type="unfinished">Log</translation>
+        <translation>Log</translation>
     </message>
     <message>
-        <location filename="../BioDispersal_dialog_base.py" line="2007"/>
+        <location filename="../BioDispersal_dialog_base.ui" line="4408"/>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="184"/>
+        <source>English</source>
+        <translation>English</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1208"/>
+        <source>Plus proche voisin</source>
+        <translation>Near</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1213"/>
+        <source>Moyenne</source>
+        <translation>Average</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1366"/>
+        <source>Ajoute un nouveau groupe</source>
+        <translation>Add new group</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="237"/>
+        <source>1 - Paramètres</source>
+        <translation>1 - Parameters</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="269"/>
+        <source>Paramètres</source>
+        <translation>Parameters</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="377"/>
+        <source>Résolution raster*</source>
+        <translation>Raster resolution</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="579"/>
+        <source>Supprimer les sous-trames sélectionnées</source>
+        <translation>Delete selected subnetworks</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="641"/>
+        <source>3 - Sélection</source>
+        <translation>3 - Selection</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="3827"/>
+        <source>Sélectionner couche</source>
+        <translation>Select layer</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="946"/>
+        <source>2- Mode de sélection</source>
+        <translation>2 - Selection mode</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="984"/>
+        <source>Mode de sélection</source>
+        <translation>Selection Mode</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1042"/>
+        <source>Créer classes</source>
+        <translation>Create classes</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1194"/>
+        <source>Mode de ré-échantillonage</source>
+        <translation>Resampling mode</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1406"/>
+        <source>Enregistrer sélection</source>
+        <translation>Save selection</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1543"/>
+        <source>Supprimer les groupes sélectionnées</source>
+        <translation>Delete selected groups</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1655"/>
+        <source>Supprimer les classes sélectionnées</source>
+        <translation>Delete selected classes</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="4155"/>
+        <source>Appliquer seulement aux lignes sélectionnées</source>
+        <translation>Apply only to selected lines</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1785"/>
+        <source>Lancer les sélections</source>
+        <translation>Launch selections</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1851"/>
+        <source>Promouvoir la sélection</source>
+        <translation>Upgrade selection</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1880"/>
+        <source>Rétrograder la sélection</source>
+        <translation>Downgrade selection</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="4110"/>
+        <source>Supprimer les lignes sélectionnées</source>
+        <translation>Delete selected lines</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="1942"/>
+        <source>Sélection</source>
+        <translation>Selection</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="2053"/>
+        <source>Hiérarchiser les couches</source>
+        <translation>Rank layers</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="2118"/>
+        <source>Supprimer la couche sélectionnée</source>
+        <translation>Delete selected layer</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="2284"/>
+        <source>Rétrograder la couche</source>
+        <translation>Downgrade layer</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="2585"/>
+        <source>Appliquer seulement aux sous-trames sélectionnées</source>
+        <translation>Apply only to selected subnetworks</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="2658"/>
+        <source>6 - Pondération</source>
+        <translation>6 - Weighting</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="2671"/>
+        <source>Pondération</source>
+        <translation>Weighting</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="2723"/>
+        <source>1 - Mode de pondération</source>
+        <translation>1 - Weighting mode</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="2956"/>
+        <source>4 - Pondération</source>
+        <translation>4 - Weighting</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="3167"/>
+        <source>Supprimer l&apos;intervalle sélectionné</source>
+        <translation>Delete selected interval</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="3277"/>
+        <source>Supprimer le tampon sélectionné</source>
+        <translation>Delete selected buffer</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="3379"/>
+        <source>Enregistrer pondération</source>
+        <translation>Save weighting</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="3562"/>
+        <source>Pondérer les couches de friction</source>
+        <translation>Weight friction layers</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="3671"/>
+        <source>2 - Réservoirs de biodiversité</source>
+        <translation>2 - Biodiversity reservoirs</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="3913"/>
+        <source>4 - Coût max</source>
+        <translation>4 - Maximal cost</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="4211"/>
+        <source>Lancer la modélisation</source>
+        <translation>Launch dispersal</translation>
+    </message>
+    <message>
+        <location filename="../BioDispersal_dialog_base.ui" line="4361"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -491,11 +521,6 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../BioDispersal_dialog_base.py" line="2022"/>
-        <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
     </message>
 </context>
 </TS>

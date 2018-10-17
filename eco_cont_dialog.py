@@ -189,6 +189,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             self.translator = QTranslator()
             self.translator.load(en_path)
             if qVersion() > '4.3.3':
+                utils.debug("Installing translator")
                 QCoreApplication.installTranslator(self.translator)
             else:
                 utils.internal_error("Unexpected qVersion : " + str(qVersion()))
