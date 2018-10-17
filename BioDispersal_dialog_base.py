@@ -51,7 +51,7 @@ class Ui_BioDispersalDialogBase(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 865, 706))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 866, 700))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -408,7 +408,7 @@ class Ui_BioDispersalDialogBase(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.selectionInLayerCombo.sizePolicy().hasHeightForWidth())
         self.selectionInLayerCombo.setSizePolicy(sizePolicy)
-        self.selectionInLayerCombo.setMinimumSize(QtCore.QSize(100, 13))
+        self.selectionInLayerCombo.setMinimumSize(QtCore.QSize(60, 13))
         self.selectionInLayerCombo.setObjectName("selectionInLayerCombo")
         self.gridLayout_7.addWidget(self.selectionInLayerCombo, 2, 1, 1, 2)
         self.selectionOpenLayerLabel = QtWidgets.QLabel(self.selectionLayerFrame)
@@ -444,7 +444,7 @@ class Ui_BioDispersalDialogBase(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.selectionLayerLabel_5.sizePolicy().hasHeightForWidth())
         self.selectionLayerLabel_5.setSizePolicy(sizePolicy)
-        self.selectionLayerLabel_5.setMinimumSize(QtCore.QSize(96, 13))
+        self.selectionLayerLabel_5.setMinimumSize(QtCore.QSize(138, 13))
         self.selectionLayerLabel_5.setObjectName("selectionLayerLabel_5")
         self.gridLayout_7.addWidget(self.selectionLayerLabel_5, 2, 0, 1, 1)
         self.selectionLayerFormatLabel = QtWidgets.QLabel(self.selectionLayerFrame)
@@ -527,13 +527,13 @@ class Ui_BioDispersalDialogBase(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.stackSelectionModeRaster)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.selectionCreateClasses = QtWidgets.QCheckBox(self.stackSelectionModeRaster)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.selectionCreateClasses.sizePolicy().hasHeightForWidth())
         self.selectionCreateClasses.setSizePolicy(sizePolicy)
         self.selectionCreateClasses.setMinimumSize(QtCore.QSize(0, 16))
-        self.selectionCreateClasses.setMaximumSize(QtCore.QSize(108, 16777215))
+        self.selectionCreateClasses.setMaximumSize(QtCore.QSize(116, 16777215))
         self.selectionCreateClasses.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.selectionCreateClasses.setObjectName("selectionCreateClasses")
         self.horizontalLayout_4.addWidget(self.selectionCreateClasses)
@@ -646,7 +646,7 @@ class Ui_BioDispersalDialogBase(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.selectionGroupAddLabel.sizePolicy().hasHeightForWidth())
         self.selectionGroupAddLabel.setSizePolicy(sizePolicy)
-        self.selectionGroupAddLabel.setMinimumSize(QtCore.QSize(88, 13))
+        self.selectionGroupAddLabel.setMinimumSize(QtCore.QSize(124, 13))
         self.selectionGroupAddLabel.setObjectName("selectionGroupAddLabel")
         self.gridLayout_8.addWidget(self.selectionGroupAddLabel, 1, 0, 1, 1)
         self.selectionGroupCombo = QtWidgets.QComboBox(self.selectGroupFrame)
@@ -655,7 +655,7 @@ class Ui_BioDispersalDialogBase(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.selectionGroupCombo.sizePolicy().hasHeightForWidth())
         self.selectionGroupCombo.setSizePolicy(sizePolicy)
-        self.selectionGroupCombo.setMinimumSize(QtCore.QSize(100, 13))
+        self.selectionGroupCombo.setMinimumSize(QtCore.QSize(70, 13))
         self.selectionGroupCombo.setObjectName("selectionGroupCombo")
         self.gridLayout_8.addWidget(self.selectionGroupCombo, 1, 1, 1, 3)
         self.selectionGroupAddLabel_2 = QtWidgets.QLabel(self.selectGroupFrame)
@@ -1952,7 +1952,7 @@ class Ui_BioDispersalDialogBase(object):
         self.verticalLayout.addLayout(self.horizontalLayout_3)
 
         self.retranslateUi(BioDispersalDialogBase)
-        self.mTabWidget.setCurrentIndex(2)
+        self.mTabWidget.setCurrentIndex(0)
         self.stackSelectionMode.setCurrentIndex(1)
         self.stackSelectionExprField.setCurrentIndex(2)
         self.stackGroupClass.setCurrentIndex(0)
@@ -2083,18 +2083,18 @@ class Ui_BioDispersalDialogBase(object):
         self.textShortHelp.setHtml(_translate("BioDispersalDialogBase", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">Nom étape</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Description générale</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Ceci est une description générale</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Description détaillée</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">  </span><span style=\" font-size:8pt; font-style:italic;\">param1</span><span style=\" font-size:8pt;\"> : description du param 1</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">  </span><span style=\" font-size:8pt; font-style:italic;\">param2</span><span style=\" font-size:8pt;\"> : description du param 2</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Ceci est un test</span></p></body></html>"))
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">Nom étape</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\">Description générale</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Ceci est une description générale</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\">Description détaillée</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">  </span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-style:italic;\">param1</span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"> : description du param 1</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">  </span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-style:italic;\">param2</span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"> : description du param 2</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Ceci est un test</span></p></body></html>"))
         self.buttonCancel.setText(_translate("BioDispersalDialogBase", "Cancel"))
 
 from qgis import gui
