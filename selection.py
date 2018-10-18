@@ -156,7 +156,7 @@ class SelectionItem(DictItem):
             out_vector_layer.dataProvider().addAttributes([orig_field,class_field,code_field])
             out_vector_layer.updateFields()        
         if (mode == vexpr) and mode_val:
-            feats = in_layer.getFeatures(QgsFeatureRequest().setFilterExpression(mide_val))
+            feats = in_layer.getFeatures(QgsFeatureRequest().setFilterExpression(mode_val))
         else:
             feats = in_layer.getFeatures(QgsFeatureRequest())
         pr = out_vector_layer.dataProvider()
@@ -341,13 +341,17 @@ class SelectionConnector(AbstractConnector):
         
     def setInLayer(self,path):
         debug("setInLayer " + path)
-        loaded_layer = loadLayer(path,loadProject=True)
-        self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
+        #loaded_layer = loadLayer(path,loadProject=True)
         if self.dlg.selectionLayerFormatVector.isChecked():
+            loaded_layer = loadVectorLayer(path,loadProject=True)
             self.dlg.selectionExpr.setLayer(loaded_layer)
             self.dlg.selectionField.setLayer(loaded_layer)
             debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
             debug(str(self.dlg.selectionField.layer().fields().names()))
+        else:
+            loaded_layer = loadRasterLayer(path,loadProject=True)
+        self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
+            
         
     def setInLayerField(self,path):
         debug("[setInLayerField]")

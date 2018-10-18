@@ -25,7 +25,7 @@
 import os.path
 import pathlib
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsRectangle
+from qgis.core import QgsCoordinateReferenceSystem, QgsRectangle, QgsProject, QgsCoordinateTransform
 from qgis.gui import QgsFileWidget
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
 from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
@@ -73,12 +73,14 @@ def getOrigPath(path):
 def checkInit():
     checkWorkspaceInit()
     if not params.extentLayer:
-        utils.user_error("Extent layer paramter not initialized")
+        utils.user_error("Extent layer parameter not initialized")
     utils.checkFileExists(getOrigPath(params.extentLayer),"Extent layer ")
     if not params.resolution:
-        utils.user_error("Resolution paramter not initialized")
+        utils.user_error("Resolution parameter not initialized")
+    if params.resolution == 0.0:
+        utils.user_error("Null resolution")
     if not params.crs:
-        utils.user_error("CRS paramter not initialized")
+        utils.user_error("CRS parameter not initialized")
     if not params.crs.isValid():
         utils.user_error("Invalid CRS")
 
@@ -88,7 +90,7 @@ def getPathFromLayerCombo(combo):
     return layer_path
         
 def getResolution():
-    return int(params.resolution)
+    return float(params.resolution)
     
 def getExtentLayer():
     return getOrigPath(params.extentLayer)
@@ -159,7 +161,7 @@ class ParamsModel(QAbstractTableModel):
     def __init__(self):
         self.workspace = None
         self.extentLayer = None
-        self.resolution = None
+        self.resolution = 0.0
         self.useRelativePath = True
         self.projectFile = ""
         self.crs = defaultCrs
@@ -184,6 +186,15 @@ class ParamsModel(QAbstractTableModel):
         
     def getCrsStr(self):
         return self.crs.authid().lower()
+
+    def getTransformator(self,in_crs):
+        transformator = QgsCoordinateTransform(in_crs,self.crs,QgsProject.instance())
+        return transformator
+    
+    def getBoundingBox(self,in_extent_rect,in_crs):
+        transformator = self.getTransformator(in_crs)
+        out_extent_rect = transformator.transformBoundingBox(in_extent_rect)
+        return out_extent_rect
         
     def setWorkspace(self,path):
         norm_path = utils.normPath(path)
@@ -277,8 +288,8 @@ class ParamsConnector:
         self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         #self.dlg.extentLayer.setFilter("*.shp;*.tif")
         self.dlg.paramsCrs.setCrs(defaultCrs)
-        self.model.setResolution(25)
-        self.dlg.rasterResolution.setValue(25)
+        #self.model.setResolution(25)
+        #self.dlg.rasterResolution.setValue(25)
         
     def connectComponents(self):
         self.dlg.paramsView.setModel(self.model)

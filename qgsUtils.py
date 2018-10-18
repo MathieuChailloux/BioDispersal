@@ -84,9 +84,9 @@ def loadVectorLayer(fname,loadProject=False):
     utils.checkFileExists(fname)
     layer = QgsVectorLayer(fname, layerNameOfPath(fname), "ogr")
     if layer == None:
-        utils.user_error("Could not load layer '" + fname + "'")
+        utils.user_error("Could not load vector layer '" + fname + "'")
     if not layer.isValid():
-        utils.user_error("Invalid layer '" + fname + "'")
+        utils.user_error("Invalid vector layer '" + fname + "'")
     layer.dataProvider().setEncoding('System')
     if loadProject:
         QgsProject.instance().addMapLayer(layer)
@@ -96,24 +96,34 @@ def loadRasterLayer(fname,loadProject=False):
     utils.checkFileExists(fname)
     rlayer = QgsRasterLayer(fname, layerNameOfPath(fname))
     if not rlayer.isValid():
-        utils.internal_error("Invalid raster layer '" + fname + "'")
+        utils.user_error("Invalid raster layer '" + fname + "'")
     if loadProject:
         QgsProject.instance().addMapLayer(rlayer)
     return rlayer
-    
+
 def loadLayer(fname,loadProject=False):
-    utils.checkFileExists(fname)
-    if isVectorPath(fname):
-        loaded_layer = loadVectorLayer(fname,loadProject)
-    elif isRasterPath(fname):
-        loaded_layer = loadRasterLayer(fname,loadProject)
-    else:
-        user_error("Unexpected layer format for file " + str(fname))
-    if loaded_layer == None:
-        user_error("Could not load layer '" + path + "'")
-    if not loaded_layer.isValid():
-        user_error("Invalid layer '" + path + "'")
-    return loaded_layer
+    try:
+        return (loadVectorLayer(fname,loadProject))
+    except CustomException:
+        try:
+            return (loadRasterLayer(fname,loadProject))
+        except CustomException:
+            utils.user_error("Could not load layer '" + fname + "'")
+            
+            
+# def loadLayer(fname,loadProject=False):
+#     utils.checkFileExists(fname)
+#     if isVectorPath(fname):
+#         loaded_layer = loadVectorLayer(fname,loadProject)
+#     elif isRasterPath(fname):
+#         loaded_layer = loadRasterLayer(fname,loadProject)
+#     else:
+#         utils.user_error("Unexpected layer format for file " + str(fname))
+#     if loaded_layer == None:
+#         user_error("Could not load layer '" + path + "'")
+#     if not loaded_layer.isValid():
+#         user_error("Invalid layer '" + path + "'")
+#     return loaded_layer
     
 def getLoadedLayerByName(name):
     layers = QgsProject.instance().mapLayersByName('my layer name')

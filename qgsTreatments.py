@@ -30,6 +30,7 @@ import sys
 import subprocess
 import processing
 
+import params
 import utils
 import qgsUtils
 
@@ -77,24 +78,29 @@ def applyRasterization(in_path,field,out_path,resolution=None,
     in_layer = qgsUtils.loadVectorLayer(in_path)
     if extent_path:
         extent_layer = qgsUtils.loadLayer(extent_path)
-        extent = extent_layer.extent()
     else:
-        in_layer = qgsUtils.loadVectorLayer(in_path)
-        extent = in_layer.extent()
-    x_min = extent.xMinimum()
-    x_max = extent.xMaximum()
-    y_min = extent.yMinimum()
-    y_max = extent.yMaximum()
+        extent_layer = qgsUtils.loadVectorLayer(in_path)
+    extent = extent_layer.extent()
+    #extent_crs = qgsUtils.getLayerCrsStr(extent_layer)
+    extent_crs = extent_layer.crs()
+    transformed_extent = params.params.getBoundingBox(extent,extent_crs)
+    x_min = transformed_extent.xMinimum()
+    x_max = transformed_extent.xMaximum()
+    y_min = transformed_extent.yMinimum()
+    y_max = transformed_extent.yMaximum()
     utils.debug("resolution  = " + str(resolution))
-    if not resolution:
-        utils.warn("Setting rasterization resolution to 25")
-        resolution = 25
-    width = int((x_max - x_min) / float(resolution))
-    height = int((y_max - y_min) / float(resolution))
+    #if not resolution:
+    #    utils.warn("Setting rasterization resolution to 25")
+    #    resolution = 25
+    #width = int((x_max - x_min) / float(resolution))
+    #height = int((y_max - y_min) / float(resolution))
+    if resolution == 0.0:
+        utils.user_error("Empty resolution")
     parameters = ['gdal_rasterize',
                   '-at',
                   '-te',str(x_min),str(y_min),str(x_max),str(y_max),
-                  '-ts', str(width), str(height),
+                  #'-ts', str(width), str(height),
+                  '-tr', str(resolution), str(resolution),
                   #'-ot','Int32',
                   #'-a_srs','epsg:2154',
                   '-of','GTiff']
@@ -147,26 +153,35 @@ def applyWarpGdal(in_path,out_path,resampling_mode,
     utils.debug("qgsTreatments.applyWarpGdal")
     in_layer = qgsUtils.loadRasterLayer(in_path)
     if extent_path:
+        utils.debug("extent_path = " + str(extent_path))
         extent_layer = qgsUtils.loadLayer(extent_path)
-        extent = extent_layer.extent()
     else:
-        #in_layer = qgsUtils.loadLayer(in_path)
-        extent = in_layer.extent()
-    x_min = extent.xMinimum()
-    x_max = extent.xMaximum()
-    y_min = extent.yMinimum()
-    y_max = extent.yMaximum()
+        extent_layer = in_layer
+    extent = extent_layer.extent()
+    extent_crs = extent_layer.crs()
+    transformed_extent = params.params.getBoundingBox(extent,extent_crs)
+    x_min = transformed_extent.xMinimum()
+    x_max = transformed_extent.xMaximum()
+    y_min = transformed_extent.yMinimum()
+    y_max = transformed_extent.yMaximum()
+    #x_min = extent.xMinimum()
+    #x_max = extent.xMaximum()
+    #y_min = extent.yMinimum()
+    #y_max = extent.yMaximum()
     if not resolution:
         resolution = in_layer.rasterUnitsPerPixelX()
         utils.warn("Setting rasterization resolution to " + str(resolution))
-    width = int((x_max - x_min) / float(resolution))
-    height = int((y_max - y_min) / float(resolution))
+    #width = int((x_max - x_min) / float(resolution))
+    #height = int((y_max - y_min) / float(resolution))
     in_crs = qgsUtils.getLayerCrsStr(in_layer)
+    extent_crs = qgsUtils.getLayerCrsStr(extent_layer)
     cmd_args = ['gdalwarp',
                 '-s_srs',in_crs,
                 '-t_srs',crs.authid(),
                 '-te',str(x_min),str(y_min),str(x_max),str(y_max),
-                '-ts', str(width), str(height),
+                #'-te_srs',extent_crs,
+                #'-ts', str(width), str(height),
+                '-tr', str(resolution), str(resolution),
                 #'-dstnodata',nodata_val,
                 #'-ot','Int16',
                 '-overwrite']

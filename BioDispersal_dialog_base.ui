@@ -306,6 +306,12 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>137</height>
+                  </size>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::NoFrame</enum>
                  </property>
@@ -313,11 +319,21 @@
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QGridLayout" name="gridLayout">
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="4" column="1">
-                   <widget class="QgsProjectionSelectionWidget" name="paramsCrs">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_44">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>Dossier de travail*</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QgsFileWidget" name="workspace">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -326,20 +342,7 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="3" column="1">
-                   <widget class="QgsSpinBox" name="rasterResolution">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="maximum">
-                     <number>999999</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
+                  <item row="1" column="0">
                    <widget class="QLabel" name="label_45">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -352,20 +355,17 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="0">
-                   <widget class="QLabel" name="label_47">
+                  <item row="1" column="1">
+                   <widget class="QgsFileWidget" name="extentLayer">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
-                    <property name="text">
-                     <string>Projection*</string>
-                    </property>
                    </widget>
                   </item>
-                  <item row="3" column="0">
+                  <item row="2" column="0">
                    <widget class="QLabel" name="label_46">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -379,17 +379,29 @@
                    </widget>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QgsFileWidget" name="extentLayer">
+                   <widget class="QgsDoubleSpinBox" name="rasterResolution">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>77</width>
+                      <height>26</height>
+                     </size>
+                    </property>
+                    <property name="maximum">
+                     <double>999999.000000000000000</double>
+                    </property>
+                    <property name="clearValue">
+                     <bool>false</bool>
+                    </property>
                    </widget>
                   </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_44">
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="label_47">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -397,12 +409,12 @@
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Dossier de travail*</string>
+                     <string>Projection*</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="1" column="1">
-                   <widget class="QgsFileWidget" name="workspace">
+                  <item row="3" column="1">
+                   <widget class="QgsProjectionSelectionWidget" name="paramsCrs">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -4414,6 +4426,11 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>qgsdoublespinbox.h</header>
+  </customwidget>
   <customwidget>
    <class>QgsFieldComboBox</class>
    <extends>QComboBox</extends>
