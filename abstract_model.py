@@ -74,7 +74,7 @@ class ArrayItem(AbstractGroupItem):
         if n < self.nb_fields:
             return self.arr[n]
         else:
-            utils.warn("getNField(" + str(n) + ") out of bounds : " + str(nb_fields))
+            utils.warn("getNField(" + str(n) + ") out of bounds : " + str(self.nb_fields))
             return None
             #assert false
             
@@ -114,7 +114,7 @@ class DictItem(AbstractGroupItem):
         else:
             utils.debug("getNField " + str(n))
             utils.debug("item fields = " + str(self.dict.keys()))
-            utils.warn("getNField(" + str(n) + ") out of bounds : " + str(nb_fields))
+            utils.warn("getNField(" + str(n) + ") out of bounds : " + str(self.nb_fields))
             return None
             #utils.internal_error("Accessing " + str(n) + " field >= " + str(self.nb_fields))
             
@@ -359,7 +359,9 @@ class DictModel(AbstractGroupModel):
             else:
                 del i.dict[fieldname]
             i.recompute()
-        self.fields.remove(fieldname)
+        utils.debug("self = " + str(self))
+        if fieldname in self.fields:
+            self.fields.remove(fieldname)
         self.layoutChanged.emit()
         
     def toXML(self,indent=" "):

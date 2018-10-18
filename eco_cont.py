@@ -199,6 +199,7 @@ class EcologicalContinuity:
         if self.dlg:
             utils.info("unload")
             self.dlg.connectors["Group"].disconnectComponents()
+            self.dlg.connectors["ST"].disconnectComponents()
             self.dlg.initializeGlobals()
         del self.toolbar
 

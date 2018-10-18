@@ -125,6 +125,7 @@ class FrictionModel(abstract_model.DictModel):
             row[st] = self.defaultVal
             
     def addSTItem(self,st_item):
+        global friction_fields
         utils.debug("addSTItem")
         st_name = st_item.dict["name"]
         if st_name not in self.fields:
@@ -142,8 +143,11 @@ class FrictionModel(abstract_model.DictModel):
         utils.debug("removeSTFromName " + str(st_name))
         self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] != st_name]
         self.removeField(st_name)
-        frictionFields.remove(st_name)
+        if st_name in frictionFields:
+            frictionFields.remove(st_name)
         self.layoutChanged.emit()
+
+    #def reloadST(self):
         
     def reloadClasses(self):
         utils.debug("reloadClasses")
