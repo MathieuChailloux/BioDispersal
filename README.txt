@@ -1,32 +1,30 @@
-Plugin Builder Results
 
-Your plugin EcologicalContinuity was created in:
-    C:/Users/mathieu.chailloux/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins\ecologicalcontinuity
+BioDispersal
+============
 
-Your QGIS plugin directory is located at:
-    C:/Users/mathieu.chailloux/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins
+BioDispersal is a QGIS 3 plugin.
+Its purpose is to compute ecological continuities based on environments permeability and animals potential dispersal areas.
+It has been developped by Mathieu Chailloux at IRSTEA, on mission for the French ecological network resource center (driven by French ministry of ecology).
 
-What's Next:
-
-  * Copy the entire directory containing your new plugin to the QGIS plugin
-    directory
-
-  * Compile the resources file using pyrcc5
-
-  * Run the tests (``make test``)
-
-  * Test the plugin by enabling it in the QGIS plugin manager
-
-  * Customize it by editing the implementation file: ``eco_cont.py``
-
-  * Create your own custom icon, replacing the default icon.png
-
-  * Modify your user interface by opening EcologicalContinuity.ui in Qt Designer
-
-  * You can use the Makefile to compile your Ui and resource files when
-    you make changes. This requires GNU make (gmake)
-
-For more information, see the PyQGIS Developer Cookbook at:
-http://www.qgis.org/pyqgis-cookbook/index.html
-
-(C) 2011-2018 GeoApt LLC - geoapt.com
+This directory contains :
+    - source files (*.py, *.ui, *.qrc, ...)
+    - help files displayed in plugin (help/*)
+    - a minimal example (sample_data/). To rerun this example, open QGIS,
+      set workspace to sample_data directory, open BousquetOrb.xml and run steps 3,4,5,7.
+      
+BioDispersal is a 7 steps plugin :
+    1) Parameters setting
+    2) Subnetworks definition
+    3) Selection and classification from input data
+    4) Data ranking to obtain a complete land use layer for each subnetwork
+    5) Friction coefficients definition to obtain a permeability layer for each subnetwork
+    6) Weighting of permeability layers if needed (optional step)
+    7) Dispersal areas computation
+    
+Each step is detailed in plugin help panel.
+    
+Links :
+ - BioDispersal git repository : https://github.com/MathieuChailloux/BioDispersal
+ - IRSTEA : http://www.irstea.fr
+ - French ecological network resource center : http://www.trameverteetbleue.fr/
+ - French ministry of ecology : https://www.ecologique-solidaire.gouv.fr/
