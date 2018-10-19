@@ -52,6 +52,7 @@ def catchSTRemoved(name):
 @pyqtSlot()
 def catchSTAdded(item):
     fusionModel.setCurrentST(item.dict["name"])
+    utils.debug("ST addItem4, items = " + str(sous_trames.stModel))
         
 @pyqtSlot()
 def catchGroupRemoved(name):
@@ -96,6 +97,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             self.current_model = self.st_groups[st]
             self.current_model.layoutChanged.emit()
         utils.debug(str(self))
+        utils.debug("ST addItem, items = " + str(self))
         
     def loadAllGroups(self):
         utils.debug("[loadAllGroups]")

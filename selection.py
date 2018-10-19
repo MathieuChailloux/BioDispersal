@@ -186,6 +186,8 @@ class SelectionItem(DictItem):
             else:
                 class_name = group_name
             class_item = classes.getClassByName(class_name)
+            if not class_item:
+                utils.internal_error("No class " + str(class_name) + " found")
             new_f = QgsFeature(fields)
             #utils.debug("new_fields = " + str(new_f.fields().names()))
             new_f.setGeometry(geom)
@@ -439,6 +441,7 @@ class SelectionConnector(AbstractConnector):
             if self.dlg.fieldSelectionMode.isChecked():
                 mode = vfield
                 mode_val = self.dlg.selectionField.currentField()
+                utils.debug("mode_val = " + str(mode_val))
                 if not mode_val:
                     utils.user_error("No field selected")
                 vals = self.getVectorVals(in_layer,mode_val)
@@ -462,6 +465,7 @@ class SelectionConnector(AbstractConnector):
             mode_val = resampling_modes[resample_idx]
         else:
             assert False
+        utils.debug("class_names = " + str(class_names))
         for (class_name, class_descr) in class_names:
             class_item = classes.ClassItem(class_name,class_descr,None,grp_name)
             classes.classModel.addItem(class_item)

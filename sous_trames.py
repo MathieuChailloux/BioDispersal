@@ -120,8 +120,11 @@ class STModel(abstract_model.DictModel):
         return item
         
     def addItem(self,item):
+        utils.debug("ST addItem1, items = " + str(self))
         super().addItem(item)
+        utils.debug("ST addItem2, items = " + str(self))
         self.stAdded.emit(item)
+        utils.debug("ST addItem3, items = " + str(self))
         
     def removeItems(self,indexes):
         names = [self.items[idx.row()].dict["name"] for idx in indexes]

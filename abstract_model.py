@@ -129,7 +129,9 @@ class DictItem(AbstractGroupItem):
         
     def toXML(self,indent=""):
         xmlStr = indent + "<" + self.__class__.__name__
+        utils.debug("item = " + str(self))
         for k,v in self.dict.items():
+            utils.debug(str(v))
             utils.debug(str(v))
             xmlStr += indent + " " + k + "=\"" + str(v).replace('"','&quot;') + "\""
         xmlStr += "/>"
@@ -187,6 +189,10 @@ class AbstractGroupModel(QAbstractTableModel):
         self.fields = fields
         self.items = []
         self.orders = {}
+
+    def __str__(self):
+        res = "[[" + ",".join([str(i) for i in self.items]) + "]]"
+        return res
         
     def checkNotEmpty(self):
         if len(self.items) == 0:

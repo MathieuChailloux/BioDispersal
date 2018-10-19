@@ -49,7 +49,9 @@ frictionFields = ["class_descr","class","code"]
 @pyqtSlot()
 def catchSTAdded(st_item):
     utils.debug("stAdded " + st_item.dict["name"])
+    utils.debug("ST addItem50, items = " + str(sous_trames.stModel))
     frictionModel.addSTItem(st_item)
+    utils.debug("ST addItem5, items = " + str(sous_trames.stModel))
     
 @pyqtSlot()
 def catchSTRemoved(name):
@@ -81,7 +83,7 @@ class FrictionModel(abstract_model.DictModel):
     def __init__(self):
         self.defaultVal = None
         self.classes = []
-        self.sous_trames = []
+        #self.sous_trames = []
         self.fields = ["class_descr","class","code"]
         super().__init__(self,self.fields)
         
@@ -128,20 +130,25 @@ class FrictionModel(abstract_model.DictModel):
         global friction_fields
         utils.debug("addSTItem")
         st_name = st_item.dict["name"]
+        utils.debug("ST addItem51, items = " + str(sous_trames.stModel))
         if st_name not in self.fields:
             # for r in self.rows:
                 # r[st_name] = self.defaultVal
             for i in self.items:
                 i.dict[st_name] = self.defaultVal
                 i.recompute()
+            utils.debug("ST addItem52, items = " + str(sous_trames.stModel))
             self.fields.append(st_name)
+            utils.debug("ST addItem521, items = " + str(sous_trames.stModel))
             frictionFields.append(st_name)
-            self.sous_trames.append(st_item)
+            utils.debug("ST addItem522, items = " + str(sous_trames.stModel))
+            #self.sous_trames.append(st_item)
+            utils.debug("ST addItem53, items = " + str(sous_trames.stModel))
             self.layoutChanged.emit()
         
     def removeSTFromName(self,st_name):
         utils.debug("removeSTFromName " + str(st_name))
-        self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] != st_name]
+        #self.sous_trames = [st_item for st_item in self.sous_trames if st_item.dict["name"] != st_name]
         self.removeField(st_name)
         if st_name in frictionFields:
             frictionFields.remove(st_name)
@@ -188,7 +195,8 @@ class FrictionModel(abstract_model.DictModel):
         
     def createRulesFiles(self):
         utils.debug("createRulesFiles")
-        for st_item in self.sous_trames:
+        #for st_item in self.sous_trames:
+        for st_item in sous_trames.stModel.items:
             st_name = st_item.dict["name"]
             utils.debug("createRulesFiles " + str(st_name))
             st_rules_fname = st_item.getRulesPath()
@@ -201,7 +209,8 @@ class FrictionModel(abstract_model.DictModel):
     def applyReclassProcessing(self):
         utils.debug("applyReclass")
         self.createRulesFiles()
-        for st_item in self.sous_trames:
+        #for st_item in self.sous_trames:
+        for st_item in sous_trames.stModel.items:
             st_name = st_item.dict["name"]
             utils.debug("applyReclass " + str(st_name))
             st_rules_fname = st_item.getRulesPath()
@@ -214,8 +223,9 @@ class FrictionModel(abstract_model.DictModel):
     def applyReclassGdal(self,indexes):
         utils.debug("friction.applyReclassGdal")
         utils.debug("indexes = " + str(indexes))
-        utils.debug("sous_trames = " + str(self.sous_trames))
-        st_list = [self.sous_trames[i-3] for i in indexes if i >=3]
+        #utils.debug("sous_trames = " + str(self.sous_trames))
+        #st_list = [self.sous_trames[i-3] for i in indexes if i >=3]
+        st_list = sous_trames.stModel.items
         nb_steps = len(st_list)
         progress_section = progress.ProgressSection("Friction",nb_steps)
         progress_section.start_section()
@@ -291,7 +301,7 @@ class FrictionModel(abstract_model.DictModel):
         eraseFlag = True
         if eraseFlag:
             self.classes = classes.classModel.items
-            self.sous_trames = sous_trames.stModel.items
+            #self.sous_trames = sous_trames.stModel.items
             self.items = []
         for fr in root:
             item = FrictionRowItem(fr.attrib)
