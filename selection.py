@@ -435,6 +435,7 @@ class SelectionConnector(AbstractConnector):
         expr = self.dlg.selectionExpr.expression()
         grp_item = self.getOrCreateGroup()
         grp_name = grp_item.dict["name"]
+        grp_descr = grp_item.dict["descr"]
         if self.dlg.selectionLayerFormatVector.isChecked():
             in_geom = getLayerSimpleGeomStr(in_layer)
             grp_item.checkGeom(in_geom)
@@ -449,7 +450,7 @@ class SelectionConnector(AbstractConnector):
             elif self.dlg.exprSelectionMode.isChecked():
                 mode = vexpr
                 mode_val = self.dlg.selectionExpr.expression()
-                class_names = [(grp_name, grp_name)]
+                class_names = [(grp_name, grp_descr)]
             else:
                 assert False
         elif self.dlg.selectionLayerFormatRaster.isChecked():
@@ -460,7 +461,7 @@ class SelectionConnector(AbstractConnector):
                 class_names = self.getClassesFromVals(grp_name,vals)
             else:
                 mode = rresample
-                class_names = [(grp_name, grp_name)]
+                class_names = [(grp_name, grp_descr)]
             resample_idx = self.dlg.selectionResampleCombo.currentIndex()
             mode_val = resampling_modes[resample_idx]
         else:

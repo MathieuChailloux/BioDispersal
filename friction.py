@@ -135,8 +135,9 @@ class FrictionModel(abstract_model.DictModel):
             # for r in self.rows:
                 # r[st_name] = self.defaultVal
             for i in self.items:
-                i.dict[st_name] = self.defaultVal
-                i.recompute()
+                if st_name not in i.dict:
+                    i.dict[st_name] = self.defaultVal
+                    i.recompute()
             utils.debug("ST addItem52, items = " + str(sous_trames.stModel))
             self.fields.append(st_name)
             utils.debug("ST addItem521, items = " + str(sous_trames.stModel))
@@ -281,14 +282,14 @@ class FrictionModel(abstract_model.DictModel):
             reader = csv.DictReader(f,fieldnames=frictionFields,delimiter=';')
             header = reader.fieldnames
             model.fields = header
-            model.sous_trames = []
+            #model.sous_trames = []
             for st in header[3:]:
                 st_item = sous_trames.getSTByName(st)
                 if not st_item:
                     utils.debug(str(frictionFields))
                     utils.debug(str(st))
                     utils.user_error("Sous-trame '" + st + "' does not exist")
-                model.sous_trames.append(st_item)
+                #model.sous_trames.append(st_item)
             first_line = next(reader)
             for row in reader:
                 item = FrictionRowItem(row)
@@ -340,7 +341,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         if self.onlySelection:
             indexes = list(set([i.column() for i in self.view.selectedIndexes()]))
         else:
-            indexes = range(3,len(self.model.sous_trames) + 3)
+            indexes = range(3,len(self.model.fields))
         return indexes
         
     # def applyItems(self):
