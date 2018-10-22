@@ -17,9 +17,6 @@
  <br/>
    Input layer must be loaded in QGIS project to be available in BioDispersal.
  <br/>
-<span style=" font-size:8pt;color:red;font-weight:600">
-   Input layer must be in Shapefile (.shp) or GeoTIFF (.tif) format.
-</span>
  </p>
  <p>
  <i>Selection mode</i>
@@ -28,13 +25,13 @@
     <li>Vector
         <ul>
             <li>By field: input layer entities are classified accorindg to selected field values.</li>
-            <li>By expression: input layer entities verifying the expression are selected. If expression is empty, every entity is selected.</li>
+            <li>By expression: input layer entities are selected according to the expression. If expression is empty, every entity is selected.</li>
         </ul>
     </li>
     <li>Raster
         <ul>
             <li>Create classes : generate classes from first band values and selected group</li>
-            <li>Resampling mode depends on data type ('Plus proche voisin' for discrete data, 'Moyenne' for continuous data)</li>
+            <li>Resampling mode depends on data type ('Near' for discrete data, 'Average' for continuous data)</li>
         </ul>
     </li>
  </ul>
