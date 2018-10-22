@@ -144,25 +144,8 @@ class CostConnector(AbstractConnector):
     def connectComponents(self):
         super().connectComponents()
         self.dlg.costSTCombo.setModel(sous_trames.stModel)
-        #self.dlg.costStartLayerCombo.layerChanged.connect(self.setStartLayerFromCombo)
         self.dlg.costStartLayer.fileChanged.connect(self.setStartLayer)
         self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
-        #self.dlg.costPermRasterCombo.layerChanged.connect(self.setPermRasterFromCombo)
-        #self.dlg.costRun.clicked.connect(self.applyItems)
-        # self.dlg.costRunSelectionMode.stateChanged.connect(self.switchOnlySelection)
-        
-    # def applyItems(self):
-        # if self.onlySelection:
-            # indexes = list(set([i.row() for i in self.view.selectedIndexes()]))
-        # else:
-            # indexes = range(0,len(self.model.items))
-        # utils.debug(str(indexes))
-        # self.model.applyItems(indexes)
-        
-    # def switchOnlySelection(self):
-        # new_val = not self.onlySelection
-        # utils.debug("setting onlySelection to " + str(new_val))
-        # self.onlySelection = new_val
         
     def switchST(self,text):
         st_item = sous_trames.getSTByName(text)

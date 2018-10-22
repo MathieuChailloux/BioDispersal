@@ -35,20 +35,23 @@ import qgsUtils
 import qgsTreatments
 import abstract_model
 
+# BioDispersal global parameters
 
+# ParamsModel from which parameters are retrieved
 params = None
 
-params_fields = ["extent","workspace","useRelPath","projectFile","crs"]
-
+# Default CRS is set to epsg:2154 (France area, metric system)
 defaultCrs = QgsCoordinateReferenceSystem("EPSG:2154")
 
+# Checks that workspace is intialized and is an existing directory.
 def checkWorkspaceInit():
     if not params.workspace:
         utils.user_error("Workspace parameter not initialized")
     if not os.path.isdir(params.workspace):
         utils.user_error("Workspace directory '" + params.workspace + "' does not exist")
         
-
+# Returns relative path w.r.t. workspace directory.
+# File separator is set to common slash '/'.
 def normalizePath(path):
     checkWorkspaceInit()
     if not path:
@@ -61,6 +64,7 @@ def normalizePath(path):
     final_path = utils.normPath(rel_path)
     return final_path
         
+# Returns absolute path from normalized path (cf 'normalizePath' function)
 def getOrigPath(path):
     checkWorkspaceInit()
     if path == "":
@@ -70,6 +74,7 @@ def getOrigPath(path):
     else:
         return os.path.normpath(utils.joinPath(params.workspace,path))
     
+# Checks that all parameters are initialized
 def checkInit():
     checkWorkspaceInit()
     if not params.extentLayer:
@@ -84,6 +89,7 @@ def checkInit():
     if not params.crs.isValid():
         utils.user_error("Invalid CRS")
 
+# Returns normalized path from QgsMapLayerComboBox
 def getPathFromLayerCombo(combo):
     layer = combo.currentLayer()
     layer_path = normalizePath(qgsUtils.pathOfLayer(layer))
@@ -95,6 +101,7 @@ def getResolution():
 def getExtentLayer():
     return getOrigPath(params.extentLayer)
     
+# Return bounding box coordinates of extent layer
 def getExtentCoords():
     extent_path = getOrigPath(params.extentLayer)
     if extent_path:
@@ -102,17 +109,20 @@ def getExtentCoords():
     else:
         utils.user_error("Extent layer not initialized")
         
+# Checks that given layer matches extent layer coordinates
 def equalsParamsExtent(path):
     params_coords = getExtentCoords()
     path_coords = qgsUtils.coordsOfExtentPath(path)
     return (params_coords == path_coords)
         
+# Returns extent layer bounding box as a QgsRectangle
 def getExtentRectangle():
     coords = getExtentCoords()
     rect = QgsRectangle(float(coords[0]),float(coords[1]),
                         float(coords[2]),float(coords[3]))
     return rect
     
+# Normalize given raster layer to match global extent and resolution
 def normalizeRaster(path,resampling_mode="near"):
     layer = qgsUtils.loadRasterLayer(path)
     # extent
@@ -139,6 +149,7 @@ def normalizeRaster(path,resampling_mode="near"):
                                     load_flag=False,to_byte=False)
         return new_path
         
+# Opens file dialog in open mode
 def openFileDialog(parent,msg="",filter=""):
     checkWorkspaceInit()
     fname, filter = QFileDialog.getOpenFileName(parent,
@@ -147,6 +158,7 @@ def openFileDialog(parent,msg="",filter=""):
                                                 filter=filter)
     return fname
     
+# Opens file dialog in save mode
 def saveFileDialog(parent,msg="",filter=""):
     checkWorkspaceInit()
     fname, filter = QFileDialog.getSaveFileName(parent,
@@ -162,7 +174,6 @@ class ParamsModel(QAbstractTableModel):
         self.workspace = None
         self.extentLayer = None
         self.resolution = 0.0
-        self.useRelativePath = True
         self.projectFile = ""
         self.crs = defaultCrs
         self.fields = ["workspace","extentLayer","resolution","projectFile","crs"]
@@ -202,13 +213,6 @@ class ParamsModel(QAbstractTableModel):
         utils.info("Workspace directory set to '" + norm_path)
         if not os.path.isdir(norm_path):
             utils.user_error("Directory '" + norm_path + "' does not exist")
-            
-    def setUseRelPath(self,state):
-        if state:
-            self.useRelativePath = True
-        else:
-            self.useRelativePath = False
-        self.layoutChanged.emit()
     
     def fromXMLRoot(self,root):
         dict = root.attrib
@@ -223,8 +227,6 @@ class ParamsModel(QAbstractTableModel):
             self.setExtentLayer(dict["extent"])
         if "resolution" in dict:
             self.setResolution(dict["resolution"])
-        if "useRelPath" in dict:
-            self.useRelativePath = bool(dict["useRelPath"])
         self.layoutChanged.emit()
     
     def toXML(self,indent=""):
@@ -235,8 +237,6 @@ class ParamsModel(QAbstractTableModel):
             xmlStr += " resolution=\"" + str(self.resolution) + "\""
         if self.extentLayer:
             xmlStr += " extent=\"" + str(self.extentLayer) + "\""
-        if self.useRelativePath:
-            xmlStr += " useRelPath=\"" + str(self.useRelativePath) + "\""
         xmlStr += "/>"
         return xmlStr
         

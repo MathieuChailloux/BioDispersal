@@ -31,6 +31,8 @@ import utils
 import pathlib
 from PyQt5.QtCore import QVariant, pyqtSignal
 
+# QgsUtils gathers pyQgs utilitary functions
+
 def typeIsInteger(t):
     return (t == QVariant.Int
             or t == QVariant.UInt
@@ -43,11 +45,13 @@ def typeIsFloat(t):
 def typeIsNumeric(t):
     return (typeIsInteger(t) or typeIsFloat(t))
 
+# Delete raster file and associated xml file
 def removeRaster(path):
     utils.removeFile(path)
     aux_name = path + ".aux.xml"
     utils.removeFile(aux_name)
     
+# Returns path from QgsMapLayer
 def pathOfLayer(l):
     utils.debug("pathOfLayer")
     uri = l.dataProvider().dataSourceUri()
@@ -70,16 +74,18 @@ def getVectorFilters():
 def getRasterFilters():
     return QgsProviderRegistry.instance().fileRasterFilters()
     
-def isVectorPath(fname):
-    vector_extensions = [".shp"]
-    extension = pathlib.Path(fname).suffix
-    return (extension in vector_extensions)
+# def isVectorPath(fname):
+    # vector_extensions = [".shp"]
+    # extension = pathlib.Path(fname).suffix
+    # return (extension in vector_extensions)
     
-def isRasterPath(fname):
-    raster_extensions = [".tif"]
-    extension = pathlib.Path(fname).suffix
-    return (extension in raster_extensions)
+# def isRasterPath(fname):
+    # raster_extensions = [".tif"]
+    # extension = pathlib.Path(fname).suffix
+    # return (extension in raster_extensions)
     
+# Opens vector layer from path.
+# If loadProject is True, layer is added to QGIS project
 def loadVectorLayer(fname,loadProject=False):
     utils.checkFileExists(fname)
     layer = QgsVectorLayer(fname, layerNameOfPath(fname), "ogr")
@@ -93,6 +99,8 @@ def loadVectorLayer(fname,loadProject=False):
         QgsProject.instance().addMapLayer(layer)
     return layer
     
+# Opens raster layer from path.
+# If loadProject is True, layer is added to QGIS project
 def loadRasterLayer(fname,loadProject=False):
     utils.checkFileExists(fname)
     rlayer = QgsRasterLayer(fname, layerNameOfPath(fname))
@@ -102,6 +110,8 @@ def loadRasterLayer(fname,loadProject=False):
         QgsProject.instance().addMapLayer(rlayer)
     return rlayer
 
+# Opens layer from path.
+# If loadProject is True, layer is added to QGIS project
 def loadLayer(fname,loadProject=False):
     try:
         return (loadVectorLayer(fname,loadProject))
@@ -110,22 +120,8 @@ def loadLayer(fname,loadProject=False):
             return (loadRasterLayer(fname,loadProject))
         except CustomException:
             utils.user_error("Could not load layer '" + fname + "'")
-            
-            
-# def loadLayer(fname,loadProject=False):
-#     utils.checkFileExists(fname)
-#     if isVectorPath(fname):
-#         loaded_layer = loadVectorLayer(fname,loadProject)
-#     elif isRasterPath(fname):
-#         loaded_layer = loadRasterLayer(fname,loadProject)
-#     else:
-#         utils.user_error("Unexpected layer format for file " + str(fname))
-#     if loaded_layer == None:
-#         user_error("Could not load layer '" + path + "'")
-#     if not loaded_layer.isValid():
-#         user_error("Invalid layer '" + path + "'")
-#     return loaded_layer
     
+# Retrieve layer loaded in QGIS project from name
 def getLoadedLayerByName(name):
     layers = QgsProject.instance().mapLayersByName('my layer name')
     nb_layers = len(layers)
@@ -140,17 +136,21 @@ def getLoadedLayerByName(name):
         
 # LAYER PARAMETERS
 
+# Returns CRS code in lowercase (e.g. 'epsg:2154')
 def getLayerCrsStr(layer):
     return str(layer.crs().authid().lower())
     
+# Returns geometry type string (e.g. 'MultiPolygon')
 def getLayerGeomStr(layer):
     return QgsWkbTypes.displayString(layer.wkbType())
     
+# Returns simple geometry type string (e.g. 'Polygon', 'Line', 'Point')
 def getLayerSimpleGeomStr(layer):
     type = layer.wkbType()
     geom_type = QgsWkbTypes.geometryType(type)
     return QgsWkbTypes.geometryDisplayString(geom_type)
-        
+    
+# Checks layers geometry compatibility (raise error if not compatible)
 def checkLayersCompatible(l1,l2):
     crs1 = l1.crs().authid()
     crs2 = l2.crs().authid()
@@ -164,9 +164,8 @@ def checkLayersCompatible(l1,l2):
         utils.user_error("Layer " + l1.name() + " geometry '" + str(geomType1)
                     + "' not compatible with geometry '" + str(geomType2)
                     + "' of layer " + l2.name())
-    #return (crs1 == crs2 and geomType1 == geomType2)
     
-
+# Initialize new layer from existing one, importing CRS and geometry
 def createLayerFromExisting(inLayer,outName,geomType=None,crs=None):
     utils.debug("[createLayerFromExisting]")
     # crs=str(inLayer.crs().authid()).lower()
@@ -200,10 +199,9 @@ def applyBuffer(in_layer,buffer_val,out_layer):
         out_layer.updateExtents()
     return out_layer
 
+# Writes file from existing QgsMapLayer
 def writeShapefile(layer,outfname):
     utils.debug("[writeShapefile] " + outfname + " from " + str(layer))
-    #crs = QgsCoordinateReferenceSystem("EPSG:2154")
-    #params =
     if os.path.isfile(outfname):
         os.remove(outfname)
     (error, error_msg) = QgsVectorFileWriter.writeAsVectorFormat(layer,outfname,'utf-8',destCRS=layer.sourceCrs(),driverName='ESRI Shapefile')
@@ -211,7 +209,8 @@ def writeShapefile(layer,outfname):
         utils.info("Shapefile '" + outfname + "' succesfully created")
     else:
         utils.user_error("Unable to create shapefile '" + outfname + "' : " + str(error_msg))
-        
+    
+# Return bounding box coordinates as a list
 def coordsOfExtentPath(extent_path):
     layer = loadLayer(extent_path)
     extent = layer.extent()

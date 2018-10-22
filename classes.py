@@ -33,9 +33,8 @@ import qgsUtils
 import params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
-class_fields = ["name","code","descr","group"]
-#classConnector = None
 classModel = None
+class_fields = ["name","code","descr","group"]
 
 def getClassLayer(grp):
     clsItem = classModel.getClassByName(out_name)

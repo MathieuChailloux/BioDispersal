@@ -22,27 +22,10 @@
  ***************************************************************************/
 """
 
-# from .abstract_model import *
-# from .params import *
-# from .sous_trames import *
-# from .groups import *
-# from .classes import *
-# from .selection import *
-# from .ponderation import *
-# from .cost import *
 
 import utils
 
 import xml.etree.ElementTree as ET
-
-# mk_item = {
-    # "STModel" : STModel.mkItemFromDict,
-    # "GroupModel" : GroupModel.mkItemFromDict,
-    # "ClassModel" : ClassModel.mkItemFromDict,
-    # "SelectionModel" : SelectionModel.mkItemFromDict,
-    # "PonderationModel" : PonderationModel.mkItemFromDict,
-    # "CostModel" : CostModel.mkItemFromDict
-# }
 
 config_models = None
 
@@ -68,20 +51,6 @@ def parseModel(model_root,new_model=False):
     utils.debug("config_models " + str(config_models))
     if model_tag not in config_models:
         utils.user_error("Unknown Model '" + model_tag + "'")
-    # if new_model:
-        # if model_tag == "GroupModel":
-            # utils.debug("Creating new group model")
-            # utils.debug("config_models " + str(config_models))
-            # model = GroupModel()
-            # utils.debug("config_models " + str(config_models))
-        # else:
-            # utils.debug("o k ou")
-            # utils.internal_error("Parse new model for " + model_tag + " not yet implemented")
-    # else:
-        # utils.debug("model from config_models")
-        # utils.debug("config_models " + str(config_models))
-        # model = config_models[model_tag]
-        # utils.debug("config_models " + str(config_models))
     model = config_models[model_tag]
     try:
         utils.debug("cas 1")
@@ -104,12 +73,4 @@ def parseModel(model_root,new_model=False):
             model.addItem(item)
         model.layoutChanged.emit()
         return model
-    # except Exception as e:
-        # utils.debug("cas 3")
-        # utils.debug("exn : " + str(e))
-        # raise e
-    # finally:
-        # utils.debug("finally")
-        # model.layoutChanged.emit()
-        # return model
         
