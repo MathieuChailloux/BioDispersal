@@ -79,8 +79,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>865</width>
-            <height>706</height>
+            <width>866</width>
+            <height>700</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -225,8 +225,8 @@
              </property>
              <property name="minimumSize">
               <size>
-               <width>450</width>
-               <height>500</height>
+               <width>550</width>
+               <height>550</height>
               </size>
              </property>
              <property name="currentIndex">
@@ -661,6 +661,12 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>470</height>
+                  </size>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::NoFrame</enum>
                  </property>
@@ -711,8 +717,8 @@
                        </property>
                        <property name="minimumSize">
                         <size>
-                         <width>200</width>
-                         <height>200</height>
+                         <width>300</width>
+                         <height>250</height>
                         </size>
                        </property>
                        <property name="frameShape">
@@ -737,7 +743,7 @@
                         <item>
                          <widget class="QFrame" name="selectionLayerFrame">
                           <property name="sizePolicy">
-                           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
@@ -745,7 +751,7 @@
                           <property name="minimumSize">
                            <size>
                             <width>200</width>
-                            <height>52</height>
+                            <height>65</height>
                            </size>
                           </property>
                           <property name="frameShape">
@@ -801,7 +807,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>67</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                              <property name="text">
@@ -855,7 +861,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>138</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                              <property name="layoutDirection">
@@ -877,7 +883,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>0</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                              <property name="text">
@@ -896,7 +902,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>0</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                              <property name="font">
@@ -916,7 +922,7 @@
                         <item>
                          <widget class="QFrame" name="selectionModeFrame">
                           <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
@@ -924,7 +930,7 @@
                           <property name="minimumSize">
                            <size>
                             <width>200</width>
-                            <height>60</height>
+                            <height>85</height>
                            </size>
                           </property>
                           <property name="frameShape">
@@ -948,7 +954,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>0</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                              <property name="font">
@@ -981,6 +987,9 @@
                                <width>16777215</width>
                                <height>37</height>
                               </size>
+                             </property>
+                             <property name="lineWidth">
+                              <number>1</number>
                              </property>
                              <property name="currentIndex">
                               <number>1</number>
@@ -1240,7 +1249,7 @@
                         <item>
                          <widget class="QFrame" name="selectGroupFrame">
                           <property name="sizePolicy">
-                           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
@@ -1248,7 +1257,7 @@
                           <property name="minimumSize">
                            <size>
                             <width>200</width>
-                            <height>39</height>
+                            <height>50</height>
                            </size>
                           </property>
                           <property name="frameShape">
@@ -1269,7 +1278,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>59</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                              <property name="font">
@@ -1294,7 +1303,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>124</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                              <property name="text">
@@ -1313,7 +1322,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>70</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                             </widget>
@@ -1329,7 +1338,7 @@
                              <property name="minimumSize">
                               <size>
                                <width>80</width>
-                               <height>13</height>
+                               <height>16</height>
                               </size>
                              </property>
                              <property name="text">
@@ -1391,10 +1400,16 @@
                         <item>
                          <widget class="QFrame" name="frame_3">
                           <property name="sizePolicy">
-                           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>0</width>
+                            <height>20</height>
+                           </size>
                           </property>
                           <property name="frameShape">
                            <enum>QFrame::NoFrame</enum>
@@ -1462,7 +1477,7 @@
                            <property name="minimumSize">
                             <size>
                              <width>150</width>
-                             <height>170</height>
+                             <height>240</height>
                             </size>
                            </property>
                            <property name="frameShape">
@@ -1694,7 +1709,7 @@
                   <item>
                    <widget class="QFrame" name="selectionViewFrame">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -4376,18 +4391,18 @@
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Nom étape&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Description générale&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est une description générale&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Description détaillée&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;param1&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; : description du param 1&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;param2&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; : description du param 2&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;Nom étape&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Description générale&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Ceci est une description générale&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Description détaillée&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt;param1&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; : description du param 1&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt;param2&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; : description du param 2&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="openLinks">
           <bool>false</bool>
