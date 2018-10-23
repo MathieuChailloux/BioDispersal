@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'BioDispersal_dialog_base.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -50,7 +50,7 @@ class Ui_BioDispersalDialogBase(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 865, 678))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 866, 680))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -176,7 +176,7 @@ class Ui_BioDispersalDialogBase(object):
         self.label_44.setSizePolicy(sizePolicy)
         self.label_44.setObjectName("label_44")
         self.gridLayout.addWidget(self.label_44, 0, 0, 1, 1)
-        self.workspace = QgsFileWidget(self.frame_12)
+        self.workspace = gui.QgsFileWidget(self.frame_12)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -192,7 +192,7 @@ class Ui_BioDispersalDialogBase(object):
         self.label_45.setSizePolicy(sizePolicy)
         self.label_45.setObjectName("label_45")
         self.gridLayout.addWidget(self.label_45, 1, 0, 1, 1)
-        self.extentLayer = QgsFileWidget(self.frame_12)
+        self.extentLayer = gui.QgsFileWidget(self.frame_12)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -208,7 +208,7 @@ class Ui_BioDispersalDialogBase(object):
         self.label_46.setSizePolicy(sizePolicy)
         self.label_46.setObjectName("label_46")
         self.gridLayout.addWidget(self.label_46, 2, 0, 1, 1)
-        self.rasterResolution = QgsDoubleSpinBox(self.frame_12)
+        self.rasterResolution = gui.QgsDoubleSpinBox(self.frame_12)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -227,7 +227,7 @@ class Ui_BioDispersalDialogBase(object):
         self.label_47.setSizePolicy(sizePolicy)
         self.label_47.setObjectName("label_47")
         self.gridLayout.addWidget(self.label_47, 3, 0, 1, 1)
-        self.paramsCrs = QgsProjectionSelectionWidget(self.frame_12)
+        self.paramsCrs = gui.QgsProjectionSelectionWidget(self.frame_12)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -404,7 +404,7 @@ class Ui_BioDispersalDialogBase(object):
         self.selectionLayerFormatRaster.setMinimumSize(QtCore.QSize(0, 13))
         self.selectionLayerFormatRaster.setObjectName("selectionLayerFormatRaster")
         self.gridLayout_7.addWidget(self.selectionLayerFormatRaster, 1, 2, 1, 1)
-        self.selectionInLayerCombo = QgsMapLayerComboBox(self.selectionLayerFrame)
+        self.selectionInLayerCombo = gui.QgsMapLayerComboBox(self.selectionLayerFrame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -431,7 +431,7 @@ class Ui_BioDispersalDialogBase(object):
         self.selectionLayerFormatVector.setMinimumSize(QtCore.QSize(0, 13))
         self.selectionLayerFormatVector.setObjectName("selectionLayerFormatVector")
         self.gridLayout_7.addWidget(self.selectionLayerFormatVector, 1, 1, 1, 1)
-        self.selectionInLayer = QgsFileWidget(self.selectionLayerFrame)
+        self.selectionInLayer = gui.QgsFileWidget(self.selectionLayerFrame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -512,7 +512,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackSelectionModeVect = QtWidgets.QWidget()
         self.stackSelectionModeVect.setObjectName("stackSelectionModeVect")
         self.horizontalLayout_24 = QtWidgets.QHBoxLayout(self.stackSelectionModeVect)
-        self.horizontalLayout_24.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_24.setObjectName("horizontalLayout_24")
         self.selectionModeLabel = QtWidgets.QLabel(self.stackSelectionModeVect)
         self.selectionModeLabel.setMinimumSize(QtCore.QSize(86, 12))
@@ -530,7 +529,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackSelectionModeRaster = QtWidgets.QWidget()
         self.stackSelectionModeRaster.setObjectName("stackSelectionModeRaster")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.stackSelectionModeRaster)
-        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.selectionCreateClasses = QtWidgets.QCheckBox(self.stackSelectionModeRaster)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -559,7 +557,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackSelectionExpr = QtWidgets.QWidget()
         self.stackSelectionExpr.setObjectName("stackSelectionExpr")
         self.horizontalLayout_26 = QtWidgets.QHBoxLayout(self.stackSelectionExpr)
-        self.horizontalLayout_26.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_26.setObjectName("horizontalLayout_26")
         self.selectionExprLabel = QtWidgets.QLabel(self.stackSelectionExpr)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -572,7 +569,7 @@ class Ui_BioDispersalDialogBase(object):
         self.horizontalLayout_26.addWidget(self.selectionExprLabel)
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_26.addItem(spacerItem4)
-        self.selectionExpr = QgsFieldExpressionWidget(self.stackSelectionExpr)
+        self.selectionExpr = gui.QgsFieldExpressionWidget(self.stackSelectionExpr)
         self.selectionExpr.setMinimumSize(QtCore.QSize(100, 13))
         self.selectionExpr.setObjectName("selectionExpr")
         self.horizontalLayout_26.addWidget(self.selectionExpr)
@@ -580,7 +577,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackSelectionField = QtWidgets.QWidget()
         self.stackSelectionField.setObjectName("stackSelectionField")
         self.horizontalLayout_27 = QtWidgets.QHBoxLayout(self.stackSelectionField)
-        self.horizontalLayout_27.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_27.setObjectName("horizontalLayout_27")
         self.selectionFieldLabel = QtWidgets.QLabel(self.stackSelectionField)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
@@ -591,7 +587,7 @@ class Ui_BioDispersalDialogBase(object):
         self.selectionFieldLabel.setMinimumSize(QtCore.QSize(80, 13))
         self.selectionFieldLabel.setObjectName("selectionFieldLabel")
         self.horizontalLayout_27.addWidget(self.selectionFieldLabel)
-        self.selectionField = QgsFieldComboBox(self.stackSelectionField)
+        self.selectionField = gui.QgsFieldComboBox(self.stackSelectionField)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -604,7 +600,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackSelectionResampling = QtWidgets.QWidget()
         self.stackSelectionResampling.setObjectName("stackSelectionResampling")
         self.horizontalLayout_23 = QtWidgets.QHBoxLayout(self.stackSelectionResampling)
-        self.horizontalLayout_23.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_23.setObjectName("horizontalLayout_23")
         self.selectionResampleLabel = QtWidgets.QLabel(self.stackSelectionResampling)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -729,7 +724,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackGroup = QtWidgets.QWidget()
         self.stackGroup.setObjectName("stackGroup")
         self.gridLayout_12 = QtWidgets.QGridLayout(self.stackGroup)
-        self.gridLayout_12.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_12.setObjectName("gridLayout_12")
         self.groupFrame = QtWidgets.QFrame(self.stackGroup)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -790,7 +784,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackClass = QtWidgets.QWidget()
         self.stackClass.setObjectName("stackClass")
         self.gridLayout_13 = QtWidgets.QGridLayout(self.stackClass)
-        self.gridLayout_13.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_13.setObjectName("gridLayout_13")
         self.classFrame = QtWidgets.QFrame(self.stackClass)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -1336,7 +1329,7 @@ class Ui_BioDispersalDialogBase(object):
         self.pondFrictLayerComboLabel.setObjectName("pondFrictLayerComboLabel")
         self.horizontalLayout_14.addWidget(self.pondFrictLayerComboLabel)
         self.gridLayout_2.addWidget(self.frame_29, 2, 0, 1, 1, QtCore.Qt.AlignLeft)
-        self.pondFrictLayerCombo = QgsMapLayerComboBox(self.frame_22)
+        self.pondFrictLayerCombo = gui.QgsMapLayerComboBox(self.frame_22)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1359,7 +1352,7 @@ class Ui_BioDispersalDialogBase(object):
         self.pondFrictLayerLabel.setObjectName("pondFrictLayerLabel")
         self.horizontalLayout_22.addWidget(self.pondFrictLayerLabel)
         self.gridLayout_2.addWidget(self.frame_36, 3, 0, 1, 1)
-        self.pondFrictLayer = QgsFileWidget(self.frame_22)
+        self.pondFrictLayer = gui.QgsFileWidget(self.frame_22)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1381,7 +1374,7 @@ class Ui_BioDispersalDialogBase(object):
         self.pondOutLayerLabel.setFont(font)
         self.pondOutLayerLabel.setObjectName("pondOutLayerLabel")
         self.gridLayout_2.addWidget(self.pondOutLayerLabel, 4, 0, 1, 1)
-        self.pondOutLayer = QgsFileWidget(self.frame_22)
+        self.pondOutLayer = gui.QgsFileWidget(self.frame_22)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1411,7 +1404,7 @@ class Ui_BioDispersalDialogBase(object):
         self.pondLayerComboLabel.setObjectName("pondLayerComboLabel")
         self.horizontalLayout_16.addWidget(self.pondLayerComboLabel)
         self.gridLayout_2.addWidget(self.frame_30, 6, 0, 1, 1)
-        self.pondLayerCombo = QgsMapLayerComboBox(self.frame_22)
+        self.pondLayerCombo = gui.QgsMapLayerComboBox(self.frame_22)
         self.pondLayerCombo.setObjectName("pondLayerCombo")
         self.gridLayout_2.addWidget(self.pondLayerCombo, 6, 1, 1, 1)
         self.frame_31 = QtWidgets.QFrame(self.frame_22)
@@ -1428,7 +1421,7 @@ class Ui_BioDispersalDialogBase(object):
         self.pondLayerLabel.setObjectName("pondLayerLabel")
         self.horizontalLayout_17.addWidget(self.pondLayerLabel)
         self.gridLayout_2.addWidget(self.frame_31, 7, 0, 1, 1)
-        self.pondLayer = QgsFileWidget(self.frame_22)
+        self.pondLayer = gui.QgsFileWidget(self.frame_22)
         self.pondLayer.setObjectName("pondLayer")
         self.gridLayout_2.addWidget(self.pondLayer, 7, 1, 1, 1)
         self.verticalLayout_14.addWidget(self.frame_22)
@@ -1443,7 +1436,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackPondIval = QtWidgets.QWidget()
         self.stackPondIval.setObjectName("stackPondIval")
         self.gridLayout_20 = QtWidgets.QGridLayout(self.stackPondIval)
-        self.gridLayout_20.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_20.setObjectName("gridLayout_20")
         self.pondIvalFrame = QtWidgets.QFrame(self.stackPondIval)
         self.pondIvalFrame.setFrameShape(QtWidgets.QFrame.NoFrame)
@@ -1486,7 +1478,6 @@ class Ui_BioDispersalDialogBase(object):
         self.stackPondBuffer = QtWidgets.QWidget()
         self.stackPondBuffer.setObjectName("stackPondBuffer")
         self.gridLayout_21 = QtWidgets.QGridLayout(self.stackPondBuffer)
-        self.gridLayout_21.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_21.setObjectName("gridLayout_21")
         self.pondBufferFrame = QtWidgets.QFrame(self.stackPondBuffer)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -1681,7 +1672,7 @@ class Ui_BioDispersalDialogBase(object):
         self.costStartRasterLabel_2.setMinimumSize(QtCore.QSize(0, 13))
         self.costStartRasterLabel_2.setObjectName("costStartRasterLabel_2")
         self.gridLayout_10.addWidget(self.costStartRasterLabel_2, 2, 1, 1, 1)
-        self.costStartLayerCombo = QgsMapLayerComboBox(self.frame_18)
+        self.costStartLayerCombo = gui.QgsMapLayerComboBox(self.frame_18)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1701,7 +1692,7 @@ class Ui_BioDispersalDialogBase(object):
         self.costStartRasterLabel_3.setMinimumSize(QtCore.QSize(0, 13))
         self.costStartRasterLabel_3.setObjectName("costStartRasterLabel_3")
         self.gridLayout_10.addWidget(self.costStartRasterLabel_3, 3, 1, 1, 1)
-        self.costStartLayer = QgsFileWidget(self.frame_18)
+        self.costStartLayer = gui.QgsFileWidget(self.frame_18)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1733,7 +1724,7 @@ class Ui_BioDispersalDialogBase(object):
         self.costStartRasterLabel_4.setMinimumSize(QtCore.QSize(0, 13))
         self.costStartRasterLabel_4.setObjectName("costStartRasterLabel_4")
         self.gridLayout_10.addWidget(self.costStartRasterLabel_4, 5, 1, 1, 1)
-        self.costPermRasterCombo = QgsMapLayerComboBox(self.frame_18)
+        self.costPermRasterCombo = gui.QgsMapLayerComboBox(self.frame_18)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1753,7 +1744,7 @@ class Ui_BioDispersalDialogBase(object):
         self.costStartRasterLabel_5.setMinimumSize(QtCore.QSize(0, 13))
         self.costStartRasterLabel_5.setObjectName("costStartRasterLabel_5")
         self.gridLayout_10.addWidget(self.costStartRasterLabel_5, 6, 1, 1, 1)
-        self.costPermRaster = QgsFileWidget(self.frame_18)
+        self.costPermRaster = gui.QgsFileWidget(self.frame_18)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1774,7 +1765,7 @@ class Ui_BioDispersalDialogBase(object):
         self.costMaxCost.setFont(font)
         self.costMaxCost.setObjectName("costMaxCost")
         self.gridLayout_10.addWidget(self.costMaxCost, 7, 0, 1, 2)
-        self.costMaxVal = QgsSpinBox(self.frame_18)
+        self.costMaxVal = gui.QgsSpinBox(self.frame_18)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1798,7 +1789,7 @@ class Ui_BioDispersalDialogBase(object):
         self.dispOutLayerLabel.setFont(font)
         self.dispOutLayerLabel.setObjectName("dispOutLayerLabel")
         self.gridLayout_10.addWidget(self.dispOutLayerLabel, 8, 0, 1, 2)
-        self.costOutLayer = QgsFileWidget(self.frame_18)
+        self.costOutLayer = gui.QgsFileWidget(self.frame_18)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1967,7 +1958,7 @@ class Ui_BioDispersalDialogBase(object):
         self.lblProgress.setObjectName("lblProgress")
         self.gridLayout_22.addWidget(self.lblProgress, 1, 0, 1, 1)
         self.frame_10 = QtWidgets.QFrame(BioDispersalDialogBase)
-        self.frame_10.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_10.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_10.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_10.setObjectName("frame_10")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.frame_10)
@@ -2133,25 +2124,19 @@ class Ui_BioDispersalDialogBase(object):
         self.textShortHelp.setHtml(_translate("BioDispersalDialogBase", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">Nom étape</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Description générale</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Ceci est une description générale</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Description détaillée</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">  </span><span style=\" font-size:8pt; font-style:italic;\">param1</span><span style=\" font-size:8pt;\"> : description du param 1</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">  </span><span style=\" font-size:8pt; font-style:italic;\">param2</span><span style=\" font-size:8pt;\"> : description du param 2</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Ceci est un test</span></p></body></html>"))
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">Nom étape</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\">Description générale</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Ceci est une description générale</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\">Description détaillée</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">  </span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-style:italic;\">param1</span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"> : description du param 1</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">  </span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-style:italic;\">param2</span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"> : description du param 2</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Ceci est un test</span></p></body></html>"))
         self.label_2.setToolTip(_translate("BioDispersalDialogBase", "http://www.irstea.fr"))
 
+from qgis import gui
 from qgis.gui import QgsScrollArea
-from qgsdoublespinbox import QgsDoubleSpinBox
-from qgsfieldcombobox import QgsFieldComboBox
-from qgsfieldexpressionwidget import QgsFieldExpressionWidget
-from qgsfilewidget import QgsFileWidget
-from qgsmaplayercombobox import QgsMapLayerComboBox
-from qgsprojectionselectionwidget import QgsProjectionSelectionWidget
-from qgsspinbox import QgsSpinBox

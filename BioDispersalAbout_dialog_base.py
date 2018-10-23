@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'BioDispersalAbout_dialog_base.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BioDispersalAbout(object):
     def setupUi(self, BioDispersalAbout):
         BioDispersalAbout.setObjectName("BioDispersalAbout")
-        BioDispersalAbout.resize(589, 415)
+        BioDispersalAbout.resize(707, 524)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(BioDispersalAbout.sizePolicy().hasHeightForWidth())
+        BioDispersalAbout.setSizePolicy(sizePolicy)
         self.gridLayout = QtWidgets.QGridLayout(BioDispersalAbout)
         self.gridLayout.setObjectName("gridLayout")
         self.label_2 = QtWidgets.QLabel(BioDispersalAbout)
@@ -63,6 +68,11 @@ class Ui_BioDispersalAbout(object):
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 0, 3, 1, 1)
         self.label = QtWidgets.QLabel(BioDispersalAbout)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 1, 0, 1, 4)
