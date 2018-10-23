@@ -162,20 +162,7 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="3">
-            <spacer name="horizontalSpacer_7">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>790</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="4">
+           <item row="0" column="5">
             <widget class="QToolButton" name="langEn">
              <property name="toolTip">
               <string>English</string>
@@ -195,7 +182,7 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="5">
+           <item row="0" column="6">
             <widget class="QToolButton" name="langFr">
              <property name="text">
               <string>...</string>
@@ -212,7 +199,20 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0" colspan="6">
+           <item row="0" column="4">
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>790</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="1" column="0" colspan="7">
             <widget class="QTabWidget" name="mTabWidget">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -4354,6 +4354,23 @@
                </item>
               </layout>
              </widget>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QToolButton" name="aboutButton">
+             <property name="toolTip">
+              <string>À propos</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/plugins/eco_cont/icons/iconHelpConsole.svg</normaloff>:/plugins/eco_cont/icons/iconHelpConsole.svg</iconset>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
           </layout>

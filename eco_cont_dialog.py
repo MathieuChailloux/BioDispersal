@@ -40,6 +40,8 @@ from qgis.gui import QgsFileWidget
 file_dir = os.path.dirname(__file__)
 if file_dir not in sys.path:
     sys.path.append(file_dir)
+    
+from BioDispersalAbout_dialog import BioDispersalAboutDialog
 
 import utils
 from .qgsUtils import *
@@ -66,6 +68,7 @@ import tabs
 from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
     
 class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
+
     def __init__(self, parent=None):
         """Constructor."""
         super(EcologicalContinuityDialog, self).__init__(parent)
@@ -75,19 +78,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        #metagroupConnector = Metagroups(self)
-        #self.groupConnector = Groups(self,metagroupConnector.metaclassModel)
-        #rasterizationConnector = Rasterization(self)
-        #self.tabs=[Groups(self),
-        #            Metagroups(self),
-        #            VectorSelections(self),,n
-        #            Rasterization(self)]
-        #self.tabs = [self.groupConnector,metagroupConnector,rasterizationConnector]
         self.setupUi(self)
-        #self.connectComponents()
         
-    # Initialize plugin tabs.
-    # One tab <=> one connector.
+    # Initialize plugin tabs and connectors.
     def initTabs(self):
         paramsConnector = params.ParamsConnector(self)
         params.params = paramsConnector.model
@@ -123,7 +116,6 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         self.recomputeModels()
         
     # Initialize Graphic elements for each tab
-    # TODO : resize
     def initGui(self):
         utils.debug("initGuiDlg")
         self.geometry = self.geometry()
@@ -135,6 +127,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             utils.debug("initGuiDlgItem " + str(k))
             tab.initGui()
         
+    # Exception hook, i.e. function called when exception raised.
+    # Displays traceback and error message in log tab.
+    # Ignores CustomException : exception raised from BioDispersal and already displayed.
     def bioDispHook(self,excType, excValue, tracebackobj):
         utils.debug("bioDispHook")
         if excType == utils.CustomException:
@@ -155,7 +150,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         self.mTabWidget.setCurrentWidget(self.logTab)
         progress.progressConnector.clear()
         
-    # Connect view and model components for each tab
+    # Connects view and model components for each tab.
+    # Connects global elements such as project file and language management.
     def connectComponents(self):
         for k, tab in self.connectors.items():
             tab.connectComponents()
@@ -165,8 +161,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         self.openProject.clicked.connect(self.loadModelAction)
         self.langEn.clicked.connect(self.switchLangEn)
         self.langFr.clicked.connect(self.switchLangFr)
+        self.aboutButton.clicked.connect(self.openHelpDialog)
         sys.excepthook = self.bioDispHook
         
+    # Initialize or re-initialize global variables.
     def initializeGlobals(self):
         groups.groupsModel = None
         classes.classModel = None
@@ -176,9 +174,10 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         friction.frictionModel = None
         friction.frictionFields = ["class_descr","class","code"]
         
-    def initLog(self):
-        utils.print_func = self.txtLog.append
+    #def initLog(self):
+    #    utils.print_func = self.txtLog.append
         
+    # Switch language to english.
     def switchLangEn(self):
         utils.debug("switchLangEn")
         plugin_dir = os.path.dirname(__file__)
@@ -199,6 +198,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         utils.curr_language = "en"
         self.connectors["Tabs"].loadHelpFile()
         
+    # Switch language to french.
     def switchLangFr(self):
         utils.debug("switchLangFr")
         plugin_dir = os.path.dirname(__file__)
@@ -218,6 +218,11 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         self.retranslateUi(self)
         utils.curr_language = "fr"
         self.connectors["Tabs"].loadHelpFile()
+        
+    def openHelpDialog(self):
+        utils.debug("openHelpDialog")
+        about_dlg = BioDispersalAboutDialog(self)
+        about_dlg.show()
         
     # Recompute self.models in case they have been reloaded
     def recomputeModels(self):
@@ -274,20 +279,19 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             self.loadModel(fname)
             
             
-class BioDispersalDialog(QgsProcessingAlgorithmDialogBase):
+# class BioDispersalDialog(QgsProcessingAlgorithmDialogBase):
 
-    def __init__(self):
-        super().__init__()
-        self.eco_dlg = EcologicalContinuityDialog()
-        #self.tabWidget().removeTab(0)
-        nb_tabs = self.eco_dlg.pluginTabs.count()
-        for n in range(0,nb_tabs):
-            n_widget = self.eco_dlg.pluginTabs.widget(0)
-            n_text = self.eco_dlg.pluginTabs.tabText(0)
-            self.tabWidget().insertTab(n,n_widget,n_text)
-        w1 = self.eco_dlg.mainTab
-        scroll_area = QtWidgets.QScrollArea()
-        scroll_area.setWindowFlags(Qt.FramelessWindowHint)
-        scroll_area.setAttribute(Qt.WA_TranslucentBackground)
-        scroll_area.setWidget(w1)
-        self.tabWidget().insertTab(1,scroll_area,"test_scroll")
+    # def __init__(self):
+        # super().__init__()
+        # self.eco_dlg = EcologicalContinuityDialog()
+        # nb_tabs = self.eco_dlg.pluginTabs.count()
+        # for n in range(0,nb_tabs):
+            # n_widget = self.eco_dlg.pluginTabs.widget(0)
+            # n_text = self.eco_dlg.pluginTabs.tabText(0)
+            # self.tabWidget().insertTab(n,n_widget,n_text)
+        # w1 = self.eco_dlg.mainTab
+        # scroll_area = QtWidgets.QScrollArea()
+        # scroll_area.setWindowFlags(Qt.FramelessWindowHint)
+        # scroll_area.setAttribute(Qt.WA_TranslucentBackground)
+        # scroll_area.setWidget(w1)
+        # self.tabWidget().insertTab(1,scroll_area,"test_scroll")

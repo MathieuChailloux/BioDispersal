@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .eco_cont_dialog import EcologicalContinuityDialog, BioDispersalDialog
+from .eco_cont_dialog import EcologicalContinuityDialog
 import os.path
 import sys
 
@@ -216,7 +216,7 @@ class EcologicalContinuity:
         #self.dlg = TestDialog()
         #self.dlg = BioDispersalDialog()
         self.dlg.initTabs()
-        self.dlg.initLog()
+        #self.dlg.initLog()
         self.dlg.initGui()
         self.connectComponents()
         #self.dlg.initLog()
