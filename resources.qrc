@@ -20,5 +20,10 @@
         <file>icons/debug_icon/mAction.svg</file>
         <file>icons/debug_icon/mActionAnnotation.svg</file>
         <file>icons/debug_icon/mActionContextHelp.png</file>
+        <file>icons/logoCRTVB.png</file>
+        <file>icons/logoIrstea.png</file>
+        <file>icons/logoMTES.png</file>
+        <file>icons/logoTetis.png</file>
+        <file>icons/logoCRTVB.svg</file>
     </qresource>
 </RCC>
