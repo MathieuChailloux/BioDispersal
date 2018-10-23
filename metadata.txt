@@ -9,12 +9,12 @@
 [general]
 name=BioDispersal
 qgisMinimumVersion=3.0
-description=Computes ecological continuities based on environments permeability
-version=1.3
+description=Computes ecological continuities based on landscape permeability
+version=1.0
 author=Chailloux Mathieu, IRSTEA, UMR TETIS
 email=mathieu.chailloux@irstea.fr
 
-about=This plugin computes ecological continuities based on environments permeability.
+about=This plugin computes ecological continuities based on landscape permeability.
 
 tracker=https://github.com/MathieuChailloux/BioDispersal/issues
 repository=https://github.com/MathieuChailloux/BioDispersal
@@ -26,7 +26,7 @@ repository=https://github.com/MathieuChailloux/BioDispersal
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=python, ecology, dispersal, ecological continuities, permeability, animal
+tags=python, ecology, dispersal, ecological continuities, permeability, animal, landscape
 
 homepage=http://homepage
 category=Plugins
