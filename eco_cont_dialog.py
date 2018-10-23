@@ -174,8 +174,8 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         friction.frictionModel = None
         friction.frictionFields = ["class_descr","class","code"]
         
-    #def initLog(self):
-    #    utils.print_func = self.txtLog.append
+    def initLog(self):
+        utils.print_func = self.txtLog.append
         
     # Switch language to english.
     def switchLangEn(self):

@@ -216,7 +216,7 @@ class EcologicalContinuity:
         #self.dlg = TestDialog()
         #self.dlg = BioDispersalDialog()
         self.dlg.initTabs()
-        #self.dlg.initLog()
+        self.dlg.initLog()
         self.dlg.initGui()
         self.connectComponents()
         #self.dlg.initLog()
