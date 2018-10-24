@@ -89,11 +89,14 @@ def getRasterFilters():
 def loadVectorLayer(fname,loadProject=False):
     utils.checkFileExists(fname)
     layer = QgsVectorLayer(fname, layerNameOfPath(fname), "ogr")
+    extension = os.path.splitext(fname)[1]
     if layer == None:
         utils.user_error("Could not load vector layer '" + fname + "'")
     if not layer.isValid():
         utils.user_error("Invalid vector layer '" + fname + "'")
-    if utils.platform_sys == 'Windows':
+    if extension == ".shp" and utils.platform_sys == "Linux":
+        layer.dataProvider().setEncoding('Latin-1')
+    else:
         layer.dataProvider().setEncoding('System')
     if loadProject:
         QgsProject.instance().addMapLayer(layer)
