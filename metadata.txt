@@ -28,7 +28,7 @@ repository=https://github.com/MathieuChailloux/BioDispersal
 # Tags are comma separated with spaces allowed
 tags=python, ecology, dispersal, ecological continuities, permeability, animal, landscape
 
-homepage=http://homepage
+homepage=https://tetis.teledetection.fr/index.php/fr/expertise-et-transfert/appui-aux-politiques-publiques/item/519-biodispersal
 category=Plugins
 icon=icon.png
 # experimental flag
