@@ -28,7 +28,7 @@ repository=https://github.com/MathieuChailloux/BioDispersal
 # Tags are comma separated with spaces allowed
 tags=python, ecology, dispersal, ecological continuities, permeability, animal, landscape
 
-homepage=http://homepage
+homepage=https://github.com/MathieuChailloux/BioDispersal
 category=Plugins
 icon=icon.png
 # experimental flag

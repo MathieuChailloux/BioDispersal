@@ -25,6 +25,7 @@ BioDispersal is a **7 steps** plugin :
 Each step is detailed in plugin help panel.
     
 **Links** :
+ - BioDispersal homepage : https://tetis.teledetection.fr/index.php/fr/expertise-et-transfert/appui-aux-politiques-publiques/item/519-biodispersal
  - BioDispersal git repository : https://github.com/MathieuChailloux/BioDispersal
  - IRSTEA : http://www.irstea.fr
  - French ecological network resource center : http://www.trameverteetbleue.fr/
