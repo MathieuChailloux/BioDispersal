@@ -22,4 +22,22 @@ Class Liaison locale of group roads;roads_Liaison locale;20;30;100;100
 railroads;railroads;23;100;10000;10000
 Thin watercourse;w1;22;100;10000;0
 Large watercourse;w2;24;10000;10000;0
-Class Liaison rÃ©gionale of group roads;roads_Liaison rÃ©gionale;21;100;10000;10000
+Class Liaison régionale of group roads;roads_Liaison régionale;21;100;10000;10000
+Class 132 of group landuse;landuse_132;25;;;
+Class 133 of group landuse;landuse_133;26;;;
+Class 521 of group landuse;landuse_521;27;;;
+Class 523 of group landuse;landuse_523;28;;;
+Class 141 of group landuse;landuse_141;29;;;
+Class 411 of group landuse;landuse_411;30;;;
+Class 421 of group landuse;landuse_421;31;;;
+Class 422 of group landuse;landuse_422;32;;;
+Class 323 of group landuse;landuse_323;33;;;
+Class 331 of group landuse;landuse_331;34;;;
+Class 332 of group landuse;landuse_332;35;;;
+Class 213 of group landuse;landuse_213;36;;;
+Class 223 of group landuse;landuse_223;37;;;
+Class 111 of group landuse;landuse_111;38;;;
+Class 122 of group landuse;landuse_122;39;;;
+Class 123 of group landuse;landuse_123;40;;;
+Class 124 of group landuse;landuse_124;41;;;
+Class 511 of group landuse;landuse_511;42;;;

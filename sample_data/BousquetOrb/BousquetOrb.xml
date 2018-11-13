@@ -1,9 +1,9 @@
 <ModelConfig>
-<ParamsModel workspace="/home/mtd/Projets/BioDispersal/Tests/BousquetOrb" resolution="25" extent="Source/ZoneEtude/EPCIBousquetOrb.shp" useRelPath="True"/>
+<ParamsModel workspace="D:/Projets/BioDispersal/Tests/BousquetOrbExtended" resolution="25" extent="../BousquetOrbExtended/Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
  <STModel>
-  <STItem   name="grasslands"   descr=""/>
-  <STItem   name="forest"   descr=""/>
-  <STItem   name="wetlands"   descr=""/>
+  <STItem   name="grasslands"   descr="Grasslands and meadows"/>
+  <STItem   name="forest"   descr="Hardwood and coniferous forests"/>
+  <STItem   name="wetlands"   descr="Wetlands and water courses"/>
  </STModel>
  <GroupModel>
   <GroupItem   name="landuse"   descr="Land Use"   geom="Raster"/>
@@ -37,22 +37,23 @@
   <ClassItem   name="roads_Liaison régionale"   code="21"   descr="Class Liaison régionale of group roads"   group="roads"/>
   <ClassItem   name="w1"   code="22"   descr="Thin watercourse"   group="w1"/>
   <ClassItem   name="w2"   code="24"   descr="Large watercourse"   group="w2"/>
+  <ClassItem   name="landuse_255"   code="25"   descr="Class 255 of group landuse"   group="landuse"/>
  </ClassModel>
  <SelectionModel>
-  <SelectionItem   in_layer="Source/CorineLandCover/CLC12_BOUSQUET_ORB.tif"   mode="RClasses"   mode_val="near"   group="landuse"/>
   <SelectionItem   in_layer="Source/VoiesFerrees/TRONCON_VOIE_FERREE_BOUSQUET_ORB.shp"   mode="VExpr"   mode_val=""   group="railroads"/>
   <SelectionItem   in_layer="Source/Routes/TRONCON_ROUTE_BOUSQUET_ORB.shp"   mode="VField"   mode_val="VOCATION"   group="roads"/>
   <SelectionItem   in_layer="Source/Hydro/TRONCON_HYDRO_BOUSQUET_ORB.shp"   mode="VExpr"   mode_val=" &quot;LARGEUR&quot;  =  'De 0 à 15 mètres' "   group="w1"/>
   <SelectionItem   in_layer="Source/Hydro/TRONCON_HYDRO_BOUSQUET_ORB.shp"   mode="VExpr"   mode_val=" &quot;LARGEUR&quot;  =   'Entre 15 et 50 mètres' "   group="w2"/>
+  <SelectionItem   in_layer="Source/CorineLandCover/CLC12_BOUSQUET_ORB_BUF.tif"   mode="RClasses"   mode_val="near"   group="landuse"/>
  </SelectionModel>
 <FusionModel>
  <ST name="grasslands">
   <GroupModel>
-   <GroupItem    name="landuse"    descr="Land Use"    geom="Raster"/>
-   <GroupItem    name="railroads"    descr="Rail roads"    geom="Line"/>
    <GroupItem    name="roads"    descr="Road network"    geom="Line"/>
-   <GroupItem    name="w1"    descr="Thin watercourse"    geom="Line"/>
+   <GroupItem    name="railroads"    descr="Rail roads"    geom="Line"/>
    <GroupItem    name="w2"    descr="Large watercourse"    geom="Line"/>
+   <GroupItem    name="w1"    descr="Thin watercourse"    geom="Line"/>
+   <GroupItem    name="landuse"    descr="Land Use"    geom="Raster"/>
   </GroupModel> </ST> <ST name="forest">
   <GroupModel>
    <GroupItem    name="roads"    descr="Road network"    geom="Line"/>
@@ -93,12 +94,13 @@
   <FrictionRowItem   class_descr="Thin watercourse"   class="w1"   code="22"   grasslands="100"   forest="10000"   wetlands="0"/>
   <FrictionRowItem   class_descr="Large watercourse"   class="w2"   code="24"   grasslands="10000"   forest="10000"   wetlands="0"/>
   <FrictionRowItem   class_descr="Class Liaison régionale of group roads"   class="roads_Liaison régionale"   code="21"   grasslands="100"   forest="10000"   wetlands="10000"/>
+  <FrictionRowItem   class_descr="Class 255 of group landuse"   class="landuse_255"   code="25"   grasslands="None"   forest="None"   wetlands="None"/>
  </FrictionModel>
  <PonderationModel>
  </PonderationModel>
  <CostModel>
   <CostItem   st_name="forest"   start_layer="Source/Reservoirs/RBP_MILBOISE.shp"   perm_layer="SousTrames/forest/forest_friction.tif"   cost="1000"   out_layer="SousTrames/forest/forest_disp_1000.tif"/>
-  <CostItem   st_name="wetlands"   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="SousTrames/wetlands/wetlands_friction.tif"   cost="1000"   out_layer="SousTrames/forest/wetlands_disp_1000.tif"/>
-  <CostItem   st_name="grasslands"   start_layer="Source/Reservoirs/RBP_PRAIRIE.shp"   perm_layer="SousTrames/grasslands/grasslands_friction.tif"   cost="1000"   out_layer="SousTrames/forest/grasslands_disp_1000.tif"/>
+  <CostItem   st_name="wetlands"   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="SousTrames/wetlands/wetlands_friction.tif"   cost="1000"   out_layer="SousTrames/wetlands/wetlands_disp_1000.tif"/>
+  <CostItem   st_name="grasslands"   start_layer="Source/Reservoirs/RBP_PRAIRIE.shp"   perm_layer="SousTrames/grasslands/grasslands_friction.tif"   cost="1000"   out_layer="SousTrames/grasslands/grasslands_disp_1000.tif"/>
  </CostModel>
 </ModelConfig>
