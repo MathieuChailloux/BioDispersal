@@ -10,6 +10,7 @@ It has been developped by Mathieu Chailloux at *IRSTEA*, on mission for the *Fre
 
 This directory contains :
  - source files (*.py, *.ui, *.qrc, ...)
+ - documentation files (docs/fr/*, only in french for now)
  - help files displayed in plugin (help/*)
  - a minimal example (sample_data/). To rerun this example, open QGIS, set workspace to sample_data directory, open BousquetOrb.xml and run steps 3,4,5,7.
       
