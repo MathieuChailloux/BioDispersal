@@ -33,3 +33,5 @@ Each step is detailed in plugin help panel.
  - IRSTEA : http://www.irstea.fr
  - French ecological network resource center : http://www.trameverteetbleue.fr/
  - French ministry of ecology : https://www.ecologique-solidaire.gouv.fr/
+
+![cerf](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/icons/cerf.png)
