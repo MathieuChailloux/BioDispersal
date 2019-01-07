@@ -15,13 +15,13 @@ It has been developped by *Mathieu Chailloux* at ![*IRSTEA*](http://www.irstea.f
 on mission for the ![*French ecological network resource center*](http://www.trameverteetbleue.fr/) 
 (driven by ![*French ministry of ecology*](https://www.ecologique-solidaire.gouv.fr/)).
 
-![dispEx](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/docs/pictures/BioDispersalExamplePicture.png)
+![dispEx](/docs/pictures/BioDispersalExamplePicture.png)
 
 # Documentation
 
 Available documentation (only in french for now):
- - ![Modelling method description](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/docs/fr/MethodePermeabiliteMilieux.pdf)
- - ![User guide](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/docs/fr/Notice_Plugin_BioDispersal1.0.pdf)
+ - [Modelling method description](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/docs/fr/MethodePermeabiliteMilieux.pdf)
+ - [User guide](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/docs/fr/Notice_Plugin_BioDispersal1.0.pdf)
 
 # Steps
 
@@ -37,10 +37,11 @@ BioDispersal is a **7 steps** plugin :
 Each step is detailed in plugin help panel.
     
 **Links** :
- - BioDispersal homepage : https://tetis.teledetection.fr/index.php/fr/expertise-et-transfert/appui-aux-politiques-publiques/item/519-biodispersal
- - BioDispersal git repository : https://github.com/MathieuChailloux/BioDispersal
- - IRSTEA : http://www.irstea.fr
- - French ecological network resource center : http://www.trameverteetbleue.fr/
- - French ministry of ecology : https://www.ecologique-solidaire.gouv.fr/
+ - [BioDispersal homepage](https://mathieuchailloux.github.io/BioDispersal/)
+ - [BioDispersal git repository](https://github.com/MathieuChailloux/BioDispersal)
+ - [IRSTEA](http://www.irstea.fr)
+ - [UMR TETIS](https://www.umr-tetis.fr)
+ - [French ecological network resource center](http://www.trameverteetbleue.fr/)
+ - [French ministry of ecology](https://www.ecologique-solidaire.gouv.fr/)
 
-[..]: # ![cerf](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/icons/cerf.png)
+[..]: # [cerf](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/icons/cerf.png)
