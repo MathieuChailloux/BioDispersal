@@ -15,6 +15,8 @@ It has been developped by *Mathieu Chailloux* at ![*IRSTEA*](http://www.irstea.f
 on mission for the ![*French ecological network resource center*](http://www.trameverteetbleue.fr/) 
 (driven by ![*French ministry of ecology*](https://www.ecologique-solidaire.gouv.fr/)).
 
+![dispEx](https://github.com/MathieuChailloux/BioDispersal/blob/gh-pages/docs/pictures/BioDispersalExamplePicture.png)
+
 ![dispEx](/docs/pictures/BioDispersalExamplePicture.png)
 
 # Documentation
@@ -35,8 +37,12 @@ BioDispersal is a **7 steps** plugin :
  7. Dispersal areas computation
     
 Each step is detailed in plugin help panel.
+
+# Quotation
+
+> BioDispersal : a QGIS plugin to compute ecological con
     
-**Links** :
+# Links
  - [BioDispersal homepage](https://mathieuchailloux.github.io/BioDispersal/)
  - [BioDispersal git repository](https://github.com/MathieuChailloux/BioDispersal)
  - [IRSTEA](http://www.irstea.fr)
