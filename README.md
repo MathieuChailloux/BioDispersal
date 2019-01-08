@@ -54,7 +54,7 @@ Each step is detailed in plugin help panel.
 
 # Quotation
 
-> Chailloux, M. & Amsallem, J. (2018) $BioDispersal$ : a QGIS plugin for modelling potential dispersal areas
+> Chailloux, M. & Amsallem, J. (2018) BioDispersal : a QGIS plugin for modelling potential dispersal areas
     
 # Links
  - [BioDispersal homepage](https://www.umr-tetis.fr/index.php/fr/production/donnees-et-plateformes/plateformes/415-biodispersal)
