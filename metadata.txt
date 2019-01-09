@@ -20,7 +20,7 @@ about=BioDispersal is a QGIS 3 plugin computing potential dispersal areas based 
  - friction coefficients are assigned to merged layer classes
  - disperal areas are computed from habitat layer according to friction layer and maximal dispersal capcity
  
- BioDispersal has been developped by Mathieu Chailloux and Jennifer Amsallem from IRSTEA / UMR TETIS. It has been funded by the French ecological network resource center and French ministry of ecology. More info at https://www.umr-tetis.fr/index.php/fr/production/donnees-et-plateformes/plateformes/415-biodispersal
+ BioDispersal has been developped by Mathieu Chailloux and Jennifer Amsallem from IRSTEA / UMR TETIS. It has been funded by the French ecological network resource center and French ministry of ecology.
 
 tracker=https://github.com/MathieuChailloux/BioDispersal/issues
 repository=https://github.com/MathieuChailloux/BioDispersal
