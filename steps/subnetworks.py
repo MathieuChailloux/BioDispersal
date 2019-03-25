@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QHeaderView
 #from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 #from .utils import *
 
-from ..qgis_lib_mc import utils, params
+from ..qgis_lib_mc import utils, abstract_model
 from . import params
 
 # import params

@@ -38,7 +38,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="resources.qrc">:/plugins/eco_cont/icons/logoIrstea.png</pixmap>
+      <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoIrstea.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -63,7 +63,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="resources.qrc">:/plugins/eco_cont/icons/logoTetis.png</pixmap>
+      <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoTetis.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -88,7 +88,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="resources.qrc">:/plugins/eco_cont/icons/logoCRTVB.png</pixmap>
+      <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoCRTVB.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -113,7 +113,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="resources.qrc">:/plugins/eco_cont/icons/logoMTES.png</pixmap>
+      <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoMTES.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>

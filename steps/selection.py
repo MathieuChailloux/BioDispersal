@@ -25,7 +25,7 @@ from qgis.core import QgsMapLayerProxyModel, QgsCoordinateTransform, QgsProject,
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, progress
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
 from . import params, classes, groups
 # from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 # from .utils import *
@@ -86,7 +86,7 @@ class SelectionItem(abstract_model.DictItem):
         elif self.is_raster:
             self.applyRasterItem()
         else:
-            user_error("Unkown format for file '" + str(self.dict["in_layer"]))
+            utils.user_error("Unkown format for file '" + str(self.dict["in_layer"]))
             
     def applyRasterItem(self):
         utils.debug("applyRasterItem")
@@ -236,7 +236,7 @@ class SelectionModel(abstract_model.DictModel):
         utils.debug("applyItems " + str(indexes))
         params.checkInit()
         selectionsByGroup = {}
-        progress_section = progress.ProgressSection("Selection",len(indexes))
+        progress_section = feedbacks.ProgressSection("Selection",len(indexes))
         progress_section.start_section()
         for n in indexes:
             i = self.items[n]
@@ -392,7 +392,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         cls = self.dlg.selectionGroupCombo.currentText()
         utils.debug("cls = " + str(cls))
         if not cls:
-            user_error("No class selected")
+            utils.user_error("No class selected")
         class_item = classes.getClassByName(cls)
         utils.debug("class_item = " + str(class_item))
         if not class_item:
@@ -598,7 +598,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         self.dlg.selectionLayerFormatRaster.setCheckState(0)
         self.dlg.selectionLayerFormatVector.setCheckState(2)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
-        self.dlg.selectionInLayer.setFilter(getVectorFilters())
+        self.dlg.selectionInLayer.setFilter(qgsUtils.getVectorFilters())
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeVect)
         self.activateExprMode()
             

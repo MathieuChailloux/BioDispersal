@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/eco_cont" >
+    <qresource prefix="/plugins/BioDispersal" >
         <file>icons/enFlag.svg</file>
         <file>icons/frFlag.svg</file>
         <file>icons/up-arrow.png</file>

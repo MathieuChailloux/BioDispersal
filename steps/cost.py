@@ -23,8 +23,10 @@
 """
 
 from PyQt5.QtGui import QIcon
+from qgis.core import QgsMapLayerProxyModel
+from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import (utils, qgsUtils, abstract_model, qgsTreatments, progress)
+from ..qgis_lib_mc import (utils, qgsUtils, abstract_model, qgsTreatments, feedbacks)
 from . import params, subnetworks
 # import utils
 # import params
@@ -61,7 +63,7 @@ class CostItem(abstract_model.DictItem):
         
     def applyItem(self):
         utils.debug("Start runCost")
-        progress.progressConnector.focusLogTab()
+        feedbacks.progressFeedback.focusLogTab()
         st_name = self.dict["st_name"]
         st_item = subnetworks.getSTByName(st_name)
         startLayer = params.getOrigPath(self.dict["start_layer"])
@@ -111,10 +113,10 @@ class CostModel(abstract_model.DictModel):
         
     def applyItems(self,indexes):
         utils.debug("[applyItems]")
-        progress.progressConnector.focusLogTab()
+        feedbacks.progressFeedback.focusLogTab()
         if not indexes:
-            internal_error("No indexes in Cost applyItems")
-        progress_section = progress.ProgressSection("Cost",len(indexes))
+            utils.internal_error("No indexes in Cost applyItems")
+        progress_section = feedbacks.ProgressSection("Cost",len(indexes))
         progress_section.start_section()
         params.checkInit()
         for n in indexes:
@@ -136,7 +138,7 @@ class CostConnector(abstract_model.AbstractConnector):
         
     def initGui(self):
         self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
-        self.dlg.costStartLayer.setFilter(getVectorFilters())
+        self.dlg.costStartLayer.setFilter(qgsUtils.getVectorFilters())
         self.dlg.costPermRasterCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.costPermRaster.setFilter("*.tif")
         self.dlg.costOutLayer.setFilter("*.tif")

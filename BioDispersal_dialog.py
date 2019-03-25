@@ -38,7 +38,7 @@ if file_dir not in sys.path:
     
 from .BioDispersalAbout_dialog import BioDispersalAboutDialog
 
-from .qgis_lib_mc import (utils, qgsUtils, config_parsing, log, progress)
+from .qgis_lib_mc import (utils, qgsUtils, config_parsing, log, feedbacks)
 from .steps import (params, subnetworks, classes, groups, selection, fusion, friction, ponderation, cost)
 #from .qgsUtils import *
 # import params
@@ -94,8 +94,8 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         ponderationConnector = ponderation.PonderationConnector(self)
         costConnector = cost.CostConnector(self)
         logConnector = log.LogConnector(self)
-        progressConnector = progress.ProgressConnector(self)
-        progress.progressConnector = progressConnector
+        progressFeedback = feedbacks.ProgressFeedback(self)
+        feedbacks.progressFeedback = progressFeedback
         tabConnector = tabs.TabConnector(self)
         self.connectors = {"Params" : paramsConnector,
                            "ST" : stConnector,
@@ -107,7 +107,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
                            "Ponderation" : ponderationConnector,
                            "Cost" : costConnector,
                            "Log" : logConnector,
-                           "Progress" : progressConnector,
+                           "Progress" : progressFeedback,
                            "Tabs" : tabConnector}
         self.recomputeModels()
         
@@ -144,7 +144,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             final_msg = tbinfo + "\n" + msg
             utils.error_msg(final_msg,prefix="Unexpected error")
         self.mTabWidget.setCurrentWidget(self.logTab)
-        progress.progressConnector.clear()
+        feedbacks.progressFeedback.clear()
         
     # Connects view and model components for each tab.
     # Connects global elements such as project file and language management.

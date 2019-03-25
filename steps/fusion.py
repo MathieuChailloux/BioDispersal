@@ -31,7 +31,7 @@ from qgis.core import QgsProject
 from PyQt5.QtCore import QModelIndex, pyqtSlot
 from PyQt5.QtGui import QIcon
 
-from ..qgis_lib_mc import utils, qgsUtils, xmlUtils, qgsTreatments, progress, config_parsing
+from ..qgis_lib_mc import utils, qgsUtils, xmlUtils, qgsTreatments, abstract_model, feedbacks, config_parsing
 from . import params, subnetworks, groups
 # import abstract_model
 # import utils
@@ -168,12 +168,12 @@ class FusionModel(abstract_model.AbstractGroupModel):
         
     def applyItems(self,indexes):
         utils.info("Applying merge")
-        progress.progressConnector.clear()
+        feedbacks.progressfeedback.clear()
         params.checkInit()
         res = str(params.getResolution())
         extent_coords = params.getExtentCoords()
         #for st in reversed(list(self.st_groups.keys())):
-        progress_section = progress.ProgressSection("Fusion",len(self.st_groups))
+        progress_section = feedbacks.ProgressSection("Fusion",len(self.st_groups))
         progress_section.start_section()
         for st in self.st_groups.keys():
             st_item = subnetworks.getSTByName(st)

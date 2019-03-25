@@ -29,7 +29,7 @@ from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
 from qgis.gui import QgsFileWidget
 
 from ..qgis_lib_mc import (utils, qgsUtils, abstract_model)
-from ..steps import params
+from . import params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
 classModel = None

@@ -38,15 +38,15 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
-	eco_cont.py eco_cont_dialog.py
+	BioDispersal.py BioDispersal_dialog.py
 
-PLUGINNAME = eco_cont
+PLUGINNAME = BioDispersal
 
 PY_FILES = \
 	__init__.py \
-	eco_cont.py eco_cont_dialog.py
+	BioDispersal.py BioDispersal_dialog.py
 
-UI_FILES = eco_cont_dialog_base.ui
+UI_FILES = BioDispersal_dialog_base.ui
 
 EXTRAS = metadata.txt icon.png
 

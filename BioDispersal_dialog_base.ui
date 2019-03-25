@@ -109,7 +109,7 @@
              </property>
              <property name="icon">
               <iconset resource="resources.qrc">
-               <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
+               <normaloff>:/plugins/BioDispersal/icons/mActionFileOpen.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileOpen.svg</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -132,7 +132,7 @@
              </property>
              <property name="icon">
               <iconset resource="resources.qrc">
-               <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
+               <normaloff>:/plugins/BioDispersal/icons/mActionFileSaveAs.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSaveAs.svg</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -155,7 +155,7 @@
              </property>
              <property name="icon">
               <iconset resource="resources.qrc">
-               <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
+               <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -172,7 +172,7 @@
              </property>
              <property name="icon">
               <iconset resource="resources.qrc">
-               <normaloff>:/plugins/eco_cont/icons/enFlag.svg</normaloff>:/plugins/eco_cont/icons/enFlag.svg</iconset>
+               <normaloff>:/plugins/BioDispersal/icons/enFlag.svg</normaloff>:/plugins/BioDispersal/icons/enFlag.svg</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -189,7 +189,7 @@
              </property>
              <property name="icon">
               <iconset resource="resources.qrc">
-               <normaloff>:/plugins/eco_cont/icons/frFlag.svg</normaloff>:/plugins/eco_cont/icons/frFlag.svg</iconset>
+               <normaloff>:/plugins/BioDispersal/icons/frFlag.svg</normaloff>:/plugins/BioDispersal/icons/frFlag.svg</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -563,7 +563,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/symbologyAdd.svg</normaloff>:/plugins/BioDispersal/icons/symbologyAdd.svg</iconset>
                        </property>
                        <property name="autoRaise">
                         <bool>true</bool>
@@ -592,7 +592,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/symbologyRemove.svg</normaloff>:/plugins/BioDispersal/icons/symbologyRemove.svg</iconset>
                        </property>
                        <property name="autoRaise">
                         <bool>true</bool>
@@ -1434,7 +1434,7 @@
                              </property>
                              <property name="icon">
                               <iconset resource="resources.qrc">
-                               <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
+                               <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
                              </property>
                             </widget>
                            </item>
@@ -1574,7 +1574,7 @@
                               </property>
                               <property name="icon">
                                <iconset resource="resources.qrc">
-                                <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
+                                <normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</iconset>
                               </property>
                               <property name="autoRaise">
                                <bool>true</bool>
@@ -1686,7 +1686,7 @@
                               </property>
                               <property name="icon">
                                <iconset resource="resources.qrc">
-                                <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
+                                <normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</iconset>
                               </property>
                               <property name="autoRaise">
                                <bool>true</bool>
@@ -1813,7 +1813,7 @@
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/play.svg</normaloff>:/plugins/BioDispersal/icons/play.svg</iconset>
                           </property>
                          </widget>
                         </item>
@@ -1882,7 +1882,7 @@
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/up-arrow.png</normaloff>:/plugins/BioDispersal/icons/up-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
                            <bool>true</bool>
@@ -1911,7 +1911,7 @@
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/down-arrow.png</normaloff>:/plugins/BioDispersal/icons/down-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
                            <bool>true</bool>
@@ -1937,7 +1937,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
                         <bool>true</bool>
@@ -2149,7 +2149,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
                         <bool>true</bool>
@@ -2181,7 +2181,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/mActionRefresh.svg</normaloff>:/plugins/BioDispersal/icons/mActionRefresh.svg</iconset>
                        </property>
                        <property name="autoRaise">
                         <bool>true</bool>
@@ -2280,7 +2280,7 @@
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/eco_cont/icons/up-arrow.png</normaloff>:/plugins/eco_cont/icons/up-arrow.png</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/up-arrow.png</normaloff>:/plugins/BioDispersal/icons/up-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
                            <bool>true</bool>
@@ -2315,7 +2315,7 @@
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/eco_cont/icons/down-arrow.png</normaloff>:/plugins/eco_cont/icons/down-arrow.png</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/down-arrow.png</normaloff>:/plugins/BioDispersal/icons/down-arrow.png</iconset>
                           </property>
                           <property name="autoRaise">
                            <bool>true</bool>
@@ -2412,7 +2412,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/play.svg</normaloff>:/plugins/BioDispersal/icons/play.svg</iconset>
                        </property>
                       </widget>
                      </item>
@@ -2521,7 +2521,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="resources.qrc">
-                       <normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</normaloff>:/plugins/eco_cont/icons/mActionRefresh.svg</iconset>
+                       <normaloff>:/plugins/BioDispersal/icons/mActionRefresh.svg</normaloff>:/plugins/BioDispersal/icons/mActionRefresh.svg</iconset>
                      </property>
                      <property name="autoRaise">
                       <bool>true</bool>
@@ -2550,7 +2550,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="resources.qrc">
-                       <normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</normaloff>:/plugins/eco_cont/icons/mActionFileOpen.svg</iconset>
+                       <normaloff>:/plugins/BioDispersal/icons/mActionFileOpen.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileOpen.svg</iconset>
                      </property>
                      <property name="autoRaise">
                       <bool>true</bool>
@@ -2579,7 +2579,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="resources.qrc">
-                       <normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSaveAs.svg</iconset>
+                       <normaloff>:/plugins/BioDispersal/icons/mActionFileSaveAs.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSaveAs.svg</iconset>
                      </property>
                      <property name="autoRaise">
                       <bool>true</bool>
@@ -2668,7 +2668,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/play.svg</normaloff>:/plugins/BioDispersal/icons/play.svg</iconset>
                        </property>
                       </widget>
                      </item>
@@ -3175,7 +3175,7 @@
                            </property>
                            <property name="icon">
                             <iconset resource="resources.qrc">
-                             <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
+                             <normaloff>:/plugins/BioDispersal/icons/symbologyAdd.svg</normaloff>:/plugins/BioDispersal/icons/symbologyAdd.svg</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -3198,7 +3198,7 @@
                            </property>
                            <property name="icon">
                             <iconset resource="resources.qrc">
-                             <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
+                             <normaloff>:/plugins/BioDispersal/icons/symbologyRemove.svg</normaloff>:/plugins/BioDispersal/icons/symbologyRemove.svg</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -3291,7 +3291,7 @@
                            </property>
                            <property name="icon">
                             <iconset resource="resources.qrc">
-                             <normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</normaloff>:/plugins/eco_cont/icons/symbologyAdd.svg</iconset>
+                             <normaloff>:/plugins/BioDispersal/icons/symbologyAdd.svg</normaloff>:/plugins/BioDispersal/icons/symbologyAdd.svg</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -3308,7 +3308,7 @@
                            </property>
                            <property name="icon">
                             <iconset resource="resources.qrc">
-                             <normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</normaloff>:/plugins/eco_cont/icons/symbologyRemove.svg</iconset>
+                             <normaloff>:/plugins/BioDispersal/icons/symbologyRemove.svg</normaloff>:/plugins/BioDispersal/icons/symbologyRemove.svg</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -3407,7 +3407,7 @@
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
                           </property>
                          </widget>
                         </item>
@@ -3470,7 +3470,7 @@
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</iconset>
                           </property>
                           <property name="autoRaise">
                            <bool>true</bool>
@@ -3590,7 +3590,7 @@
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/play.svg</normaloff>:/plugins/BioDispersal/icons/play.svg</iconset>
                           </property>
                          </widget>
                         </item>
@@ -4066,7 +4066,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
                        </property>
                       </widget>
                      </item>
@@ -4141,7 +4141,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</normaloff>:/plugins/eco_cont/icons/mActionDeleteSelected.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</normaloff>:/plugins/BioDispersal/icons/mActionDeleteSelected.svg</iconset>
                        </property>
                        <property name="autoRaise">
                         <bool>true</bool>
@@ -4239,7 +4239,7 @@
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
-                         <normaloff>:/plugins/eco_cont/icons/play.svg</normaloff>:/plugins/eco_cont/icons/play.svg</iconset>
+                         <normaloff>:/plugins/BioDispersal/icons/play.svg</normaloff>:/plugins/BioDispersal/icons/play.svg</iconset>
                        </property>
                       </widget>
                      </item>
@@ -4306,7 +4306,7 @@
                    </property>
                    <property name="icon">
                     <iconset resource="resources.qrc">
-                     <normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</normaloff>:/plugins/eco_cont/icons/debug_icon/mActionAnnotation.svg</iconset>
+                     <normaloff>:/plugins/BioDispersal/icons/debug_icon/mActionAnnotation.svg</normaloff>:/plugins/BioDispersal/icons/debug_icon/mActionAnnotation.svg</iconset>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
@@ -4326,7 +4326,7 @@
                    </property>
                    <property name="icon">
                     <iconset resource="resources.qrc">
-                     <normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</normaloff>:/plugins/eco_cont/icons/mActionFileSave.svg</iconset>
+                     <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
                    </property>
                    <property name="autoRaise">
                     <bool>true</bool>
@@ -4343,7 +4343,7 @@
                    </property>
                    <property name="icon">
                     <iconset resource="resources.qrc">
-                     <normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</normaloff>:/plugins/eco_cont/icons/iconClearConsole.svg</iconset>
+                     <normaloff>:/plugins/BioDispersal/icons/iconClearConsole.svg</normaloff>:/plugins/BioDispersal/icons/iconClearConsole.svg</iconset>
                    </property>
                    <property name="autoRaise">
                     <bool>true</bool>
@@ -4366,7 +4366,7 @@
              </property>
              <property name="icon">
               <iconset resource="resources.qrc">
-               <normaloff>:/plugins/eco_cont/icons/iconHelpConsole.svg</normaloff>:/plugins/eco_cont/icons/iconHelpConsole.svg</iconset>
+               <normaloff>:/plugins/BioDispersal/icons/iconHelpConsole.svg</normaloff>:/plugins/BioDispersal/icons/iconHelpConsole.svg</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -4482,7 +4482,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources.qrc">:/plugins/eco_cont/icons/logoIrstea.png</pixmap>
+         <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoIrstea.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -4507,7 +4507,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources.qrc">:/plugins/eco_cont/icons/logoTetis.png</pixmap>
+         <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoTetis.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

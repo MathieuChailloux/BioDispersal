@@ -26,11 +26,11 @@
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
-    """Load EcologicalContinuity class from file EcologicalContinuity.
+    """Load BioDispersal class from file BioDispersal.
 
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
     #
-    from .eco_cont import EcologicalContinuity
-    return EcologicalContinuity(iface)
+    from .BioDispersal import BioDispersal
+    return BioDispersal(iface)

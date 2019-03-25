@@ -29,7 +29,7 @@ from qgis.gui import QgsFileWidget
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QVBoxLayout
 
-from ..qgsi_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, progress
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
 from . import params
 # from .utils import *
 # from .qgsUtils import *
@@ -173,7 +173,7 @@ class PondBufferIvalModel(PondIvalModel):
         
     # def checkNotEmpty(self):
         # if len(self.items) == 0:
-            # internal_error("Empty buffer model")
+            # utils.internal_error("Empty buffer model")
         
     @classmethod
     def fromStr(cls,s):
@@ -194,7 +194,7 @@ class PondBufferIvalModel(PondIvalModel):
     def toGdalCalcExpr(self):
         expr = super().toGdalCalcExpr()
         if not self.max_val:
-            internal_error("No max value for buffer model")
+            utils.internal_error("No max value for buffer model")
         expr += " + (A==1)"
         return expr
         
@@ -285,7 +285,7 @@ class PonderationItem(abstract_model.DictItem):
         elif mode == "Minimum":
             self.applyMin(friction_norm_path,pond_norm_path,out_layer_path)
         else:
-            internal_error("Unexpected ponderation mode '" + str(mode) + "'")
+            utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
             
     def applyPonderation(self,layer1,layer2,out_layer):
         checkFileExists(layer1)
@@ -381,8 +381,8 @@ class PonderationModel(abstract_model.DictModel):
     def applyItems(self,indexes):
         utils.debug("[applyItems]")
         if not indexes:
-            internal_error("No indexes in Ponderation applyItems")
-        progress_section = progress.ProgressSection("Ponderation",len(indexes))
+            utils.internal_error("No indexes in Ponderation applyItems")
+        progress_section = feedbacks.ProgressSection("Ponderation",len(indexes))
         progress_section.start_section()
         params.checkInit()
         for n in indexes:
@@ -462,16 +462,16 @@ class PonderationConnector(abstract_model.AbstractConnector):
         
     
     def activateDirectMode(self):
-        debug("activateDirectMode")
+        utils.debug("activateDirectMode")
         self.dlg.stackPond.hide()
         
     def activateIvalMode(self):
-        debug("activateIvalMode")
+        utils.debug("activateIvalMode")
         self.dlg.stackPond.show()
         self.dlg.stackPond.setCurrentWidget(self.dlg.stackPondIval)
         
     def activateBufferMode(self):
-        debug("activateBufferMode")
+        utils.debug("activateBufferMode")
         self.dlg.stackPond.show()
         self.dlg.stackPond.setCurrentWidget(self.dlg.stackPondBuffer)
     

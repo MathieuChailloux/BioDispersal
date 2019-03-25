@@ -16,18 +16,18 @@ import unittest
 
 from PyQt5.QtGui import QDialogButtonBox, QDialog
 
-from eco_cont_dialog import EcologicalContinuityDialog
+from BioDispersal_dialog import BioDispersalDialaog
 
 from utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
 
 
-class EcologicalContinuityDialogTest(unittest.TestCase):
+class BioDispersalDialogTest(unittest.TestCase):
     """Test dialog works."""
 
     def setUp(self):
         """Runs before each test."""
-        self.dialog = EcologicalContinuityDialog(None)
+        self.dialog = BioDispersalDialog(None)
 
     def tearDown(self):
         """Runs after each test."""
@@ -49,7 +49,7 @@ class EcologicalContinuityDialogTest(unittest.TestCase):
         self.assertEqual(result, QDialog.Rejected)
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(EcologicalContinuityDialogTest)
+    suite = unittest.makeSuite(BioDispersalDialogTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 

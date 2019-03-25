@@ -66,7 +66,7 @@ class BioDispersal:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = EcologicalContinuityDialog()
+        self.dlg = BioDispersalDialog()
         utils.debug("init")
         #self.dlg = BioDispersalDialog()
         #self.dlg = TestDialog()
@@ -171,7 +171,7 @@ class BioDispersal:
         utils.debug("initGui")
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/eco_cont/icons/cerf.png'
+        icon_path = ':/plugins/BioDispersal/icons/cerf.png'
         self.add_action(
             icon_path,
             text=self.tr(u'BioDispersal'),

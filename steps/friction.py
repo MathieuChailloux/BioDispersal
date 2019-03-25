@@ -30,8 +30,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, progress
-from . import params, subnetworks
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
+from . import params, subnetworks, classes
 
 # import utils
 # import qgsUtils
@@ -217,7 +217,7 @@ class FrictionModel(abstract_model.DictModel):
         utils.debug("indexes = " + str(indexes))
         st_list = subnetworks.stModel.items
         nb_steps = len(st_list)
-        progress_section = progress.ProgressSection("Friction",nb_steps)
+        progress_section = feedbacks.ProgressSection("Friction",nb_steps)
         progress_section.start_section()
         for st_item in st_list:
             st_merged_fname = st_item.getMergedPath()
@@ -275,7 +275,7 @@ class FrictionModel(abstract_model.DictModel):
                 if not st_item:
                     utils.debug(str(frictionFields))
                     utils.debug(str(st))
-                    utils.user_error("Sous-trame '" + st + "' does not exist"
+                    utils.user_error("Sous-trame '" + st + "' does not exist")
             first_line = next(reader)
             for row in reader:
                 item = FrictionRowItem(row)
@@ -353,7 +353,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         
     def loadCSVAction(self):
         utils.debug("loadCSVAction " + str(self))
-        fname = params.openFileDialog(parent=self.dlg,
+        fname = qgsUtils.openFileDialog(parent=self.dlg,
                                       msg="Ouvrir le tableau de friction",
                                       filter="*.csv")
         if fname:
@@ -364,7 +364,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
      
     def saveCSVAction(self):
         utils.debug("saveCSVAction")
-        fname = params.saveFileDialog(parent=self.dlg,
+        fname = qgsUtils.saveFileDialog(parent=self.dlg,
                                       msg="Sauvegarder le tableau de friction sous",
                                       filter="*.csv")
         if fname:
