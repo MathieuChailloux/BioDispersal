@@ -24,14 +24,18 @@
 from qgis.core import QgsMapLayerProxyModel, QgsCoordinateTransform, QgsProject, QgsGeometry
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
-from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
-from .utils import *
-from .qgsUtils import *
-import params
-import classes
-import groups
-from .qgsTreatments import *
-import progress
+
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, progress
+from . import params, classes, groups
+# from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
+# from .utils import *
+# from .qgsUtils import *
+# import params
+# import classes
+# import groups
+# from .qgsTreatments import *
+# import progress
+
 from osgeo import gdal
 import numpy as np
 
@@ -58,7 +62,7 @@ rresample = "RResample"
 #                (all features are selected if empty expression)
 #   - 'class' : class assigned to selection item
 #   - 'group' : group assigned to selection item
-class SelectionItem(DictItem):
+class SelectionItem(abstract_model.DictItem):
 
     def __init__(self,in_layer,mode,mode_val,group):#,class_descr="",group_descr="",code=None):
         dict = {"in_layer" : in_layer,
@@ -88,7 +92,7 @@ class SelectionItem(DictItem):
         utils.debug("applyRasterItem")
         params.checkInit()
         in_layer_path = params.getOrigPath(self.dict["in_layer"])
-        checkFileExists(in_layer_path)
+        utils.checkFileExists(in_layer_path)
         group_name = self.dict["group"]
         group_item = groups.getGroupByName(group_name)
         #tmp_path = group_item.getRasterTmpPath()
@@ -111,12 +115,12 @@ class SelectionItem(DictItem):
             unique_vals.remove(in_nodata_val)
             utils.debug("Unique values : " + str(unique_vals))
             reclass_dict = group_item.getReclassDict()
-            applyReclassGdalFromDict(in_layer_path,out_tmp_path,reclass_dict)
-            applyWarpGdal(out_tmp_path,out_path,resampling_mode,crs,
+            qgsTreatments.applyReclassGdalFromDict(in_layer_path,out_tmp_path,reclass_dict)
+            qgsTreatments.applyWarpGdal(out_tmp_path,out_path,resampling_mode,crs,
                           resolution,extent_path,
                           load_flag=True,to_byte=True)
         else:
-            applyWarpGdal(in_layer_path,out_path,resampling_mode,crs,
+            qgsTreatments.applyWarpGdal(in_layer_path,out_path,resampling_mode,crs,
                           resolution,extent_path,
                           load_flag=True,to_byte=False)
         
@@ -130,8 +134,8 @@ class SelectionItem(DictItem):
     def applyVectorItem(self):
         utils.debug("classModel = " + str(classes.classModel))
         in_layer_path = params.getOrigPath(self.dict["in_layer"])
-        checkFileExists(in_layer_path)
-        in_layer = loadVectorLayer(in_layer_path)
+        utils.checkFileExists(in_layer_path)
+        in_layer = qgsUtils.loadVectorLayer(in_layer_path)
         mode = self.dict["mode"]
         mode_val = self.dict["mode_val"]
         # class_name = self.dict["class"]
@@ -147,7 +151,7 @@ class SelectionItem(DictItem):
             out_vector_layer = group_item.vectorLayer
         else:
             # group layer creation
-            out_vector_layer = createLayerFromExisting(in_layer,group_name + "_vector",
+            out_vector_layer = qgsUtils.createLayerFromExisting(in_layer,group_name + "_vector",
                                                        geomType=None,crs=params.params.getCrsStr())
             group_item.vectorLayer = out_vector_layer
             orig_field = QgsField("Origin", QVariant.String)
@@ -196,16 +200,16 @@ class SelectionItem(DictItem):
             new_f["Code"] = class_item.dict["code"]
             res = pr.addFeature(new_f)
             if not res:
-                internal_error("addFeature failed")
+                utils.internal_error("addFeature failed")
             out_vector_layer.updateExtents()
         utils.debug("length(feats) = " + str(tmp_cpt))
         group_item.vectorLayer = out_vector_layer
         if tmp_cpt == 0:
-            warn("No entity selected from '" + str(self) + "'")
+            utils.warn("No entity selected from '" + str(self) + "'")
         group_item.saveVectorLayer()
         
         
-class SelectionModel(DictModel):
+class SelectionModel(abstract_model.DictModel):
     
     def __init__(self):
         super().__init__(self,selection_fields)
@@ -220,7 +224,7 @@ class SelectionModel(DictModel):
             else:
                 mode = vexpr
         else:
-            checkFields(selection_fields,dict.keys())
+            utils.checkFields(selection_fields,dict.keys())
             mode = dict["mode"]
             mode_val = dict["mode_val"]
         item = SelectionItem(dict["in_layer"],mode,mode_val,dict["group"])
@@ -247,7 +251,7 @@ class SelectionModel(DictModel):
                 utils.user_error("Group '" + g + "' does not exist")
             grp_vector_path = grp_item.getVectorPath()
             if os.path.isfile(grp_vector_path):
-                removeFile(grp_vector_path)
+                qgsUtils.removeFile(grp_vector_path)
             from_raster = False
             for s in selections:
                 s.applyItem()
@@ -260,7 +264,7 @@ class SelectionModel(DictModel):
                 grp_item.applyRasterizationItem()
         progress_section.end_section()
         
-class SelectionConnector(AbstractConnector):
+class SelectionConnector(abstract_model.AbstractConnector):
 
     def __init__(self,dlg):
         self.dlg = dlg
@@ -332,47 +336,47 @@ class SelectionConnector(AbstractConnector):
         self.dlg.selectionGroupDescr.setText(grp_item.dict["descr"])
                         
     def setInLayerFromCombo(self,layer):
-        debug("setInLayerFromCombo")
-        debug(str(layer.__class__.__name__))
+        utils.debug("setInLayerFromCombo")
+        utils.debug(str(layer.__class__.__name__))
         if layer:
-            path=pathOfLayer(layer)
+            path = qgsUtils.pathOfLayer(layer)
             self.dlg.selectionExpr.setLayer(layer)
             self.dlg.selectionField.setLayer(layer)
         else:
-            warn("Could not load selection in layer")
+            utils.warn("Could not load selection in layer")
         
     def setInLayer(self,path):
-        debug("setInLayer " + path)
+        utils.debug("setInLayer " + path)
         #loaded_layer = loadLayer(path,loadProject=True)
         if self.dlg.selectionLayerFormatVector.isChecked():
-            loaded_layer = loadVectorLayer(path,loadProject=True)
+            loaded_layer = qgsUtils.loadVectorLayer(path,loadProject=True)
             self.dlg.selectionExpr.setLayer(loaded_layer)
             self.dlg.selectionField.setLayer(loaded_layer)
-            debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
-            debug(str(self.dlg.selectionField.layer().fields().names()))
+            utils.debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
+            utils.debug(str(self.dlg.selectionField.layer().fields().names()))
         else:
-            loaded_layer = loadRasterLayer(path,loadProject=True)
+            loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
         self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
             
         
-    def setInLayerField(self,path):
-        debug("[setInLayerField]")
-        layer = QgsVectorLayer(path, "test", "ogr")
-        self.dlg.selectionField.setLayer(layer)
+    # def setInLayerField(self,path):
+        # utils.debug("[setInLayerField]")
+        # layer = QgsVectorLayer(path, "test", "ogr")
+        # self.dlg.selectionField.setLayer(layer)
                 
     def getOrCreateGroup(self):
         utils.debug("getOrCreateGroup")
         group = self.dlg.selectionGroupCombo.currentText()
         utils.debug("group = " + str(group))
         if not group:
-            user_error("No group selected")
+            utils.user_error("No group selected")
         group_item = groups.getGroupByName(group)
         utils.debug("grp_item = " + str(group_item))
         if not group_item:
             group_descr = self.dlg.selectionGroupDescr.text()
             in_layer = self.dlg.selectionInLayerCombo.currentLayer()
             if self.dlg.selectionLayerFormatVector.isChecked():
-                in_geom = getLayerSimpleGeomStr(in_layer)
+                in_geom = qgsUtils.getLayerSimpleGeomStr(in_layer)
             else:
                 in_geom = "Raster"
             utils.debug("test1")
@@ -437,7 +441,7 @@ class SelectionConnector(AbstractConnector):
         grp_name = grp_item.dict["name"]
         grp_descr = grp_item.dict["descr"]
         if self.dlg.selectionLayerFormatVector.isChecked():
-            in_geom = getLayerSimpleGeomStr(in_layer)
+            in_geom = qgsUtils.getLayerSimpleGeomStr(in_layer)
             grp_item.checkGeom(in_geom)
             if self.dlg.fieldSelectionMode.isChecked():
                 mode = vfield

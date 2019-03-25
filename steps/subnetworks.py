@@ -27,9 +27,13 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
 #from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
 #from .utils import *
-import params
-import abstract_model
-import utils
+
+from ..qgis_lib_mc import utils, params
+from . import params
+
+# import params
+# import abstract_model
+# import utils
 import os
 
 st_fields = ["name","descr"]

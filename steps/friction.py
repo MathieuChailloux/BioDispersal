@@ -30,14 +30,17 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 from qgis.gui import QgsFileWidget
 
-import utils
-import qgsUtils
-import progress
-import sous_trames
-import classes
-import params
-import abstract_model
-import qgsTreatments
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, progress
+from . import params, subnetworks
+
+# import utils
+# import qgsUtils
+# import progress
+# import sous_trames
+# import classes
+# import params
+# import abstract_model
+# import qgsTreatments
 
 # Friction connector is global so that it can be relinked if model is reloaded.
 # Model can be reloaded through CSV and project file
@@ -49,9 +52,9 @@ frictionFields = ["class_descr","class","code"]
 @pyqtSlot()
 def catchSTAdded(st_item):
     utils.debug("stAdded " + st_item.dict["name"])
-    utils.debug("ST addItem50, items = " + str(sous_trames.stModel))
+    utils.debug("ST addItem50, items = " + str(subnetworks.stModel))
     frictionModel.addSTItem(st_item)
-    utils.debug("ST addItem5, items = " + str(sous_trames.stModel))
+    utils.debug("ST addItem5, items = " + str(subnetworks.stModel))
     
 @pyqtSlot()
 def catchSTRemoved(name):
@@ -73,7 +76,7 @@ class FrictionRowItem(abstract_model.DictItem):
     
     # Adds an entry by sous-trame (columns in table view)
     def addSTCols(self,defaultVal):
-        for st in sous_trames.getSTList():
+        for st in subnetworks.getSTList():
             self.dict[st] = defaultVal
         self.recompute()
             
@@ -121,14 +124,14 @@ class FrictionModel(abstract_model.DictModel):
         
     def addSTCols(self,row):
         utils.debug("addSTCols")
-        for st in sous_trames.getSTList():
+        for st in subnetworks.getSTList():
             row[st] = self.defaultVal
             
     def addSTItem(self,st_item):
         global friction_fields
         utils.debug("addSTItem")
         st_name = st_item.dict["name"]
-        utils.debug("ST addItem51, items = " + str(sous_trames.stModel))
+        utils.debug("ST addItem51, items = " + str(subnetworks.stModel))
         if st_name not in self.fields:
             for i in self.items:
                 if st_name not in i.dict:
@@ -186,7 +189,7 @@ class FrictionModel(abstract_model.DictModel):
         
     def createRulesFiles(self):
         utils.debug("createRulesFiles")
-        for st_item in sous_trames.stModel.items:
+        for st_item in subnetworks.stModel.items:
             st_name = st_item.dict["name"]
             utils.debug("createRulesFiles " + str(st_name))
             st_rules_fname = st_item.getRulesPath()
@@ -199,7 +202,7 @@ class FrictionModel(abstract_model.DictModel):
     def applyReclassProcessing(self):
         utils.debug("applyReclass")
         self.createRulesFiles()
-        for st_item in sous_trames.stModel.items:
+        for st_item in subnetworks.stModel.items:
             st_name = st_item.dict["name"]
             utils.debug("applyReclass " + str(st_name))
             st_rules_fname = st_item.getRulesPath()
@@ -212,11 +215,10 @@ class FrictionModel(abstract_model.DictModel):
     def applyReclassGdal(self,indexes):
         utils.debug("friction.applyReclassGdal")
         utils.debug("indexes = " + str(indexes))
-        st_list = sous_trames.stModel.items
+        st_list = subnetworks.stModel.items
         nb_steps = len(st_list)
         progress_section = progress.ProgressSection("Friction",nb_steps)
         progress_section.start_section()
-        #for st_item in self.sous_trames:
         for st_item in st_list:
             st_merged_fname = st_item.getMergedPath()
             utils.checkFileExists(st_merged_fname)
@@ -268,14 +270,12 @@ class FrictionModel(abstract_model.DictModel):
             reader = csv.DictReader(f,fieldnames=frictionFields,delimiter=';')
             header = reader.fieldnames
             model.fields = header
-            #model.sous_trames = []
             for st in header[3:]:
-                st_item = sous_trames.getSTByName(st)
+                st_item = subnetworks.getSTByName(st)
                 if not st_item:
                     utils.debug(str(frictionFields))
                     utils.debug(str(st))
-                    utils.user_error("Sous-trame '" + st + "' does not exist")
-                #model.sous_trames.append(st_item)
+                    utils.user_error("Sous-trame '" + st + "' does not exist"
             first_line = next(reader)
             for row in reader:
                 item = FrictionRowItem(row)
@@ -288,7 +288,6 @@ class FrictionModel(abstract_model.DictModel):
         eraseFlag = True
         if eraseFlag:
             self.classes = classes.classModel.items
-            #self.sous_trames = sous_trames.stModel.items
             self.items = []
         for fr in root:
             item = FrictionRowItem(fr.attrib)
@@ -312,8 +311,8 @@ class FrictionConnector(abstract_model.AbstractConnector):
         utils.debug("internClassAdded " )
         
     def connectComponents(self):
-        sous_trames.stModel.stAdded.connect(catchSTAdded)
-        sous_trames.stModel.stRemoved.connect(catchSTRemoved)
+        subnetworks.stModel.stAdded.connect(catchSTAdded)
+        subnetworks.stModel.stRemoved.connect(catchSTRemoved)
         classes.classModel.classAdded.connect(catchClassAdded)
         classes.classModel.classRemoved.connect(catchClassRemoved)
         super().connectComponents()

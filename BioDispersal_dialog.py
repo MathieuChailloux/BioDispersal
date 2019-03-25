@@ -29,35 +29,31 @@ from io import StringIO
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
-#from PyQt5.QtGui import *
 from PyQt5.QtCore import QTranslator, qVersion, QCoreApplication
-import processing
-from processing.gui import AlgorithmDialog
-#from qgis.core import *
-#from qgis.gui import *
 from qgis.gui import QgsFileWidget
 
 file_dir = os.path.dirname(__file__)
 if file_dir not in sys.path:
     sys.path.append(file_dir)
     
-from BioDispersalAbout_dialog import BioDispersalAboutDialog
+from .BioDispersalAbout_dialog import BioDispersalAboutDialog
 
-import utils
-from .qgsUtils import *
-import params
-import sous_trames
-import classes
-import groups
-from .selection import SelectionConnector
-import fusion
-import friction
-from .ponderation import PonderationConnector
-from .cost import CostConnector
-from .config_parsing import *
-from .log import LogConnector
-import progress
-import tabs
+from .qgis_lib_mc import (utils, qgsUtils, config_parsing, log, progress)
+from .steps import (params, subnetworks, classes, groups, selection, fusion, friction, ponderation, cost)
+#from .qgsUtils import *
+# import params
+# import sous_trames
+# import classes
+# import groups
+# from .selection import SelectionConnector
+# import fusion
+# import friction
+# from .ponderation import PonderationConnector
+# from .cost import CostConnector
+# from .config_parsing import *
+# from .log import LogConnector
+# import progress
+from . import tabs
 
 #FORM_CLASS, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -67,11 +63,11 @@ import tabs
     
 from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
     
-class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
+class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
 
     def __init__(self, parent=None):
         """Constructor."""
-        super(EcologicalContinuityDialog, self).__init__(parent)
+        super(BioDispersalDialog, self).__init__(parent)
         #super().__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -84,20 +80,20 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
     def initTabs(self):
         paramsConnector = params.ParamsConnector(self)
         params.params = paramsConnector.model
-        stConnector = sous_trames.STConnector(self)
-        sous_trames.stModel = stConnector.model
+        stConnector = subnetworks.STConnector(self)
+        subnetworks.stModel = stConnector.model
         groupsConnector = groups.GroupConnector(self)
         groups.groupsModel = groupsConnector.model
         classConnector = classes.ClassConnector(self)
         classes.classModel = classConnector.model
-        selectionConnector = SelectionConnector(self)
+        selectionConnector = selection.SelectionConnector(self)
         fusionConnector = fusion.FusionConnector(self)
         fusion.fusionModel = fusionConnector.model
         frictionConnector = friction.FrictionConnector(self)
         friction.frictionModel = frictionConnector.model
-        ponderationConnector = PonderationConnector(self)
-        costConnector = CostConnector(self)
-        logConnector = LogConnector(self)
+        ponderationConnector = ponderation.PonderationConnector(self)
+        costConnector = cost.CostConnector(self)
+        logConnector = log.LogConnector(self)
         progressConnector = progress.ProgressConnector(self)
         progress.progressConnector = progressConnector
         tabConnector = tabs.TabConnector(self)
@@ -169,7 +165,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         groups.groupsModel = None
         classes.classModel = None
         classes.class_fields = ["name","code","descr"]
-        sous_trames.stModel = None
+        subnetworks.stModel = None
         fusion.fusionModel = None
         friction.frictionModel = None
         friction.frictionFields = ["class_descr","class","code"]
@@ -227,7 +223,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
     # Recompute self.models in case they have been reloaded
     def recomputeModels(self):
         self.models = {"ParamsModel" : params.params,
-                        "STModel" : sous_trames.stModel,
+                        "STModel" : subnetworks.stModel,
                         "GroupModel" : groups.groupsModel,
                         "ClassModel" : classes.classModel,
                         "SelectionModel" : self.connectors["Selection"].model,
@@ -254,7 +250,7 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         utils.info("BioDispersal model saved into file '" + fname + "'")
         
     def saveModelAsAction(self):
-        fname = params.saveFileDialog(parent=self,msg="Sauvegarder le projet sous",filter="*.xml")
+        fname = qgsUtils.saveFileDialog(parent=self,msg="Sauvegarder le projet sous",filter="*.xml")
         if fname:
             self.saveModelAs(fname)
         
@@ -268,30 +264,12 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
     def loadModel(self,fname):
         utils.debug("loadModel " + str(fname))
         utils.checkFileExists(fname)
-        setConfigModels(self.models)
+        config_parsing.setConfigModels(self.models)
         params.params.projectFile = fname
-        parseConfig(fname)
+        config_parsing.parseConfig(fname)
         utils.info("BioDispersal model loaded from file '" + fname + "'")
         
     def loadModelAction(self):
-        fname = params.openFileDialog(parent=self,msg="Ouvrir le projet",filter="*.xml")
+        fname = qgsUtils.openFileDialog(parent=self,msg="Ouvrir le projet",filter="*.xml")
         if fname:
             self.loadModel(fname)
-            
-            
-# class BioDispersalDialog(QgsProcessingAlgorithmDialogBase):
-
-    # def __init__(self):
-        # super().__init__()
-        # self.eco_dlg = EcologicalContinuityDialog()
-        # nb_tabs = self.eco_dlg.pluginTabs.count()
-        # for n in range(0,nb_tabs):
-            # n_widget = self.eco_dlg.pluginTabs.widget(0)
-            # n_text = self.eco_dlg.pluginTabs.tabText(0)
-            # self.tabWidget().insertTab(n,n_widget,n_text)
-        # w1 = self.eco_dlg.mainTab
-        # scroll_area = QtWidgets.QScrollArea()
-        # scroll_area.setWindowFlags(Qt.FramelessWindowHint)
-        # scroll_area.setAttribute(Qt.WA_TranslucentBackground)
-        # scroll_area.setWidget(w1)
-        # self.tabWidget().insertTab(1,scroll_area,"test_scroll")

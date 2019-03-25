@@ -21,17 +21,18 @@
  *                                                                         *
  ***************************************************************************/
 """
-import processing
 
 from PyQt5.QtGui import QIcon
 
-import utils
-import params
-from .qgsUtils import *
-import progress
-import sous_trames
-from .abstract_model import *
-from .qgsTreatments import *
+from ..qgis_lib_mc import (utils, qgsUtils, abstract_model, qgsTreatments, progress)
+from . import params, subnetworks
+# import utils
+# import params
+# from .qgsUtils import *
+# import progress
+# import sous_trames
+# from .abstract_model import *
+# from .qgsTreatments import *
 
 import time
 
@@ -42,7 +43,7 @@ cost_fields = ["st_name","start_layer","perm_layer","cost","out_layer"]
 #   - 'start_layer' : vector layer containing starting points
 #   - 'perm_layer' : raster layer containing cost for each pixel
 #   - 'cost' : maximal cost
-class CostItem(DictItem):
+class CostItem(abstract_model.DictItem):
 
     def __init__(self,st_name,start_layer,perm_layer,cost,out_layer):
         dict = {"st_name" : st_name,
@@ -62,13 +63,13 @@ class CostItem(DictItem):
         utils.debug("Start runCost")
         progress.progressConnector.focusLogTab()
         st_name = self.dict["st_name"]
-        st_item = sous_trames.getSTByName(st_name)
+        st_item = subnetworks.getSTByName(st_name)
         startLayer = params.getOrigPath(self.dict["start_layer"])
         utils.checkFileExists(startLayer,"Dispersion Start Layer ")
         startRaster = st_item.getStartLayerPath()
         params.checkInit()
         extent_layer_path = params.getExtentLayer()
-        applyRasterization(startLayer,"geom",startRaster,
+        qgsTreatments.applyRasterization(startLayer,"geom",startRaster,
                            resolution=params.getResolution(),
                            extent_path=extent_layer_path,load_flag=False,to_byte=False,
                            more_args=['-ot','Byte','-a_nodata','0'])
@@ -79,8 +80,8 @@ class CostItem(DictItem):
         outPath = params.getOrigPath(self.dict["out_layer"])
         if os.path.isfile(outPath):
             removeRaster(outPath)
-        applyRCost(startRaster,permRaster,cost,tmpPath)
-        applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
+        qgsTreatments.applyRCost(startRaster,permRaster,cost,tmpPath)
+        qgsTreatments.applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
         #removeRaster(tmpPath)
         res_layer = qgsUtils.loadRasterLayer(outPath)
         QgsProject.instance().addMapLayer(res_layer)
@@ -89,7 +90,7 @@ class CostItem(DictItem):
     def checkItem(self):
         pass
         
-class CostModel(DictModel):
+class CostModel(abstract_model.DictModel):
     
     def __init__(self):
         super().__init__(self,cost_fields)
@@ -102,7 +103,7 @@ class CostModel(DictModel):
                             dict["cost"],dict["out_layer"])
         else:
             st_name = dict["st_name"]
-            st_item = sous_trames.getSTByName(st_name)
+            st_item = subnetworks.getSTByName(st_name)
             out_path = st_item.getDispersionPath(dict["cost"])
             item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
                             dict["cost"],out_path)
@@ -123,7 +124,7 @@ class CostModel(DictModel):
         progress_section.end_section()
         
         
-class CostConnector(AbstractConnector):
+class CostConnector(abstract_model.AbstractConnector):
 
     def __init__(self,dlg):
         self.dlg = dlg
@@ -143,12 +144,12 @@ class CostConnector(AbstractConnector):
         
     def connectComponents(self):
         super().connectComponents()
-        self.dlg.costSTCombo.setModel(sous_trames.stModel)
+        self.dlg.costSTCombo.setModel(subnetworks.stModel)
         self.dlg.costStartLayer.fileChanged.connect(self.setStartLayer)
         self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
         
     def switchST(self,text):
-        st_item = sous_trames.getSTByName(text)
+        st_item = subnetworks.getSTByName(text)
         st_friction_path = st_item.getFrictionPath()
         self.dlg.costPermRaster.lineEdit().setValue(st_friction_path)
         

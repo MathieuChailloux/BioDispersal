@@ -21,6 +21,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+
+import os.path
+import sys
+
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
@@ -28,14 +32,11 @@ from PyQt5.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .eco_cont_dialog import EcologicalContinuityDialog
-import os.path
-import sys
-
-import utils
+from .BioDispersal_dialog import BioDispersalDialog
+from .qgis_lib_mc import utils
 from qgis.utils import qgis_excepthook
 
-class EcologicalContinuity:
+class BioDispersal:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -74,8 +75,8 @@ class EcologicalContinuity:
         self.actions = []
         self.menu = self.tr(u'&BioDispersal')
         # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'EcologicalContinuity')
-        self.toolbar.setObjectName(u'EcologicalContinuity')
+        self.toolbar = self.iface.addToolBar(u'BioDispersal')
+        self.toolbar.setObjectName(u'BioDispersal')
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -90,7 +91,7 @@ class EcologicalContinuity:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('EcologicalContinuity', message)
+        return QCoreApplication.translate('BioDispersal', message)
 
 
     def add_action(
@@ -212,7 +213,7 @@ class EcologicalContinuity:
         #self.dlg.runButton.clicked.connect(self.dlg.runCost)
         #self.dlg.connectComponents()
         # show the dialog
-        self.dlg = EcologicalContinuityDialog()
+        self.dlg = BioDispersalDialog()
         #self.dlg = TestDialog()
         #self.dlg = BioDispersalDialog()
         self.dlg.initTabs()

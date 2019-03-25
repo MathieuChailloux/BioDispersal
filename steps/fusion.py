@@ -31,16 +31,18 @@ from qgis.core import QgsProject
 from PyQt5.QtCore import QModelIndex, pyqtSlot
 from PyQt5.QtGui import QIcon
 
-import abstract_model
-import utils
-import xmlUtils
-import qgsUtils
-import params
-import sous_trames
-import groups
-import progress
-import qgsTreatments
-import config_parsing
+from ..qgis_lib_mc import utils, qgsUtils, xmlUtils, qgsTreatments, progress, config_parsing
+from . import params, subnetworks, groups
+# import abstract_model
+# import utils
+# import xmlUtils
+# import qgsUtils
+# import params
+# import sous_trames
+# import groups
+# import progress
+# import qgsTreatments
+# import config_parsing
 
 fusionModel = None
 fusion_fields = ["name","descr"]
@@ -52,7 +54,7 @@ def catchSTRemoved(name):
 @pyqtSlot()
 def catchSTAdded(item):
     fusionModel.setCurrentST(item.dict["name"])
-    utils.debug("ST addItem4, items = " + str(sous_trames.stModel))
+    utils.debug("ST addItem4, items = " + str(subnetworks.stModel))
         
 @pyqtSlot()
 def catchGroupRemoved(name):
@@ -174,7 +176,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         progress_section = progress.ProgressSection("Fusion",len(self.st_groups))
         progress_section.start_section()
         for st in self.st_groups.keys():
-            st_item = sous_trames.getSTByName(st)
+            st_item = subnetworks.getSTByName(st)
             groups = self.st_groups[st]
             if not groups.items:
                 utils.warn("No layer for group for subnetwork '" + str(st) + "', ignoring.")
@@ -275,10 +277,10 @@ class FusionConnector(abstract_model.AbstractConnector):
                          
     def connectComponents(self):
         super().connectComponents()
-        sous_trames.stModel.stRemoved.connect(catchSTRemoved)
-        sous_trames.stModel.stAdded.connect(catchSTAdded)
+        subnetworks.stModel.stRemoved.connect(catchSTRemoved)
+        subnetworks.stModel.stAdded.connect(catchSTAdded)
         groups.groupsModel.groupRemoved.connect(catchGroupRemoved)
-        self.dlg.fusionST.setModel(sous_trames.stModel)
+        self.dlg.fusionST.setModel(subnetworks.stModel)
         #self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)
         #self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
