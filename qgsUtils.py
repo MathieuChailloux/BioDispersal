@@ -118,10 +118,10 @@ def loadRasterLayer(fname,loadProject=False):
 def loadLayer(fname,loadProject=False):
     try:
         return (loadVectorLayer(fname,loadProject))
-    except CustomException:
+    except utils.CustomException:
         try:
             return (loadRasterLayer(fname,loadProject))
-        except CustomException:
+        except utils.CustomException:
             utils.user_error("Could not load layer '" + fname + "'")
     
 # Retrieve layer loaded in QGIS project from name

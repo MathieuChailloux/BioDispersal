@@ -432,7 +432,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         in_layer = self.dlg.selectionInLayerCombo.currentLayer()
         if not in_layer:
             utils.user_error("No layer selected")
-        in_layer_path = params.normalizePath(pathOfLayer(in_layer))
+        in_layer_path = params.normalizePath(qgsUtils.pathOfLayer(in_layer))
         expr = self.dlg.selectionExpr.expression()
         grp_item = self.getOrCreateGroup()
         grp_name = grp_item.dict["name"]
