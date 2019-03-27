@@ -30,14 +30,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 from qgis.gui import QgsFileWidget
 
-import utils
-import qgsUtils
-import progress
-import sous_trames
-import classes
-import params
-import abstract_model
-import qgsTreatments
+from . import utils, qgsUtils, qgsTreatments, abstract_model, progress
+from . import params, sous_trames, classes
 
 # Friction connector is global so that it can be relinked if model is reloaded.
 # Model can be reloaded through CSV and project file

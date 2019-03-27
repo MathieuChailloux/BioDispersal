@@ -30,10 +30,8 @@ from qgis.gui import QgsFileWidget
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
 from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
-import utils
-import qgsUtils
-import qgsTreatments
-import abstract_model
+from . import utils, qgsUtils, qgsTreatments
+from . import abstract_model
 
 # BioDispersal global parameters
 

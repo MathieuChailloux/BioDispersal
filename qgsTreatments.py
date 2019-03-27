@@ -30,9 +30,8 @@ import sys
 import subprocess
 import processing
 
-import params
-import utils
-import qgsUtils
+from . import utils, qgsUtils
+from . import params
 
 nodata_val = '-9999'
 if utils.platform_sys == 'Windows':

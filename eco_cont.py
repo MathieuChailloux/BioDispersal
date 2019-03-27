@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .eco_cont_dialog import EcologicalContinuityDialog
+from . import eco_cont_dialog
 import os.path
 import sys
 
@@ -65,7 +65,7 @@ class EcologicalContinuity:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = EcologicalContinuityDialog()
+        self.dlg = eco_cont_dialog.EcologicalContinuityDialog()
         utils.debug("init")
         #self.dlg = BioDispersalDialog()
         #self.dlg = TestDialog()
@@ -212,7 +212,7 @@ class EcologicalContinuity:
         #self.dlg.runButton.clicked.connect(self.dlg.runCost)
         #self.dlg.connectComponents()
         # show the dialog
-        self.dlg = EcologicalContinuityDialog()
+        self.dlg = eco_cont_dialog.EcologicalContinuityDialog()
         #self.dlg = TestDialog()
         #self.dlg = BioDispersalDialog()
         self.dlg.initTabs()

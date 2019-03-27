@@ -22,12 +22,12 @@
  ***************************************************************************/
 """
 
-import utils
-import qgsUtils
-import params
 import time
 
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
+
+from . import utils, qgsUtils
+from . import params
 
 progressConnector = None
 

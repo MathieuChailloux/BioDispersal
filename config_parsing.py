@@ -23,7 +23,7 @@
 """
 
 
-import utils
+from . import utils
 
 import xml.etree.ElementTree as ET
 

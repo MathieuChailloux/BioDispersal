@@ -31,16 +31,8 @@ from qgis.core import QgsProject
 from PyQt5.QtCore import QModelIndex, pyqtSlot
 from PyQt5.QtGui import QIcon
 
-import abstract_model
-import utils
-import xmlUtils
-import qgsUtils
-import params
-import sous_trames
-import groups
-import progress
-import qgsTreatments
-import config_parsing
+from . import utils, xmlUtils, qgsUtils, qgsTreatments, abstract_model, config_parsing, progress
+from . import params, sous_trames, groups
 
 fusionModel = None
 fusion_fields = ["name","descr"]

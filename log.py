@@ -22,8 +22,8 @@
  ***************************************************************************/
 """
 
-import utils
-import params
+from . import utils
+from . import params
 
 class LogConnector:
     

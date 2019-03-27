@@ -22,16 +22,20 @@
  ***************************************************************************/
 """
 import processing
+import os
 
 from PyQt5.QtGui import QIcon
+from qgis.core import QgsProject, QgsMapLayerProxyModel
+from qgis.gui import QgsFileWidget
 
-import utils
-import params
-from .qgsUtils import *
-import progress
-import sous_trames
-from .abstract_model import *
-from .qgsTreatments import *
+from . import utils, params, qgsUtils, qgsTreatments, abstract_model, progress
+from . import params, sous_trames
+# import params
+# from .qgsUtils import *
+# import progress
+# import sous_trames
+# from .abstract_model import *
+# from .qgsTreatments import *
 
 import time
 
@@ -42,7 +46,7 @@ cost_fields = ["st_name","start_layer","perm_layer","cost","out_layer"]
 #   - 'start_layer' : vector layer containing starting points
 #   - 'perm_layer' : raster layer containing cost for each pixel
 #   - 'cost' : maximal cost
-class CostItem(DictItem):
+class CostItem(abstract_model.DictItem):
 
     def __init__(self,st_name,start_layer,perm_layer,cost,out_layer):
         dict = {"st_name" : st_name,
@@ -68,7 +72,7 @@ class CostItem(DictItem):
         startRaster = st_item.getStartLayerPath()
         params.checkInit()
         extent_layer_path = params.getExtentLayer()
-        applyRasterization(startLayer,"geom",startRaster,
+        qgsTreatments.applyRasterization(startLayer,"geom",startRaster,
                            resolution=params.getResolution(),
                            extent_path=extent_layer_path,load_flag=False,to_byte=False,
                            more_args=['-ot','Byte','-a_nodata','0'])
@@ -78,9 +82,9 @@ class CostItem(DictItem):
         #outPath = st_item.getDispersionPath(cost)
         outPath = params.getOrigPath(self.dict["out_layer"])
         if os.path.isfile(outPath):
-            removeRaster(outPath)
-        applyRCost(startRaster,permRaster,cost,tmpPath)
-        applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
+            qgsUtils.removeRaster(outPath)
+        qgsTreatments.applyRCost(startRaster,permRaster,cost,tmpPath)
+        qgsTreatments.applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
         #removeRaster(tmpPath)
         res_layer = qgsUtils.loadRasterLayer(outPath)
         QgsProject.instance().addMapLayer(res_layer)
@@ -89,7 +93,7 @@ class CostItem(DictItem):
     def checkItem(self):
         pass
         
-class CostModel(DictModel):
+class CostModel(abstract_model.DictModel):
     
     def __init__(self):
         super().__init__(self,cost_fields)
@@ -123,7 +127,7 @@ class CostModel(DictModel):
         progress_section.end_section()
         
         
-class CostConnector(AbstractConnector):
+class CostConnector(abstract_model.AbstractConnector):
 
     def __init__(self,dlg):
         self.dlg = dlg
@@ -135,7 +139,7 @@ class CostConnector(AbstractConnector):
         
     def initGui(self):
         self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
-        self.dlg.costStartLayer.setFilter(getVectorFilters())
+        self.dlg.costStartLayer.setFilter(qgsUtils.getVectorFilters())
         self.dlg.costPermRasterCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.costPermRaster.setFilter("*.tif")
         self.dlg.costOutLayer.setFilter("*.tif")
@@ -153,23 +157,23 @@ class CostConnector(AbstractConnector):
         self.dlg.costPermRaster.lineEdit().setValue(st_friction_path)
         
     def setStartLayer(self,path):
-        layer = loadVectorLayer(path,loadProject=True)
+        layer = qgsUtils.loadVectorLayer(path,loadProject=True)
         self.dlg.costStartLayerCombo.setLayer(layer)
         
     def setPermRaster(self,path):
-        layer = loadRasterLayer(path,loadProject=True)
+        layer = qgsUtils.loadRasterLayer(path,loadProject=True)
         self.dlg.costPermRasterCombo.setLayer(layer)
         
     def setStartLayerFromCombo(self,layer):
         utils.debug("setStartLayerFromCombo")
         if layer:
-            path=pathOfLayer(layer)
+            path = qgsUtils.pathOfLayer(layer)
             self.dlg.costStartLayer.lineEdit().setValue(path)
         
     def setPermRasterFromCombo(self,layer):
         utils.debug("setPermRasterFromCombo")
         if layer:
-            path=pathOfLayer(layer)
+            path = qgsUtils.pathOfLayer(layer)
             self.dlg.costPermRaster.lineEdit().setValue(path)
         
     def mkItem(self):
@@ -179,11 +183,11 @@ class CostConnector(AbstractConnector):
         start_layer = self.dlg.costStartLayerCombo.currentLayer()
         if not start_layer:
             utils.user_error("No start layer selected")
-        start_layer_path = params.normalizePath(pathOfLayer(start_layer))
+        start_layer_path = params.normalizePath(qgsUtils.pathOfLayer(start_layer))
         perm_layer = self.dlg.costPermRasterCombo.currentLayer()
         if not perm_layer:
             utils.user_error("No permability layer selected")
-        perm_layer_path = params.normalizePath(pathOfLayer(perm_layer))
+        perm_layer_path = params.normalizePath(qgsUtils.pathOfLayer(perm_layer))
         cost = str(self.dlg.costMaxVal.value())
         out_layer_path = params.normalizePath(self.dlg.costOutLayer.filePath())
         cost_item = CostItem(st_name,start_layer_path,perm_layer_path,cost,out_layer_path)

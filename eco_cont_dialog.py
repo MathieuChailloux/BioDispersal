@@ -43,21 +43,24 @@ if file_dir not in sys.path:
     
 from BioDispersalAbout_dialog import BioDispersalAboutDialog
 
-import utils
-from .qgsUtils import *
-import params
-import sous_trames
-import classes
-import groups
-from .selection import SelectionConnector
-import fusion
-import friction
-from .ponderation import PonderationConnector
-from .cost import CostConnector
-from .config_parsing import *
-from .log import LogConnector
-import progress
-import tabs
+from . import utils, qgsUtils, config_parsing, progress, tabs, log
+from . import params, sous_trames, classes, groups, selection, fusion, friction, ponderation, cost
+
+# import utils
+# from .qgsUtils import *
+# import params
+# import sous_trames
+# import classes
+# import groups
+# from .selection import SelectionConnector
+# import fusion
+# import friction
+# from .ponderation import PonderationConnector
+# from .cost import CostConnector
+# from .config_parsing import *
+# from .log import LogConnector
+# import progress
+# import tabs
 
 #FORM_CLASS, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -90,14 +93,14 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         groups.groupsModel = groupsConnector.model
         classConnector = classes.ClassConnector(self)
         classes.classModel = classConnector.model
-        selectionConnector = SelectionConnector(self)
+        selectionConnector = selection.SelectionConnector(self)
         fusionConnector = fusion.FusionConnector(self)
         fusion.fusionModel = fusionConnector.model
         frictionConnector = friction.FrictionConnector(self)
         friction.frictionModel = frictionConnector.model
-        ponderationConnector = PonderationConnector(self)
-        costConnector = CostConnector(self)
-        logConnector = LogConnector(self)
+        ponderationConnector = ponderation.PonderationConnector(self)
+        costConnector = cost.CostConnector(self)
+        logConnector = log.LogConnector(self)
         progressConnector = progress.ProgressConnector(self)
         progress.progressConnector = progressConnector
         tabConnector = tabs.TabConnector(self)
@@ -268,9 +271,9 @@ class EcologicalContinuityDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
     def loadModel(self,fname):
         utils.debug("loadModel " + str(fname))
         utils.checkFileExists(fname)
-        setConfigModels(self.models)
+        config_parsing.setConfigModels(self.models)
         params.params.projectFile = fname
-        parseConfig(fname)
+        config_parsing.parseConfig(fname)
         utils.info("BioDispersal model loaded from file '" + fname + "'")
         
     def loadModelAction(self):

@@ -26,10 +26,10 @@ import os
 
 from qgis.gui import *
 from qgis.core import *
-#from .utils import *
-import utils
 import pathlib
 from PyQt5.QtCore import QVariant, pyqtSignal
+
+from . import utils
 
 # QgsUtils gathers pyQgs utilitary functions
 

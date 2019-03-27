@@ -24,7 +24,7 @@
 
 import os
 
-import utils
+from . import utils
 #import helps
 from PyQt5.QtCore import QUrl, QFile, QIODevice, QTextStream
 from PyQt5.QtGui import QTextDocument

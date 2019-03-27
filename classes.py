@@ -27,10 +27,7 @@ import os
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
 from qgis.gui import QgsFileWidget
-import abstract_model
-import utils
-import qgsUtils
-import params
+from . import utils, qgsUtils, abstract_model, params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
 classModel = None

@@ -23,7 +23,7 @@
 """
 
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
-import utils
+from . import utils
 
 from abc import ABC, abstractmethod
 #class Abstract(ABC):
