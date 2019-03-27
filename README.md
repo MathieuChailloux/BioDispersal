@@ -34,10 +34,8 @@ Available documentation (only in french for now):
 
 A sample data set can be downloaded at TODO.
 
-To produce above dispersal map, open configuration file *BousquetOrb.xml* 
-and run steps 2,3,4,5,7. You should obtain such results (legend is manually assigned) :
-
-GIF
+To produce above dispersal map (legend is manually assigned), open configuration file *BousquetOrb.xml* 
+and run steps 2,3,4,5,7.
  
 # Steps
 
