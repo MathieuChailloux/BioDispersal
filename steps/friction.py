@@ -84,6 +84,7 @@ class FrictionRowItem(abstract_model.DictItem):
 class FrictionModel(abstract_model.DictModel):
 
     def __init__(self):
+        self.parser_name = "FrictionModel"
         self.defaultVal = None
         self.classes = []
         self.fields = ["class_descr","class","code"]
@@ -217,7 +218,7 @@ class FrictionModel(abstract_model.DictModel):
         utils.debug("indexes = " + str(indexes))
         st_list = subnetworks.stModel.items
         nb_steps = len(st_list)
-        progress_section = feedbacks.ProgressSection("Friction",nb_steps)
+        progress_section = feedbacks.ProgressFeedback("Friction",nb_steps)
         progress_section.start_section()
         for st_item in st_list:
             st_merged_fname = st_item.getMergedPath()

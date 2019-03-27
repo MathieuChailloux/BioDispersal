@@ -370,6 +370,7 @@ class PonderationItem(abstract_model.DictItem):
 class PonderationModel(abstract_model.DictModel):
 
     def __init__(self):
+        self.parser_name = "PonderationModel"
         super().__init__(self,ponderation_fields)
         
     @staticmethod
@@ -382,7 +383,7 @@ class PonderationModel(abstract_model.DictModel):
         utils.debug("[applyItems]")
         if not indexes:
             utils.internal_error("No indexes in Ponderation applyItems")
-        progress_section = feedbacks.ProgressSection("Ponderation",len(indexes))
+        progress_section = feedbacks.ProgressFeedback("Ponderation",len(indexes))
         progress_section.start_section()
         params.checkInit()
         for n in indexes:

@@ -172,6 +172,7 @@ def saveFileDialog(parent,msg="",filter=""):
 class ParamsModel(QAbstractTableModel):
 
     def __init__(self):
+        self.parser_name = "ParamsModel"
         self.workspace = None
         self.extentLayer = None
         self.resolution = 0.0
@@ -231,7 +232,7 @@ class ParamsModel(QAbstractTableModel):
         self.layoutChanged.emit()
     
     def toXML(self,indent=""):
-        xmlStr = indent + "<ParamsModel"
+        xmlStr = indent + "<" + self.parser_name
         if self.workspace:
             xmlStr += " workspace=\"" + str(self.workspace) + "\""
         if self.resolution:

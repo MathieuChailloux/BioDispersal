@@ -115,6 +115,7 @@ class STModel(abstract_model.DictModel):
     stRemoved = pyqtSignal('PyQt_PyObject')
 
     def __init__(self):
+        self.parser_name = "STModel"
         super().__init__(self,st_fields)
         
     @staticmethod

@@ -156,6 +156,7 @@ class GroupModel(abstract_model.DictModel):
     groupRemoved = pyqtSignal('PyQt_PyObject')
 
     def __init__(self):
+        self.parser_name = "GroupModel"
         super().__init__(self,groups_fields)
         
     @staticmethod

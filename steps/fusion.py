@@ -69,6 +69,7 @@ def catchGroupRemoved(name):
 class FusionModel(abstract_model.AbstractGroupModel):
     
     def __init__(self):
+        self.parser_name = "FusionModel"
         self.st_groups = {}
         self.current_st = None
         self.current_model = None
@@ -120,7 +121,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             utils.user_error("No sous-trame selected")
         
     def toXML(self,indent=""):
-        xmlStr = indent + "<" + self.__class__.__name__ + ">\n"
+        xmlStr = indent + "<" + self.parser_name + ">\n"
         for st, grp in self.st_groups.items():
             xmlStr += indent + " <ST name=\"" + st + "\">\n"
             xmlStr += grp.toXML(indent=indent + "  ")
@@ -173,7 +174,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         res = str(params.getResolution())
         extent_coords = params.getExtentCoords()
         #for st in reversed(list(self.st_groups.keys())):
-        progress_section = feedbacks.ProgressSection("Fusion",len(self.st_groups))
+        progress_section = feedbacks.ProgressFeedback("Fusion",len(self.st_groups))
         progress_section.start_section()
         for st in self.st_groups.keys():
             st_item = subnetworks.getSTByName(st)

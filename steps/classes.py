@@ -86,6 +86,7 @@ class ClassModel(abstract_model.DictModel):
     classRemoved = pyqtSignal('PyQt_PyObject')
     
     def __init__(self):
+        self.parser_name = "ClassModel"
         super().__init__(self,class_fields)
         
     @staticmethod

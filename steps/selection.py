@@ -21,7 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMapLayerProxyModel, QgsCoordinateTransform, QgsProject, QgsGeometry
+from qgis.core import QgsMapLayerProxyModel, QgsCoordinateTransform, QgsProject, QgsGeometry, QgsField, QgsFeature, QgsFeatureRequest
+from PyQt5.QtCore import QVariant
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
 
@@ -38,6 +39,7 @@ from . import params, classes, groups
 
 from osgeo import gdal
 import numpy as np
+import os
 
 selection_fields = ["in_layer","mode","mode_val","group"]
 
@@ -212,6 +214,7 @@ class SelectionItem(abstract_model.DictItem):
 class SelectionModel(abstract_model.DictModel):
     
     def __init__(self):
+        self.parser_name = "SelectionModel"
         super().__init__(self,selection_fields)
         
     @staticmethod
@@ -251,7 +254,7 @@ class SelectionModel(abstract_model.DictModel):
                 utils.user_error("Group '" + g + "' does not exist")
             grp_vector_path = grp_item.getVectorPath()
             if os.path.isfile(grp_vector_path):
-                qgsUtils.removeFile(grp_vector_path)
+                qgsUtils.removeVectorLayer(grp_vector_path)
             from_raster = False
             for s in selections:
                 s.applyItem()

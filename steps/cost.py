@@ -95,6 +95,7 @@ class CostItem(abstract_model.DictItem):
 class CostModel(abstract_model.DictModel):
     
     def __init__(self):
+        self.parser_name = "CostModel"
         super().__init__(self,cost_fields)
     
     @staticmethod
@@ -116,7 +117,7 @@ class CostModel(abstract_model.DictModel):
         feedbacks.progressFeedback.focusLogTab()
         if not indexes:
             utils.internal_error("No indexes in Cost applyItems")
-        progress_section = feedbacks.ProgressSection("Cost",len(indexes))
+        progress_section = feedbacks.ProgressFeedback("Cost",len(indexes))
         progress_section.start_section()
         params.checkInit()
         for n in indexes:

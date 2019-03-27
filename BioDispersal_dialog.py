@@ -94,8 +94,10 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         ponderationConnector = ponderation.PonderationConnector(self)
         costConnector = cost.CostConnector(self)
         logConnector = log.LogConnector(self)
-        progressFeedback = feedbacks.ProgressFeedback(self)
-        feedbacks.progressFeedback = progressFeedback
+        # progressFeedback = feedbacks.ProgressFeedback(self)
+        # feedbacks.progressFeedback = progressFeedback
+        progressConnector = feedbacks.ProgressConnector(self)
+        feedbacks.progressConnector = progressConnector
         tabConnector = tabs.TabConnector(self)
         self.connectors = {"Params" : paramsConnector,
                            "ST" : stConnector,
@@ -107,9 +109,9 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
                            "Ponderation" : ponderationConnector,
                            "Cost" : costConnector,
                            "Log" : logConnector,
-                           "Progress" : progressFeedback,
+                           "Progress" : progressConnector,
                            "Tabs" : tabConnector}
-        self.recomputeModels()
+        self.recomputeParsers()
         
     # Initialize Graphic elements for each tab
     def initGui(self):
@@ -220,22 +222,31 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         about_dlg = BioDispersalAboutDialog(self)
         about_dlg.show()
         
-    # Recompute self.models in case they have been reloaded
-    def recomputeModels(self):
-        self.models = {"ParamsModel" : params.params,
-                        "STModel" : subnetworks.stModel,
-                        "GroupModel" : groups.groupsModel,
-                        "ClassModel" : classes.classModel,
-                        "SelectionModel" : self.connectors["Selection"].model,
-                        "FusionModel" : fusion.fusionModel,
-                        "FrictionModel" : friction.frictionModel,
-                        "PonderationModel" : self.connectors["Ponderation"].model,
-                        "CostModel" : self.connectors["Cost"].model}
+    # Recompute self.parsers in case they have been reloaded
+    def recomputeParsers(self):
+        self.parsers = [ params.params,
+                         subnetworks.stModel,
+                         groups.groupsModel,
+                         classes.classModel,
+                         self.connectors["Selection"].model,
+                         fusion.fusionModel,
+                         friction.frictionModel,
+                         self.connectors["Ponderation"].model,
+                         self.connectors["Cost"].model ]
+        # self.parsers = {"ParamsModel" : params.params,
+                        # "STModel" : subnetworks.stModel,
+                        # "GroupModel" : groups.groupsModel,
+                        # "ClassModel" : classes.classModel,
+                        # "SelectionModel" : self.connectors["Selection"].model,
+                        # "FusionModel" : fusion.fusionModel,
+                        # "FrictionModel" : friction.frictionModel,
+                        # "PonderationModel" : self.connectors["Ponderation"].model,
+                        # "CostModel" : self.connectors["Cost"].model}
         
     # Return XML string describing project
     def toXML(self):
         xmlStr = "<ModelConfig>\n"
-        for k, m in self.models.items():
+        for k, m in self.parsers.items():
             xmlStr += m.toXML() + "\n"
         xmlStr += "</ModelConfig>\n"
         utils.debug("Final xml : \n" + xmlStr)
@@ -243,7 +254,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
 
     # Save project to 'fname'
     def saveModelAs(self,fname):
-        self.recomputeModels()
+        self.recomputeParsers()
         xmlStr = self.toXML()
         params.params.projectFile = fname
         utils.writeFile(fname,xmlStr)
@@ -264,7 +275,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
     def loadModel(self,fname):
         utils.debug("loadModel " + str(fname))
         utils.checkFileExists(fname)
-        config_parsing.setConfigModels(self.models)
+        config_parsing.setConfigParsers(self.parsers)
         params.params.projectFile = fname
         config_parsing.parseConfig(fname)
         utils.info("BioDispersal model loaded from file '" + fname + "'")
