@@ -30,12 +30,6 @@ from qgis.gui import QgsFileWidget
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
 from . import params, classes
-# import abstract_model
-# import utils
-# import qgsUtils
-# import params
-# import qgsTreatments
-# import classes
          
 groups_fields = ["name","descr","geom"]
 #groupsConnector = None

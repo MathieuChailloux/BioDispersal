@@ -37,22 +37,8 @@ if file_dir not in sys.path:
     sys.path.append(file_dir)
     
 from .BioDispersalAbout_dialog import BioDispersalAboutDialog
-
 from .qgis_lib_mc import (utils, qgsUtils, config_parsing, log, feedbacks)
 from .steps import (params, subnetworks, classes, groups, selection, fusion, friction, ponderation, cost)
-#from .qgsUtils import *
-# import params
-# import sous_trames
-# import classes
-# import groups
-# from .selection import SelectionConnector
-# import fusion
-# import friction
-# from .ponderation import PonderationConnector
-# from .cost import CostConnector
-# from .config_parsing import *
-# from .log import LogConnector
-# import progress
 from . import tabs
 
 #FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -94,10 +80,10 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         ponderationConnector = ponderation.PonderationConnector(self)
         costConnector = cost.CostConnector(self)
         logConnector = log.LogConnector(self)
-        # progressFeedback = feedbacks.ProgressFeedback(self)
-        # feedbacks.progressFeedback = progressFeedback
-        progressConnector = feedbacks.ProgressConnector(self)
-        feedbacks.progressConnector = progressConnector
+        progressFeedback = feedbacks.ProgressFeedback(self)
+        feedbacks.progressFeedback = progressFeedback
+        # progressConnector = feedbacks.ProgressConnector(self)
+        # feedbacks.progressConnector = progressConnector
         tabConnector = tabs.TabConnector(self)
         self.connectors = {"Params" : paramsConnector,
                            "ST" : stConnector,
@@ -109,7 +95,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
                            "Ponderation" : ponderationConnector,
                            "Cost" : costConnector,
                            "Log" : logConnector,
-                           "Progress" : progressConnector,
+                           "Progress" : progressFeedback,
                            "Tabs" : tabConnector}
         self.recomputeParsers()
         

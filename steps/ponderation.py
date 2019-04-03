@@ -26,17 +26,9 @@ import re
 
 from qgis.core import QgsMapLayerProxyModel
 from qgis.gui import QgsFileWidget
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QVBoxLayout
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
 from . import params
-# from .utils import *
-# from .qgsUtils import *
-# from .qgsTreatments import *
-# import progress
-# import params
-# import abstract_model
 
 
 
@@ -288,11 +280,11 @@ class PonderationItem(abstract_model.DictItem):
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
             
     def applyPonderation(self,layer1,layer2,out_layer):
-        checkFileExists(layer1)
-        checkFileExists(layer2)
+        utils.checkFileExists(layer1)
+        utils.checkFileExists(layer2)
         layer2_norm = params.normalizeRaster(layer2)
         # if os.path.isfile(out_layer):
-            # removeRaster(out_layer)
+            # qgsUtils.removeRaster(out_layer)
         qgsTreatments.applyPonderationGdal(layer1,layer2_norm,out_layer,pos_values=False)
             
     def applyItemDirect(self,friction_path,pond_path,out_path):
@@ -307,7 +299,7 @@ class PonderationItem(abstract_model.DictItem):
         # pond_layer_path = params.getOrigPath(self.dict["ponderation"])
         # pond_norm_path = params.normalizeRaster(pond_layer_path)
         # out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        #tmp_path = mkTmpPath(out_path)
+        #tmp_path = utils.mkTmpPath(out_path)
         ivals = self.dict["intervals"]
         ival_model = PondValueIvalModel.fromStr(ivals)
         ival_model.checkModel()
@@ -320,21 +312,21 @@ class PonderationItem(abstract_model.DictItem):
         # friction_layer_path = params.getOrigPath(self.dict["friction"])
         # friction_norm_path = params.normalizeRaster(friction_layer_path)
         # pond_layer_path = params.getOrigPath(self.dict["ponderation"])
-        # pond_buf_path = mkTmpPath(pond_layer_path,suffix="_buf")
+        # pond_buf_path = utils.mkTmpPath(pond_layer_path,suffix="_buf")
         #pond_norm_path = params.normalizeRaster(pond_layer_path)
         #out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        pond_buf_path = mkTmpPath(pond_path,suffix="_buf")
-        tmp_path = mkTmpPath(out_path)
+        pond_buf_path = utils.mkTmpPath(pond_path,suffix="_buf")
+        tmp_path = utils.mkTmpPath(out_path)
         ivals = self.dict["intervals"]
         ival_model = PondBufferIvalModel.fromStr(ivals)
         ival_model.checkModel()
         buffer_distances = ival_model.toDistances()
-        applyRBuffer(pond_path,buffer_distances,pond_buf_path)
+        qgsTreatments.applyRBuffer(pond_path,buffer_distances,pond_buf_path)
         gdal_calc_expr = ival_model.toGdalCalcExpr()
-        pond_buf_reclassed = mkTmpPath(pond_buf_path,suffix="_reclassed")
+        pond_buf_reclassed = utils.mkTmpPath(pond_buf_path,suffix="_reclassed")
         qgsTreatments.applyGdalCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
                       load_flag=False,more_args=['--type=Float32'])
-        pond_buf_norm = mkTmpPath(pond_buf_path,suffix="_norm")
+        pond_buf_norm = utils.mkTmpPath(pond_buf_path,suffix="_norm")
         crs = params.params.crs
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
@@ -344,7 +336,7 @@ class PonderationItem(abstract_model.DictItem):
                       #more_args=['-ot','Float32'])
         #pond_buf_norm_path = params.normalizeRaster(pond_buf_path)
         #applyGdalCalc(pond_norm_path,pond_buf_norm_path,gdalc_calc_expr)
-        pond_buf_nonull = mkTmpPath(pond_buf_path,suffix="_nonull")
+        pond_buf_nonull = utils.mkTmpPath(pond_buf_path,suffix="_nonull")
         qgsTreatments.applyRNull(pond_buf_norm,1,pond_buf_nonull)
         self.applyPonderation(friction_path,pond_buf_nonull,out_path)
         qgsUtils.removeRaster(pond_buf_path)
@@ -375,7 +367,7 @@ class PonderationModel(abstract_model.DictModel):
         
     @staticmethod
     def mkItemFromDict(dict):
-        checkFields(ponderation_fields,dict.keys())
+        utils.checkFields(ponderation_fields,dict.keys())
         item = PonderationItem(dict)
         return item
         

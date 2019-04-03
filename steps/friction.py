@@ -33,15 +33,6 @@ from qgis.gui import QgsFileWidget
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
 from . import params, subnetworks, classes
 
-# import utils
-# import qgsUtils
-# import progress
-# import sous_trames
-# import classes
-# import params
-# import abstract_model
-# import qgsTreatments
-
 # Friction connector is global so that it can be relinked if model is reloaded.
 # Model can be reloaded through CSV and project file
 frictionConnector = None

@@ -22,19 +22,14 @@
  ***************************************************************************/
 """
 
+import os
+
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
-#from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
-#from .utils import *
 
 from ..qgis_lib_mc import utils, abstract_model
 from . import params
-
-# import params
-# import abstract_model
-# import utils
-import os
 
 st_fields = ["name","descr"]
 stModel = None

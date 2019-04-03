@@ -33,16 +33,6 @@ from PyQt5.QtGui import QIcon
 
 from ..qgis_lib_mc import utils, qgsUtils, xmlUtils, qgsTreatments, abstract_model, feedbacks, config_parsing
 from . import params, subnetworks, groups
-# import abstract_model
-# import utils
-# import xmlUtils
-# import qgsUtils
-# import params
-# import sous_trames
-# import groups
-# import progress
-# import qgsTreatments
-# import config_parsing
 
 fusionModel = None
 fusion_fields = ["name","descr"]

@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from qgis.core import QgsMapLayerProxyModel, QgsCoordinateTransform, QgsProject, QgsGeometry, QgsField, QgsFeature, QgsFeatureRequest
 from PyQt5.QtCore import QVariant
 from PyQt5.QtGui import QIcon
@@ -28,14 +29,6 @@ from PyQt5.QtWidgets import QHeaderView
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
 from . import params, classes, groups
-# from .abstract_model import AbstractGroupModel, AbstractGroupItem, DictItem, DictModel, AbstractConnector
-# from .utils import *
-# from .qgsUtils import *
-# import params
-# import classes
-# import groups
-# from .qgsTreatments import *
-# import progress
 
 from osgeo import gdal
 import numpy as np
@@ -360,12 +353,6 @@ class SelectionConnector(abstract_model.AbstractConnector):
         else:
             loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
         self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
-            
-        
-    # def setInLayerField(self,path):
-        # utils.debug("[setInLayerField]")
-        # layer = QgsVectorLayer(path, "test", "ogr")
-        # self.dlg.selectionField.setLayer(layer)
                 
     def getOrCreateGroup(self):
         utils.debug("getOrCreateGroup")
@@ -438,7 +425,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         in_layer = self.dlg.selectionInLayerCombo.currentLayer()
         if not in_layer:
             utils.user_error("No layer selected")
-        in_layer_path = params.normalizePath(pathOfLayer(in_layer))
+        in_layer_path = params.normalizePath(qgsUtils.pathOfLayer(in_layer))
         expr = self.dlg.selectionExpr.expression()
         grp_item = self.getOrCreateGroup()
         grp_name = grp_item.dict["name"]
@@ -610,7 +597,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         self.dlg.selectionLayerFormatVector.setCheckState(0)
         self.dlg.selectionLayerFormatRaster.setCheckState(2)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        self.dlg.selectionInLayer.setFilter(getRasterFilters())
+        self.dlg.selectionInLayer.setFilter(qgsUtils.getRasterFilters())
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeRaster)
         self.dlg.stackSelectionExprField.setCurrentWidget(self.dlg.stackSelectionResampling)
         

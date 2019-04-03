@@ -1,5 +1,5 @@
 <ModelConfig>
-<ParamsModel workspace="D:/Projets/BioDispersal/Tests/BousquetOrbExtended" resolution="25" extent="../BousquetOrbExtended/Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
+<ParamsModel resolution="25" extent="Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
  <STModel>
   <STItem   name="grasslands"   descr="Grasslands and meadows"/>
   <STItem   name="forest"   descr="Hardwood and coniferous forests"/>

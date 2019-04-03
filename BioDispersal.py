@@ -34,6 +34,7 @@ from .resources import *
 # Import the code for the dialog
 from .BioDispersal_dialog import BioDispersalDialog
 from .qgis_lib_mc import utils
+
 from qgis.utils import qgis_excepthook
 
 class BioDispersal:
