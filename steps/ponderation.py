@@ -361,8 +361,9 @@ class PonderationItem(abstract_model.DictItem):
 
 class PonderationModel(abstract_model.DictModel):
 
-    def __init__(self):
+    def __init__(self,bdModel):
         self.parser_name = "PonderationModel"
+        self.bdModel = bdModel
         super().__init__(self,ponderation_fields)
         
     @staticmethod
@@ -387,9 +388,8 @@ class PonderationModel(abstract_model.DictModel):
         
 class PonderationConnector(abstract_model.AbstractConnector):
 
-    def __init__(self,dlg):
+    def __init__(self,dlg,ponderationModel):
         self.dlg = dlg
-        ponderationModel = PonderationModel()
         super().__init__(ponderationModel,self.dlg.ponderationView,
                         self.dlg.pondAdd,self.dlg.pondRemove,
                         self.dlg.pondRun,self.dlg.pondRunOnlySelection)

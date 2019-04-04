@@ -31,17 +31,7 @@ from PyQt5.QtWidgets import QHeaderView
 from ..qgis_lib_mc import utils, abstract_model
 from . import params
 
-st_fields = ["name","descr"]
-stModel = None
-         
-def getSTByName(st_name):
-    for st in stModel.items:
-        if st.name == st_name:
-            return st
-    return None
-         
-def getSTList():
-    return [st.dict["name"] for st in stModel.items]
+#stModel = None
          
 class STItem(abstract_model.DictItem):
 
@@ -106,16 +96,29 @@ class STItem(abstract_model.DictItem):
         
 class STModel(abstract_model.DictModel):
 
-    stAdded = pyqtSignal('PyQt_PyObject')
-    stRemoved = pyqtSignal('PyQt_PyObject')
+    # stAdded = pyqtSignal('PyQt_PyObject')
+    # stRemoved = pyqtSignal('PyQt_PyObject')
+    
+    ST_FIELDS = ["name","descr"]
 
-    def __init__(self):
+    def __init__(self,bdModel):
         self.parser_name = "STModel"
-        super().__init__(self,st_fields)
+        self.is_runnable = False
+        self.bdModel = bdModel
+        super().__init__(self,self.ST_FIELDS)
+        
+    def getSTByName(st_name):
+        for st in self.items:
+            if st.name == st_name:
+                return st
+        return None
+        
+    def getSTList():
+        return [st.dict["name"] for st in self.items]
         
     @staticmethod
     def mkItemFromDict(dict):
-        utils.checkFields(st_fields,dict.keys())
+        utils.checkFields(self.st_fields,dict.keys())
         item = STItem(dict["name"],dict["descr"])
         return item
         
@@ -123,7 +126,8 @@ class STModel(abstract_model.DictModel):
         utils.debug("ST addItem1, items = " + str(self))
         super().addItem(item)
         utils.debug("ST addItem2, items = " + str(self))
-        self.stAdded.emit(item)
+        self.bdModel.addST(item)
+        #self.stAdded.emit(item)
         utils.debug("ST addItem3, items = " + str(self))
         
     def removeItems(self,indexes):
@@ -132,7 +136,8 @@ class STModel(abstract_model.DictModel):
         super().removeItems(indexes)
         for n in names:
             utils.debug("stRemoved " + str(n))
-            self.stRemoved.emit(n)
+            self.bdModel.removeST(n)
+            #self.stRemoved.emit(n)
             
     def flags(self, index):
         if index.column() == 0:
@@ -143,10 +148,9 @@ class STModel(abstract_model.DictModel):
         
 class STConnector(abstract_model.AbstractConnector):
 
-    def __init__(self,dlg):
+    def __init__(self,dlg,stModel):
         self.dlg = dlg
-        self.stModel = STModel()
-        super().__init__(self.stModel,self.dlg.stView,
+        super().__init__(stModel,self.dlg.stView,
                          self.dlg.stAdd,self.dlg.stRemove)
         
     def initGui(self):

@@ -35,30 +35,30 @@ from . import params, subnetworks, classes
 
 # Friction connector is global so that it can be relinked if model is reloaded.
 # Model can be reloaded through CSV and project file
-frictionConnector = None
-frictionModel = None
-frictionFields = ["class_descr","class","code"]
+# frictionConnector = None
+# frictionModel = None
+# frictionFields = ["class_descr","class","code"]
 
 # Signal handlers to update subnetworks and classes in frictionModel
-@pyqtSlot()
-def catchSTAdded(st_item):
-    utils.debug("stAdded " + st_item.dict["name"])
-    utils.debug("ST addItem50, items = " + str(subnetworks.stModel))
-    frictionModel.addSTItem(st_item)
-    utils.debug("ST addItem5, items = " + str(subnetworks.stModel))
+# @pyqtSlot()
+# def catchSTAdded(st_item):
+    # utils.debug("stAdded " + st_item.dict["name"])
+    # utils.debug("ST addItem50, items = " + str(self.bdModel.stModel))
+    # frictionModel.addSTItem(st_item)
+    # utils.debug("ST addItem5, items = " + str(self.bdModel.stModel))
     
-@pyqtSlot()
-def catchSTRemoved(name):
-    frictionModel.removeSTFromName(name)
+# @pyqtSlot()
+# def catchSTRemoved(name):
+    # frictionModel.removeSTFromName(name)
     
-@pyqtSlot()
-def catchClassAdded(class_item):
-    utils.debug("classAdded " + class_item.dict["name"])
-    frictionModel.addClassItem(class_item)
+# @pyqtSlot()
+# def catchClassAdded(class_item):
+    # utils.debug("classAdded " + class_item.dict["name"])
+    # frictionModel.addClassItem(class_item)
     
-@pyqtSlot()
-def catchClassRemoved(name):
-    frictionModel.removeClassFromName(name)
+# @pyqtSlot()
+# def catchClassRemoved(name):
+    # frictionModel.removeClassFromName(name)
 
 class FrictionRowItem(abstract_model.DictItem):
 
@@ -74,8 +74,10 @@ class FrictionRowItem(abstract_model.DictItem):
 
 class FrictionModel(abstract_model.DictModel):
 
-    def __init__(self):
+    def __init__(self,bdModel):
         self.parser_name = "FrictionModel"
+        self.is_runnable = True
+        self.bdModel = bdModel
         self.defaultVal = None
         self.classes = []
         self.fields = ["class_descr","class","code"]
@@ -120,24 +122,23 @@ class FrictionModel(abstract_model.DictModel):
             row[st] = self.defaultVal
             
     def addSTItem(self,st_item):
-        global friction_fields
         utils.debug("addSTItem")
         st_name = st_item.dict["name"]
-        utils.debug("ST addItem51, items = " + str(subnetworks.stModel))
+        utils.debug("ST addItem51, items = " + str(self.bdModel.stModel))
         if st_name not in self.fields:
             for i in self.items:
                 if st_name not in i.dict:
                     i.dict[st_name] = self.defaultVal
                     i.recompute()
             self.fields.append(st_name)
-            frictionFields.append(st_name)
+            #frictionFields.append(st_name)
             self.layoutChanged.emit()
         
     def removeSTFromName(self,st_name):
         utils.debug("removeSTFromName " + str(st_name))
         self.removeField(st_name)
-        if st_name in frictionFields:
-            frictionFields.remove(st_name)
+        # if st_name in frictionFields:
+            # frictionFields.remove(st_name)
         self.layoutChanged.emit()
 
     #def reloadST(self):
@@ -181,7 +182,7 @@ class FrictionModel(abstract_model.DictModel):
         
     def createRulesFiles(self):
         utils.debug("createRulesFiles")
-        for st_item in subnetworks.stModel.items:
+        for st_item in self.bdModel.stModel.items:
             st_name = st_item.dict["name"]
             utils.debug("createRulesFiles " + str(st_name))
             st_rules_fname = st_item.getRulesPath()
@@ -194,7 +195,7 @@ class FrictionModel(abstract_model.DictModel):
     def applyReclassProcessing(self):
         utils.debug("applyReclass")
         self.createRulesFiles()
-        for st_item in subnetworks.stModel.items:
+        for st_item in self.bdModel.stModel.items:
             st_name = st_item.dict["name"]
             utils.debug("applyReclass " + str(st_name))
             st_rules_fname = st_item.getRulesPath()
@@ -207,7 +208,7 @@ class FrictionModel(abstract_model.DictModel):
     def applyReclassGdal(self,indexes):
         utils.debug("friction.applyReclassGdal")
         utils.debug("indexes = " + str(indexes))
-        st_list = subnetworks.stModel.items
+        st_list = self.bdModel.stModel.items
         nb_steps = len(st_list)
         progress_section = feedbacks.ProgressFeedback("Friction",nb_steps)
         progress_section.start_section()
@@ -254,33 +255,32 @@ class FrictionModel(abstract_model.DictModel):
                 writer.writerow(i.dict)
         utils.info("Friction saved to file '" + str(fname) + "'")
                 
-    @classmethod
     def fromCSV(cls,fname):
-        model = cls()
-        model.classes = classes.classModel.items
+        self.items = []
+        # model = cls()
+        # model.classes = classes.classModel.items
         with open(fname,"r") as f:
-            reader = csv.DictReader(f,fieldnames=frictionFields,delimiter=';')
+            reader = csv.DictReader(f,fieldnames=self.fields,delimiter=';')
             header = reader.fieldnames
             model.fields = header
             for st in header[3:]:
                 st_item = subnetworks.getSTByName(st)
                 if not st_item:
-                    utils.debug(str(frictionFields))
-                    utils.debug(str(st))
                     utils.user_error("Sous-trame '" + st + "' does not exist")
             first_line = next(reader)
             for row in reader:
                 item = FrictionRowItem(row)
-                model.addItem(item)
-        return model
+                self.addItem(item)
+        self.layoutChanged.emit()
     
         
     def fromXMLRoot(self,root):
         #model = cls()
-        eraseFlag = True
-        if eraseFlag:
-            self.classes = classes.classModel.items
-            self.items = []
+        # eraseFlag = True
+        # if eraseFlag:
+            # self.classes = classes.classModel.items
+            # self.items = []
+        self.items = []
         for fr in root:
             item = FrictionRowItem(fr.attrib)
             self.addItem(item)
@@ -289,24 +289,22 @@ class FrictionModel(abstract_model.DictModel):
            
 class FrictionConnector(abstract_model.AbstractConnector):
     
-    def __init__(self,dlg):
-        global frictionModel
+    def __init__(self,dlg,frictionModel):
         self.dlg = dlg
-        frictionModel = FrictionModel()
         super().__init__(frictionModel,self.dlg.frictionView,None,None)
         
     def initGui(self):
         pass
     
-    @pyqtSlot()
-    def internCatchClassAdded(self):
-        utils.debug("internClassAdded " )
+    # @pyqtSlot()
+    # def internCatchClassAdded(self):
+        # utils.debug("internClassAdded " )
         
     def connectComponents(self):
-        subnetworks.stModel.stAdded.connect(catchSTAdded)
-        subnetworks.stModel.stRemoved.connect(catchSTRemoved)
-        classes.classModel.classAdded.connect(catchClassAdded)
-        classes.classModel.classRemoved.connect(catchClassRemoved)
+        # self.bdModel.stModel.stAdded.connect(catchSTAdded)
+        # self.bdModel.stModel.stRemoved.connect(catchSTRemoved)
+        # classes.classModel.classAdded.connect(catchClassAdded)
+        # classes.classModel.classRemoved.connect(catchClassRemoved)
         super().connectComponents()
         self.dlg.frictionLoadClass.clicked.connect(self.model.reloadClasses)
         self.dlg.frictionRun.clicked.connect(self.applyItems)
@@ -327,20 +325,8 @@ class FrictionConnector(abstract_model.AbstractConnector):
         # self.model.applyItems(indexes)
         
     def loadCSV(self,fname):
-        global frictionModel, frictionFields
         utils.checkFileExists(fname)
-        new_model = self.model.fromCSV(fname)
-        self.model.items = new_model.items
-        self.model.fields = new_model.fields
-        frictionModel = self.model
-        frictionFields = self.model.fields
-        # self.model = new_model
-        # frictionModel = new_model
-        # frictionFields = new_model.fields
-        # utils.debug("frictionFields = " + str(new_model.fields))
-        #self.connectComponents()
-        #self.model.layoutChanged.emit()
-        frictionModel.layoutChanged.emit()
+        self.model.loadCSV(fname)
         utils.info("Friction loaded from '" + str(fname))
         
     def loadCSVAction(self):

@@ -31,6 +31,7 @@ from PyQt5 import uic
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTranslator, qVersion, QCoreApplication
 from qgis.gui import QgsFileWidget
+from qgis.core import QgsApplication, QgsProcessingContext
 
 file_dir = os.path.dirname(__file__)
 if file_dir not in sys.path:
@@ -40,6 +41,7 @@ from .BioDispersalAbout_dialog import BioDispersalAboutDialog
 from .qgis_lib_mc import (utils, qgsUtils, config_parsing, log, feedbacks)
 from .steps import (params, subnetworks, classes, groups, selection, fusion, friction, ponderation, cost)
 from . import tabs
+from .BioDispersal_model import BioDispersalModel
 
 #FORM_CLASS, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'eco_cont_dialog_base.ui'))
@@ -64,38 +66,36 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         
     # Initialize plugin tabs and connectors.
     def initTabs(self):
-        paramsConnector = params.ParamsConnector(self)
-        params.params = paramsConnector.model
-        stConnector = subnetworks.STConnector(self)
-        subnetworks.stModel = stConnector.model
-        groupsConnector = groups.GroupConnector(self)
-        groups.groupsModel = groupsConnector.model
-        classConnector = classes.ClassConnector(self)
-        classes.classModel = classConnector.model
-        selectionConnector = selection.SelectionConnector(self)
-        fusionConnector = fusion.FusionConnector(self)
-        fusion.fusionModel = fusionConnector.model
-        frictionConnector = friction.FrictionConnector(self)
-        friction.frictionModel = frictionConnector.model
-        ponderationConnector = ponderation.PonderationConnector(self)
-        costConnector = cost.CostConnector(self)
+        global progressFeedback
         logConnector = log.LogConnector(self)
-        progressFeedback = feedbacks.ProgressFeedback(self)
-        feedbacks.progressFeedback = progressFeedback
-        # progressConnector = feedbacks.ProgressConnector(self)
-        # feedbacks.progressConnector = progressConnector
+        logConnector.initGui()
+        self.feedback =  feedbacks.ProgressFeedback(self)
+        feedbacks.progressFeedback = self.feedback
+        self.context = QgsProcessingContext()
+        self.context.setFeedback(self.feedback)
+        self.bdModel = BioDispersalModel(self.context,self.feedback)
+        #################
+        self.paramsConnector = params.ParamsConnector(self,self.bdModel.paramsModel)
+        self.stConnector = subnetworks.STConnector(self,self.bdModel.stModel)
+        self.groupsConnector = groups.GroupConnector(self,self.bdModel.groupsModel)
+        self.classConnector = classes.ClassConnector(self,self.bdModel.classesModel)
+        self.selectionConnector = selection.SelectionConnector(self,self.bdModel.selectionModel)
+        self.fusionConnector = fusion.FusionConnector(self,self.bdModel.fusionModel)
+        self.frictionConnector = friction.FrictionConnector(self,self.bdModel.frictionModel)
+        self.ponderationConnector = ponderation.PonderationConnector(self,self.bdModel.ponderationModel)
+        self.costConnector = cost.CostConnector(self,self.bdModel.costModel)
         tabConnector = tabs.TabConnector(self)
-        self.connectors = {"Params" : paramsConnector,
-                           "ST" : stConnector,
-                           "Group" : groupsConnector,
-                           "Class" : classConnector,
-                           "Selection" : selectionConnector,
-                           "Fusion" : fusionConnector,
-                           "Friction" : frictionConnector,
-                           "Ponderation" : ponderationConnector,
-                           "Cost" : costConnector,
+        self.connectors = {"Params" : self.paramsConnector,
+                           "ST" : self.stConnector,
+                           "Group" : self.groupsConnector,
+                           "Class" : self.classConnector,
+                           "Selection" : self.selectionConnector,
+                           "Fusion" : self.fusionConnector,
+                           "Friction" : self.frictionConnector,
+                           "Ponderation" : self.ponderationConnector,
+                           "Cost" : self.costConnector,
                            "Log" : logConnector,
-                           "Progress" : progressFeedback,
+                           "Progress" : feedbacks.progressFeedback,
                            "Tabs" : tabConnector}
         self.recomputeParsers()
         
@@ -150,58 +150,45 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         
     # Initialize or re-initialize global variables.
     def initializeGlobals(self):
-        groups.groupsModel = None
-        classes.classModel = None
-        classes.class_fields = ["name","code","descr"]
-        subnetworks.stModel = None
-        fusion.fusionModel = None
-        friction.frictionModel = None
-        friction.frictionFields = ["class_descr","class","code"]
+        pass
+        #groups.groupsModel = None
+        #classes.classModel = None
+        #classes.class_fields = ["name","code","descr"]
+        #subnetworks.stModel = None
+        #fusion.fusionModel = None
+        #friction.frictionModel = None
+        #friction.frictionFields = ["class_descr","class","code"]
         
     def initLog(self):
         utils.print_func = self.txtLog.append
-        
-    # Switch language to english.
-    def switchLangEn(self):
-        utils.debug("switchLangEn")
+   
+    def switchLang(self,lang):
+        utils.debug("switchLang " + str(lang))
         plugin_dir = os.path.dirname(__file__)
-        en_path = os.path.join(plugin_dir,'i18n','BioDispersal_en.qm')
+        lang_path = os.path.join(plugin_dir,'i18n','FragScape_' + lang + '.qm')
+        if os.path.exists(lang_path):
+            self.translator = QTranslator()
+            self.translator.load(lang_path)
+            if qVersion() > '4.3.3':
+                utils.debug("Installing translator " + str(lang_path))
+                QCoreApplication.installTranslator(self.translator)
+            else:
+                utils.internal_error("Unexpected qVersion : " + str(qVersion()))
+        else:
+            utils.warn("No translation file : " + str(en_path))
+        self.retranslateUi(self)
+        utils.curr_language = lang
+        self.connectors["Tabs"].loadHelpFile()
+        
+    def switchLangEn(self):
+        self.switchLang("en")
         self.langEn.setChecked(True)
         self.langFr.setChecked(False)
-        if os.path.exists(en_path):
-            self.translator = QTranslator()
-            self.translator.load(en_path)
-            if qVersion() > '4.3.3':
-                utils.debug("Installing translator")
-                QCoreApplication.installTranslator(self.translator)
-            else:
-                utils.internal_error("Unexpected qVersion : " + str(qVersion()))
-        else:
-            utils.internal_error("No translation file : " + str(en_path))
-        self.retranslateUi(self)
-        utils.curr_language = "en"
-        self.connectors["Tabs"].loadHelpFile()
         
-    # Switch language to french.
     def switchLangFr(self):
-        utils.debug("switchLangFr")
-        plugin_dir = os.path.dirname(__file__)
-        fr_path = os.path.join(plugin_dir,'i18n','BioDispersal_fr.qm')
-        utils.debug("fr_path = " + str(fr_path))
+        self.switchLang("fr")
         self.langEn.setChecked(False)
         self.langFr.setChecked(True)
-        if os.path.exists(fr_path):
-            self.translator = QTranslator()
-            self.translator.load(fr_path)
-            if qVersion() > '4.3.3':
-                QCoreApplication.installTranslator(self.translator)
-            else:
-                utils.internal_error("Unexpected qVersion : " + str(qVersion()))
-        else:
-            utils.internal_error("No translation file : " + str(fr_path))
-        self.retranslateUi(self)
-        utils.curr_language = "fr"
-        self.connectors["Tabs"].loadHelpFile()
         
     def openHelpDialog(self):
         utils.debug("openHelpDialog")
@@ -209,40 +196,32 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         about_dlg.show()
         
     # Recompute self.parsers in case they have been reloaded
+    # TODO
     def recomputeParsers(self):
-        self.parsers = [ params.params,
-                         subnetworks.stModel,
-                         groups.groupsModel,
-                         classes.classModel,
-                         self.connectors["Selection"].model,
-                         fusion.fusionModel,
-                         friction.frictionModel,
-                         self.connectors["Ponderation"].model,
-                         self.connectors["Cost"].model ]
-        # self.parsers = {"ParamsModel" : params.params,
-                        # "STModel" : subnetworks.stModel,
-                        # "GroupModel" : groups.groupsModel,
-                        # "ClassModel" : classes.classModel,
-                        # "SelectionModel" : self.connectors["Selection"].model,
-                        # "FusionModel" : fusion.fusionModel,
-                        # "FrictionModel" : friction.frictionModel,
-                        # "PonderationModel" : self.connectors["Ponderation"].model,
-                        # "CostModel" : self.connectors["Cost"].model}
+        self.parsers = [ self.bdModel.paramsModel,
+                         self.bdModel.stModel,
+                         self.bdModel.classesModel,
+                         self.bdModel.groupsModel,
+                         self.bdModel.fusionModel,
+                         self.bdModel.frictionModel,
+                         self.bdModel.ponderationModel,
+                         self.bdModel.costModel ]
         
     # Return XML string describing project
     def toXML(self):
-        xmlStr = "<ModelConfig>\n"
-        for k, m in self.parsers.items():
-            xmlStr += m.toXML() + "\n"
-        xmlStr += "</ModelConfig>\n"
-        utils.debug("Final xml : \n" + xmlStr)
-        return xmlStr
+        self.bdModel.toXML()
+        # xmlStr = "<ModelConfig>\n"
+        # for k, m in self.parsers.items():
+            # xmlStr += m.toXML() + "\n"
+        # xmlStr += "</ModelConfig>\n"
+        # utils.debug("Final xml : \n" + xmlStr)
+        # return xmlStr
 
     # Save project to 'fname'
     def saveModelAs(self,fname):
         self.recomputeParsers()
         xmlStr = self.toXML()
-        params.params.projectFile = fname
+        self.bdModel.paramsModel.projectFile = fname
         utils.writeFile(fname,xmlStr)
         utils.info("BioDispersal model saved into file '" + fname + "'")
         
@@ -253,7 +232,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         
     # Save project to projectFile if existing
     def saveModel(self):
-        fname = params.params.projectFile
+        fname = self.bdModel.paramsModel.projectFile
         utils.checkFileExists(fname,"Project ")
         self.saveModelAs(fname)
    
@@ -262,7 +241,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         utils.debug("loadModel " + str(fname))
         utils.checkFileExists(fname)
         config_parsing.setConfigParsers(self.parsers)
-        params.params.projectFile = fname
+        self.fsModel.paramsModel.projectFile = fname
         config_parsing.parseConfig(fname)
         utils.info("BioDispersal model loaded from file '" + fname + "'")
         

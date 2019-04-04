@@ -206,8 +206,10 @@ class SelectionItem(abstract_model.DictItem):
         
 class SelectionModel(abstract_model.DictModel):
     
-    def __init__(self):
+    def __init__(self,bdModel):
         self.parser_name = "SelectionModel"
+        self.is_runnable = True
+        self.bdModel = bdModel
         super().__init__(self,selection_fields)
         
     @staticmethod
@@ -262,9 +264,8 @@ class SelectionModel(abstract_model.DictModel):
         
 class SelectionConnector(abstract_model.AbstractConnector):
 
-    def __init__(self,dlg):
+    def __init__(self,dlg,selectionModel):
         self.dlg = dlg
-        selectionModel = SelectionModel()
         self.onlySelection = False
         super().__init__(selectionModel,self.dlg.selectionView,
                         self.dlg.selectionAdd,self.dlg.selectionRemove)
@@ -467,108 +468,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
             classes.classModel.layoutChanged.emit()
         item = SelectionItem(in_layer_path,mode,mode_val,grp_name)
         return item
-        
-        
-    # def mkItemFromRaster(self):
-        # utils.debug("mkItemFromRaster")
-        # in_layer = self.dlg.selectionInLayerCombo.currentLayer()
-        # in_layer_path = params.normalizePath(pathOfLayer(in_layer))
-        # utils.debug("in_layer_path = " + str(in_layer_path))
-        # if self.dlg.selectionCreateClasses.isChecked():
-            # mode = rclasses
-        # else:
-            # mode = rresample
-        # utils.debug("mode = " + str(mode))
-        # mode_val = self.dlg.selectionResampleCombo.currentText()
-        # utils.debug("mode_val = " + str(mode_val))
-        # grp_item = self.getOrCreateGroup()
-        # utils.debug("grp_item = " + str(grp_item))
-        # utils.debug("avant")
-        # grp_name = grp_item.dict["name"]
-        # utils.debug("apres")
-        # utils.debug("grp = " + str(grp_name))
-        # if mode == rclasses:
-            # resampling_mode = "near"
-            # in_layer = gdal.Open(in_layer_path)
-            # band1 = in_layer.GetRasterBand(1)
-            # data_array = band1.ReadAsArray()
-            # unique_vals = set(np.unique(data_array))
-            # utils.debug("Unique values init : " + str(unique_vals))
-            # in_nodata_val = int(band1.GetNoDataValue())
-            # utils.debug("in_nodata_val = " + str(in_nodata_val))
-            # unique_vals.remove(in_nodata_val)
-            # utils.debug("Unique values : " + str(unique_vals))
-            # for v in unique_vals:
-                # class_name = group_name + "_" + str(v)
-                # class_descr = "Class " + str(fv) + " of group " + group
-                # class_item = classes.ClassItem(class_name,class_descr,None)
-                # classes.classModel.addItem(class_item)
-                # classes.classModel.layoutChanged.emit()
-        # item = SelectionItem(in_layer_path,mode,mode_val,grp_name)#,class_descr,group_descr)
-        # items.append(item)
-        # return item
-        
-        
-    # def mkItemFromExpr(self):
-        # in_layer = self.dlg.selectionInLayerCombo.currentLayer()
-        # in_layer_path = params.normalizePath(pathOfLayer(in_layer))
-        # in_geom = getLayerSimpleGeomStr(in_layer)
-        # expr = self.dlg.selectionExpr.expression()
-        # grp_item = self.getOrCreateGroup()
-        # grp_item.checkGeom(in_geom)
-        # grp_name = grp_item.dict["name"]
-        # class_item = self.getOrCreateClass()
-        # cls_name = class_item.dict["name"]
-        # selection = SelectionItem(in_layer_path,vexpr,expr,cls_name,grp_name)
-        # return selection
-        
-        
-    # def mkItemsFromField(self):
-        # in_layer = self.dlg.selectionInLayerCombo.currentLayer()
-        # in_layer_path = params.normalizePath(pathOfLayer(in_layer))
-        # in_geom = getLayerSimpleGeomStr(in_layer)
-        # field_name = self.dlg.selectionField.currentField()
-        # if not field_name:
-            # user_error("No field selected")
-        # grp_item = self.getOrCreateGroup()
-        # grp_item.checkGeom(in_geom)
-        # group = grp_item.dict["name"]
-        # if not group:
-            # user_error("No group selected")
-        # field_values = set()
-        # for f in in_layer.getFeatures():
-            # field_values.add(f[field_name])
-        # debug(str(field_values))
-        # items = []
-        # for fv in field_values:
-            # class_name = group + "_" + str(fv)
-            # class_descr = "Class " + str(fv) + " of group " + group
-            # class_item = classes.ClassItem(class_name,class_descr,None)
-            # classes.classModel.addItem(class_item)
-            # classes.classModel.layoutChanged.emit()
-            # expr = "\"" + field_name + "\" = '" + str(fv) + "'"
-            # item = SelectionItem(in_layer_path,vfield,expr,class_name,group)#,class_descr,group_descr)
-            # items.append(item)
-        # return items
-        
-    # def addItems(self):
-        # debug("[addItemsFromField]")
-        # if self.dlg.selectionLayerFormatVector.isChecked():
-            # if self.dlg.fieldSelectionMode.isChecked():
-                # items = self.mkItemsFromField()
-            # elif self.dlg.exprSelectionMode.isChecked():
-                # items = [self.mkItemFromExpr()]
-            # else:
-                # assert False
-        # elif self.dlg.selectionLayerFormatRaster.isChecked():
-            # items = [self.mkItemFromRaster()]
-            # utils.debug("nb items = " + str(len(items)))
-        # else:
-            # assert False
-        # for item in items:
-            # self.model.addItem(item)
-            # self.model.layoutChanged.emit()
-            
+                    
     # Vector / raster modes
     
     def switchVectorMode(self,checked):

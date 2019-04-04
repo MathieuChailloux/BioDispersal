@@ -87,8 +87,10 @@ class CostItem(abstract_model.DictItem):
         
 class CostModel(abstract_model.DictModel):
     
-    def __init__(self):
+    def __init__(self,bdModel):
         self.parser_name = "CostModel"
+        self.is_runnable = True
+        self.bdModel = bdModel
         super().__init__(self,cost_fields)
     
     @staticmethod
@@ -122,9 +124,8 @@ class CostModel(abstract_model.DictModel):
         
 class CostConnector(abstract_model.AbstractConnector):
 
-    def __init__(self,dlg):
+    def __init__(self,dlg,costModel):
         self.dlg = dlg
-        costModel = CostModel()
         self.onlySelection = False
         super().__init__(costModel,self.dlg.costView,
                          self.dlg.costAdd,self.dlg.costRemove,
@@ -140,7 +141,7 @@ class CostConnector(abstract_model.AbstractConnector):
         
     def connectComponents(self):
         super().connectComponents()
-        self.dlg.costSTCombo.setModel(subnetworks.stModel)
+        self.dlg.costSTCombo.setModel(self.model.bdModel.stModel)
         self.dlg.costStartLayer.fileChanged.connect(self.setStartLayer)
         self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
         

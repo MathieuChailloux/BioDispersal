@@ -34,23 +34,23 @@ from PyQt5.QtGui import QIcon
 from ..qgis_lib_mc import utils, qgsUtils, xmlUtils, qgsTreatments, abstract_model, feedbacks, config_parsing
 from . import params, subnetworks, groups
 
-fusionModel = None
+#fusionModel = None
 fusion_fields = ["name","descr"]
         
-@pyqtSlot()
-def catchSTRemoved(name):
-    fusionModel.removeSTFromName(name)
+# @pyqtSlot()
+# def catchSTRemoved(name):
+    # fusionModel.removeSTFromName(name)
         
-@pyqtSlot()
-def catchSTAdded(item):
-    fusionModel.setCurrentST(item.dict["name"])
-    utils.debug("ST addItem4, items = " + str(subnetworks.stModel))
+# @pyqtSlot()
+# def catchSTAdded(item):
+    # fusionModel.setCurrentST(item.dict["name"])
+    # utils.debug("ST addItem4, items = " + str(self.bdModel.stModel))
         
-@pyqtSlot()
-def catchGroupRemoved(name):
-    global fusionModel
-    for st, grp_model in fusionModel.st_groups.items():
-        grp_model.removeGroupFromName(name)
+# @pyqtSlot()
+# def catchGroupRemoved(name):
+    # global fusionModel
+    # for st, grp_model in fusionModel.st_groups.items():
+        # grp_model.removeGroupFromName(name)
         
 # @pyqtSlot()
 # def catchGroupAdded(item):
@@ -58,8 +58,10 @@ def catchGroupRemoved(name):
         
 class FusionModel(abstract_model.AbstractGroupModel):
     
-    def __init__(self):
+    def __init__(self,bdModel):
         self.parser_name = "FusionModel"
+        self.is_runnable = True
+        self.bdModel = bdModel
         self.st_groups = {}
         self.current_st = None
         self.current_model = None
@@ -254,10 +256,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
 
 class FusionConnector(abstract_model.AbstractConnector):
     
-    def __init__(self,dlg):
+    def __init__(self,dlg,fusionModel):
         self.dlg = dlg
         self.models = {}
-        fusionModel = FusionModel()
         self.onlySelection = False
         super().__init__(fusionModel,self.dlg.fusionView,
                          None,self.dlg.fusionRemove,
@@ -268,10 +269,10 @@ class FusionConnector(abstract_model.AbstractConnector):
                          
     def connectComponents(self):
         super().connectComponents()
-        subnetworks.stModel.stRemoved.connect(catchSTRemoved)
-        subnetworks.stModel.stAdded.connect(catchSTAdded)
-        groups.groupsModel.groupRemoved.connect(catchGroupRemoved)
-        self.dlg.fusionST.setModel(subnetworks.stModel)
+        # self.bdModel.stModel.stRemoved.connect(catchSTRemoved)
+        # self.bdModel.stModel.stAdded.connect(catchSTAdded)
+        # groups.groupsModel.groupRemoved.connect(catchGroupRemoved)
+        self.dlg.fusionST.setModel(self.model.bdModel.stModel)
         #self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)
         #self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)

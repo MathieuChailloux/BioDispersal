@@ -81,12 +81,14 @@ class ClassItem(abstract_model.DictItem):
 # Signals 'classAdded' and 'classRemoved' are emitted on item addition/deletion
 class ClassModel(abstract_model.DictModel):
 
-    classAdded = pyqtSignal('PyQt_PyObject')
-    classAdded2 = pyqtSignal()
-    classRemoved = pyqtSignal('PyQt_PyObject')
+    # classAdded = pyqtSignal('PyQt_PyObject')
+    # classAdded2 = pyqtSignal()
+    # classRemoved = pyqtSignal('PyQt_PyObject')
     
-    def __init__(self):
+    def __init__(self,bdModel):
         self.parser_name = "ClassModel"
+        self.is_runnable = False
+        self.bdModel = bdModel
         super().__init__(self,class_fields)
         
     @staticmethod
@@ -116,8 +118,9 @@ class ClassModel(abstract_model.DictModel):
             
     def addItem(self,item):
         super().addItem(item)
-        self.classAdded.emit(item)
-        self.classAdded2.emit()
+        self.bdModel.addClass(item)
+        # self.classAdded.emit(item)
+        # self.classAdded2.emit()
         
     def removeFromGroupName(self,name):
         indexes = []
@@ -136,13 +139,13 @@ class ClassModel(abstract_model.DictModel):
         names = [self.items[idx.row()].dict["name"] for idx in indexes]
         super().removeItems(indexes)
         for n in names:
-            self.classRemoved.emit(n)
+            self.bdModel.removeClass(n)
+            #self.classRemoved.emit(n)
 
 class ClassConnector(abstract_model.AbstractConnector):
 
-    def __init__(self,dlg):
+    def __init__(self,dlg,classModel):
         self.dlg = dlg
-        classModel = ClassModel()
         super().__init__(classModel,self.dlg.classView,
                          None,self.dlg.classRemove)
         # super().__init__(classModel,self.dlg.classView,

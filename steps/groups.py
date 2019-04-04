@@ -146,11 +146,13 @@ class GroupItem(abstract_model.DictItem):
         
 class GroupModel(abstract_model.DictModel):
 
-    groupAdded = pyqtSignal('PyQt_PyObject')
-    groupRemoved = pyqtSignal('PyQt_PyObject')
+    # groupAdded = pyqtSignal('PyQt_PyObject')
+    # groupRemoved = pyqtSignal('PyQt_PyObject')
 
-    def __init__(self):
+    def __init__(self,bdModel):
         self.parser_name = "GroupModel"
+        self.is_runnable = False
+        self.bdModel = bdModel
         super().__init__(self,groups_fields)
         
     @staticmethod
@@ -172,14 +174,16 @@ class GroupModel(abstract_model.DictModel):
              
     def addItem(self,item):
         super().addItem(item)
-        self.groupAdded.emit(item)
+        self.bdModel.addGroup(item)
+        #self.groupAdded.emit(item)
         
     def removeItems(self,indexes):
         names = [self.items[idx.row()].dict["name"] for idx in indexes]
         super().removeItems(indexes)
         for n in names:
-            self.groupRemoved.emit(n)
-            classes.classModel.removeFromGroupName(n)
+            self.bdModel.removeGroup(g)
+            # self.groupRemoved.emit(n)
+            # classes.classModel.removeFromGroupName(n)
             
     def removeGroupFromName(self,name):
         self.items = [item for item in self.items if item.dict["name"] != name]
@@ -187,9 +191,8 @@ class GroupModel(abstract_model.DictModel):
 
 class GroupConnector(abstract_model.AbstractConnector):
 
-    def __init__(self,dlg):
+    def __init__(self,dlg,groupsModel):
         self.dlg = dlg
-        groupsModel = GroupModel()
         super().__init__(groupsModel,self.dlg.groupsView,
                         self.dlg.selectionGroupAdd,self.dlg.groupsRemove)
         # super().__init__(groupsModel,self.dlg.groupsView,
