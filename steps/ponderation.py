@@ -366,7 +366,7 @@ class PonderationModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,ponderation_fields)
         
-    def mkItemFromDict(dict):
+    def mkItemFromDict(self,dict):
         utils.checkFields(ponderation_fields,dict.keys())
         item = PonderationItem(dict)
         return item

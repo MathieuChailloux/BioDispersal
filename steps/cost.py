@@ -54,11 +54,11 @@ class CostItem(abstract_model.DictItem):
         same_cost = self.dict["cost"] == other.dict["cost"]
         return (same_start and same_perm and same_cost)
         
-    def applyItem(self):
+    def applyItem(self,stModel):
         utils.debug("Start runCost")
         feedbacks.progressFeedback.focusLogTab()
         st_name = self.dict["st_name"]
-        st_item = subnetworks.getSTByName(st_name)
+        st_item = stModel.getSTByName(st_name)
         startLayer = params.getOrigPath(self.dict["start_layer"])
         utils.checkFileExists(startLayer,"Dispersion Start Layer ")
         startRaster = st_item.getStartLayerPath()
@@ -93,14 +93,14 @@ class CostModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,cost_fields)
     
-    def mkItemFromDict(dict):
+    def mkItemFromDict(self,dict):
         if "out_layer" in dict:
             utils.checkFields(cost_fields,dict.keys())
             item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
                             dict["cost"],dict["out_layer"])
         else:
             st_name = dict["st_name"]
-            st_item = subnetworks.getSTByName(st_name)
+            st_item = self.bdModel.stModel.getSTByName(st_name)
             out_path = st_item.getDispersionPath(dict["cost"])
             item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
                             dict["cost"],out_path)
@@ -116,7 +116,7 @@ class CostModel(abstract_model.DictModel):
         params.checkInit()
         for n in indexes:
             i = self.items[n]
-            i.applyItem()
+            i.applyItem(self.bdModel.stModel)
             progress_section.next_step()
         progress_section.end_section()
         
@@ -145,7 +145,7 @@ class CostConnector(abstract_model.AbstractConnector):
         self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
         
     def switchST(self,text):
-        st_item = subnetworks.getSTByName(text)
+        st_item = self.model.bdModel.stModel.getSTByName(text)
         st_friction_path = st_item.getFrictionPath()
         self.dlg.costPermRaster.lineEdit().setValue(st_friction_path)
         

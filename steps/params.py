@@ -50,12 +50,15 @@ def checkWorkspaceInit():
     paramsModel.checkWorkspaceInit()
         
 def normalizePath(path):
-    paramsModel.normalizePath(path)
+    return paramsModel.normalizePath(path)
         
 def getOrigPath(path):
-    paramsModel.getOrigPath(path)
+    return paramsModel.getOrigPath(path)
         
 def checkInit():
+    utils.debug("paramsModel : " + str(paramsModel))
+    utils.debug("paramsModel : " + str(paramsModel is None))
+    utils.debug("paramsModel : " + str(paramsModel.extentLayer))
     paramsModel.checkInit()
         
 def getResolution():
@@ -96,7 +99,7 @@ class ParamsModel(QAbstractTableModel):
         QAbstractTableModel.__init__(self)
         
     def setExtentLayer(self,path):
-        path = normalizePath(path)
+        path = self.normalizePath(path)
         utils.info("Setting extent layer to " + str(path))
         self.extentLayer = path
         self.layoutChanged.emit()
@@ -241,19 +244,23 @@ class ParamsModel(QAbstractTableModel):
     # Returns absolute path from normalized path (cf 'normalizePath' function)
     def getOrigPath(self,path):
         self.checkWorkspaceInit()
-        if path == "":
+        if path is None or path == "":
             utils.user_error("Empty path")
         elif os.path.isabs(path):
             return path
         else:
-            return os.path.normpath(utils.joinPath(self.workspace,path))
+            join_path = utils.joinPath(self.workspace,path)
+            norm_path = os.path.normpath(join_path)
+            return norm_path
             
     # Checks that all parameters are initialized
     def checkInit(self):
         self.checkWorkspaceInit()
         if not self.extentLayer:
             utils.user_error("Extent layer parameter not initialized")
-        utils.checkFileExists(getOrigPath(self.extentLayer),"Extent layer ")
+        extent_path = self.getOrigPath(self.extentLayer)
+        utils.debug("extent_path = " + str(extent_path))
+        utils.checkFileExists(extent_path,"Extent layer ")
         if not self.resolution:
             utils.user_error("Resolution parameter not initialized")
         if self.resolution == 0.0:
@@ -315,6 +322,8 @@ class ParamsModel(QAbstractTableModel):
                                         resolution,extent_path,
                                         load_flag=False,to_byte=False)
             return new_path
+        else:
+            return path
 
 class ParamsConnector:
 

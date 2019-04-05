@@ -98,13 +98,13 @@ class STModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,self.ST_FIELDS)
         
-    def getSTByName(st_name):
+    def getSTByName(self,st_name):
         for st in self.items:
             if st.name == st_name:
                 return st
         return None
         
-    def getSTList():
+    def getSTList(self):
         return [st.dict["name"] for st in self.items]
         
     def mkItemFromDict(self,dict):

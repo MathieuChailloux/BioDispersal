@@ -36,7 +36,7 @@ class BioDispersalModel:
         self.paramsModel = params.ParamsModel(self)
         self.stModel = subnetworks.STModel(self)
         self.selectionModel = selection.SelectionModel(self)
-        self.classesModel = classes.ClassModel(self)
+        self.classModel = classes.ClassModel(self)
         self.groupsModel = groups.GroupModel(self)
         self.fusionModel = fusion.FusionModel(self)
         self.frictionModel = friction.FrictionModel(self)

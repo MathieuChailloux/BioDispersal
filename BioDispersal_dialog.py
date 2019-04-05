@@ -66,7 +66,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         
     # Initialize plugin tabs and connectors.
     def initTabs(self):
-        global progressFeedback
+        global progressFeedback, paramsModel
         logConnector = log.LogConnector(self)
         logConnector.initGui()
         self.feedback =  feedbacks.ProgressFeedback(self)
@@ -74,12 +74,14 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         self.context = QgsProcessingContext()
         self.context.setFeedback(self.feedback)
         self.bdModel = BioDispersalModel(self.context,self.feedback)
+        utils.debug("paramsMOdel 1 = " + str(params.paramsModel))
         params.paramsModel = self.bdModel.paramsModel
+        utils.debug("paramsMOdel 2 = " + str(params.paramsModel))
         #################
         self.paramsConnector = params.ParamsConnector(self,self.bdModel.paramsModel)
         self.stConnector = subnetworks.STConnector(self,self.bdModel.stModel)
         self.groupsConnector = groups.GroupConnector(self,self.bdModel.groupsModel)
-        self.classConnector = classes.ClassConnector(self,self.bdModel.classesModel)
+        self.classConnector = classes.ClassConnector(self,self.bdModel.classModel)
         self.selectionConnector = selection.SelectionConnector(self,self.bdModel.selectionModel)
         self.fusionConnector = fusion.FusionConnector(self,self.bdModel.fusionModel)
         self.frictionConnector = friction.FrictionConnector(self,self.bdModel.frictionModel)
@@ -201,8 +203,9 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
     def recomputeParsers(self):
         self.parsers = [ self.bdModel.paramsModel,
                          self.bdModel.stModel,
-                         self.bdModel.classesModel,
+                         self.bdModel.classModel,
                          self.bdModel.groupsModel,
+                         self.bdModel.selectionModel,
                          self.bdModel.fusionModel,
                          self.bdModel.frictionModel,
                          self.bdModel.ponderationModel,

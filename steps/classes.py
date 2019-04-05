@@ -32,19 +32,19 @@ from ..qgis_lib_mc import (utils, qgsUtils, abstract_model)
 from . import params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
-classModel = None
+# classModel = None
 class_fields = ["name","code","descr","group"]
 
-def getClassLayer(grp):
-    clsItem = classModel.getClassByName(out_name)
-    cls_layer = clsItem.getLayer()
-    return cls_layer
+# def getClassLayer(grp):
+    # clsItem = classModel.getClassByName(out_name)
+    # cls_layer = clsItem.getLayer()
+    # return cls_layer
     
-def getClassByName(class_name):
-    for cls in classModel.items:
-        if cls.name == class_name:
-            return cls
-    return None
+# def getClassByName(class_name):
+    # for cls in classModel.items:
+        # if cls.name == class_name:
+            # return cls
+    # return None
     
 # ClassItem implements DictItem and contains below fields :
 #   - 'name' : class name (identifier, unique in model)
@@ -91,7 +91,7 @@ class ClassModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,class_fields)
         
-    def mkItemFromDict(dict):
+    def mkItemFromDict(self,dict):
         utils.checkFields(class_fields,dict.keys())
         item = ClassItem(dict["name"],dict["descr"],dict["code"],dict["group"])
         return item
@@ -140,6 +140,20 @@ class ClassModel(abstract_model.DictModel):
         for n in names:
             self.bdModel.removeClass(n)
             #self.classRemoved.emit(n)
+            
+    def getReclassDict(self,group_name):
+        reclass_dict = {}
+        grp_classes = [ item for item in self.items if item.dict["group"] == group_name ]
+        for cls_item in grp_classes:
+            class_name = cls_item.dict["name"]
+            if group_name not in class_name:
+                utils.internal_error("Inconsistent class/group : " + str(class_name) + " - " + str(group_name))
+            len_grp = len(group_name)
+            assert(len(class_name) > len_grp)
+            val = class_name[len_grp+1:]
+            reclass_dict[val] = cls_item.dict["code"]
+        assert(len(reclass_dict) > 0)
+        return reclass_dict
 
 class ClassConnector(abstract_model.AbstractConnector):
 

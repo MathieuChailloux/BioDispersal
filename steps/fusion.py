@@ -101,7 +101,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             if self.current_st not in self.st_groups:
                 self.st_groups[self.current_st] = groups.copyGroupModel(self.bdModel.groupsModel)
                 self.current_model = self.st_groups[self.current_st]
-            for grp_item in groups.groupsModel.items:
+            for grp_item in self.bdModel.groupsModel.items:
                 utils.debug("grp_item = " + str(grp_item))
                 if not self.current_model.groupExists(grp_item):
                     utils.debug("Adding group " + str(grp_item.dict["name"])
@@ -141,7 +141,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 # utils.debug("coucou")
                 # utils.debug("config_models " + str(config_parsing.config_models))
                 #grp_model = config_parsing.parseModel(grp,new_model=True)
-                grp_model = groups.GroupModel()
+                grp_model = groups.GroupModel(None)
                 for grp_item in grp:
                     item = grp_model.mkItemFromDict(grp_item.attrib)
                     grp_model.addItem(item)
@@ -169,7 +169,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         progress_section = feedbacks.ProgressFeedback("Fusion",len(self.st_groups))
         progress_section.start_section()
         for st in self.st_groups.keys():
-            st_item = subnetworks.getSTByName(st)
+            st_item = self.bdModel.stModel.getSTByName(st)
             groups = self.st_groups[st]
             if not groups.items:
                 utils.warn("No layer for group for subnetwork '" + str(st) + "', ignoring.")

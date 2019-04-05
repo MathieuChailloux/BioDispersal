@@ -64,12 +64,6 @@ class FrictionRowItem(abstract_model.DictItem):
 
     def __init__(self,dict):
         super().__init__(dict)
-    
-    # Adds an entry by sous-trame (columns in table view)
-    def addSTCols(self,defaultVal):
-        for st in subnetworks.getSTList():
-            self.dict[st] = defaultVal
-        self.recompute()
             
 
 class FrictionModel(abstract_model.DictModel):
@@ -118,7 +112,7 @@ class FrictionModel(abstract_model.DictModel):
         
     def addSTCols(self,row):
         utils.debug("addSTCols")
-        for st in subnetworks.getSTList():
+        for st in self.bdModel.stModel.getSTList():
             row[st] = self.defaultVal
             
     def addSTItem(self,st_item):
@@ -148,7 +142,7 @@ class FrictionModel(abstract_model.DictModel):
         classes_to_delete = []
         for item in self.items:
             cls_name = item.dict["class"]
-            cls_item = classes.getClassByName(cls_name)
+            cls_item = self.bdModel.getClassByName(cls_name)
             if not cls_item:
                 classes_to_delete.append(cls_name)
                 utils.debug("Removing class " + str(cls_name))
@@ -156,7 +150,7 @@ class FrictionModel(abstract_model.DictModel):
                 utils.debug("Class " + cls_name + " indeed exists")
         self.items = [fr for fr in self.items if fr.dict["class"] not in classes_to_delete]
         self.layoutChanged.emit()
-        for cls_item in classes.classModel.items:
+        for cls_item in self.bdModel.classModel.items:
             utils.debug("cls_item : " + str(cls_item.dict))
             cls_name = cls_item.dict["name"]
             cls_code = cls_item.dict["code"]
@@ -264,7 +258,7 @@ class FrictionModel(abstract_model.DictModel):
             header = reader.fieldnames
             model.fields = header
             for st in header[3:]:
-                st_item = subnetworks.getSTByName(st)
+                st_item = self.bdModel.stModel.getSTByName(st)
                 if not st_item:
                     utils.user_error("Sous-trame '" + st + "' does not exist")
             first_line = next(reader)

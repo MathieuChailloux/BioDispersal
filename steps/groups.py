@@ -35,16 +35,16 @@ groups_fields = ["name","descr","geom"]
 #groupsConnector = None
 groupsModel = None
 
-def getGroupLayer(grp):
-    groupItem = groupsModel.getGroupByName(out_name)
-    group_layer = groupItem.getLayer()
-    return group_layer
+# def getGroupLayer(grp):
+    # groupItem = groupsModel.getGroupByName(out_name)
+    # group_layer = groupItem.getLayer()
+    # return group_layer
     
-def getGroupByName(groups_name):
-    for group in groupsModel.items:
-        if group.name == groups_name:
-            return group
-    return None
+# def getGroupByName(groups_name):
+    # for group in groupsModel.items:
+        # if group.name == groups_name:
+            # return group
+    # return None
 
 def copyGroupModel(model):
     new_model = GroupModel(None)
@@ -108,20 +108,22 @@ class GroupItem(abstract_model.DictItem):
         vector_path = self.getVectorPath()
         qgsUtils.writeShapefile(self.vectorLayer,vector_path)
         
-    def getReclassDict(self):
-        reclass_dict = {}
-        for cls_item in classes.classModel.items:
-            group_name = self.dict["name"]
-            if cls_item.dict["group"] == group_name:
-                class_name = cls_item.dict["name"]
-                if group_name not in class_name:
-                    utils.internal_error("Inconsistent class/group : " + str(class_name) + " - " + str(group_name))
-                len_grp = len(group_name)
-                assert(len(class_name) > len_grp)
-                val = class_name[len_grp+1:]
-                reclass_dict[val] = cls_item.dict["code"]
-        assert(len(reclass_dict) > 0)
-        return reclass_dict
+    # def getReclassDict(self):
+        # reclass_dict = {}
+        # group_name = self.dict["name"]
+        # group_classes = [  ]
+        # for cls_item in classes.classModel.items:
+            # group_name = self.dict["name"]
+            # if cls_item.dict["group"] == group_name:
+                # class_name = cls_item.dict["name"]
+                # if group_name not in class_name:
+                    # utils.internal_error("Inconsistent class/group : " + str(class_name) + " - " + str(group_name))
+                # len_grp = len(group_name)
+                # assert(len(class_name) > len_grp)
+                # val = class_name[len_grp+1:]
+                # reclass_dict[val] = cls_item.dict["code"]
+        # assert(len(reclass_dict) > 0)
+        # return reclass_dict
             
     def applyRasterizationItem(self):
         utils.debug("[applyRasterizationItem]")
@@ -146,7 +148,7 @@ class GroupModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,groups_fields)
         
-    def mkItemFromDict(dict):
+    def mkItemFromDict(self,dict):
         utils.checkFields(groups_fields,dict.keys())
         item = GroupItem(dict["name"],dict["descr"],dict["geom"])
         return item
