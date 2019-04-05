@@ -51,16 +51,7 @@ class STItem(abstract_model.DictItem):
         return (self.dict["name"] == other.dict["name"])
         
     def getSTPath(self):
-        params.checkWorkspaceInit()
-        all_st_path = utils.joinPath(params.params.workspace,"SousTrames")
-        if not os.path.isdir(all_st_path):
-            utils.info("Creating ST directory '" + all_st_path + "'")
-            os.makedirs(all_st_path)
-        st_path = utils.joinPath(all_st_path,self.name)
-        if not os.path.isdir(st_path):
-            utils.info("Creating ST directory '" + st_path + "'")
-            os.makedirs(st_path)
-        return st_path
+        return params.paramsModel.getSTPath(self.name)
         
     def getMergedPath(self):
         basename = self.name + "_merged.tif"
@@ -116,9 +107,8 @@ class STModel(abstract_model.DictModel):
     def getSTList():
         return [st.dict["name"] for st in self.items]
         
-    @staticmethod
-    def mkItemFromDict(dict):
-        utils.checkFields(self.st_fields,dict.keys())
+    def mkItemFromDict(self,dict):
+        utils.checkFields(self.ST_FIELDS,dict.keys())
         item = STItem(dict["name"],dict["descr"])
         return item
         

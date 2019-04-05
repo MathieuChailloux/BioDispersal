@@ -47,7 +47,7 @@ def getGroupByName(groups_name):
     return None
 
 def copyGroupModel(model):
-    new_model = GroupModel()
+    new_model = GroupModel(None)
     for i in model.items:
         new_model.addItem(i)
     return new_model
@@ -87,16 +87,7 @@ class GroupItem(abstract_model.DictItem):
         return (self.dict["name"] == other.dict["name"])
 
     def getGroupPath(self):
-        params.checkWorkspaceInit()
-        groups_path = utils.joinPath(params.params.workspace,"Groupes")
-        if not os.path.isdir(groups_path):
-            utils.info("Creating groups directory '" + groups_path + "'")
-            os.makedirs(groups_path)
-        group_path = utils.joinPath(groups_path,self.name)
-        if not os.path.isdir(group_path):
-            utils.info("Creating group directory '" + group_path + "'")
-            os.makedirs(group_path)
-        return group_path
+        return params.paramsModel.getGroupPath(self.name)
         
     def getVectorPath(self):
         basename = self.name + "_vector.shp"
@@ -155,7 +146,6 @@ class GroupModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,groups_fields)
         
-    @staticmethod
     def mkItemFromDict(dict):
         utils.checkFields(groups_fields,dict.keys())
         item = GroupItem(dict["name"],dict["descr"],dict["geom"])
@@ -174,14 +164,16 @@ class GroupModel(abstract_model.DictModel):
              
     def addItem(self,item):
         super().addItem(item)
-        self.bdModel.addGroup(item)
+        if self.bdModel:
+            self.bdModel.addGroup(item)
         #self.groupAdded.emit(item)
         
     def removeItems(self,indexes):
-        names = [self.items[idx.row()].dict["name"] for idx in indexes]
         super().removeItems(indexes)
-        for n in names:
-            self.bdModel.removeGroup(g)
+        if self.bdModel:
+            names = [self.items[idx.row()].dict["name"] for idx in indexes]
+            for n in names:
+                self.bdModel.removeGroup(g)
             # self.groupRemoved.emit(n)
             # classes.classModel.removeFromGroupName(n)
             

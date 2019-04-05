@@ -99,7 +99,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         if self.current_st:
             utils.debug("Current st = " + str(self.current_st))
             if self.current_st not in self.st_groups:
-                self.st_groups[self.current_st] = groups.copyGroupModel(groups.groupsModel)
+                self.st_groups[self.current_st] = groups.copyGroupModel(self.bdModel.groupsModel)
                 self.current_model = self.st_groups[self.current_st]
             for grp_item in groups.groupsModel.items:
                 utils.debug("grp_item = " + str(grp_item))

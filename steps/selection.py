@@ -93,7 +93,7 @@ class SelectionItem(abstract_model.DictItem):
         #tmp_path = group_item.getRasterTmpPath()
         out_path = group_item.getRasterPath()
         out_tmp_path = utils.mkTmpPath(out_path)
-        crs = params.params.crs
+        crs = params.paramsModel.crs
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
         mode = self.dict["mode"]
@@ -147,7 +147,7 @@ class SelectionItem(abstract_model.DictItem):
         else:
             # group layer creation
             out_vector_layer = qgsUtils.createLayerFromExisting(in_layer,group_name + "_vector",
-                                                       geomType=None,crs=params.params.getCrsStr())
+                                                       geomType=None,crs=params.paramsModel.getCrsStr())
             group_item.vectorLayer = out_vector_layer
             orig_field = QgsField("Origin", QVariant.String)
             class_field = QgsField("Class", QVariant.String)
@@ -212,7 +212,6 @@ class SelectionModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,selection_fields)
         
-    @staticmethod
     def mkItemFromDict(dict):
         #checkFields(selection_fields,dict.keys())
         if "expr" in dict:

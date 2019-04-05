@@ -96,7 +96,7 @@ class BioDispersalModel:
     def toXML(self,indent=""):
         xmlStr = indent + "<" + self.parser_name + ">"
         new_indent = " "
-        for model in models:
+        for model in self.models:
             xmlStr += "\n" + indent + "</" + self.parser_name + ">"
         return xmlStr
         

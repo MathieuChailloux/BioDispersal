@@ -91,7 +91,6 @@ class ClassModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,class_fields)
         
-    @staticmethod
     def mkItemFromDict(dict):
         utils.checkFields(class_fields,dict.keys())
         item = ClassItem(dict["name"],dict["descr"],dict["code"],dict["group"])

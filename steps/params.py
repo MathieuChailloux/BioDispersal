@@ -35,16 +35,50 @@ from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
 # BioDispersal global parameters
 
 # ParamsModel from which parameters are retrieved
-params = None
+paramsModel = None
 
 # Default CRS is set to epsg:2154 (France area, metric system)
 defaultCrs = QgsCoordinateReferenceSystem("EPSG:2154")
 
 # Returns normalized path from QgsMapLayerComboBox
-# def getPathFromLayerCombo(combo):
-    # layer = combo.currentLayer()
-    # layer_path = normalizePath(qgsUtils.pathOfLayer(layer))
-    # return layer_path
+def getPathFromLayerCombo(combo):
+    layer = combo.currentLayer()
+    layer_path = normalizePath(qgsUtils.pathOfLayer(layer))
+    return layer_path
+            
+def checkWorkspaceInit():
+    paramsModel.checkWorkspaceInit()
+        
+def normalizePath(path):
+    paramsModel.normalizePath(path)
+        
+def getOrigPath(path):
+    paramsModel.getOrigPath(path)
+        
+def checkInit():
+    paramsModel.checkInit()
+        
+def getResolution():
+    return paramsModel.getResolution()
+    
+def getExtentLayer():
+    return paramsModel.getExtentLayer()
+    
+# Return bounding box coordinates of extent layer
+def getExtentCoords():
+    return paramsModel.getExtentCoords()
+        
+# Checks that given layer matches extent layer coordinates
+def equalsParamsExtent(path):
+    return paramsModel.equalsParamsExtent(path)
+        
+# Returns extent layer bounding box as a QgsRectangle
+def getExtentRectangle():
+    return paramsModel.getExtentRectangle()
+    
+# Normalize given raster layer to match global extent and resolution
+def normalizeRaster(path,resampling_mode="near"):
+    return paramsModel.normalizeRaster(path,resampling_mode)
         
 #class ParamsModel(abstract_model.AbstractGroupModel):
 class ParamsModel(QAbstractTableModel):
@@ -95,6 +129,30 @@ class ParamsModel(QAbstractTableModel):
         utils.info("Workspace directory set to '" + norm_path)
         if not os.path.isdir(norm_path):
             utils.user_error("Directory '" + norm_path + "' does not exist")
+            
+    def getGroupPath(self,name):
+        self.checkWorkspaceInit()
+        groups_path = utils.joinPath(self.workspace,"Groups")
+        if not os.path.isdir(groups_path):
+            utils.info("Creating groups directory '" + groups_path + "'")
+            os.makedirs(groups_path)
+        group_path = utils.joinPath(groups_path,name)
+        if not os.path.isdir(group_path):
+            utils.info("Creating group directory '" + group_path + "'")
+            os.makedirs(group_path)
+        return group_path
+        
+    def getSTPath(self,name):
+        self.checkWorkspaceInit()
+        all_st_path = utils.joinPath(self.workspace,"Subnetworks")
+        if not os.path.isdir(all_st_path):
+            utils.info("Creating ST directory '" + all_st_path + "'")
+            os.makedirs(all_st_path)
+        st_path = utils.joinPath(all_st_path,name)
+        if not os.path.isdir(st_path):
+            utils.info("Creating ST directory '" + st_path + "'")
+            os.makedirs(st_path)
+        return st_path
             
     def fromXMLRoot(self,root):
         dict = root.attrib
@@ -160,7 +218,7 @@ class ParamsModel(QAbstractTableModel):
         return QVariant()
         
     # Checks that workspace is intialized and is an existing directory.
-    def checkWorkspaceInit():
+    def checkWorkspaceInit(self):
         if not self.workspace:
             utils.user_error("Workspace parameter not initialized")
         if not os.path.isdir(self.workspace):
@@ -168,7 +226,7 @@ class ParamsModel(QAbstractTableModel):
             
     # Returns relative path w.r.t. workspace directory.
     # File separator is set to common slash '/'.
-    def normalizePath(path):
+    def normalizePath(self,path):
         self.checkWorkspaceInit()
         if not path:
             utils.user_error("Empty path")
@@ -181,7 +239,7 @@ class ParamsModel(QAbstractTableModel):
         return final_path
             
     # Returns absolute path from normalized path (cf 'normalizePath' function)
-    def getOrigPath(path):
+    def getOrigPath(self,path):
         self.checkWorkspaceInit()
         if path == "":
             utils.user_error("Empty path")
@@ -191,7 +249,7 @@ class ParamsModel(QAbstractTableModel):
             return os.path.normpath(utils.joinPath(self.workspace,path))
             
     # Checks that all parameters are initialized
-    def checkInit():
+    def checkInit(self):
         self.checkWorkspaceInit()
         if not self.extentLayer:
             utils.user_error("Extent layer parameter not initialized")
@@ -205,14 +263,14 @@ class ParamsModel(QAbstractTableModel):
         if not self.crs.isValid():
             utils.user_error("Invalid CRS")
             
-    def getResolution():
+    def getResolution(self):
         return float(self.resolution)
         
-    def getExtentLayer():
+    def getExtentLayer(self):
         return self.getOrigPath(self.extentLayer)
         
     # Return bounding box coordinates of extent layer
-    def getExtentCoords():
+    def getExtentCoords(self):
         extent_path = getOrigPath(self.extentLayer)
         if extent_path:
             return qgsUtils.coordsOfExtentPath(extent_path)
@@ -220,20 +278,20 @@ class ParamsModel(QAbstractTableModel):
             utils.user_error("Extent layer not initialized")
             
     # Checks that given layer matches extent layer coordinates
-    def equalsParamsExtent(path):
+    def equalsParamsExtent(self,path):
         params_coords = self.getExtentCoords()
         path_coords = qgsUtils.coordsOfExtentPath(path)
         return (params_coords == path_coords)
             
     # Returns extent layer bounding box as a QgsRectangle
-    def getExtentRectangle():
+    def getExtentRectangle(self):
         coords = self.getExtentCoords()
         rect = QgsRectangle(float(coords[0]),float(coords[1]),
                             float(coords[2]),float(coords[3]))
         return rect
         
     # Normalize given raster layer to match global extent and resolution
-    def normalizeRaster(path,resampling_mode="near"):
+    def normalizeRaster(self,path,resampling_mode="near"):
         layer = qgsUtils.loadRasterLayer(path)
         # extent
         params_coords = self.getExtentCoords()

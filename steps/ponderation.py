@@ -327,7 +327,7 @@ class PonderationItem(abstract_model.DictItem):
         qgsTreatments.applyGdalCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
                       load_flag=False,more_args=['--type=Float32'])
         pond_buf_norm = utils.mkTmpPath(pond_buf_path,suffix="_norm")
-        crs = params.params.crs
+        crs = params.paramsModel.crs
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
         qgsTreatments.applyWarpGdal(pond_buf_reclassed,pond_buf_norm,'near',
@@ -366,7 +366,6 @@ class PonderationModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,ponderation_fields)
         
-    @staticmethod
     def mkItemFromDict(dict):
         utils.checkFields(ponderation_fields,dict.keys())
         item = PonderationItem(dict)

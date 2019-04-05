@@ -74,6 +74,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         self.context = QgsProcessingContext()
         self.context.setFeedback(self.feedback)
         self.bdModel = BioDispersalModel(self.context,self.feedback)
+        params.paramsModel = self.bdModel.paramsModel
         #################
         self.paramsConnector = params.ParamsConnector(self,self.bdModel.paramsModel)
         self.stConnector = subnetworks.STConnector(self,self.bdModel.stModel)
@@ -241,7 +242,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         utils.debug("loadModel " + str(fname))
         utils.checkFileExists(fname)
         config_parsing.setConfigParsers(self.parsers)
-        self.fsModel.paramsModel.projectFile = fname
+        self.bdModel.paramsModel.projectFile = fname
         config_parsing.parseConfig(fname)
         utils.info("BioDispersal model loaded from file '" + fname + "'")
         

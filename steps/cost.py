@@ -93,7 +93,6 @@ class CostModel(abstract_model.DictModel):
         self.bdModel = bdModel
         super().__init__(self,cost_fields)
     
-    @staticmethod
     def mkItemFromDict(dict):
         if "out_layer" in dict:
             utils.checkFields(cost_fields,dict.keys())
