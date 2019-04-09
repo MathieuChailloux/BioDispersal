@@ -172,10 +172,12 @@ class ClassConnector(abstract_model.AbstractConnector):
 
     # Classes are created in selection tab.
     # No code given so that it be automatically generated.
-    def mkItem(self):
-        name = self.dlg.selectionClassName.text()
-        self.dlg.selectionClassCombo.setCurrentText(name)
-        descr = self.dlg.selectionClassDescr.text()
-        classItem = ClassItem(name,descr,None)
-        return classItem
+    # def mkItem(self):
+        # name = self.dlg.selectionClassName.text()
+        # self.dlg.selectionClassCombo.setCurrentText(name)
+        # descr = self.dlg.selectionClassDescr.text()
+        # code = self.model.getFreeCode()
+        # grp = self.dlg.selectionGroupCombo.
+        # classItem = ClassItem(name,descr,code)
+        # return classItem
          

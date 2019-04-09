@@ -219,7 +219,7 @@ class GroupConnector(abstract_model.AbstractConnector):
         
     def setGroupName(self,text):
         utils.debug("setGroupName " + str(text))
-        grp_item = getGroupByName(text)
+        grp_item = self.model.getGroupByName(text)
         self.dlg.selectionGroupName.setText(grp_item.dict["name"])
         self.dlg.selectionGroupDescr.setText(grp_item.dict["descr"])
         

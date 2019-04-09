@@ -377,20 +377,21 @@ class SelectionConnector(abstract_model.AbstractConnector):
         return group_item
         
         
-    def getOrCreateClass(self):
-        utils.debug("getOrCreateClass")
-        cls = self.dlg.selectionGroupCombo.currentText()
-        utils.debug("cls = " + str(cls))
-        if not cls:
-            utils.user_error("No class selected")
-        class_item = self.model.bdModel.classModel.getClassByName(cls)
-        utils.debug("class_item = " + str(class_item))
-        if not class_item:
-            class_descr = ""
-            class_item = classes.ClassItem(cls,class_descr,None)
-            self.model.bdModel.classModel.addItem(class_item)
-            self.model.bdModel.classModel.layoutChanged.emit()
-        return class_item
+    # def getOrCreateClass(self):
+        # utils.debug("getOrCreateClass")
+        # cls = self.dlg.selectionGroupCombo.currentText()
+        # utils.debug("cls = " + str(cls))
+        # if not cls:
+            # utils.user_error("No class selected")
+        # class_item = self.model.bdModel.classModel.getClassByName(cls)
+        # utils.debug("class_item = " + str(class_item))
+        # if not class_item:
+            # class_descr = ""
+            # class_code = self.model.bdModel.classModel.getFreeCode()
+            # class_item = classes.ClassItem(cls,class_descr,class_code)
+            # self.model.bdModel.classModel.addItem(class_item)
+            # self.model.bdModel.classModel.layoutChanged.emit()
+        # return class_item
         
     def getClassesFromVals(self,group,vals):
         res = []
@@ -462,7 +463,8 @@ class SelectionConnector(abstract_model.AbstractConnector):
             assert False
         utils.debug("class_names = " + str(class_names))
         for (class_name, class_descr) in class_names:
-            class_item = classes.ClassItem(class_name,class_descr,None,grp_name)
+            class_code = self.model.bdModel.classModel.getFreeCode()
+            class_item = classes.ClassItem(class_name,class_descr,class_code,grp_name)
             self.model.bdModel.classModel.addItem(class_item)
             self.model.bdModel.classModel.layoutChanged.emit()
         item = SelectionItem(in_layer_path,mode,mode_val,grp_name)

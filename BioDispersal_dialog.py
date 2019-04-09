@@ -39,6 +39,7 @@ if file_dir not in sys.path:
     
 from .BioDispersalAbout_dialog import BioDispersalAboutDialog
 from .qgis_lib_mc import (utils, qgsUtils, config_parsing, log, feedbacks)
+from .algs.BioDispersal_algs import BioDispersalAlgorithmsProvider
 from .steps import (params, subnetworks, classes, groups, selection, fusion, friction, ponderation, cost)
 from . import tabs
 from .BioDispersal_model import BioDispersalModel
@@ -62,6 +63,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
+        self.provider = BioDispersalAlgorithmsProvider()
         self.setupUi(self)
         
     # Initialize plugin tabs and connectors.
@@ -105,6 +107,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
     # Initialize Graphic elements for each tab
     def initGui(self):
         utils.debug("initGuiDlg")
+        QgsApplication.processingRegistry().addProvider(self.provider)
         self.geometry = self.geometry()
         self.x = self.x()
         self.y = self.y()
@@ -178,7 +181,7 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
             else:
                 utils.internal_error("Unexpected qVersion : " + str(qVersion()))
         else:
-            utils.warn("No translation file : " + str(en_path))
+            utils.warn("No translation file : " + str(lang_path))
         self.retranslateUi(self)
         utils.curr_language = lang
         self.connectors["Tabs"].loadHelpFile()
