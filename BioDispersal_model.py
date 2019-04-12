@@ -62,6 +62,12 @@ class BioDispersalModel:
     def mkOutputFile(self,name):
         return self.paramsModel.mkOutputFile(name)
         
+    def getRasterParams(self):
+        crs = self.paramsModel.crs
+        extent = self.paramsModel.getExtentLayer()
+        resolution = self.paramsModel.getResolution()
+        return (crs, extent, resolution)
+        
     def runModel(self):
         utils.debug("feedback fs rm = " + str(self.feedback))
         for model in self.models:

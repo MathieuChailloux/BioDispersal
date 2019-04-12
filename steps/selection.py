@@ -22,12 +22,20 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsMapLayerProxyModel, QgsCoordinateTransform, QgsProject, QgsGeometry, QgsField, QgsFeature, QgsFeatureRequest
+from qgis.core import (Qgis,
+                       QgsMapLayerProxyModel,
+                       QgsCoordinateTransform,
+                       QgsProject,
+                       QgsGeometry,
+                       QgsField,
+                       QgsFeature,
+                       QgsFeatureRequest)
 from PyQt5.QtCore import QVariant
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
+from ..algs import BioDispersal_algs
 from . import params, classes, groups
 
 from osgeo import gdal
@@ -74,51 +82,47 @@ class SelectionItem(abstract_model.DictItem):
     def checkItem(self):
         pass
         
-    def applyItem(self,bdModel):
-        if self.is_vector:
-            self.applyVectorItem(bdModel)
-            #self.applyRasterItem()
-        elif self.is_raster:
-            self.applyRasterItem(bdModel)
-        else:
-            utils.user_error("Unkown format for file '" + str(self.dict["in_layer"]))
+    # def applyItem(self,bdModel):
+        # if self.is_vector:
+            # self.applyVectorItem(bdModel)
+        # elif self.is_raster:
+            # self.applyRasterItem(bdModel)
+        # else:
+            # utils.user_error("Unkown format for file '" + str(self.dict["in_layer"]))
             
-    def applyRasterItem(self,bdModel):
-        utils.debug("applyRasterItem")
-        params.checkInit()
-        in_layer_path = params.getOrigPath(self.dict["in_layer"])
-        utils.checkFileExists(in_layer_path)
-        group_name = self.dict["group"]
-        group_item = bdModel.groupsModel.getGroupByName(group_name)
-        #tmp_path = group_item.getRasterTmpPath()
-        out_path = group_item.getRasterPath()
-        out_tmp_path = utils.mkTmpPath(out_path)
-        crs = params.paramsModel.crs
-        resolution = params.getResolution()
-        extent_path = params.getExtentLayer()
-        mode = self.dict["mode"]
-        if mode == rclasses:
-            resampling_mode = "near"
-            #in_layer = loadRasterLayer(in_layer_path)
-            in_layer = gdal.Open(in_layer_path)
-            band1 = in_layer.GetRasterBand(1)
-            data_array = band1.ReadAsArray()
-            unique_vals = set(np.unique(data_array))
-            utils.debug("Unique values init : " + str(unique_vals))
-            in_nodata_val = int(band1.GetNoDataValue())
-            utils.debug("in_nodata_val = " + str(in_nodata_val))
-            unique_vals.remove(in_nodata_val)
-            utils.debug("Unique values : " + str(unique_vals))
-            #reclass_dict = group_item.getReclassDict()
-            reclass_dict = classes.getReclassDict(group_name)
-            qgsTreatments.applyReclassGdalFromDict(in_layer_path,out_tmp_path,reclass_dict)
-            qgsTreatments.applyWarpGdal(out_tmp_path,out_path,resampling_mode,crs,
-                          resolution,extent_path,
-                          load_flag=True,to_byte=True)
-        else:
-            qgsTreatments.applyWarpGdal(in_layer_path,out_path,resampling_mode,crs,
-                          resolution,extent_path,
-                          load_flag=True,to_byte=False)
+    # def applyRasterItem(self,bdModel):
+        # utils.debug("applyRasterItem")
+        # params.checkInit()
+        # in_layer_path = params.getOrigPath(self.dict["in_layer"])
+        # utils.checkFileExists(in_layer_path)
+        # group_name = self.dict["group"]
+        # group_item = bdModel.groupsModel.getGroupByName(group_name)
+        # out_path = group_item.getRasterPath()
+        # out_tmp_path = utils.mkTmpPath(out_path)
+        # crs = params.paramsModel.crs
+        # resolution = params.getResolution()
+        # extent_path = params.getExtentLayer()
+        # mode = self.dict["mode"]
+        # if mode == rclasses:
+            # resampling_mode = "near"
+            # in_layer = gdal.Open(in_layer_path)
+            # band1 = in_layer.GetRasterBand(1)
+            # data_array = band1.ReadAsArray()
+            # unique_vals = set(np.unique(data_array))
+            # utils.debug("Unique values init : " + str(unique_vals))
+            # in_nodata_val = int(band1.GetNoDataValue())
+            # utils.debug("in_nodata_val = " + str(in_nodata_val))
+            # unique_vals.remove(in_nodata_val)
+            # utils.debug("Unique values : " + str(unique_vals))
+            # reclass_dict = classes.getReclassDict(group_name)
+            # qgsTreatments.applyReclassGdalFromDict(in_layer_path,out_tmp_path,reclass_dict)
+            # qgsTreatments.applyWarpGdal(out_tmp_path,out_path,resampling_mode,crs,
+                          # resolution,extent_path,
+                          # load_flag=True,to_byte=True)
+        # else:
+            # qgsTreatments.applyWarpGdal(in_layer_path,out_path,resampling_mode,crs,
+                          # resolution,extent_path,
+                          # load_flag=True,to_byte=False)
         
     # Selection is performed in 3 steps :
     #   1) creates group layer (group_vector.shp) if not existing with below fields :
@@ -127,81 +131,75 @@ class SelectionItem(abstract_model.DictItem):
     #       - 'Code' : code assigned to this class
     #   2) select features
     #   3) add features to group layer
-    def applyVectorItem(self,bdModel):
-        in_layer_path = params.getOrigPath(self.dict["in_layer"])
-        utils.checkFileExists(in_layer_path)
-        in_layer = qgsUtils.loadVectorLayer(in_layer_path)
-        mode = self.dict["mode"]
-        mode_val = self.dict["mode_val"]
-        # class_name = self.dict["class"]
-        # class_item = classes.getClassByName(class_name)
-        # if not class_item:
-            # utils.user_error("No class named '" + class_name + "'")
-        group_name = self.dict["group"]
-        group_item = bdModel.groupsModel.getGroupByName(group_name)
-        if not group_item:
-            utils.user_error("No group named '" + group_name + "'")
-        out_vector_layer_path = group_item.getVectorPath()
-        if os.path.isfile(out_vector_layer_path):
-            out_vector_layer = group_item.vectorLayer
-        else:
-            # group layer creation
-            out_vector_layer = qgsUtils.createLayerFromExisting(in_layer,group_name + "_vector",
-                                                       geomType=None,crs=params.paramsModel.getCrsStr())
-            group_item.vectorLayer = out_vector_layer
-            orig_field = QgsField("Origin", QVariant.String)
-            class_field = QgsField("Class", QVariant.String)
-            code_field = QgsField("Code", QVariant.Int)
-            out_vector_layer.dataProvider().addAttributes([orig_field,class_field,code_field])
-            out_vector_layer.updateFields()        
-        if (mode == vexpr) and mode_val:
-            feats = in_layer.getFeatures(QgsFeatureRequest().setFilterExpression(mode_val))
-        else:
-            feats = in_layer.getFeatures(QgsFeatureRequest())
-        pr = out_vector_layer.dataProvider()
-        in_crs = in_layer.sourceCrs()
-        out_crs = out_vector_layer.sourceCrs()
-        utils.debug("in_crs : " + str(in_crs.description()))
-        utils.debug("out_crs : " + str(out_crs.description()))
-        if in_crs.authid() == out_crs.authid():
-            transform_flag = False
-        else:
-            transform_flag = True
-            transformator = QgsCoordinateTransform(in_crs,out_crs,QgsProject.instance())
-        fields = out_vector_layer.fields()
-        tmp_cpt = 0
-        for f in feats:
-            tmp_cpt += 1
-            geom = f.geometry()
-            if transform_flag:
-                transf_res = geom.transform(transformator)#,QgsCoordinateTransform.ForwardTransform)
-                if transf_res != QgsGeometry.Success:
-                    utils.internal_error("Could not transform geometry : " + str(trasf_res))
-            if mode == vfield:
-                if mode_val not in f.fields().names():
-                    utils.debug("fields = " + str(f.fields().names()))
-                    utils.internal_error("No field named " + str(mode_val))
-                class_name = group_name + "_" + str(f[mode_val])
-            else:
-                class_name = group_name
-            class_item = bdModel.classModel.getClassByName(class_name)
-            if not class_item:
-                utils.internal_error("No class " + str(class_name) + " found")
-            new_f = QgsFeature(fields)
-            #utils.debug("new_fields = " + str(new_f.fields().names()))
-            new_f.setGeometry(geom)
-            new_f["Origin"] = in_layer.name()
-            new_f["Class"] = class_name
-            new_f["Code"] = class_item.dict["code"]
-            res = pr.addFeature(new_f)
-            if not res:
-                utils.internal_error("addFeature failed")
-            out_vector_layer.updateExtents()
-        utils.debug("length(feats) = " + str(tmp_cpt))
-        group_item.vectorLayer = out_vector_layer
-        if tmp_cpt == 0:
-            utils.warn("No entity selected from '" + str(self) + "'")
-        group_item.saveVectorLayer()
+    # def applyVectorItem(self,bdModel):
+        # in_layer_path = params.getOrigPath(self.dict["in_layer"])
+        # utils.checkFileExists(in_layer_path)
+        # in_layer = qgsUtils.loadVectorLayer(in_layer_path)
+        # mode = self.dict["mode"]
+        # mode_val = self.dict["mode_val"]
+        # group_name = self.dict["group"]
+        # group_item = bdModel.groupsModel.getGroupByName(group_name)
+        # if not group_item:
+            # utils.user_error("No group named '" + group_name + "'")
+        # out_vector_layer_path = group_item.getVectorPath()
+        # if os.path.isfile(out_vector_layer_path):
+            # out_vector_layer = group_item.vectorLayer
+        # else:
+            # out_vector_layer = qgsUtils.createLayerFromExisting(in_layer,group_name + "_vector",
+                                                       # geomType=None,crs=params.paramsModel.getCrsStr())
+            # group_item.vectorLayer = out_vector_layer
+            # orig_field = QgsField("Origin", QVariant.String)
+            # class_field = QgsField("Class", QVariant.String)
+            # code_field = QgsField("Code", QVariant.Int)
+            # out_vector_layer.dataProvider().addAttributes([orig_field,class_field,code_field])
+            # out_vector_layer.updateFields()        
+        # if (mode == vexpr) and mode_val:
+            # feats = in_layer.getFeatures(QgsFeatureRequest().setFilterExpression(mode_val))
+        # else:
+            # feats = in_layer.getFeatures(QgsFeatureRequest())
+        # pr = out_vector_layer.dataProvider()
+        # in_crs = in_layer.sourceCrs()
+        # out_crs = out_vector_layer.sourceCrs()
+        # utils.debug("in_crs : " + str(in_crs.description()))
+        # utils.debug("out_crs : " + str(out_crs.description()))
+        # if in_crs.authid() == out_crs.authid():
+            # transform_flag = False
+        # else:
+            # transform_flag = True
+            # transformator = QgsCoordinateTransform(in_crs,out_crs,QgsProject.instance())
+        # fields = out_vector_layer.fields()
+        # tmp_cpt = 0
+        # for f in feats:
+            # tmp_cpt += 1
+            # geom = f.geometry()
+            # if transform_flag:
+                # transf_res = geom.transform(transformator)#,QgsCoordinateTransform.ForwardTransform)
+                # if transf_res != QgsGeometry.Success:
+                    # utils.internal_error("Could not transform geometry : " + str(trasf_res))
+            # if mode == vfield:
+                # if mode_val not in f.fields().names():
+                    # utils.debug("fields = " + str(f.fields().names()))
+                    # utils.internal_error("No field named " + str(mode_val))
+                # class_name = group_name + "_" + str(f[mode_val])
+            # else:
+                # class_name = group_name
+            # class_item = bdModel.classModel.getClassByName(class_name)
+            # if not class_item:
+                # utils.internal_error("No class " + str(class_name) + " found")
+            # new_f = QgsFeature(fields)
+            # new_f.setGeometry(geom)
+            # new_f["Origin"] = in_layer.name()
+            # new_f["Class"] = class_name
+            # new_f["Code"] = class_item.dict["code"]
+            # res = pr.addFeature(new_f)
+            # if not res:
+                # utils.internal_error("addFeature failed")
+            # out_vector_layer.updateExtents()
+        # utils.debug("length(feats) = " + str(tmp_cpt))
+        # group_item.vectorLayer = out_vector_layer
+        # if tmp_cpt == 0:
+            # utils.warn("No entity selected from '" + str(self) + "'")
+        # group_item.saveVectorLayer()
         
         
 class SelectionModel(abstract_model.DictModel):
@@ -226,15 +224,123 @@ class SelectionModel(abstract_model.DictModel):
             mode_val = dict["mode_val"]
         item = SelectionItem(dict["in_layer"],mode,mode_val,dict["group"])
         return item
+        
+    def getItemInPath(self,item):
+        return self.bdModel.getOrigPath(item.dict["in_layer"])
+        
+    def getItemOutPath(self,item):
+        grp_name = item.dict["group"]
+        if item.is_vector:
+            return self.bdModel.groupsModel.getVectorPath(grp_name)
+        else:
+            return self.bdModel.groupsModel.getRasterPath(grp_name)
+        
+        
+    def applySelectionVExpr(self,item,grp_item,out_path,context,feedback):
+        grp_name = grp_item.dict["name"]
+        class_item = self.bdModel.classModel.getClassByName(grp_name)
+        parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : self.getItemInPath(item),
+                       BioDispersal_algs.SelectVExprAlg.EXPR : item.dict["mode_val"],
+                       BioDispersal_algs.SelectVExprAlg.CLASS : grp_name,
+                       BioDispersal_algs.SelectVExprAlg.CODE : class_item.dict["code"],
+                       BioDispersal_algs.SelectVExprAlg.OUTPUT : out_path }
+        qgsTreatments.applyProcessingAlg("BioDispersal","selectvexpr",parameters,
+                                         context=context,feedback=feedback)
+        
+    def applySelectionVField(self,item,grp_name,out_path,context,feedback):
+        matrix = self.bdModel.classModel.getMatrixOfGroup(grp_name)
+        parameters = { BioDispersal_algs.SelectVFieldAlg.INPUT : self.getItemInPath(item),
+                       BioDispersal_algs.SelectVFieldAlg.FIELD : item.dict["mode_val"],
+                       BioDispersal_algs.SelectVFieldAlg.GROUP : grp_name,
+                       BioDispersal_algs.SelectVFieldAlg.ASSOC : matrix,
+                       BioDispersal_algs.SelectVFieldAlg.OUTPUT : out_path }
+        qgsTreatments.applyProcessingAlg("BioDispersal","selectvfield",parameters,
+                                         context=context,feedback=feedback)
+        
+    def applyItemWithContext(self,item,grp_item,context,feedback):
+        mode = item.dict["mode"]
+        grp_name = grp_item.dict["name"]
+        out_path = self.getItemOutPath(item)
+        input = self.getItemInPath(item)
+        if mode == vexpr:
+            self.applySelectionVExpr(item,grp_item,out_path,context,feedback)
+        elif mode == vfield:
+            self.applySelectionVField(item,grp_name,out_path,context,feedback)
+        elif mode == rclasses:
+            out_tmp_path = utils.mkTmpPath(out_path)
+            matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
+            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,
+                                                 context=context,feedback=feedback)
+            to_warp = out_tmp_path
+        elif mode == rresample:
+            to_warp = input
+        else:
+            utils.user_error("Unexpected mode : " + str(mode))
+        if item.is_raster:
+            resampling_mode = item.dict["mode_val"]
+            crs, extent, resolution = self.bdModel.getRasterParams()
+            qgsTreatments.applyWarpReproject(to_warp,out_path,resampling_mode,crs,
+                                             resolution=resolution,extent=extent,
+                                             context=context,feedback=feedback)
+            
+        
+    def applyItemsWithContext(self,indexes,context,feedback):
+        feedbacks.progressFeedback.beginSection("selection applyItems")
+        self.bdModel.paramsModel.checkInit()
+        selectionsByGroup = {}
+        # Group selections
+        #indexes = self.getSelectedIndexes()
+        nb_items = len(indexes)
+        step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
+        curr_step = 0
+        for n in indexes:
+            i = self.items[n]
+            grp = i.dict["group"]
+            if grp in selectionsByGroup:
+                selectionsByGroup[grp].append(i)
+            else:
+                selectionsByGroup[grp] = [i]
+        # Iteration on groups
+        for grp_name, selections in selectionsByGroup.items():
+            grp_item = self.bdModel.groupsModel.getGroupByName(grp_name)
+            if not grp_item:
+                feedback.reportError("Group '" + grp_name + "' does not exist sqfs")
+                utils.user_error("Group '" + grp_name + "' does not exist")
+            grp_vector_path = self.bdModel.groupsModel.getVectorPath(grp_name)
+            if os.path.isfile(grp_vector_path):
+                qgsUtils.removeVectorLayer(grp_vector_path)
+            from_raster = False
+            for s in selections:
+                self.applyItemWithContext(s,grp_item,context,feedback)
+                #progress_section.next_step()
+                if s.is_raster:
+                    from_raster = True
+                    if len(selections) > 1:
+                        feedback.reportError("Group '" + grp_name + "' does not exist gsdsa")
+                        utils.user_error("Several selections in group '" + grp_name +"'")
+            if not from_raster:
+                crs, extent, resolution = self.bdModel.getRasterParams()
+                out_path = self.bdModel.groupsModel.getRasterPath(grp_name)
+                qgsTreatments.applyRasterization(grp_vector_path,out_path,extent,resolution,
+                                                 field="Code",out_type=Qgis.UInt16,all_touch=True,
+                                                 context=context,feedback=feedback)
+            curr_step += 1
+            step_feedback.setCurrentStep(curr_step)
+        feedbacks.progressFeedback.endSection()
 
     # Selections are performed group by group.
     # Group vector layers are then rasterized (group_vector.shp to group_raster.tif)
     def applyItems(self,indexes):
         utils.debug("applyItems " + str(indexes))
-        params.checkInit()
+        feedbacks.progressFeedback.beginSection("selection")
+        self.bdModel.paramsModel.checkInit()
         selectionsByGroup = {}
         #progress_section = feedbacks.ProgressSection("Selection",len(indexes))
         #progress_section.start_section()
+        nb_items = len(indexes)
+        curr_step = 1
+        feedback = feedbacks.progressFeedback
+        step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
         for n in indexes:
             i = self.items[n]
             grp = i.dict["group"]
@@ -259,6 +365,9 @@ class SelectionModel(abstract_model.DictModel):
                         utils.user_error("Several selections in group '" + g +"'")
             if not from_raster:
                 grp_item.applyRasterizationItem()
+            curr_step += 1
+            step_feedback.setCurrentStep(curr_step)
+        feedbacks.progressFeedback.endSection()
         #progress_section.end_section()
         
 class SelectionConnector(abstract_model.AbstractConnector):
@@ -314,46 +423,13 @@ class SelectionConnector(abstract_model.AbstractConnector):
         else:
             indexes = range(0,len(self.model.items))
         utils.debug(str(indexes))
-        self.model.applyItems(indexes)
+        self.model.applyItemsWithContext(indexes,self.dlg.context,self.dlg.feedback)
         
-    def switchOnlySelection(self):
-        new_val = not self.onlySelection
-        utils.debug("setting onlySelection to " + str(new_val))
-        self.onlySelection = new_val
-        
-    def setClass(self,text):
-        cls_item = self.model.classModel.getClassByName(text)
-        self.dlg.selectionClassName.setText(cls_item.dict["name"])
-        self.dlg.selectionClassDescr.setText(cls_item.dict["descr"])
-        
-    def setGroup(self,text):
-        grp_item = self.model.bdModel.groupsModel.getGroupByName(text)
-        self.dlg.selectionGroupName.setText(grp_item.dict["name"])
-        self.dlg.selectionGroupDescr.setText(grp_item.dict["descr"])
+    # def switchOnlySelection(self):
+        # new_val = not self.onlySelection
+        # utils.debug("setting onlySelection to " + str(new_val))
+        # self.onlySelection = new_val
                         
-    def setInLayerFromCombo(self,layer):
-        utils.debug("setInLayerFromCombo")
-        utils.debug(str(layer.__class__.__name__))
-        if layer:
-            path = qgsUtils.pathOfLayer(layer)
-            self.dlg.selectionExpr.setLayer(layer)
-            self.dlg.selectionField.setLayer(layer)
-        else:
-            utils.warn("Could not load selection in layer")
-        
-    def setInLayer(self,path):
-        utils.debug("setInLayer " + path)
-        #loaded_layer = loadLayer(path,loadProject=True)
-        if self.dlg.selectionLayerFormatVector.isChecked():
-            loaded_layer = qgsUtils.loadVectorLayer(path,loadProject=True)
-            self.dlg.selectionExpr.setLayer(loaded_layer)
-            self.dlg.selectionField.setLayer(loaded_layer)
-            utils.debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
-            utils.debug(str(self.dlg.selectionField.layer().fields().names()))
-        else:
-            loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
-        self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
-                
     def getOrCreateGroup(self):
         utils.debug("getOrCreateGroup")
         group = self.dlg.selectionGroupCombo.currentText()
@@ -376,6 +452,16 @@ class SelectionConnector(abstract_model.AbstractConnector):
             self.model.bdModel.groupsModel.layoutChanged.emit()
         return group_item
         
+        
+    def groupOfItem(self,item):
+        grp_name = item.dict["group"]
+        grp_item = self.bdModel.groupsModel.getGroupByName(grp_name)
+        return grp_item
+        
+    def getClassesOfItem(self,item):
+        grp_name = item.dict["group"]
+        class_items = self.bdModel.classModel.getClassesOfGroup(grp_name)
+        return class_items
         
     # def getOrCreateClass(self):
         # utils.debug("getOrCreateClass")
@@ -469,6 +555,41 @@ class SelectionConnector(abstract_model.AbstractConnector):
             self.model.bdModel.classModel.layoutChanged.emit()
         item = SelectionItem(in_layer_path,mode,mode_val,grp_name)
         return item
+        
+
+        
+    def setClass(self,text):
+        cls_item = self.model.classModel.getClassByName(text)
+        self.dlg.selectionClassName.setText(cls_item.dict["name"])
+        self.dlg.selectionClassDescr.setText(cls_item.dict["descr"])
+        
+    def setGroup(self,text):
+        grp_item = self.model.bdModel.groupsModel.getGroupByName(text)
+        self.dlg.selectionGroupName.setText(grp_item.dict["name"])
+        self.dlg.selectionGroupDescr.setText(grp_item.dict["descr"])
+                        
+    def setInLayerFromCombo(self,layer):
+        utils.debug("setInLayerFromCombo")
+        utils.debug(str(layer.__class__.__name__))
+        if layer:
+            path = qgsUtils.pathOfLayer(layer)
+            self.dlg.selectionExpr.setLayer(layer)
+            self.dlg.selectionField.setLayer(layer)
+        else:
+            utils.warn("Could not load selection in layer")
+        
+    def setInLayer(self,path):
+        utils.debug("setInLayer " + path)
+        #loaded_layer = loadLayer(path,loadProject=True)
+        if self.dlg.selectionLayerFormatVector.isChecked():
+            loaded_layer = qgsUtils.loadVectorLayer(path,loadProject=True)
+            self.dlg.selectionExpr.setLayer(loaded_layer)
+            self.dlg.selectionField.setLayer(loaded_layer)
+            utils.debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
+            utils.debug(str(self.dlg.selectionField.layer().fields().names()))
+        else:
+            loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
+        self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
                     
     # Vector / raster modes
     

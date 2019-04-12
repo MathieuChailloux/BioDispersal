@@ -25,6 +25,9 @@
 from PyQt5.QtCore import QCoreApplication, QVariant
 from qgis.core import (Qgis,
                        QgsProject,
+                       QgsFields,
+                       QgsField,
+                       QgsFeature,
                        QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingException,
@@ -36,7 +39,11 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterMatrix,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterExpression,
-                       QgsProcessingParameterRasterDestination)
+                       QgsProcessingParameterString,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterVectorDestination,
+                       QgsProcessingParameterRasterDestination,
+                       QgsFeatureSink)
 
 import processing
 
@@ -50,7 +57,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
 
     def __init__(self):
         self.alglist = [TestAlg(),
-                        SelectionVExprAlg()]
+                        SelectVExprAlg(),
+                        SelectVFieldAlg()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -127,38 +135,36 @@ class TestAlg(QgsProcessingAlgorithm):
     def processAlgorithm(self,parameters,context,feedback):
         return None
         
-        
-class SelectionVExprAlg(QgsProcessingAlgorithm):
+class SelectVExprAlg(QgsProcessingAlgorithm):
 
-    ALG_NAME = 'selectionvexpralg'
+    ALG_NAME = 'selectvexpr'
     
     INPUT = 'INPUT'
     EXPR = 'EXPR'
-    BURNVAL = 'BURNVAL'
-    EXTENT = 'EXTENT'
-    RESOLUTION = 'RESOLUTION'
+    CLASS = 'CLASS'
+    CODE = 'CODE'
     OUTPUT = 'OUTPUT'
     
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
         
     def createInstance(self):
-        return SelectionVExprAlg()
+        return SelectVExprAlg()
         
     def name(self):
         return self.ALG_NAME
         
     def displayName(self):
-        return self.tr('3.1 - Selection from expression')
+        return self.tr('Selection (VExpr)')
         
     def shortHelpString(self):
-        return self.tr('Selection from expression then rasterization')
+        return self.tr('Code layer creation from input layer')
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input layer')))
+                description=self.tr('Input layer')))
         self.addParameter(
             QgsProcessingParameterExpression (
                 self.EXPR,
@@ -167,23 +173,18 @@ class SelectionVExprAlg(QgsProcessingAlgorithm):
                 parentLayerParameterName=self.INPUT,
                 optional=True))
         self.addParameter(
+            QgsProcessingParameterString (
+                self.CLASS,
+                description=self.tr('Class')))
+        self.addParameter(
             QgsProcessingParameterNumber (
-                self.BURNVAL,
-                description=self.tr('Burn value'),
+                self.CODE,
+                description=self.tr('Code'),
                 type=QgsProcessingParameterNumber.Integer))
         self.addParameter(
-            QgsProcessingParameterExtent (
-                self.EXTENT,
-                description=self.tr('Extent')))
-        self.addParameter(
-            QgsProcessingParameterNumber (
-                self.RESOLUTION,
-                description=self.tr('Resolution (georeferenced units)'),
-                type=QgsProcessingParameterNumber.Double))
-        self.addParameter(
-            QgsProcessingParameterRasterDestination (
+            QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
-                description=self.tr('Output')))
+                self.tr("Output layer")))
                 
     def processAlgorithm(self,parameters,context,feedback):
         input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
@@ -192,18 +193,237 @@ class SelectionVExprAlg(QgsProcessingAlgorithm):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         qgsUtils.normalizeEncoding(input)
         expr = self.parameterAsExpression(parameters,self.EXPR,context)
-        burn_val = self.parameterAsInt(parameters,self.BURNVAL,context)
-        extent = self.parameterAsExtent(parameters,self.EXTENT,context)
-        resolution = self.parameterAsDouble(parameters,self.RESOLUTION,context)
-        output = parameters[self.OUTPUT]
-        if expr:
-            selected = qgsTreatments.extractByExpression(input,expr,MEMORY_LAYER_NAME,context,feedback)
+        class_name = self.parameterAsString(parameters,self.CLASS,context)
+        code = self.parameterAsInt(parameters,self.CODE,context)
+        out_fields = QgsFields()
+        orig_field = QgsField("Origin", QVariant.String)
+        class_field = QgsField("Class", QVariant.String)
+        code_field = QgsField("Code", QVariant.Int)
+        out_fields.append(orig_field)
+        out_fields.append(class_field)
+        out_fields.append(code_field)
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            out_fields,
+            input.wkbType(),
+            input.sourceCrs()
+        )
+        if sink is None:
+            raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
+            
+        if expr is None or expr == "":
+            nb_feats = input.featureCount()
+            feats = input.getFeatures()
         else:
-            selected = input
-        feedback.pushDebugInfo("selected = " + str(selected))
-        rasterized = qgsTreatments.applyRasterization(selected,output,extent,resolution,
-                                                      burn_val=burn_val,all_touch=True,
-                                                      context=context,feedback=feedback)
-        # layer = QgsProject.instance().mapLayer(rasterized)
-        # QgsProject.instance().addMapLayer(layer)
-        return { 'OUTPUT' : rasterized }
+            qgsTreatments.selectByExpression(input,expr)
+            nb_feats = input.selectedFeatureCount()
+            feats = input.getSelectedFeatures()
+            
+        if nb_feats == 0:
+            raise QgsProcessingException("No feature selected")
+        progress_step = 100.0 / nb_feats
+        curr_step = 0
+        for f in feats:
+            new_f = QgsFeature(out_fields)
+            new_f["Origin"] = input.sourceName()
+            new_f["Class"] = class_name
+            new_f["Code"] = code
+            new_f.setGeometry(f.geometry())
+            sink.addFeature(new_f,QgsFeatureSink.FastInsert)
+            curr_step += 1
+            feedback.setProgress(int(curr_step * progress_step))
+            
+        res = { self.OUTPUT : dest_id }
+        return res
+
+        
+class SelectVFieldAlg(QgsProcessingAlgorithm):
+
+    ALG_NAME = 'selectvfield'
+    
+    INPUT = 'INPUT'
+    FIELD = 'FIELD'
+    GROUP = 'GROUP'
+    ASSOC = 'ASSOC'
+    OUTPUT = 'OUTPUT'
+    
+    HEADER_FIELD_VAL = 'Field value'
+    HEADER_INT_VAL = 'New integer value'
+    
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def createInstance(self):
+        return SelectVFieldAlg()
+        
+    def name(self):
+        return self.ALG_NAME
+        
+    def displayName(self):
+        return self.tr('Selection (VField)')
+        
+    def shortHelpString(self):
+        return self.tr('Code layer creation from input layer')
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.INPUT,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.FIELD,
+                description=self.tr('Field'),
+                defaultValue=None,
+                parentLayerParameterName=self.INPUT))
+        self.addParameter(
+            QgsProcessingParameterString (
+                self.GROUP,
+                description=self.tr('Group')))
+        self.addParameter(
+            QgsProcessingParameterMatrix (
+                self.ASSOC,
+                description=self.tr('Value / code association'),
+                numberRows=1,
+                hasFixedNumberRows=False,
+                headers=[self.HEADER_FIELD_VAL,self.HEADER_INT_VAL]))
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
+        feedback.pushDebugInfo("input = " + str(input))
+        if input is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        qgsUtils.normalizeEncoding(input)
+        fieldname = self.parameterAsString(parameters,self.FIELD,context)
+        if not fieldname:
+            raise QgsProcessingException("No field given")
+        grp_name = self.parameterAsString(parameters,self.GROUP,context)
+        assoc = self.parameterAsMatrix(parameters,self.ASSOC,context)
+        out_fields = QgsFields()
+        orig_field = QgsField("Origin", QVariant.String)
+        class_field = QgsField("Class", QVariant.String)
+        code_field = QgsField("Code", QVariant.Int)
+        out_fields.append(orig_field)
+        out_fields.append(class_field)
+        out_fields.append(code_field)
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            out_fields,
+            input.wkbType(),
+            input.sourceCrs()
+        )
+        if sink is None:
+            raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
+        i = iter(assoc)
+        assoc_table = dict(zip(i,i))
+        feedback.pushDebugInfo("assoc_table : " + str(assoc_table))
+        nb_feats = input.featureCount()
+        if nb_feats == 0:
+            raise QgsProcessingException("No feature in input layer")
+        progress_step = 100.0 / nb_feats
+        curr_step = 0
+        for f in input.getFeatures():
+            field_val = str(f[fieldname])
+            if field_val not in assoc_table:
+                raise QgsProcessingException("Value '" + str(field_val) + "' does not exist in association")
+            new_f = QgsFeature(out_fields)
+            new_f["Origin"] = input.sourceName()
+            new_f["Class"] = grp_name + "_" + str(field_val)
+            try:
+                code = int(assoc_table[field_val])
+            except ValueError:
+                raise QgsProcessingException("Matrix contains non-integer value " + str(assoc_table[field_val]))
+            new_f["Code"] = code
+            new_f.setGeometry(f.geometry())
+            sink.addFeature(new_f)
+            curr_step += 1
+            feedback.setProgress(int(curr_step * progress_step))
+            
+        res = { self.OUTPUT : dest_id }
+        return res        
+        
+# class TODO(QgsProcessingAlgorithm):
+
+    # ALG_NAME = 'todo'
+    
+    # INPUT = 'INPUT'
+    # EXPR = 'EXPR'
+    # BURNVAL = 'BURNVAL'
+    # EXTENT = 'EXTENT'
+    # RESOLUTION = 'RESOLUTION'
+    # OUTPUT = 'OUTPUT'
+    
+    # def tr(self, string):
+        # return QCoreApplication.translate('Processing', string)
+        
+    # def createInstance(self):
+        # return TODO()
+        
+    # def name(self):
+        # return self.ALG_NAME
+        
+    # def displayName(self):
+        # return self.tr('TODO')
+        
+    # def shortHelpString(self):
+        # return self.tr('Selection from expression then rasterization')
+
+    # def initAlgorithm(self, config=None):
+        # self.addParameter(
+            # QgsProcessingParameterFeatureSource(
+                # self.INPUT,
+                # self.tr('Input layer')))
+        # self.addParameter(
+            # QgsProcessingParameterExpression (
+                # self.EXPR,
+                # description=self.tr('Expression'),
+                # defaultValue="",
+                # parentLayerParameterName=self.INPUT,
+                # optional=True))
+        # self.addParameter(
+            # QgsProcessingParameterNumber (
+                # self.BURNVAL,
+                # description=self.tr('Burn value'),
+                # type=QgsProcessingParameterNumber.Integer))
+        # self.addParameter(
+            # QgsProcessingParameterExtent (
+                # self.EXTENT,
+                # description=self.tr('Extent')))
+        # self.addParameter(
+            # QgsProcessingParameterNumber (
+                # self.RESOLUTION,
+                # description=self.tr('Resolution (georeferenced units)'),
+                # type=QgsProcessingParameterNumber.Double))
+        # self.addParameter(
+            # QgsProcessingParameterRasterDestination (
+                # self.OUTPUT,
+                # description=self.tr('Output')))
+                
+    # def processAlgorithm(self,parameters,context,feedback):
+        # input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
+        # feedback.pushDebugInfo("input = " + str(input))
+        # if input is None:
+            # raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        # qgsUtils.normalizeEncoding(input)
+        # expr = self.parameterAsExpression(parameters,self.EXPR,context)
+        # burn_val = self.parameterAsInt(parameters,self.BURNVAL,context)
+        # extent = self.parameterAsExtent(parameters,self.EXTENT,context)
+        # resolution = self.parameterAsDouble(parameters,self.RESOLUTION,context)
+        # output = parameters[self.OUTPUT]
+        # if expr:
+            # selected = qgsTreatments.extractByExpression(input,expr,MEMORY_LAYER_NAME,context,feedback)
+        # else:
+            # selected = input
+        # feedback.pushDebugInfo("selected = " + str(selected))
+        # rasterized = qgsTreatments.applyRasterization(selected,output,extent,resolution,
+                                                      # burn_val=burn_val,all_touch=True,
+                                                      # context=context,feedback=feedback)
+        # return { 'OUTPUT' : rasterized }

@@ -86,23 +86,23 @@ class GroupItem(abstract_model.DictItem):
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
 
-    def getGroupPath(self):
-        return params.paramsModel.getGroupPath(self.name)
+    # def getGroupPath(self):
+        # return params.paramsModel.getGroupPath(self.name)
         
-    def getVectorPath(self):
-        basename = self.name + "_vector.shp"
-        grp_path = self.getGroupPath()
-        return utils.joinPath(grp_path,basename)
+    # def getVectorPath(self):
+        # basename = self.name + "_vector.shp"
+        # grp_path = self.getGroupPath()
+        # return utils.joinPath(grp_path,basename)
         
-    def getRasterPath(self):
-        basename = self.name + "_raster.tif"
-        grp_path = self.getGroupPath()
-        return utils.joinPath(grp_path,basename)
+    # def getRasterPath(self):
+        # basename = self.name + "_raster.tif"
+        # grp_path = self.getGroupPath()
+        # return utils.joinPath(grp_path,basename)
         
-    def getRasterTmpPath(self):
-        basename = self.name + "_raster_tmp.tif"
-        grp_path = self.getGroupPath()
-        return utils.joinPath(grp_path,basename)
+    # def getRasterTmpPath(self):
+        # basename = self.name + "_raster_tmp.tif"
+        # grp_path = self.getGroupPath()
+        # return utils.joinPath(grp_path,basename)
         
     def saveVectorLayer(self):
         vector_path = self.getVectorPath()
@@ -134,8 +134,8 @@ class GroupItem(abstract_model.DictItem):
         params.checkInit()
         resolution = params.getResolution()
         extent_path = params.getExtentLayer()
-        qgsTreatments.applyRasterization(in_path,field,out_path,resolution,
-                                         extent_path,load_flag=True,to_byte=True)
+        qgsTreatments.applyRasterizationCmd(in_path,field,out_path,extent_path,resolution,
+                                         load_flag=True,to_byte=True)
         
 class GroupModel(abstract_model.DictModel):
 
@@ -182,6 +182,37 @@ class GroupModel(abstract_model.DictModel):
     def removeGroupFromName(self,name):
         self.items = [item for item in self.items if item.dict["name"] != name]
         self.layoutChanged.emit()
+            
+    def getGroupPath(self,name):
+        return self.bdModel.paramsModel.getGroupPath(name)
+        
+    def getVectorPath(self,name):
+        basename = name + "_vector.shp"
+        grp_path = self.getGroupPath(name)
+        return utils.joinPath(grp_path,basename)
+        
+    def getRasterPath(self,name):
+        basename = name + "_raster.tif"
+        grp_path = self.getGroupPath(name)
+        return utils.joinPath(grp_path,basename)
+        
+    def getRasterTmpPath(self,name):
+        basename = name + "_raster_tmp.tif"
+        grp_path = self.getGroupPath(name)
+        return utils.joinPath(grp_path,basename)
+            
+    # def applyRasterizationItem(self,item,context=None,feedback=None):
+        # feedback.pushDebugInfo("[applyRasterizationItem]")
+        # field = "Code"
+        # group_name = item.dict["name"]
+        # in_path = self.getVectorPath(item)
+        # out_path = self.getRasterPath(item)
+        # self.bdModel.paramsModel.checkInit()
+        # resolution = self.bdModel.paramsModel.getResolution()
+        # extent = self.bdModel.paramsModel.getExtentCoords()
+        # qgsTreatments.applyRasterization(in_path,field,out_path,extent,resolution,
+                                         # field=field,out_type=Qgis.UInt16,all_touch=True,
+                                         # context=context,feedback=feedback)
 
 class GroupConnector(abstract_model.AbstractConnector):
 

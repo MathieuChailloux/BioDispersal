@@ -285,7 +285,8 @@ class PonderationItem(abstract_model.DictItem):
         layer2_norm = params.normalizeRaster(layer2)
         # if os.path.isfile(out_layer):
             # qgsUtils.removeRaster(out_layer)
-        qgsTreatments.applyPonderationGdal(layer1,layer2_norm,out_layer,pos_values=False)
+        #qgsTreatments.applyPonderationGdal(layer1,layer2_norm,out_layer,pos_values=False)
+        qgsTreatments.applyRasterCalcMult(layer1,layer2_norm,out_layer,out_type=2)
             
     def applyItemDirect(self,friction_path,pond_path,out_path):
         # friction_layer_path = params.getOrigPath(self.dict["friction"])
@@ -383,6 +384,9 @@ class PonderationModel(abstract_model.DictModel):
             i.applyItem()
             progress_section.next_step()
         progress_section.end_section()
+        
+    # def applyItemsWithContext(self,context,feedback):
+        
             
         
 class PonderationConnector(abstract_model.AbstractConnector):

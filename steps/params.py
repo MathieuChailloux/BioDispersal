@@ -276,9 +276,14 @@ class ParamsModel(QAbstractTableModel):
     def getExtentLayer(self):
         return self.getOrigPath(self.extentLayer)
         
+    def getExtent(self):
+        extent_path = self.getOrigPath(self.extentLayer)
+        extent_layer = qgsUtils.loadLayer(extent_path)
+        return extent_layer.extent()
+        
     # Return bounding box coordinates of extent layer
     def getExtentCoords(self):
-        extent_path = getOrigPath(self.extentLayer)
+        extent_path = self.getOrigPath(self.extentLayer)
         if extent_path:
             return qgsUtils.coordsOfExtentPath(extent_path)
         else:

@@ -76,6 +76,16 @@ class ClassItem(abstract_model.DictItem):
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
+        
+    def getFieldValue(self):
+        name = self.dict["name"]
+        if "_" not in name:
+            utils.internal_error("Attempt to get field value from ill-formed class " + str(name))
+        parts = name.split("_")
+        val = parts[-1]
+        if not val:
+            assert(False)
+        return val
             
 # ClassModel implements DictModel with ClassItem items
 # Signals 'classAdded' and 'classRemoved' are emitted on item addition/deletion
@@ -101,6 +111,22 @@ class ClassModel(abstract_model.DictModel):
             if i.dict["name"] == name:
                 return i
         None
+        
+    def getClassesOfGroup(self,grp_name):
+        class_items = [i for i in self.items if i.dict["group"] == grp_name]
+        return class_items
+        
+    def getMatrixOfGroup(self,grp_name):
+        classes = self.getClassesOfGroup(grp_name)
+        tups = [(c.getFieldValue(), c.dict["code"]) for c in classes]
+        matrix = [ item for tup in tups for item in tup ]
+        return matrix
+        
+    def getReclassifyMatrixOfGroup(self,grp_name):
+        classes = self.getClassesOfGroup(grp_name)
+        tups = [(c.getFieldValue(), c.getFieldValue(), c.dict["code"]) for c in classes]
+        matrix = [ item for tup in tups for item in tup ]
+        return matrix
         
     def codeExists(self,n):
         for i in self.items:
@@ -141,19 +167,19 @@ class ClassModel(abstract_model.DictModel):
             self.bdModel.removeClass(n)
             #self.classRemoved.emit(n)
             
-    def getReclassDict(self,group_name):
-        reclass_dict = {}
-        grp_classes = [ item for item in self.items if item.dict["group"] == group_name ]
-        for cls_item in grp_classes:
-            class_name = cls_item.dict["name"]
-            if group_name not in class_name:
-                utils.internal_error("Inconsistent class/group : " + str(class_name) + " - " + str(group_name))
-            len_grp = len(group_name)
-            assert(len(class_name) > len_grp)
-            val = class_name[len_grp+1:]
-            reclass_dict[val] = cls_item.dict["code"]
-        assert(len(reclass_dict) > 0)
-        return reclass_dict
+    # def getReclassDict(self,group_name):
+        # reclass_dict = {}
+        # grp_classes = [ item for item in self.items if item.dict["group"] == group_name ]
+        # for cls_item in grp_classes:
+            # class_name = cls_item.dict["name"]
+            # if group_name not in class_name:
+                # utils.internal_error("Inconsistent class/group : " + str(class_name) + " - " + str(group_name))
+            # len_grp = len(group_name)
+            # assert(len(class_name) > len_grp)
+            # val = class_name[len_grp+1:]
+            # reclass_dict[val] = cls_item.dict["code"]
+        # assert(len(reclass_dict) > 0)
+        # return reclass_dict
 
 class ClassConnector(abstract_model.AbstractConnector):
 
