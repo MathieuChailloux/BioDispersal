@@ -39,7 +39,6 @@ from ..algs import BioDispersal_algs
 from . import params, classes, groups
 
 from osgeo import gdal
-import numpy as np
 import os
 
 selection_fields = ["in_layer","mode","mode_val","group"]
@@ -270,7 +269,7 @@ class SelectionModel(abstract_model.DictModel):
             out_tmp_path = utils.mkTmpPath(out_path)
             matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
             qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,boundaries_mode=2,
-                                                           context=context,feedback=feedback)
+                                                 context=context,feedback=feedback)
             to_warp = out_tmp_path
         elif mode == rresample:
             to_warp = input
@@ -320,12 +319,15 @@ class SelectionModel(abstract_model.DictModel):
                     if len(selections) > 1:
                         feedback.reportError("Group '" + grp_name + "' does not exist gsdsa")
                         utils.user_error("Several selections in group '" + grp_name +"'")
+            out_path = self.bdModel.groupsModel.getRasterPath(grp_name)
             if not from_raster:
                 crs, extent, resolution = self.bdModel.getRasterParams()
-                out_path = self.bdModel.groupsModel.getRasterPath(grp_name)
+                if os.path.isfile(out_path):
+                    qgsUtils.removeRaster(out_path)
                 qgsTreatments.applyRasterization(grp_vector_path,out_path,extent,resolution,
                                                  field="Code",out_type=Qgis.UInt16,all_touch=True,
                                                  context=context,feedback=feedback)
+            qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
         feedbacks.progressFeedback.endSection()
@@ -488,27 +490,6 @@ class SelectionConnector(abstract_model.AbstractConnector):
             class_descr = "Class " + str(v) + " of group " + group
             res.append((class_name,class_descr))
         return res
-        
-    def getRasterVals(self,layer_path):
-        utils.debug("getRasterVals " + str(layer_path))
-        orig_path = params.getOrigPath(layer_path)
-        utils.debug("orig_path =  " + str(orig_path))
-        in_layer = gdal.Open(orig_path)
-        band1 = in_layer.GetRasterBand(1)
-        data_array = band1.ReadAsArray()
-        unique_vals = set(np.unique(data_array))
-        utils.debug("Unique values init : " + str(unique_vals))
-        in_nodata_val = int(band1.GetNoDataValue())
-        utils.debug("in_nodata_val = " + str(in_nodata_val))
-        unique_vals.remove(in_nodata_val)
-        utils.debug("Unique values : " + str(unique_vals))
-        return unique_vals
-        
-    def getVectorVals(self,layer,field_name):
-        field_values = set()
-        for f in layer.getFeatures():
-            field_values.add(f[field_name])
-        return field_values
         
     def mkItem(self):
         in_layer = self.dlg.selectionInLayerCombo.currentLayer()
