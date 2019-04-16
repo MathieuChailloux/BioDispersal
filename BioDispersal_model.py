@@ -64,7 +64,7 @@ class BioDispersalModel:
         
     def getRasterParams(self):
         crs = self.paramsModel.crs
-        extent = self.paramsModel.getExtentLayer()
+        extent = self.paramsModel.getExtentString()
         resolution = self.paramsModel.getResolution()
         return (crs, extent, resolution)
         

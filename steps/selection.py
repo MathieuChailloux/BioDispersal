@@ -269,8 +269,8 @@ class SelectionModel(abstract_model.DictModel):
         elif mode == rclasses:
             out_tmp_path = utils.mkTmpPath(out_path)
             matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
-            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,
-                                                 context=context,feedback=feedback)
+            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,boundaries_mode=2,
+                                                           context=context,feedback=feedback)
             to_warp = out_tmp_path
         elif mode == rresample:
             to_warp = input
@@ -279,9 +279,11 @@ class SelectionModel(abstract_model.DictModel):
         if item.is_raster:
             resampling_mode = item.dict["mode_val"]
             crs, extent, resolution = self.bdModel.getRasterParams()
-            qgsTreatments.applyWarpReproject(to_warp,out_path,resampling_mode,crs,
-                                             resolution=resolution,extent=extent,
-                                             context=context,feedback=feedback)
+            #in_layer = qgsUtils.loadRasterLayer(to_warp)
+            #in_crs = qgsUtils.getLayerCrsStr(in_layer)
+            qgsTreatments.applyWarpReproject(to_warp,out_path,resampling_mode,crs.authid(),
+                                             extent=extent,extent_crs=crs,resolution=resolution,
+                                             overwrite=True,context=context,feedback=feedback)
             
         
     def applyItemsWithContext(self,indexes,context,feedback):
