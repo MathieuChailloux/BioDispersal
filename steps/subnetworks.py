@@ -49,38 +49,29 @@ class STItem(abstract_model.DictItem):
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
-        
-    def getSTPath(self):
-        return params.paramsModel.getSTPath(self.name)
-        
-    def getMergedPath(self):
+                
+    def getMergedPath(self,st_path):
         basename = self.name + "_merged.tif"
-        st_path = self.getSTPath()
         return utils.joinPath(st_path,basename)
         
-    def getRulesPath(self):
+    def getRulesPath(self,st_path):
         basename = self.name + "_rules.txt"
-        st_path = self.getSTPath()
         return utils.joinPath(st_path,basename)
         
-    def getFrictionPath(self):
+    def getFrictionPath(self,st_path):
         basename = self.name + "_friction.tif"
-        st_path = self.getSTPath()
         return utils.joinPath(st_path,basename)
         
-    def getDispersionPath(self,cost):
+    def getDispersionPath(self,st_path,cost):
         basename = self.name + "_dispersion_" + str(cost) + ".tif"
-        st_path = self.getSTPath()
         return utils.joinPath(st_path,basename)
         
-    def getDispersionTmpPath(self,cost):
+    def getDispersionTmpPath(self,st_path,cost):
         basename = self.name + "_dispersion_" + str(cost) + "_tmp.tif"
-        st_path = self.getSTPath()
         return utils.joinPath(st_path,basename)
         
-    def getStartLayerPath(self):
+    def getStartLayerPath(self,st_path):
         basename = self.name + "_start.tif"
-        st_path = self.getSTPath()
         return utils.joinPath(st_path,basename)
         
         
@@ -106,6 +97,39 @@ class STModel(abstract_model.DictModel):
         
     def getSTList(self):
         return [st.dict["name"] for st in self.items]
+        
+    def getSTPath(self,st_name):
+        return self.bdModel.paramsModel.getSTPath(st_name)
+        
+    def getMergedPath(self,st_name):
+        basename = st_name + "_merged.tif"
+        st_path = self.getSTPath(st_name)
+        return utils.joinPath(st_path,basename)
+        
+    def getRulesPath(self,st_name):
+        basename = st_name + "_rules.txt"
+        st_path = self.getSTPath(st_name)
+        return utils.joinPath(st_path,basename)
+        
+    def getFrictionPath(self,st_name):
+        basename = st_name + "_friction.tif"
+        st_path = self.getSTPath(st_name)
+        return utils.joinPath(st_path,basename)
+        
+    def getDispersionPath(self,st_name,cost):
+        basename = st_name + "_dispersion_" + str(cost) + ".tif"
+        st_path = self.getSTPath(st_name)
+        return utils.joinPath(st_path,basename)
+        
+    def getDispersionTmpPath(self,st_name,cost):
+        basename = st_name + "_dispersion_" + str(cost) + "_tmp.tif"
+        st_path = self.getSTPath(st_name)
+        return utils.joinPath(st_path,basename)
+        
+    def getStartLayerPath(self,st_name):
+        basename = st_name + "_start.tif"
+        st_path = self.getSTPath(st_name)
+        return utils.joinPath(st_path,basename)
         
     def mkItemFromDict(self,dict):
         utils.checkFields(self.ST_FIELDS,dict.keys())

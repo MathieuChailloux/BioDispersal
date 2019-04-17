@@ -85,27 +85,21 @@ class GroupItem(abstract_model.DictItem):
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
-
-    # def getGroupPath(self):
-        # return params.paramsModel.getGroupPath(self.name)
         
-    # def getVectorPath(self):
-        # basename = self.name + "_vector.shp"
-        # grp_path = self.getGroupPath()
-        # return utils.joinPath(grp_path,basename)
+    def getVectorPath(self,grp_path):
+        basename = self.name + "_vector.shp"
+        return utils.joinPath(grp_path,basename)
         
-    # def getRasterPath(self):
-        # basename = self.name + "_raster.tif"
-        # grp_path = self.getGroupPath()
-        # return utils.joinPath(grp_path,basename)
+    def getRasterPath(selfgrp_path):
+        basename = self.name + "_raster.tif"
+        return utils.joinPath(grp_path,basename)
         
-    # def getRasterTmpPath(self):
-        # basename = self.name + "_raster_tmp.tif"
-        # grp_path = self.getGroupPath()
-        # return utils.joinPath(grp_path,basename)
+    def getRasterTmpPath(selfgrp_path):
+        basename = self.name + "_raster_tmp.tif"
+        return utils.joinPath(grp_path,basename)
         
-    def saveVectorLayer(self):
-        vector_path = self.getVectorPath()
+    def saveVectorLayer(selfgrp_path):
+        vector_path = self.getVectorPath(grp_path)
         qgsUtils.writeShapefile(self.vectorLayer,vector_path)
         
     # def getReclassDict(self):

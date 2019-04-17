@@ -158,6 +158,34 @@ class FusionModel(abstract_model.AbstractGroupModel):
         utils.debug("[testFunc]")
         utils.debug("config_models " + str(config_parsing.config_models))
         
+    def applyItemsWithContext(self,indexes,context,feedback):
+        feedbacks.progressFeedback.beginSection("Groups merge")
+        self.bdModel.paramsModel.checkInit()
+        nb_items = len(self.st_groups)
+        feedback.pushDebugInfo("nb_items = " + str(nb_items))
+        step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
+        curr_step = 0
+        for st in self.st_groups.keys():
+            st_item = self.bdModel.stModel.getSTByName(st)
+            groups = self.st_groups[st]
+            if not groups.items:
+                step_feedback.pushInfo("No layer for group for subnetwork '" + str(st) + "', ignoring.")
+                continue
+            else:
+                step_feedback.pushInfo("groups = " + str(groups.items))
+            step_feedback.pushDebugInfo("apply fusion to " + st)
+            step_feedback.pushDebugInfo(str([g.dict["name"] for g in groups.items]))
+            grp_args = [self.bdModel.groupsModel.getRasterPath(g.name) for g in reversed(groups.items)]
+            step_feedback.pushDebugInfo(str(grp_args))
+            out_path = self.bdModel.stModel.getMergedPath(st_item.name)
+            if os.path.isfile(out_path):
+                qgsUtils.removeRaster(out_path)
+            qgsTreatments.applyMergeRaster(grp_args,out_path,context=context,feedback=step_feedback)
+            qgsUtils.loadRasterLayer(out_path,loadProject=True)
+            curr_step += 1
+            step_feedback.setCurrentStep(curr_step)
+        feedbacks.progressFeedback.endSection()
+        
         
     def applyItems(self,indexes):
         utils.info("Applying merge")

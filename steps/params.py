@@ -133,9 +133,12 @@ class ParamsModel(QAbstractTableModel):
         if not os.path.isdir(norm_path):
             utils.user_error("Directory '" + norm_path + "' does not exist")
             
-    def getGroupPath(self,name):
+    def getGroupsPath(self):
         self.checkWorkspaceInit()
-        groups_path = utils.joinPath(self.workspace,"Groups")
+        return utils.joinPath(self.workspace,"Groups")
+            
+    def getGroupPath(self,name):
+        groups_path = self.getGroupsPath()
         if not os.path.isdir(groups_path):
             utils.info("Creating groups directory '" + groups_path + "'")
             os.makedirs(groups_path)

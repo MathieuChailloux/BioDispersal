@@ -346,7 +346,6 @@ class SelectVFieldAlg(QgsProcessingAlgorithm):
             sink.addFeature(new_f)
             curr_step += 1
             feedback.setProgress(int(curr_step * progress_step))
-            
         res = { self.OUTPUT : dest_id }
         return res        
         
