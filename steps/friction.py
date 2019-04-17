@@ -185,6 +185,25 @@ class FrictionModel(abstract_model.DictModel):
                     in_class = i.dict["code"]
                     out_class = i.dict[st_name]
                     f.write(str(in_class) + " = " + str(out_class) + "\n")
+                    
+    # def getReclassifyMatrixes(self):
+        # st_list = self.bdModel.stModel.getSTList()
+        # matrixes = { st_name : [] for st_name in st_list }
+        # for item in self.items:
+            # for st in st_list:
+                # if st not in self.fields:
+                    # utils.internal_error("Subnetwork '" + str(st) + "' not found in friction model")
+                # new_val = item.dict[st]
+                # if new_val == qgsTreatments.nodata_val:
+                    # assert(False)
+                    # utils.internal_error("Reclassify to nodata in " + str(item))
+                # try:
+                    # int(new_val)
+                # except ValueError:
+                    # utils.debug("Ignoring non-integer value " + str(new_val))
+                    # new_val = qgsTreatments.nodata_val
+                # matrixes[st] += [ item.dict["code"], item.dict["code"], new_val ]
+        # return matrixes
                 
     def applyReclassProcessing(self):
         utils.debug("applyReclass")
@@ -233,6 +252,24 @@ class FrictionModel(abstract_model.DictModel):
                                                    reclass_dict,load_flag=True)
             progress_section.next_step()
         progress_section.end_section()
+        
+    # def applyItemsWithContext(self,indexes,context,feedback):
+        # feedbacks.progressFeedback.beginSection("Friction")
+        # self.bdModel.paramsModel.checkInit()
+        # reclass_matrixes = self.getReclassifyMatrixes()
+        # nb_items = len(reclass_matrixes)
+        # step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
+        # curr_step = 0
+        # for st_name, matrix in reclass_matrixes.items():
+            # feedback.pushInfo("Friction computation for subnetwork " + str(st_name))
+            # in_path = self.bdModel.stModel.getMergedPath(st_name)
+            # out_path = self.bdModel.stModel.getFrictionPath(st_name)
+            # qgsUtils.removeRaster(out_path)
+            # qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,boundaries_mode=2,
+                                                 # context=context,feedback=step_feedback)
+            # curr_step += 1
+            # step_feedback.setCurrentStep(curr_step)
+        # feedbacks.progressFeedback.endSection()
         
     def applyItems(self,indexes):
         #self.applyReclass()
