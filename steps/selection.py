@@ -268,7 +268,7 @@ class SelectionModel(abstract_model.DictModel):
         elif mode == rclasses:
             out_tmp_path = utils.mkTmpPath(out_path)
             matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
-            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,boundaries_mode=2,
+            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,boundaries_mode=2,nodata_missing=True,
                                                  context=context,feedback=feedback)
             to_warp = out_tmp_path
         elif mode == rresample:

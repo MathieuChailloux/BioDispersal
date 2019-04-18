@@ -283,9 +283,6 @@ class PonderationItem(abstract_model.DictItem):
         utils.checkFileExists(layer1)
         utils.checkFileExists(layer2)
         layer2_norm = params.normalizeRaster(layer2)
-        # if os.path.isfile(out_layer):
-            # qgsUtils.removeRaster(out_layer)
-        #qgsTreatments.applyPonderationGdal(layer1,layer2_norm,out_layer,pos_values=False)
         qgsTreatments.applyRasterCalcMult(layer1,layer2_norm,out_layer,out_type=2)
             
     def applyItemDirect(self,friction_path,pond_path,out_path):
@@ -360,7 +357,15 @@ class PonderationItem(abstract_model.DictItem):
         qgsTreatments.applyMinGdal(layer1,layer2,out_layer,load_flag=True)
         
 
+        
+        
 class PonderationModel(abstract_model.DictModel):
+
+    MIN_MODE = 0
+    MAX_MODE = 1
+    MULT_MODE = 2
+    INTERVALS_MODE = 3
+    BUFFER_MODE = 4
 
     def __init__(self,bdModel):
         self.parser_name = "PonderationModel"
@@ -372,13 +377,68 @@ class PonderationModel(abstract_model.DictModel):
         item = PonderationItem(dict)
         return item
         
+    def applyItemWithContext(self,item,context,feedback):
+        mode = int(item.dict["mode"])
+        friction_layer_path = self.bdModel.getOrigPath(item.dict["friction"])
+        friction_norm_path = self.bdModel.normalizeRaster(friction_layer_path)
+        pond_layer_path = self.bdModel.getOrigPath(item.dict["ponderation"])
+        pond_norm_path = self.bdModel.normalizeRaster(pond_layer_path)
+        out_layer_path = self.bdModel.getOrigPath(item.dict["out_layer"])
+        if mode == self.MULT_MODE:
+            qgsTreatments.applyRasterCalcMult(friction_norm_path,pond_norm_path,out_layer_path,
+                                              context=context,feedback=feedback)
+        elif mode == self.INTERVALS_MODE:
+            self.applyItemIvalWithContext(item,context,feedback)
+        elif mode == self.BUFFER_MODE:
+            self.applyItemBufferWithContext(item,context,feedback)
+        elif mode == self.MAX_MODE:
+            qgsTreatments.applyRasterCalcMax(friction_norm_path,pond_norm_path,out_layer_path,
+                                             context=context,feedback=feedback)
+        elif mode == self.MIN_MODE:
+            qgsTreatments.applyRasterCalcMin(friction_norm_path,pond_norm_path,out_layer_path,
+                                             context=context,feedback=feedback)
+        else:
+            utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
+            
+    def applyItemIvalWithContext(self,item,context,feedback):
+        ivals = item.dict["intervals"]
+        ival_model = PondValueIvalModel.fromStr(ivals)
+        ival_model.checkModel()
+        gdalc_calc_expr = ival_model.toGdalCalcExpr()
+            
+    def applyItemBufferWithContext(self,item,out_path,context,feedback):
+        pond_buf_path = utils.mkTmpPath(pond_path,suffix="_buf")
+        tmp_path = utils.mkTmpPath(out_path)
+        ivals = item.dict["intervals"]
+        ival_model = PondBufferIvalModel.fromStr(ivals)
+        ival_model.checkModel()
+        buffer_distances = ival_model.toDistances()
+        qgsTreatments.applyRBuffer(pond_path,buffer_distances,pond_buf_path,context,feedback)
+        gdal_calc_expr = ival_model.toGdalCalcExpr()
+        pond_buf_reclassed = utils.mkTmpPath(pond_buf_path,suffix="_reclassed")
+        qgsTreatments.applyRasterCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
+                                      context=context,feedback=feedback)
+        pond_buf_norm = utils.mkTmpPath(pond_buf_path,suffix="_norm")
+        crs = params.paramsModel.crs
+        crs, extent, resolution = self.bdModel.getRasterParams()
+        qgsTreatments.applyWarpReproject(pond_buf_reclassed,pond_buf_norm,'near',
+                                         dst_crs=crs,resolution=resolution,extent = extent,
+                                         context=context,feedback=feedback)
+        pond_buf_nonull = utils.mkTmpPath(pond_buf_path,suffix="_nonull")
+        qgsTreatments.applyRNull(pond_buf_norm,1,pond_buf_nonull)
+        self.applyPonderation(friction_path,pond_buf_nonull,out_path)
+        qgsUtils.removeRaster(pond_buf_path)
+        qgsUtils.removeRaster(pond_buf_reclassed)
+        qgsUtils.removeRaster(pond_buf_norm)
+        qgsUtils.removeRaster(pond_buf_nonull)
+            
     def applyItems(self,indexes):
         utils.debug("[applyItems]")
         if not indexes:
             utils.internal_error("No indexes in Ponderation applyItems")
         progress_section = feedbacks.ProgressFeedback("Ponderation",len(indexes))
         progress_section.start_section()
-        params.checkInit()
+        self.bdModel.checkInit()
         for n in indexes:
             i = self.items[n]
             i.applyItem()
@@ -418,10 +478,10 @@ class PonderationConnector(abstract_model.AbstractConnector):
         self.valueConnector.connectComponents()
         self.bufferConnector = PondBufferIvalConnector(self.dlg)
         self.bufferConnector.connectComponents()
-        self.dlg.pondModeCombo.currentTextChanged.connect(self.switchPondMode)
+        self.dlg.pondModeCombo.currentIndexChanged.connect(self.switchPondMode)
     
     def mkItem(self):
-        mode = self.dlg.pondModeCombo.currentText()
+        mode = self.dlg.pondModeCombo.currentIndex()
         if not mode:
             utils.user_error("No ponderation mode selected")
         friction_layer_path = params.getPathFromLayerCombo(self.dlg.pondFrictLayerCombo)
@@ -429,11 +489,11 @@ class PonderationConnector(abstract_model.AbstractConnector):
         out_path = params.normalizePath(self.dlg.pondOutLayer.filePath())
         if not out_path:
             utils.user_error("No output path selected for ponderation")
-        if mode in ["Direct","Maximum","Minimum"]:
+        if mode in [PonderationModel.MIN_MODE,PonderationModel.MAX_MODE,PonderationModel.MULT_MODE]:
             ivals =  ""
-        elif mode == "Intervalles":
+        elif mode == PonderationModel.INTERVALS_MODE:
             ivals = str(self.valueConnector.model)
-        elif mode == "Tampons":
+        elif mode == PonderationModel.BUFFER_MODE:
             ivals = str(self.bufferConnector.model)
         else:
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
@@ -447,11 +507,11 @@ class PonderationConnector(abstract_model.AbstractConnector):
         return item
     
     def switchPondMode(self,mode):
-        if mode in ["Direct","Maximum","Minimum"]:
+        if mode in [PonderationModel.MIN_MODE,PonderationModel.MAX_MODE,PonderationModel.MULT_MODE]:
             self.activateDirectMode()
-        elif mode == "Intervalles":
+        elif mode == PonderationModel.INTERVALS_MODE:
             self.activateIvalMode()
-        elif mode == "Tampons":
+        elif mode == PonderationModel.BUFFER_MODE:
             self.activateBufferMode()
         else:
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")

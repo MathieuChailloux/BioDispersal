@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>924</width>
-    <height>705</height>
+    <height>708</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -77,7 +77,7 @@
             <x>0</x>
             <y>0</y>
             <width>689</width>
-            <height>611</height>
+            <height>614</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -240,7 +240,7 @@
              <property name="minimumSize">
               <size>
                <width>658</width>
-               <height>550</height>
+               <height>565</height>
               </size>
              </property>
              <property name="currentIndex">
@@ -701,7 +701,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>600</width>
-                   <height>280</height>
+                   <height>300</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -725,7 +725,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>430</width>
-                      <height>280</height>
+                      <height>300</height>
                      </size>
                     </property>
                     <property name="frameShape">
@@ -735,12 +735,6 @@
                      <enum>QFrame::Raised</enum>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_7">
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>0</number>
-                     </property>
                      <item row="0" column="0">
                       <widget class="QLabel" name="selectionLayerLabel">
                        <property name="sizePolicy">
@@ -785,7 +779,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="1" colspan="3">
+                     <item row="1" column="1">
                       <widget class="QCheckBox" name="selectionLayerFormatVector">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -801,6 +795,25 @@
                        </property>
                        <property name="text">
                         <string>Vecteur</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="2" colspan="2">
+                      <widget class="QCheckBox" name="selectionLayerFormatRaster">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>13</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string>Raster</string>
                        </property>
                       </widget>
                      </item>
@@ -932,10 +945,16 @@
                         <layout class="QHBoxLayout" name="horizontalLayout_24">
                          <item>
                           <widget class="QLabel" name="selectionModeLabel">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="minimumSize">
                             <size>
                              <width>86</width>
-                             <height>12</height>
+                             <height>13</height>
                             </size>
                            </property>
                            <property name="text">
@@ -976,7 +995,7 @@
                          <item>
                           <widget class="QCheckBox" name="selectionCreateClasses">
                            <property name="sizePolicy">
-                            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                              <horstretch>0</horstretch>
                              <verstretch>0</verstretch>
                             </sizepolicy>
@@ -1032,7 +1051,7 @@
                        <property name="minimumSize">
                         <size>
                          <width>100</width>
-                         <height>16</height>
+                         <height>35</height>
                         </size>
                        </property>
                        <property name="maximumSize">
@@ -1045,7 +1064,7 @@
                         <number>1</number>
                        </property>
                        <property name="currentIndex">
-                        <number>2</number>
+                        <number>0</number>
                        </property>
                        <widget class="QWidget" name="stackSelectionExpr">
                         <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -2595,8 +2614,17 @@
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_14">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
                   <property name="topMargin">
-                   <number>9</number>
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
                   </property>
                   <item>
                    <widget class="QFrame" name="frame_22">
@@ -2607,10 +2635,10 @@
                      <enum>QFrame::Raised</enum>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_2">
-                     <property name="leftMargin">
+                     <property name="topMargin">
                       <number>0</number>
                      </property>
-                     <property name="topMargin">
+                     <property name="bottomMargin">
                       <number>0</number>
                      </property>
                      <item row="0" column="0">
@@ -2673,66 +2701,23 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="0" alignment="Qt::AlignLeft">
-                      <widget class="QFrame" name="frame_29">
-                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
+                     <item row="2" column="0">
+                      <widget class="QLabel" name="pondFrictLayerComboLabel">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
                        </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>13</height>
+                        </size>
                        </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_14">
-                        <property name="spacing">
-                         <number>3</number>
-                        </property>
-                        <property name="leftMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="topMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="rightMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="bottomMargin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <spacer name="horizontalSpacer_8">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeType">
-                           <enum>QSizePolicy::Fixed</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>15</width>
-                            <height>13</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="pondFrictLayerComboLabel">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>0</width>
-                            <height>13</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>Sélectionner couche</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
+                       <property name="text">
+                        <string>Sélectionner couche</string>
+                       </property>
                       </widget>
                      </item>
                      <item row="2" column="1">
@@ -2746,59 +2731,16 @@
                        <property name="minimumSize">
                         <size>
                          <width>100</width>
-                         <height>13</height>
+                         <height>16</height>
                         </size>
                        </property>
                       </widget>
                      </item>
                      <item row="3" column="0">
-                      <widget class="QFrame" name="frame_36">
-                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
+                      <widget class="QLabel" name="pondFrictLayerLabel">
+                       <property name="text">
+                        <string>Ouvrir couche</string>
                        </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_22">
-                        <property name="spacing">
-                         <number>3</number>
-                        </property>
-                        <property name="leftMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="topMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="rightMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="bottomMargin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <spacer name="horizontalSpacer_26">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeType">
-                           <enum>QSizePolicy::Fixed</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>15</width>
-                            <height>13</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="pondFrictLayerLabel">
-                          <property name="text">
-                           <string>Ouvrir couche</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
                       </widget>
                      </item>
                      <item row="3" column="1">
@@ -2812,7 +2754,7 @@
                        <property name="minimumSize">
                         <size>
                          <width>0</width>
-                         <height>13</height>
+                         <height>16</height>
                         </size>
                        </property>
                       </widget>
@@ -2872,110 +2814,38 @@
                       </widget>
                      </item>
                      <item row="6" column="0">
-                      <widget class="QFrame" name="frame_30">
-                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
+                      <widget class="QLabel" name="pondLayerComboLabel">
+                       <property name="text">
+                        <string>Sélectionner couche</string>
                        </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_16">
-                        <property name="spacing">
-                         <number>3</number>
-                        </property>
-                        <property name="leftMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="topMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="rightMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="bottomMargin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <spacer name="horizontalSpacer_9">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeType">
-                           <enum>QSizePolicy::Fixed</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>15</width>
-                            <height>13</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="pondLayerComboLabel">
-                          <property name="text">
-                           <string>Sélectionner couche</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
                       </widget>
                      </item>
                      <item row="6" column="1">
-                      <widget class="QgsMapLayerComboBox" name="pondLayerCombo"/>
+                      <widget class="QgsMapLayerComboBox" name="pondLayerCombo">
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>16</height>
+                        </size>
+                       </property>
+                      </widget>
                      </item>
                      <item row="7" column="0">
-                      <widget class="QFrame" name="frame_31">
-                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
+                      <widget class="QLabel" name="pondLayerLabel">
+                       <property name="text">
+                        <string>Ouvrir couche</string>
                        </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_17">
-                        <property name="spacing">
-                         <number>3</number>
-                        </property>
-                        <property name="leftMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="topMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="rightMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="bottomMargin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <spacer name="horizontalSpacer_24">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeType">
-                           <enum>QSizePolicy::Fixed</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>15</width>
-                            <height>13</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="pondLayerLabel">
-                          <property name="text">
-                           <string>Ouvrir couche</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
                       </widget>
                      </item>
                      <item row="7" column="1">
-                      <widget class="QgsFileWidget" name="pondLayer"/>
+                      <widget class="QgsFileWidget" name="pondLayer">
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>16</height>
+                        </size>
+                       </property>
+                      </widget>
                      </item>
                     </layout>
                    </widget>
@@ -2991,7 +2861,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
-                      <height>150</height>
+                      <height>100</height>
                      </size>
                     </property>
                     <property name="currentIndex">
@@ -3038,7 +2908,7 @@
                            <property name="minimumSize">
                             <size>
                              <width>200</width>
-                             <height>100</height>
+                             <height>50</height>
                             </size>
                            </property>
                            <property name="dragEnabled">
@@ -3250,6 +3120,12 @@
                   </item>
                   <item>
                    <widget class="QFrame" name="frame_17">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>185</height>
+                     </size>
+                    </property>
                     <property name="frameShape">
                      <enum>QFrame::NoFrame</enum>
                     </property>
@@ -3257,6 +3133,12 @@
                      <enum>QFrame::Raised</enum>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_13">
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
                      <item>
                       <widget class="QFrame" name="frame_32">
                        <property name="frameShape">
@@ -4441,8 +4323,6 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

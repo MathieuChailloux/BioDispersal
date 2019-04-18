@@ -41,47 +41,47 @@ paramsModel = None
 defaultCrs = QgsCoordinateReferenceSystem("EPSG:2154")
 
 # Returns normalized path from QgsMapLayerComboBox
-def getPathFromLayerCombo(combo):
-    layer = combo.currentLayer()
-    layer_path = normalizePath(qgsUtils.pathOfLayer(layer))
-    return layer_path
+# def getPathFromLayerCombo(combo):
+    # layer = combo.currentLayer()
+    # layer_path = normalizePath(qgsUtils.pathOfLayer(layer))
+    # return layer_path
             
-def checkWorkspaceInit():
-    paramsModel.checkWorkspaceInit()
+# def checkWorkspaceInit():
+    # paramsModel.checkWorkspaceInit()
         
-def normalizePath(path):
-    return paramsModel.normalizePath(path)
+# def normalizePath(path):
+    # return paramsModel.normalizePath(path)
         
-def getOrigPath(path):
-    return paramsModel.getOrigPath(path)
+# def getOrigPath(path):
+    # return paramsModel.getOrigPath(path)
         
-def checkInit():
-    utils.debug("paramsModel : " + str(paramsModel))
-    utils.debug("paramsModel : " + str(paramsModel is None))
-    utils.debug("paramsModel : " + str(paramsModel.extentLayer))
-    paramsModel.checkInit()
+# def checkInit():
+    # utils.debug("paramsModel : " + str(paramsModel))
+    # utils.debug("paramsModel : " + str(paramsModel is None))
+    # utils.debug("paramsModel : " + str(paramsModel.extentLayer))
+    # paramsModel.checkInit()
         
-def getResolution():
-    return paramsModel.getResolution()
+# def getResolution():
+    # return paramsModel.getResolution()
     
-def getExtentLayer():
-    return paramsModel.getExtentLayer()
+# def getExtentLayer():
+    # return paramsModel.getExtentLayer()
     
 # Return bounding box coordinates of extent layer
-def getExtentCoords():
-    return paramsModel.getExtentCoords()
+# def getExtentCoords():
+    # return paramsModel.getExtentCoords()
         
 # Checks that given layer matches extent layer coordinates
-def equalsParamsExtent(path):
-    return paramsModel.equalsParamsExtent(path)
+# def equalsParamsExtent(path):
+    # return paramsModel.equalsParamsExtent(path)
         
 # Returns extent layer bounding box as a QgsRectangle
-def getExtentRectangle():
-    return paramsModel.getExtentRectangle()
+# def getExtentRectangle():
+    # return paramsModel.getExtentRectangle()
     
 # Normalize given raster layer to match global extent and resolution
-def normalizeRaster(path,resampling_mode="near"):
-    return paramsModel.normalizeRaster(path,resampling_mode)
+# def normalizeRaster(path,resampling_mode="near"):
+    # return paramsModel.normalizeRaster(path,resampling_mode)
         
 #class ParamsModel(abstract_model.AbstractGroupModel):
 class ParamsModel(QAbstractTableModel):

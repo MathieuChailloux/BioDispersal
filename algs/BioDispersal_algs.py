@@ -43,6 +43,7 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterField,
                        QgsProcessingParameterVectorDestination,
                        QgsProcessingParameterRasterDestination,
+                       QgsProcessingParameterRasterLayer,
                        QgsFeatureSink)
 
 import processing
@@ -58,7 +59,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
     def __init__(self):
         self.alglist = [TestAlg(),
                         SelectVExprAlg(),
-                        SelectVFieldAlg()]
+                        SelectVFieldAlg(),
+                        WeightingByValue()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -348,81 +350,86 @@ class SelectVFieldAlg(QgsProcessingAlgorithm):
             feedback.setProgress(int(curr_step * progress_step))
         res = { self.OUTPUT : dest_id }
         return res        
-        
-# class TODO(QgsProcessingAlgorithm):
+      
 
-    # ALG_NAME = 'todo'
-    
-    # INPUT = 'INPUT'
-    # EXPR = 'EXPR'
-    # BURNVAL = 'BURNVAL'
-    # EXTENT = 'EXTENT'
-    # RESOLUTION = 'RESOLUTION'
-    # OUTPUT = 'OUTPUT'
-    
-    # def tr(self, string):
-        # return QCoreApplication.translate('Processing', string)
-        
-    # def createInstance(self):
-        # return TODO()
-        
-    # def name(self):
-        # return self.ALG_NAME
-        
-    # def displayName(self):
-        # return self.tr('TODO')
-        
-    # def shortHelpString(self):
-        # return self.tr('Selection from expression then rasterization')
+      
+class WeightingByValue(QgsProcessingAlgorithm):
 
-    # def initAlgorithm(self, config=None):
-        # self.addParameter(
-            # QgsProcessingParameterFeatureSource(
-                # self.INPUT,
-                # self.tr('Input layer')))
-        # self.addParameter(
-            # QgsProcessingParameterExpression (
-                # self.EXPR,
-                # description=self.tr('Expression'),
-                # defaultValue="",
-                # parentLayerParameterName=self.INPUT,
-                # optional=True))
-        # self.addParameter(
-            # QgsProcessingParameterNumber (
-                # self.BURNVAL,
-                # description=self.tr('Burn value'),
-                # type=QgsProcessingParameterNumber.Integer))
-        # self.addParameter(
-            # QgsProcessingParameterExtent (
-                # self.EXTENT,
-                # description=self.tr('Extent')))
-        # self.addParameter(
-            # QgsProcessingParameterNumber (
-                # self.RESOLUTION,
-                # description=self.tr('Resolution (georeferenced units)'),
-                # type=QgsProcessingParameterNumber.Double))
-        # self.addParameter(
-            # QgsProcessingParameterRasterDestination (
-                # self.OUTPUT,
-                # description=self.tr('Output')))
+    ALG_NAME = 'weightingbyvalue'
+    
+    INPUT_LAYER = 'INPUT_LAYER'
+    WEIGHT_LAYER = 'WEIGHT_LAYER'
+    INTERVALS = 'INTERVALS'
+    OUTPUT = 'OUTPUT'
+    
+    LOW_BOUND = 'LOW_BOUND'
+    UP_BOUND = 'UP_BOUND'
+    POND_VAL = 'POND_VALUE'
+    
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def createInstance(self):
+        return WeightingByValue()
+        
+    def name(self):
+        return self.ALG_NAME
+        
+    def displayName(self):
+        return self.tr('Weighting (By value)')
+        
+    def shortHelpString(self):
+        return self.tr('TODO')
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT_LAYER,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.WEIGHT_LAYER,
+                description=self.tr('Weighting layer')))
+        self.addParameter(
+            QgsProcessingParameterMatrix (
+                self.INTERVALS,
+                description=self.tr('Value intervals'),
+                numberRows=1,
+                hasFixedNumberRows=False,
+                headers=[self.LOW_BOUND,self.UP_BOUND,self.POND_VAL]))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
                 
-    # def processAlgorithm(self,parameters,context,feedback):
-        # input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
-        # feedback.pushDebugInfo("input = " + str(input))
-        # if input is None:
-            # raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        # qgsUtils.normalizeEncoding(input)
-        # expr = self.parameterAsExpression(parameters,self.EXPR,context)
-        # burn_val = self.parameterAsInt(parameters,self.BURNVAL,context)
-        # extent = self.parameterAsExtent(parameters,self.EXTENT,context)
-        # resolution = self.parameterAsDouble(parameters,self.RESOLUTION,context)
-        # output = parameters[self.OUTPUT]
-        # if expr:
-            # selected = qgsTreatments.extractByExpression(input,expr,MEMORY_LAYER_NAME,context,feedback)
-        # else:
-            # selected = input
-        # feedback.pushDebugInfo("selected = " + str(selected))
-        # rasterized = qgsTreatments.applyRasterization(selected,output,extent,resolution,
-                                                      # burn_val=burn_val,all_touch=True,
-                                                      # context=context,feedback=feedback)
-        # return { 'OUTPUT' : rasterized }
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT_LAYER,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT_LAYER))
+        weighting = self.parameterAsRasterLayer(parameters,self.WEIGHT_LAYER,context)
+        if weighting is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.WEIGHT_LAYER))
+        #intervals = self.parameterAsMatrix(parameters,self.INTERVALS,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        nodata_val = -9999
+        reclass_params = { 'DATA_TYPE' : 5,
+                           'INPUT_RASTER' : input,
+                           'NODATA_FOR_MISSING' : True,
+                           'NO_DATA' : nodata_val,
+                           'OUTPUT' : 'TEMPORARY_OUTPUT',
+                           'RANGE_BOUNDARIES' : 2,
+                           'RASTER_BAND' : 1,
+                           'TABLE' : parameters[self.INTERVALS] }
+        reclassed = processing.run('native:reclassifybytable',reclass_params,context=context,feedback=feedback)
+        reclassed_layer = reclassed['OUTPUT']
+        expr = "A*B"
+        rastercalc_params = { 'BAND_A' : 1,
+                              'BAND_B' : 1,
+                              'FORMULA' : expr,
+                              'INPUT_A' : input,
+                              'INPUT_B' : reclassed_layer,
+                              'NO_DATA' : nodata_val,
+                              'OUTPUT' : output,
+                              'RTYPE' : 5 }
+        calc = processing.run('gdal:rastercalculator',rastercalc_params,context=context,feedback=feedback)
+        return calc
