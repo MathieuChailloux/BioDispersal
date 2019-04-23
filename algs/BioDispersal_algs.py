@@ -61,7 +61,9 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
         self.alglist = [TestAlg(),
                         SelectVExprAlg(),
                         SelectVFieldAlg(),
-                        WeightingByValue()]
+                        WeightingBasics(),
+                        WeightingByIntervals(),
+                        WeightingByDistance()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -352,11 +354,287 @@ class SelectVFieldAlg(QgsProcessingAlgorithm):
         res = { self.OUTPUT : dest_id }
         return res        
       
+class WeightingAlgorithm(QgsProcessingAlgorithm):
+    
+    INPUT_LAYER = 'INPUT_LAYER'
+    WEIGHT_LAYER = 'WEIGHT_LAYER'
+    RESAMPLING = 'RESAMPLING'
+    OUTPUT = 'OUTPUT'
+    
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def name(self):
+        return self.ALG_NAME
 
-      
-class WeightingByValue(QgsProcessingAlgorithm):
+    def initAlgorithm(self, config=None):
+        self.methods = ((self.tr('Nearest neighbour'), 'near'),
+                        (self.tr('Bilinear'), 'bilinear'),
+                        (self.tr('Cubic'), 'cubic'),
+                        (self.tr('Cubic spline'), 'cubicspline'),
+                        (self.tr('Lanczos windowed sinc'), 'lanczos'),
+                        (self.tr('Average'), 'average'),
+                        (self.tr('Mode'), 'mode'),
+                        (self.tr('Maximum'), 'max'),
+                        (self.tr('Minimum'), 'min'),
+                        (self.tr('Median'), 'med'),
+                        (self.tr('First quartile'), 'q1'),
+                        (self.tr('Third quartile'), 'q3'))
+                        
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT_LAYER,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.WEIGHT_LAYER,
+                description=self.tr('Weighting layer')))
+        self.addParameter(QgsProcessingParameterEnum(self.RESAMPLING,
+                                                     self.tr('Resampling method to use'),
+                                                     options=[i[0] for i in self.methods],
+                                                     defaultValue=0))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def prepareParameters(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT_LAYER,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT_LAYER))
+        weighting = self.parameterAsRasterLayer(parameters,self.WEIGHT_LAYER,context)
+        if weighting is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.WEIGHT_LAYER))
+        resampling = parameters[self.RESAMPLING]
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        return (input, weighting, resampling, output)
+        
+    def warpWeightingLayer(self,parameters,context,feedback):
+        input, weighting, resampling, output = self.prepareParameters(parameters,context,feedback)
+        input_dp = input.dataProvider()
+        nodata_val = input_dp.sourceNoDataValue(1)
+        resolution = input.rasterUnitsPerPixelX()
+        crs = input.crs()
+        warp_params = { 'INPUT' : weighting,
+                        'TARGET_CRS' : crs,
+                        'RESAMPLING' : resampling,
+                        'NODATA' : nodata_val,
+                        'TARGET_RESOLUTION' : resolution,
+                        'TARGET_EXTENT' : input.extent(),
+                        'TARGET_EXTENT_CRS' : crs,
+                        'OUTPUT' : output }
+        warped = processing.run('gdal:warpreproject',warp_params,context=context,feedback=feedback)
+        return warped['OUTPUT']
+        
+    def warpFromCustomLayer(self,input,resampling,output,context,feedback):
+        input_dp = input.dataProvider()
+        nodata_val = input_dp.sourceNoDataValue(1)
+        resolution = input.rasterUnitsPerPixelX()
+        crs = input.crs()
+        warp_params = { 'INPUT' : input,
+                        'TARGET_CRS' : crs,
+                        'RESAMPLING' : resampling,
+                        'NODATA' : nodata_val,
+                        'TARGET_RESOLUTION' : resolution,
+                        'TARGET_EXTENT' : input.extent(),
+                        'TARGET_EXTENT_CRS' : crs,
+                        'OUTPUT' : output }
+        warped = processing.run('gdal:warpreproject',warp_params,context=context,feedback=feedback)
+        return warped['OUTPUT']
+        
 
-    ALG_NAME = 'weightingbyvalue'
+
+class WeightingBasics(WeightingAlgorithm):
+
+    ALG_NAME = 'weightingbasics'
+
+    OPERATOR = 'OPERATOR'
+        
+    def createInstance(self):
+        return WeightingBasics()
+        
+    def displayName(self):
+        return self.tr('Weighting (Basics)')
+        
+    def shortHelpString(self):
+        return self.tr('TODO')
+
+    def initAlgorithm(self, config=None):
+        self.operators = [ self.tr('Minimum'),
+                           self.tr('Maximum'),
+                           self.tr('Multiplication') ]
+        super().initAlgorithm()
+        self.addParameter(QgsProcessingParameterEnum(self.OPERATOR,
+                                                     self.tr('Weighting method to use'),
+                                                     options=self.operators,
+                                                     defaultValue=0))
+                                                             
+    def processAlgorithm(self,parameters,context,feedback):
+        input, weighting, resampling, output = self.prepareParameters(parameters,context,feedback)
+        operator = self.parameterAsEnum(parameters,self.OPERATOR,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        warped_layer = self.warpFromCustomLayer(weighting,resampling,MEMORY_LAYER_NAME,context,feedback)
+        nodata_val = input.dataProvider().sourceNoDataValue(1)
+        if operator == 0:
+            out = qgsTreatments.applyRasterCalcMin(input,warped_layer,output,
+                                                   nodata_val=nodata_val,
+                                                   context=context,feedback=feedback)
+        elif operator == 1:
+            out = qgsTreatments.applyRasterCalcMax(input,warped_layer,output,
+                                                   nodata_val=nodata_val,
+                                                   context=context,feedback=feedback)
+        elif operator == 1:
+            out = qgsTreatments.applyRasterCalcMult(input,warped_layer,output,
+                                                    nodata_val=nodata_val,
+                                                    context=context,feedback=feedback)
+        else:
+            assert(False)
+        return { 'OUTPUT' : out }
+
+            
+class WeightingIntervalsAlgorithm(WeightingAlgorithm):
+    
+    INTERVALS = 'INTERVALS'
+    RANGE_BOUNDARIES = 'RANGE_BOUNDARIES'
+    
+    LOW_BOUND = 'LOW_BOUND'
+    UP_BOUND = 'UP_BOUND'
+    POND_VAL = 'POND_VALUE'
+
+    def initAlgorithm(self, config=None):
+        self.range_boundaries = [self.tr('min < value <= max'),
+                                 self.tr('min <= value < max'),
+                                 self.tr('min <= value <= max'),
+                                 self.tr('min < value < max')]
+        super().initAlgorithm(config)
+        self.addParameter(
+            QgsProcessingParameterMatrix (
+                self.INTERVALS,
+                description=self.tr('Intervals'),
+                numberRows=1,
+                hasFixedNumberRows=False,
+                headers=[self.LOW_BOUND,self.UP_BOUND,self.POND_VAL]))
+        self.addParameter(QgsProcessingParameterEnum(self.RANGE_BOUNDARIES,
+                                                     self.tr('Range boundaries'),
+                                                     options=self.range_boundaries,
+                                                     defaultValue=0))
+                
+   
+class WeightingByIntervals(WeightingIntervalsAlgorithm):
+
+    ALG_NAME = 'weightingbyintervals'
+        
+    def createInstance(self):
+        return WeightingByIntervals()
+        
+    def displayName(self):
+        return self.tr('Weighting (By intervals)')
+        
+    def shortHelpString(self):
+        return self.tr('TODO')
+
+    def initAlgorithm(self, config=None):
+        super().initAlgorithm(config)
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        input, weighting, resampling, output = self.prepareParameters(parameters,context,feedback)
+        range_boundaries = self.parameterAsEnum(parameters,self.RANGE_BOUNDARIES,context)
+        # WARP
+        warped_layer = self.warpWeightingLayer(parameters,context,feedback)
+        # RECLASSIFY
+        nodata_val = input.dataProvider().sourceNoDataValue(1)
+        reclass_params = { 'DATA_TYPE' : 5,
+                           'INPUT_RASTER' : warped_layer,
+                           'NODATA_FOR_MISSING' : True,
+                           'NO_DATA' : nodata_val,
+                           'OUTPUT' : 'TEMPORARY_OUTPUT',
+                           'RANGE_BOUNDARIES' : range_boundaries,
+                           'RASTER_BAND' : 1,
+                           'TABLE' : parameters[self.INTERVALS] }
+        reclassed = processing.run('native:reclassifybytable',reclass_params,context=context,feedback=feedback)
+        reclassed_layer = reclassed['OUTPUT']
+        # WEIGHTING
+        expr = "A*B"
+        rastercalc_params = { 'BAND_A' : 1,
+                              'BAND_B' : 1,
+                              'FORMULA' : expr,
+                              'INPUT_A' : input,
+                              'INPUT_B' : reclassed_layer,
+                              'NO_DATA' : nodata_val,
+                              'OUTPUT' : output,
+                              'RTYPE' : 5 }
+        calc = processing.run('gdal:rastercalculator',rastercalc_params,context=context,feedback=feedback)
+        return calc
+   
+class WeightingByDistance(WeightingIntervalsAlgorithm):
+
+    ALG_NAME = 'weightingbydistance'
+        
+    def createInstance(self):
+        return WeightingByDistance()
+        
+    def displayName(self):
+        return self.tr('Weighting (By distance)')
+        
+    def shortHelpString(self):
+        return self.tr('TODO')
+
+    def initAlgorithm(self, config=None):
+        super().initAlgorithm(config)
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        input, weighting, resampling, output = self.prepareParameters(parameters,context,feedback)
+        range_boundaries = self.parameterAsEnum(parameters,self.RANGE_BOUNDARIES,context)
+        intervals = self.parameterAsMatrix(parameters,self.INTERVALS,context)
+        # WARP
+        #warped_layer = self.warpWeightingLayer(parameters,context,feedback)
+        # BUFFER
+        feedback.pushDebugInfo('intervals = ' +str(intervals))
+        distances = intervals[1::3]
+        feedback.pushDebugInfo('distances = ' +str(distances))
+        distances_str = ",".join([str(d) for d in distances])
+        feedback.pushDebugInfo('distances_str = ' +str(distances_str))
+        buffer_params = { 'input' : weighting,
+                          'output' : 'TEMPORARY_OUTPUT',
+                          'distances' : distances_str,
+                          'units' : 0, # 0 = meters ?
+                          'GRASS_RASTER_FORMAT_META' : '',
+                          'GRASS_RASTER_FORMAT_OPT' : '',
+                          'GRASS_REGION_CELLSIZE_PARAMETER' : 0,
+                          'GRASS_REGION_PARAMETER' : None,
+                          '-z' : False }
+                          #'--type' : 'Int32'
+                          #'--overwrite' : False}
+        buffered = processing.run('grass7:r.buffer',buffer_params,context=context,feedback=feedback)
+        buffered_layer = buffered['output']
+        # RECLASSIFY
+        nodata_val = input.dataProvider().sourceNoDataValue(1)
+        reclass_params = { 'DATA_TYPE' : 5,
+                           'INPUT_RASTER' : buffered_layer,
+                           'NODATA_FOR_MISSING' : True,
+                           'NO_DATA' : nodata_val,
+                           'OUTPUT' : 'TEMPORARY_OUTPUT',
+                           'RANGE_BOUNDARIES' : range_boundaries,
+                           'RASTER_BAND' : 1,
+                           'TABLE' : parameters[self.INTERVALS] }
+        reclassed = processing.run('native:reclassifybytable',reclass_params,context=context,feedback=feedback)
+        reclassed_layer = reclassed['OUTPUT']
+        # WEIGHTING
+        expr = "A*B"
+        rastercalc_params = { 'BAND_A' : 1,
+                              'BAND_B' : 1,
+                              'FORMULA' : expr,
+                              'INPUT_A' : input,
+                              'INPUT_B' : reclassed_layer,
+                              'NO_DATA' : nodata_val,
+                              'OUTPUT' : output,
+                              'RTYPE' : 5 }
+        calc = processing.run('gdal:rastercalculator',rastercalc_params,context=context,feedback=feedback)
+        return calc
+   
+class WeightingByValueBis(QgsProcessingAlgorithm):
+
+    ALG_NAME = 'weightingbyvaluebis'
     
     INPUT_LAYER = 'INPUT_LAYER'
     WEIGHT_LAYER = 'WEIGHT_LAYER'
@@ -373,13 +651,13 @@ class WeightingByValue(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
         
     def createInstance(self):
-        return WeightingByValue()
+        return WeightingByValueBis()
         
     def name(self):
         return self.ALG_NAME
         
     def displayName(self):
-        return self.tr('Weighting (By value)')
+        return self.tr('Weighting (By value bis)')
         
     def shortHelpString(self):
         return self.tr('TODO')
