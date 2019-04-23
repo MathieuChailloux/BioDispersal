@@ -44,6 +44,7 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterVectorDestination,
                        QgsProcessingParameterRasterDestination,
                        QgsProcessingParameterRasterLayer,
+                       QgsProcessingParameterEnum,
                        QgsFeatureSink)
 
 import processing
@@ -359,7 +360,9 @@ class WeightingByValue(QgsProcessingAlgorithm):
     
     INPUT_LAYER = 'INPUT_LAYER'
     WEIGHT_LAYER = 'WEIGHT_LAYER'
+    RESAMPLING = 'RESAMPLING'
     INTERVALS = 'INTERVALS'
+    RANGE_BOUNDARIES = 'RANGE_BOUNDARIES'
     OUTPUT = 'OUTPUT'
     
     LOW_BOUND = 'LOW_BOUND'
@@ -382,6 +385,23 @@ class WeightingByValue(QgsProcessingAlgorithm):
         return self.tr('TODO')
 
     def initAlgorithm(self, config=None):
+        self.methods = ((self.tr('Nearest neighbour'), 'near'),
+                        (self.tr('Bilinear'), 'bilinear'),
+                        (self.tr('Cubic'), 'cubic'),
+                        (self.tr('Cubic spline'), 'cubicspline'),
+                        (self.tr('Lanczos windowed sinc'), 'lanczos'),
+                        (self.tr('Average'), 'average'),
+                        (self.tr('Mode'), 'mode'),
+                        (self.tr('Maximum'), 'max'),
+                        (self.tr('Minimum'), 'min'),
+                        (self.tr('Median'), 'med'),
+                        (self.tr('First quartile'), 'q1'),
+                        (self.tr('Third quartile'), 'q3'))
+        self.range_boundaries = [self.tr('min < value <= max'),
+                                 self.tr('min <= value < max'),
+                                 self.tr('min <= value <= max'),
+                                 self.tr('min < value < max')]
+                        
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT_LAYER,
@@ -390,6 +410,10 @@ class WeightingByValue(QgsProcessingAlgorithm):
             QgsProcessingParameterRasterLayer(
                 self.WEIGHT_LAYER,
                 description=self.tr('Weighting layer')))
+        self.addParameter(QgsProcessingParameterEnum(self.RESAMPLING,
+                                                     self.tr('Resampling method to use'),
+                                                     options=[i[0] for i in self.methods],
+                                                     defaultValue=0))
         self.addParameter(
             QgsProcessingParameterMatrix (
                 self.INTERVALS,
@@ -397,6 +421,10 @@ class WeightingByValue(QgsProcessingAlgorithm):
                 numberRows=1,
                 hasFixedNumberRows=False,
                 headers=[self.LOW_BOUND,self.UP_BOUND,self.POND_VAL]))
+        self.addParameter(QgsProcessingParameterEnum(self.RANGE_BOUNDARIES,
+                                                     self.tr('Range boundaries'),
+                                                     options=self.range_boundaries,
+                                                     defaultValue=0))
         self.addParameter(
             QgsProcessingParameterRasterDestination(
                 self.OUTPUT,
@@ -409,19 +437,38 @@ class WeightingByValue(QgsProcessingAlgorithm):
         weighting = self.parameterAsRasterLayer(parameters,self.WEIGHT_LAYER,context)
         if weighting is None:
             raise QgsProcessingException(self.invalidRasterError(parameters, self.WEIGHT_LAYER))
+        #resampling = self.methods[self.parameterAsEnum(parameters, self.RESAMPLING, context)][1]
         #intervals = self.parameterAsMatrix(parameters,self.INTERVALS,context)
+        range_boundaries = self.parameterAsEnum(parameters,self.RANGE_BOUNDARIES,context)
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        nodata_val = -9999
+        #nodata_val = -9999
+        # WARP
+        input_dp = input.dataProvider()
+        nodata_val = input_dp.sourceNoDataValue(1)
+        resolution = input.rasterUnitsPerPixelX()
+        crs = input.crs()
+        warp_params = { 'INPUT' : weighting,
+                        'TARGET_CRS' : crs,
+                        'RESAMPLING' : parameters[self.RESAMPLING],
+                        'NODATA' : nodata_val,
+                        'TARGET_RESOLUTION' : resolution,
+                        'TARGET_EXTENT' : input.extent(),
+                        'TARGET_EXTENT_CRS' : crs,
+                        'OUTPUT' : 'TEMPORARY_OUTPUT' }
+        warped = processing.run('gdal:warpreproject',warp_params,context=context,feedback=feedback)
+        warped_layer = warped['OUTPUT']
+        # RECLASSIFY
         reclass_params = { 'DATA_TYPE' : 5,
-                           'INPUT_RASTER' : input,
+                           'INPUT_RASTER' : warped_layer,
                            'NODATA_FOR_MISSING' : True,
                            'NO_DATA' : nodata_val,
                            'OUTPUT' : 'TEMPORARY_OUTPUT',
-                           'RANGE_BOUNDARIES' : 2,
+                           'RANGE_BOUNDARIES' : range_boundaries,
                            'RASTER_BAND' : 1,
                            'TABLE' : parameters[self.INTERVALS] }
         reclassed = processing.run('native:reclassifybytable',reclass_params,context=context,feedback=feedback)
         reclassed_layer = reclassed['OUTPUT']
+        # WEIGHTING
         expr = "A*B"
         rastercalc_params = { 'BAND_A' : 1,
                               'BAND_B' : 1,
