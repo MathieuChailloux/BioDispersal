@@ -392,6 +392,7 @@ class WeightingAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterEnum(self.RESAMPLING,
                                                      self.tr('Resampling method to use'),
                                                      options=[i[0] for i in self.methods],
+                                                     optional=True,
                                                      defaultValue=0))
         self.addParameter(
             QgsProcessingParameterRasterDestination(
@@ -422,7 +423,7 @@ class WeightingAlgorithm(QgsProcessingAlgorithm):
                         'TARGET_RESOLUTION' : resolution,
                         'TARGET_EXTENT' : input.extent(),
                         'TARGET_EXTENT_CRS' : crs,
-                        'OUTPUT' : output }
+                        'OUTPUT' : MEMORY_LAYER_NAME }
         warped = processing.run('gdal:warpreproject',warp_params,context=context,feedback=feedback)
         return warped['OUTPUT']
         
@@ -441,7 +442,6 @@ class WeightingAlgorithm(QgsProcessingAlgorithm):
                         'OUTPUT' : output }
         warped = processing.run('gdal:warpreproject',warp_params,context=context,feedback=feedback)
         return warped['OUTPUT']
-        
 
 
 class WeightingBasics(WeightingAlgorithm):
@@ -473,7 +473,7 @@ class WeightingBasics(WeightingAlgorithm):
         input, weighting, resampling, output = self.prepareParameters(parameters,context,feedback)
         operator = self.parameterAsEnum(parameters,self.OPERATOR,context)
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        warped_layer = self.warpFromCustomLayer(weighting,resampling,MEMORY_LAYER_NAME,context,feedback)
+        warped_layer = self.warpWeightingLayer(parameters,context,feedback)
         nodata_val = input.dataProvider().sourceNoDataValue(1)
         if operator == 0:
             out = qgsTreatments.applyRasterCalcMin(input,warped_layer,output,

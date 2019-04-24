@@ -354,7 +354,12 @@ class PonderationItem(abstract_model.DictItem):
         # checkFileExists(layer2)
         # layer1_norm = params.normalizeRaster(layer1)
         # layer2_norm = params.normalizeRaster(layer2)
-        qgsTreatments.applyMinGdal(layer1,layer2,out_layer,load_flag=True)
+        #qgsTreatments.applyMinGdal(layer1,layer2,out_layer,load_flag=True)
+        weighting_params = { 'INPUT_LAYER' : layer1,
+                             'WEIGHT_LAYER' : layer2,
+                             'OPERATOR' : 0,
+                             'OUTPUT' : out_layer }
+        qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params)
         
 
         
@@ -382,21 +387,35 @@ class PonderationModel(abstract_model.DictModel):
         friction_layer_path = self.bdModel.getOrigPath(item.dict["friction"])
         friction_norm_path = self.bdModel.normalizeRaster(friction_layer_path)
         pond_layer_path = self.bdModel.getOrigPath(item.dict["ponderation"])
-        pond_norm_path = self.bdModel.normalizeRaster(pond_layer_path)
+        pond_norm_path = pond_layer_path
+        # pond_norm_path = self.bdModel.normalizeRaster(pond_layer_path)
         out_layer_path = self.bdModel.getOrigPath(item.dict["out_layer"])
+        weighting_params = { 'INPUT_LAYER' : layer1,
+                             'WEIGHT_LAYER' : layer2,
+                             'OUTPUT' : out_layer }
         if mode == self.MULT_MODE:
-            qgsTreatments.applyRasterCalcMult(friction_norm_path,pond_norm_path,out_layer_path,
-                                              context=context,feedback=feedback)
+            weighting_params['OPERATOR'] = 2
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,
+                                             context=context,feedback=feedback)
+            # qgsTreatments.applyRasterCalcMult(friction_norm_path,pond_norm_path,out_layer_path,
+                                              # context=context,feedback=feedback)
         elif mode == self.INTERVALS_MODE:
+            
             self.applyItemIvalWithContext(item,context,feedback)
         elif mode == self.BUFFER_MODE:
             self.applyItemBufferWithContext(item,context,feedback)
         elif mode == self.MAX_MODE:
-            qgsTreatments.applyRasterCalcMax(friction_norm_path,pond_norm_path,out_layer_path,
+            weighting_params['OPERATOR'] = 1
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,
                                              context=context,feedback=feedback)
+            # qgsTreatments.applyRasterCalcMax(friction_norm_path,pond_norm_path,out_layer_path,
+                                             # context=context,feedback=feedback)
         elif mode == self.MIN_MODE:
-            qgsTreatments.applyRasterCalcMin(friction_norm_path,pond_norm_path,out_layer_path,
+            weighting_params['OPERATOR'] = 0
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,
                                              context=context,feedback=feedback)
+            # qgsTreatments.applyRasterCalcMin(friction_norm_path,pond_norm_path,out_layer_path,
+                                             # context=context,feedback=feedback)
         else:
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
             
