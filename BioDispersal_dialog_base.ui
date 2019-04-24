@@ -1391,7 +1391,7 @@
                      </size>
                     </property>
                     <property name="currentIndex">
-                     <number>0</number>
+                     <number>1</number>
                     </property>
                     <widget class="QWidget" name="stackGroup">
                      <layout class="QGridLayout" name="gridLayout_12">
@@ -1455,6 +1455,9 @@
                              <width>100</width>
                              <height>150</height>
                             </size>
+                           </property>
+                           <property name="sortingEnabled">
+                            <bool>true</bool>
                            </property>
                           </widget>
                          </item>
@@ -1554,7 +1557,11 @@
                           <number>0</number>
                          </property>
                          <item row="1" column="0" colspan="3">
-                          <widget class="QTableView" name="classView"/>
+                          <widget class="QTableView" name="classView">
+                           <property name="sortingEnabled">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
                          </item>
                          <item row="0" column="0">
                           <widget class="QLabel" name="classesLabel">
@@ -2504,6 +2511,9 @@
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="sortingEnabled">
+                     <bool>true</bool>
+                    </property>
                    </widget>
                   </item>
                   <item alignment="Qt::AlignHCenter">
@@ -2914,6 +2924,9 @@
                            <property name="dragEnabled">
                             <bool>true</bool>
                            </property>
+                           <property name="sortingEnabled">
+                            <bool>true</bool>
+                           </property>
                           </widget>
                          </item>
                          <item row="0" column="2">
@@ -3090,8 +3103,11 @@
                            <property name="minimumSize">
                             <size>
                              <width>200</width>
-                             <height>100</height>
+                             <height>50</height>
                             </size>
+                           </property>
+                           <property name="sortingEnabled">
+                            <bool>true</bool>
                            </property>
                           </widget>
                          </item>

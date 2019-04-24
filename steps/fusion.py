@@ -187,45 +187,33 @@ class FusionModel(abstract_model.AbstractGroupModel):
         feedbacks.progressFeedback.endSection()
         
         
-    def applyItems(self,indexes):
-        utils.info("Applying merge")
-        feedbacks.progressfeedback.clear()
-        params.checkInit()
-        res = str(params.getResolution())
-        extent_coords = params.getExtentCoords()
-        #for st in reversed(list(self.st_groups.keys())):
-        progress_section = feedbacks.ProgressFeedback("Fusion",len(self.st_groups))
-        progress_section.start_section()
-        for st in self.st_groups.keys():
-            st_item = self.bdModel.stModel.getSTByName(st)
-            groups = self.st_groups[st]
-            if not groups.items:
-                utils.warn("No layer for group for subnetwork '" + str(st) + "', ignoring.")
-                continue
-            else:
-                utils.info("groups = " + str(groups.items))
-            utils.debug("apply fusion to " + st)
-            utils.debug(str([g.dict["name"] for g in groups.items]))
-            grp_args = [g.getRasterPath() for g in reversed(groups.items)]
-            utils.debug(str(grp_args))
-            out_path = st_item.getMergedPath()
-            if os.path.isfile(out_path):
-                qgsUtils.removeRaster(out_path)
-            qgsTreatments.applyGdalMerge(grp_args,out_path,load_flag=True)
-            #cmd_args = ['gdal_merge.bat',
-            #            '-o', out_path,
-            #            '-of', 'GTiff',
-            #            '-ot','Int32',
-            #            '-n', qgsTreatments.nodata_val,
-            #            '-a_nodata', qgsTreatments.nodata_val]
-            #cmd_args = cmd_args + grp_args
-            #utils.executeCmd(cmd_args)
-            #p = subprocess.Popen(cmd_args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-            #res_layer = qgsUtils.loadRasterLayer(out_path)
-            #QgsProject.instance().addMapLayer(res_layer)
-            progress_section.next_step()
-        progress_section.end_section()
-        utils.info("Merge succesfully applied")
+    # def applyItems(self,indexes):
+        # utils.info("Applying merge")
+        # feedbacks.progressfeedback.clear()
+        # params.checkInit()
+        # res = str(params.getResolution())
+        # extent_coords = params.getExtentCoords()
+        # progress_section = feedbacks.ProgressFeedback("Fusion",len(self.st_groups))
+        # progress_section.start_section()
+        # for st in self.st_groups.keys():
+            # st_item = self.bdModel.stModel.getSTByName(st)
+            # groups = self.st_groups[st]
+            # if not groups.items:
+                # utils.warn("No layer for group for subnetwork '" + str(st) + "', ignoring.")
+                # continue
+            # else:
+                # utils.info("groups = " + str(groups.items))
+            # utils.debug("apply fusion to " + st)
+            # utils.debug(str([g.dict["name"] for g in groups.items]))
+            # grp_args = [g.getRasterPath() for g in reversed(groups.items)]
+            # utils.debug(str(grp_args))
+            # out_path = st_item.getMergedPath()
+            # if os.path.isfile(out_path):
+                # qgsUtils.removeRaster(out_path)
+            # qgsTreatments.applyGdalMerge(grp_args,out_path,load_flag=True)
+            # progress_section.next_step()
+        # progress_section.end_section()
+        # utils.info("Merge succesfully applied")
             
     # def updateItems(self,i1,i2):
         # k = self.current_st

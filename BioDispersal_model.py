@@ -42,9 +42,9 @@ class BioDispersalModel:
         self.frictionModel = friction.FrictionModel(self)
         self.ponderationModel = ponderation.PonderationModel(self)
         self.costModel = cost.CostModel(self)
-        self.models = [self.paramsModel, self.stModel, self.selectionModel,
-                       self.fusionModel, self.frictionModel, self.ponderationModel,
-                       self.costModel]
+        self.models = [self.paramsModel, self.stModel, self.groupsModel, self.classModel,
+                       self.selectionModel, self.fusionModel, self.frictionModel,
+                       self.ponderationModel, self.costModel]
         self.parser_name = "BioDispersalModel"
         
     def checkWorkspaceInit(self):
@@ -80,20 +80,22 @@ class BioDispersalModel:
         self.frictionModel.addSTItem(item)
         self.fusionModel.setCurrentST(item.dict["name"])
         
-    def deleteST(self,name):
+    def removeST(self,name):
         self.frictionModel.removeSTFromName(name)
         self.fusionModel.removeSTFromName(name)
         
     def addClass(self,item):
         self.frictionModel.addClassItem(item)        
         
-    def deleteClass(self,name):
+    def removeClass(self,name):
         self.frictionModel.removeClassFromName(name)
         
     def addGroup(self,item):
         pass
         
-    def deleteGroup(self,name):
+    def removeGroup(self,name):
+        self.classModel.removeFromGroupName(name)
+        self.selectionModel.removeFromGroupName(name)
         for st, grp_model in self.fusionModel.st_groups.items():
             grp_model.removeGroupFromName(name)
         
@@ -101,9 +103,10 @@ class BioDispersalModel:
         
     def toXML(self,indent=""):
         xmlStr = indent + "<" + self.parser_name + ">"
-        new_indent = " "
+        new_indent = indent + " "
         for model in self.models:
-            xmlStr += "\n" + indent + "</" + self.parser_name + ">"
+            xmlStr += "\n" + indent + model.toXML(indent=new_indent)
+        xmlStr += "\n" + indent + "</" + self.parser_name + ">"
         return xmlStr
         
     def getModelFromParserName(self,name):

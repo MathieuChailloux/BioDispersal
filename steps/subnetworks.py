@@ -23,8 +23,9 @@
 """
 
 import os
+import re
 
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
+from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
 
@@ -46,6 +47,7 @@ class STItem(abstract_model.DictItem):
         utils.debug(self.dict["name"])
         if self.dict["name"] == "":
             utils.user_error("Empty sous-trame name")
+            
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])

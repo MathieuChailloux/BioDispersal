@@ -25,7 +25,7 @@
 import csv
 import os
 
-from PyQt5.QtCore import pyqtSlot, QModelIndex
+from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 from qgis.gui import QgsFileWidget
@@ -275,7 +275,7 @@ class FrictionModel(abstract_model.DictModel):
     def applyItems(self,indexes):
         #self.applyReclass()
         utils.debug("applyItems")
-        params.checkInit()
+        self.bdModel.paramsModel.checkInit()
         self.applyReclassGdal(indexes)
         
     def saveCSV(self,fname):
@@ -318,6 +318,13 @@ class FrictionModel(abstract_model.DictModel):
             self.addItem(item)
         self.layoutChanged.emit()
         #return model
+        
+    def flags(self, index):
+        if index.column() in [1,2]:
+            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        else:
+            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        return flags
            
 class FrictionConnector(abstract_model.AbstractConnector):
     

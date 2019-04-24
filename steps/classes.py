@@ -25,7 +25,7 @@
 import os
 
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
+from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
 from qgis.gui import QgsFileWidget
 
 from ..qgis_lib_mc import (utils, qgsUtils, abstract_model)
@@ -151,14 +151,14 @@ class ClassModel(abstract_model.DictModel):
         indexes = []
         names = []
         cpt = 0
-        for item in self.items:
+        for cpt, item in enumerate(self.items):
             if item.dict["group"] == name:
                 indexes.append(cpt)
                 names.append(item.dict["name"])
             cpt += 1
         self.removeItemsFromRows(indexes) 
         for n in names:
-            self.classRemoved.emit(n)
+            self.bdModel.removeClass(n)
          
     def removeItems(self,indexes):
         names = [self.items[idx.row()].dict["name"] for idx in indexes]
@@ -166,6 +166,13 @@ class ClassModel(abstract_model.DictModel):
         for n in names:
             self.bdModel.removeClass(n)
             #self.classRemoved.emit(n)
+            
+    def flags(self, index):
+        if index.column() == 0:
+            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        else:
+            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        return flags
             
     # def getReclassDict(self,group_name):
         # reclass_dict = {}

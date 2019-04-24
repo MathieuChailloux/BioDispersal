@@ -79,9 +79,9 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         self.context = QgsProcessingContext()
         self.context.setFeedback(self.feedback)
         self.bdModel = BioDispersalModel(self.context,self.feedback)
-        utils.debug("paramsMOdel 1 = " + str(params.paramsModel))
-        params.paramsModel = self.bdModel.paramsModel
-        utils.debug("paramsMOdel 2 = " + str(params.paramsModel))
+        # utils.debug("paramsMOdel 1 = " + str(params.paramsModel))
+        # params.paramsModel = self.bdModel.paramsModel
+        # utils.debug("paramsMOdel 2 = " + str(params.paramsModel))
         #################
         self.paramsConnector = params.ParamsConnector(self,self.bdModel.paramsModel)
         self.stConnector = subnetworks.STConnector(self,self.bdModel.stModel)
@@ -219,7 +219,7 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         
     # Return XML string describing project
     def toXML(self):
-        self.bdModel.toXML()
+        return self.bdModel.toXML()
         # xmlStr = "<ModelConfig>\n"
         # for k, m in self.parsers.items():
             # xmlStr += m.toXML() + "\n"

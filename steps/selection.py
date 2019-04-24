@@ -233,7 +233,13 @@ class SelectionModel(abstract_model.DictModel):
             return self.bdModel.groupsModel.getVectorPath(grp_name)
         else:
             return self.bdModel.groupsModel.getRasterPath(grp_name)
-        
+            
+    def removeFromGroupName(self,grp_name):
+        indexes = []
+        for cpt, item in enumerate(self.items):
+            if item.dict["group"] == grp_name:
+                indexes.append(cpt)
+        self.removeItemsFromRows(indexes)         
         
     def applySelectionVExpr(self,item,grp_item,out_path,context,feedback):
         grp_name = grp_item.dict["name"]
@@ -261,6 +267,8 @@ class SelectionModel(abstract_model.DictModel):
         grp_name = grp_item.dict["name"]
         out_path = self.getItemOutPath(item)
         input = self.getItemInPath(item)
+        step_feedback = feedbacks.ProgressMultiStepFeedback(2,feedback)
+        step_feedback.setCurrentStep(0)
         if mode == vexpr:
             self.applySelectionVExpr(item,grp_item,out_path,context,feedback)
         elif mode == vfield:
@@ -269,12 +277,13 @@ class SelectionModel(abstract_model.DictModel):
             out_tmp_path = utils.mkTmpPath(out_path)
             matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
             qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,boundaries_mode=2,nodata_missing=True,
-                                                 context=context,feedback=feedback)
+                                                 context=context,feedback=step_feedback)
             to_warp = out_tmp_path
         elif mode == rresample:
             to_warp = input
         else:
             utils.user_error("Unexpected mode : " + str(mode))
+        step_feedback.setCurrentStep(1)
         if item.is_raster:
             resampling_mode = item.dict["mode_val"]
             crs, extent, resolution = self.bdModel.getRasterParams()
@@ -282,7 +291,8 @@ class SelectionModel(abstract_model.DictModel):
             #in_crs = qgsUtils.getLayerCrsStr(in_layer)
             qgsTreatments.applyWarpReproject(to_warp,out_path,resampling_mode,crs.authid(),
                                              extent=extent,extent_crs=crs,resolution=resolution,
-                                             overwrite=True,context=context,feedback=feedback)
+                                             overwrite=True,context=context,feedback=step_feedback)
+        step_feedback.setCurrentStep(2)
             
         
     def applyItemsWithContext(self,indexes,context,feedback):
@@ -459,12 +469,12 @@ class SelectionConnector(abstract_model.AbstractConnector):
         
     def groupOfItem(self,item):
         grp_name = item.dict["group"]
-        grp_item = self.bdModel.groupsModel.getGroupByName(grp_name)
+        grp_item = self.model.bdModel.groupsModel.getGroupByName(grp_name)
         return grp_item
         
     def getClassesOfItem(self,item):
         grp_name = item.dict["group"]
-        class_items = self.bdModel.classModel.getClassesOfGroup(grp_name)
+        class_items = self.model.bdModel.classModel.getClassesOfGroup(grp_name)
         return class_items
         
     # def getOrCreateClass(self):
@@ -495,7 +505,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         in_layer = self.dlg.selectionInLayerCombo.currentLayer()
         if not in_layer:
             utils.user_error("No layer selected")
-        in_layer_path = params.normalizePath(qgsUtils.pathOfLayer(in_layer))
+        in_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(in_layer))
         expr = self.dlg.selectionExpr.expression()
         grp_item = self.getOrCreateGroup()
         grp_name = grp_item.dict["name"]
@@ -509,7 +519,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
                 utils.debug("mode_val = " + str(mode_val))
                 if not mode_val:
                     utils.user_error("No field selected")
-                vals = self.getVectorVals(in_layer,mode_val)
+                vals = qgsUtils.getVectorVals(in_layer,mode_val)
                 class_names = self.getClassesFromVals(grp_name,vals)
             elif self.dlg.exprSelectionMode.isChecked():
                 mode = vexpr
@@ -521,7 +531,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
             in_geom = "Raster"
             if self.dlg.selectionCreateClasses.isChecked():
                 mode = rclasses
-                vals = self.getRasterVals(in_layer_path)
+                vals = qgsUtils.getRasterVals(in_layer)
                 class_names = self.getClassesFromVals(grp_name,vals)
             else:
                 mode = rresample

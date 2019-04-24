@@ -55,33 +55,31 @@ class CostItem(abstract_model.DictItem):
         same_cost = self.dict["cost"] == other.dict["cost"]
         return (same_start and same_perm and same_cost)
         
-    def applyItem(self,stModel):
-        utils.debug("Start runCost")
-        feedbacks.progressFeedback.focusLogTab()
-        st_name = self.dict["st_name"]
-        st_item = stModel.getSTByName(st_name)
-        startLayer = params.getOrigPath(self.dict["start_layer"])
-        utils.checkFileExists(startLayer,"Dispersion Start Layer ")
-        startRaster = st_item.getStartLayerPath()
-        params.checkInit()
-        extent_layer_path = params.getExtentLayer()
-        qgsTreatments.applyRasterization(startLayer,"geom",startRaster,
-                           resolution=params.getResolution(),
-                           extent_path=extent_layer_path,load_flag=False,to_byte=False,
-                           more_args=['-ot','Byte','-a_nodata','0'])
-        permRaster = params.getOrigPath(self.dict["perm_layer"])
-        cost = self.dict["cost"]
-        tmpPath = st_item.getDispersionTmpPath(cost)
-        #outPath = st_item.getDispersionPath(cost)
-        outPath = params.getOrigPath(self.dict["out_layer"])
-        if os.path.isfile(outPath):
-            qgsUtils.removeRaster(outPath)
-        qgsTreatments.applyRCost(startRaster,permRaster,cost,tmpPath)
-        qgsTreatments.applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
-        #removeRaster(tmpPath)
-        res_layer = qgsUtils.loadRasterLayer(outPath)
-        QgsProject.instance().addMapLayer(res_layer)
-        utils.debug("End runCost")
+    # def applyItem(self,stModel):
+        # utils.debug("Start runCost")
+        # feedbacks.progressFeedback.focusLogTab()
+        # st_name = self.dict["st_name"]
+        # st_item = stModel.getSTByName(st_name)
+        # startLayer = params.getOrigPath(self.dict["start_layer"])
+        # utils.checkFileExists(startLayer,"Dispersion Start Layer ")
+        # startRaster = st_item.getStartLayerPath()
+        # params.checkInit()
+        # extent_layer_path = params.getExtentLayer()
+        # qgsTreatments.applyRasterization(startLayer,"geom",startRaster,
+                           # resolution=params.getResolution(),
+                           # extent_path=extent_layer_path,load_flag=False,to_byte=False,
+                           # more_args=['-ot','Byte','-a_nodata','0'])
+        # permRaster = params.getOrigPath(self.dict["perm_layer"])
+        # cost = self.dict["cost"]
+        # tmpPath = st_item.getDispersionTmpPath(cost)
+        # outPath = params.getOrigPath(self.dict["out_layer"])
+        # if os.path.isfile(outPath):
+            # qgsUtils.removeRaster(outPath)
+        # qgsTreatments.applyRCost(startRaster,permRaster,cost,tmpPath)
+        # qgsTreatments.applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
+        # res_layer = qgsUtils.loadRasterLayer(outPath)
+        # QgsProject.instance().addMapLayer(res_layer)
+        # utils.debug("End runCost")
             
     def checkItem(self):
         pass
@@ -151,19 +149,19 @@ class CostModel(abstract_model.DictModel):
             #progress_section.next_step()
         feedbacks.progressFeedback.endSection()
         
-    def applyItems(self,indexes):
-        utils.debug("[applyItems]")
-        feedbacks.progressFeedback.focusLogTab()
-        if not indexes:
-            utils.internal_error("No indexes in Cost applyItems")
-        progress_section = feedbacks.ProgressFeedback("Cost",len(indexes))
-        progress_section.start_section()
-        params.checkInit()
-        for n in indexes:
-            i = self.items[n]
-            i.applyItem(self.bdModel.stModel)
-            progress_section.next_step()
-        progress_section.end_section()
+    # def applyItems(self,indexes):
+        # utils.debug("[applyItems]")
+        # feedbacks.progressFeedback.focusLogTab()
+        # if not indexes:
+            # utils.internal_error("No indexes in Cost applyItems")
+        # progress_section = feedbacks.ProgressFeedback("Cost",len(indexes))
+        # progress_section.start_section()
+        # params.checkInit()
+        # for n in indexes:
+            # i = self.items[n]
+            # i.applyItem(self.bdModel.stModel)
+            # progress_section.next_step()
+        # progress_section.end_section()
         
         
 class CostConnector(abstract_model.AbstractConnector):
@@ -221,13 +219,13 @@ class CostConnector(abstract_model.AbstractConnector):
         start_layer = self.dlg.costStartLayerCombo.currentLayer()
         if not start_layer:
             utils.user_error("No start layer selected")
-        start_layer_path = params.normalizePath(qgsUtils.pathOfLayer(start_layer))
+        start_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(start_layer))
         perm_layer = self.dlg.costPermRasterCombo.currentLayer()
         if not perm_layer:
             utils.user_error("No permability layer selected")
-        perm_layer_path = params.normalizePath(qgsUtils.pathOfLayer(perm_layer))
+        perm_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(perm_layer))
         cost = str(self.dlg.costMaxVal.value())
-        out_layer_path = params.normalizePath(self.dlg.costOutLayer.filePath())
+        out_layer_path = self.model.bdModel.normalizePath(self.dlg.costOutLayer.filePath())
         cost_item = CostItem(st_name,start_layer_path,perm_layer_path,cost,out_layer_path)
         return cost_item
         

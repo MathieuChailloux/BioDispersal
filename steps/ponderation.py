@@ -42,6 +42,10 @@ ival_re = "\(\[(" + float_re + "),(" + float_re + ")\],(" + float_re + ")\)"
 
 class PondIvalItem(abstract_model.DictItem):
 
+    LB = 'low_bound'
+    UB = 'up_bound'
+    PV = 'pond_value'
+
     def __init__(self,lb=0.0,ub=0.0,pv=1.0):
         dict = {"low_bound": lb,
                 "up_bound" : ub,
@@ -140,6 +144,14 @@ class PondIvalModel(abstract_model.DictModel):
                 s+= " + "
             s += ival.toGdalCalcExpr(i)
         return s
+        
+    def toProcessingMatrix(self):
+        m = []
+        for i in self.items:
+            m.append(i.dict["low_bound"])
+            m.append(i.dict["up_bound"])
+            m.append(i.dict["pond_value"])
+        return m
         
 class PondValueIvalModel(PondIvalModel):
 
@@ -259,88 +271,69 @@ class PonderationItem(abstract_model.DictItem):
     def __init__(self,dict):
         super().__init__(dict)
         
-    def applyItem(self):
-        mode = self.dict["mode"]
-        friction_layer_path = params.getOrigPath(self.dict["friction"])
-        friction_norm_path = params.normalizeRaster(friction_layer_path)
-        pond_layer_path = params.getOrigPath(self.dict["ponderation"])
-        pond_norm_path = params.normalizeRaster(pond_layer_path)
-        out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        if mode == "Direct":
-            self.applyItemDirect(friction_norm_path,pond_norm_path,out_layer_path)
-        elif mode == "Intervalles":
-            self.applyItemValueIvals(friction_norm_path,pond_norm_path,out_layer_path)
-        elif mode == "Tampons":
-            self.applyItemBufferIvals(friction_norm_path,pond_norm_path,out_layer_path)
-        elif mode == "Maximum":
-            self.applyMax(friction_norm_path,pond_norm_path,out_layer_path)
-        elif mode == "Minimum":
-            self.applyMin(friction_norm_path,pond_norm_path,out_layer_path)
-        else:
-            utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
-            
-    def applyPonderation(self,layer1,layer2,out_layer):
-        utils.checkFileExists(layer1)
-        utils.checkFileExists(layer2)
-        layer2_norm = params.normalizeRaster(layer2)
-        qgsTreatments.applyRasterCalcMult(layer1,layer2_norm,out_layer,out_type=2)
-            
-    def applyItemDirect(self,friction_path,pond_path,out_path):
-        # friction_layer_path = params.getOrigPath(self.dict["friction"])
-        # ponderation_layer_path = params.getOrigPath(self.dict["ponderation"])
-        # out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        self.applyPonderation(friction_path,ponderation_path,out_path)
-        
-    def applyItemValueIvals(self,friction_path,pond_path,out_path):
+    # def applyItem(self):
+        # mode = self.dict["mode"]
         # friction_layer_path = params.getOrigPath(self.dict["friction"])
         # friction_norm_path = params.normalizeRaster(friction_layer_path)
         # pond_layer_path = params.getOrigPath(self.dict["ponderation"])
         # pond_norm_path = params.normalizeRaster(pond_layer_path)
         # out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        #tmp_path = utils.mkTmpPath(out_path)
-        ivals = self.dict["intervals"]
-        ival_model = PondValueIvalModel.fromStr(ivals)
-        ival_model.checkModel()
-        gdalc_calc_expr = ival_model.toGdalCalcExpr()
-        qgsTreatments.applyGdalCalcAB_ANull(friction_path,pond_path,out_path,gdalc_calc_expr,load_flag=True)
-        #self.applyPonderation(friction_path,tmp_path,out_path)
+        # if mode == "Direct":
+            # self.applyItemDirect(friction_norm_path,pond_norm_path,out_layer_path)
+        # elif mode == "Intervalles":
+            # self.applyItemValueIvals(friction_norm_path,pond_norm_path,out_layer_path)
+        # elif mode == "Tampons":
+            # self.applyItemBufferIvals(friction_norm_path,pond_norm_path,out_layer_path)
+        # elif mode == "Maximum":
+            # self.applyMax(friction_norm_path,pond_norm_path,out_layer_path)
+        # elif mode == "Minimum":
+            # self.applyMin(friction_norm_path,pond_norm_path,out_layer_path)
+        # else:
+            # utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
+            
+    # def applyPonderation(self,layer1,layer2,out_layer):
+        # utils.checkFileExists(layer1)
+        # utils.checkFileExists(layer2)
+        # layer2_norm = params.normalizeRaster(layer2)
+        # qgsTreatments.applyRasterCalcMult(layer1,layer2_norm,out_layer,out_type=2)
+            
+    # def applyItemDirect(self,friction_path,pond_path,out_path):
+        # self.applyPonderation(friction_path,ponderation_path,out_path)
+        
+    # def applyItemValueIvals(self,friction_path,pond_path,out_path):
+        # ivals = self.dict["intervals"]
+        # ival_model = PondValueIvalModel.fromStr(ivals)
+        # ival_model.checkModel()
+        # gdalc_calc_expr = ival_model.toGdalCalcExpr()
+        # qgsTreatments.applyGdalCalcAB_ANull(friction_path,pond_path,out_path,gdalc_calc_expr,load_flag=True)
         
         
-    def applyItemBufferIvals(self,friction_path,pond_path,out_path):
-        # friction_layer_path = params.getOrigPath(self.dict["friction"])
-        # friction_norm_path = params.normalizeRaster(friction_layer_path)
-        # pond_layer_path = params.getOrigPath(self.dict["ponderation"])
-        # pond_buf_path = utils.mkTmpPath(pond_layer_path,suffix="_buf")
-        #pond_norm_path = params.normalizeRaster(pond_layer_path)
-        #out_layer_path = params.getOrigPath(self.dict["out_layer"])
-        pond_buf_path = utils.mkTmpPath(pond_path,suffix="_buf")
-        tmp_path = utils.mkTmpPath(out_path)
-        ivals = self.dict["intervals"]
-        ival_model = PondBufferIvalModel.fromStr(ivals)
-        ival_model.checkModel()
-        buffer_distances = ival_model.toDistances()
-        qgsTreatments.applyRBuffer(pond_path,buffer_distances,pond_buf_path)
-        gdal_calc_expr = ival_model.toGdalCalcExpr()
-        pond_buf_reclassed = utils.mkTmpPath(pond_buf_path,suffix="_reclassed")
-        qgsTreatments.applyGdalCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
-                      load_flag=False,more_args=['--type=Float32'])
-        pond_buf_norm = utils.mkTmpPath(pond_buf_path,suffix="_norm")
-        crs = params.paramsModel.crs
-        resolution = params.getResolution()
-        extent_path = params.getExtentLayer()
-        qgsTreatments.applyWarpGdal(pond_buf_reclassed,pond_buf_norm,'near',
-                      crs,resolution,extent_path,
-                      load_flag=False,to_byte=False)
-                      #more_args=['-ot','Float32'])
-        #pond_buf_norm_path = params.normalizeRaster(pond_buf_path)
-        #applyGdalCalc(pond_norm_path,pond_buf_norm_path,gdalc_calc_expr)
-        pond_buf_nonull = utils.mkTmpPath(pond_buf_path,suffix="_nonull")
-        qgsTreatments.applyRNull(pond_buf_norm,1,pond_buf_nonull)
-        self.applyPonderation(friction_path,pond_buf_nonull,out_path)
-        qgsUtils.removeRaster(pond_buf_path)
-        qgsUtils.removeRaster(pond_buf_reclassed)
-        qgsUtils.removeRaster(pond_buf_norm)
-        qgsUtils.removeRaster(pond_buf_nonull)
+    # def applyItemBufferIvals(self,friction_path,pond_path,out_path):
+        # pond_buf_path = utils.mkTmpPath(pond_path,suffix="_buf")
+        # tmp_path = utils.mkTmpPath(out_path)
+        # ivals = self.dict["intervals"]
+        # ival_model = PondBufferIvalModel.fromStr(ivals)
+        # ival_model.checkModel()
+        # buffer_distances = ival_model.toDistances()
+        # qgsTreatments.applyRBuffer(pond_path,buffer_distances,pond_buf_path)
+        # gdal_calc_expr = ival_model.toGdalCalcExpr()
+        # pond_buf_reclassed = utils.mkTmpPath(pond_buf_path,suffix="_reclassed")
+        # qgsTreatments.applyGdalCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
+                      # load_flag=False,more_args=['--type=Float32'])
+        # pond_buf_norm = utils.mkTmpPath(pond_buf_path,suffix="_norm")
+        # crs = params.paramsModel.crs
+        # resolution = params.getResolution()
+        # extent_path = params.getExtentLayer()
+        # qgsTreatments.applyWarpGdal(pond_buf_reclassed,pond_buf_norm,'near',
+                      # crs,resolution,extent_path,
+                      # load_flag=False,to_byte=False)
+        # pond_buf_nonull = utils.mkTmpPath(pond_buf_path,suffix="_nonull")
+        # qgsTreatments.applyRNull(pond_buf_norm,1,pond_buf_nonull)
+        # self.applyPonderation(friction_path,pond_buf_nonull,out_path)
+        # qgsUtils.removeRaster(pond_buf_path)
+        # qgsUtils.removeRaster(pond_buf_reclassed)
+        # qgsUtils.removeRaster(pond_buf_norm)
+        # qgsUtils.removeRaster(pond_buf_nonull)
         
     def applyMax(self,layer1,layer2,out_layer):
         # checkFileExists(layer1)
@@ -400,10 +393,19 @@ class PonderationModel(abstract_model.DictModel):
             # qgsTreatments.applyRasterCalcMult(friction_norm_path,pond_norm_path,out_layer_path,
                                               # context=context,feedback=feedback)
         elif mode == self.INTERVALS_MODE:
-            
-            self.applyItemIvalWithContext(item,context,feedback)
+            ival_model = PondValueIvalModel.fromStr(item.dict["intervals"])
+            matrix = ival_model.toProcessingMatrix()
+            weighting_params['INTERVALS'] = matrix
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbyintervals',weighting_params,
+                                             context=context,feedback=feedback)
+            #self.applyItemIvalWithContext(item,context,feedback)
         elif mode == self.BUFFER_MODE:
-            self.applyItemBufferWithContext(item,context,feedback)
+            ival_model = PondBufferIvalModel.fromStr(item.dict["intervals"])
+            matrix = ival_model.toProcessingMatrix()
+            weighting_params['INTERVALS'] = matrix
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbydistance',weighting_params,
+                                             context=context,feedback=feedback)
+            #self.applyItemBufferWithContext(item,context,feedback)
         elif mode == self.MAX_MODE:
             weighting_params['OPERATOR'] = 1
             qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,

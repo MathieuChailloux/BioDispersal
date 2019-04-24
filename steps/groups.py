@@ -25,7 +25,7 @@
 import os
 
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
+from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex
 from qgis.gui import QgsFileWidget
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
@@ -119,17 +119,17 @@ class GroupItem(abstract_model.DictItem):
         # assert(len(reclass_dict) > 0)
         # return reclass_dict
             
-    def applyRasterizationItem(self):
-        utils.debug("[applyRasterizationItem]")
-        field = "Code"
-        group_name = self.dict["name"]
-        in_path = self.getVectorPath()
-        out_path = self.getRasterPath()
-        params.checkInit()
-        resolution = params.getResolution()
-        extent_path = params.getExtentLayer()
-        qgsTreatments.applyRasterizationCmd(in_path,field,out_path,extent_path,resolution,
-                                         load_flag=True,to_byte=True)
+    # def applyRasterizationItem(self):
+        # utils.debug("[applyRasterizationItem]")
+        # field = "Code"
+        # group_name = self.dict["name"]
+        # in_path = self.getVectorPath()
+        # out_path = self.getRasterPath()
+        # params.checkInit()
+        # resolution = params.getResolution()
+        # extent_path = params.getExtentLayer()
+        # qgsTreatments.applyRasterizationCmd(in_path,field,out_path,extent_path,resolution,
+                                         # load_flag=True,to_byte=True)
         
 class GroupModel(abstract_model.DictModel):
 
@@ -165,11 +165,11 @@ class GroupModel(abstract_model.DictModel):
         #self.groupAdded.emit(item)
         
     def removeItems(self,indexes):
-        super().removeItems(indexes)
         if self.bdModel:
             names = [self.items[idx.row()].dict["name"] for idx in indexes]
             for n in names:
-                self.bdModel.removeGroup(g)
+                self.bdModel.removeGroup(n)
+        super().removeItems(indexes)
             # self.groupRemoved.emit(n)
             # classes.classModel.removeFromGroupName(n)
             
@@ -194,6 +194,13 @@ class GroupModel(abstract_model.DictModel):
         basename = name + "_raster_tmp.tif"
         grp_path = self.getGroupPath(name)
         return utils.joinPath(grp_path,basename)
+        
+    def flags(self, index):
+        if index.column() == 0:
+            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        else:
+            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        return flags
             
     # def applyRasterizationItem(self,item,context=None,feedback=None):
         # feedback.pushDebugInfo("[applyRasterizationItem]")
