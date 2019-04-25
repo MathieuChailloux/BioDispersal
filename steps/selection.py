@@ -270,9 +270,9 @@ class SelectionModel(abstract_model.DictModel):
         step_feedback = feedbacks.ProgressMultiStepFeedback(2,feedback)
         step_feedback.setCurrentStep(0)
         if mode == vexpr:
-            self.applySelectionVExpr(item,grp_item,out_path,context,feedback)
+            self.applySelectionVExpr(item,grp_item,out_path,context,step_feedback)
         elif mode == vfield:
-            self.applySelectionVField(item,grp_name,out_path,context,feedback)
+            self.applySelectionVField(item,grp_name,out_path,context,step_feedback)
         elif mode == rclasses:
             out_tmp_path = utils.mkTmpPath(out_path)
             matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
@@ -315,19 +315,19 @@ class SelectionModel(abstract_model.DictModel):
         for grp_name, selections in selectionsByGroup.items():
             grp_item = self.bdModel.groupsModel.getGroupByName(grp_name)
             if not grp_item:
-                feedback.reportError("Group '" + grp_name + "' does not exist sqfs")
+                step_feedback.reportError("Group '" + grp_name + "' does not exist sqfs")
                 utils.user_error("Group '" + grp_name + "' does not exist")
             grp_vector_path = self.bdModel.groupsModel.getVectorPath(grp_name)
             if os.path.isfile(grp_vector_path):
                 qgsUtils.removeVectorLayer(grp_vector_path)
             from_raster = False
             for s in selections:
-                self.applyItemWithContext(s,grp_item,context,feedback)
+                self.applyItemWithContext(s,grp_item,context,step_feedback)
                 #progress_section.next_step()
                 if s.is_raster:
                     from_raster = True
                     if len(selections) > 1:
-                        feedback.reportError("Group '" + grp_name + "' does not exist gsdsa")
+                        step_feedback.reportError("Group '" + grp_name + "' does not exist gsdsa")
                         utils.user_error("Several selections in group '" + grp_name +"'")
             out_path = self.bdModel.groupsModel.getRasterPath(grp_name)
             if not from_raster:
@@ -336,7 +336,7 @@ class SelectionModel(abstract_model.DictModel):
                     qgsUtils.removeRaster(out_path)
                 qgsTreatments.applyRasterization(grp_vector_path,out_path,extent,resolution,
                                                  field="Code",out_type=Qgis.UInt16,all_touch=True,
-                                                 context=context,feedback=feedback)
+                                                 context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
