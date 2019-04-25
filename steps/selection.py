@@ -296,7 +296,7 @@ class SelectionModel(abstract_model.DictModel):
             
         
     def applyItemsWithContext(self,indexes,context,feedback):
-        feedbacks.progressFeedback.beginSection("selection applyItems")
+        #feedbacks.progressFeedback.beginSection("selection applyItems")
         self.bdModel.paramsModel.checkInit()
         selectionsByGroup = {}
         # Group selections
@@ -340,13 +340,12 @@ class SelectionModel(abstract_model.DictModel):
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
-        feedbacks.progressFeedback.endSection()
+        #feedbacks.progressFeedback.endSection()
 
     # Selections are performed group by group.
     # Group vector layers are then rasterized (group_vector.shp to group_raster.tif)
     def applyItems(self,indexes):
         utils.debug("applyItems " + str(indexes))
-        feedbacks.progressFeedback.beginSection("selection")
         self.bdModel.paramsModel.checkInit()
         selectionsByGroup = {}
         #progress_section = feedbacks.ProgressSection("Selection",len(indexes))
@@ -355,6 +354,7 @@ class SelectionModel(abstract_model.DictModel):
         curr_step = 1
         feedback = feedbacks.progressFeedback
         step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
+        feedback.setProgressText("Gathering selections by group")
         for n in indexes:
             i = self.items[n]
             grp = i.dict["group"]
@@ -366,6 +366,7 @@ class SelectionModel(abstract_model.DictModel):
             grp_item = self.bdModel.groupsModel.getGroupByName(g)
             if not grp_item:
                 utils.user_error("Group '" + g + "' does not exist")
+            step_feedback.setProgressText("Selection of group " + str(grp_item.name))
             grp_vector_path = grp_item.getVectorPath()
             if os.path.isfile(grp_vector_path):
                 qgsUtils.removeVectorLayer(grp_vector_path)
@@ -437,7 +438,9 @@ class SelectionConnector(abstract_model.AbstractConnector):
         else:
             indexes = range(0,len(self.model.items))
         utils.debug(str(indexes))
+        self.dlg.feedback.beginSection("Selection")
         self.model.applyItemsWithContext(indexes,self.dlg.context,self.dlg.feedback)
+        self.dlg.feedback.endSection()
         
     # def switchOnlySelection(self):
         # new_val = not self.onlySelection
@@ -574,15 +577,20 @@ class SelectionConnector(abstract_model.AbstractConnector):
     def setInLayer(self,path):
         utils.debug("setInLayer " + path)
         #loaded_layer = loadLayer(path,loadProject=True)
-        if self.dlg.selectionLayerFormatVector.isChecked():
-            loaded_layer = qgsUtils.loadVectorLayer(path,loadProject=True)
-            self.dlg.selectionExpr.setLayer(loaded_layer)
-            self.dlg.selectionField.setLayer(loaded_layer)
-            utils.debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
-            utils.debug(str(self.dlg.selectionField.layer().fields().names()))
-        else:
-            loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
-        self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
+        if path:
+            try:
+                if self.dlg.selectionLayerFormatVector.isChecked():
+                    loaded_layer = qgsUtils.loadVectorLayer(path,loadProject=True)
+                    self.dlg.selectionExpr.setLayer(loaded_layer)
+                    self.dlg.selectionField.setLayer(loaded_layer)
+                    utils.debug("selectionField layer : " + str(self.dlg.selectionField.layer().name()))
+                    utils.debug(str(self.dlg.selectionField.layer().fields().names()))
+                else:
+                    loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
+                self.dlg.selectionInLayerCombo.setLayer(loaded_layer)
+            except utils.CustomException as e:
+                self.dlg.selectionInLayer.setFilePath("")
+                raise e
                     
     # Vector / raster modes
     

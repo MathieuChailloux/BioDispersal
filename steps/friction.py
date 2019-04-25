@@ -194,6 +194,10 @@ class FrictionModel(abstract_model.DictModel):
                 if st not in self.fields:
                     utils.internal_error("Subnetwork '" + str(st) + "' not found in friction model")
                 new_val = item.dict[st]
+                if new_val is None:
+                    utils.user_error("No friction assigned to subnetwork " + str(st)
+                                     + " for class " + str(item.dict["class"])
+                                     + ", please type an integer value or 'None' string")
                 if new_val == qgsTreatments.nodata_val:
                     assert(False)
                     utils.internal_error("Reclassify to nodata in " + str(item))
@@ -204,6 +208,17 @@ class FrictionModel(abstract_model.DictModel):
                     new_val = qgsTreatments.nodata_val
                 matrixes[st] += [ item.dict["code"], item.dict["code"], new_val ]
         return matrixes
+        
+    def getCodes(self):
+        codes = set([int(item.dict["code"]) for item in self.items])
+        return codes
+        
+    def checkInVals(self,in_path):
+        in_vals = qgsUtils.getRasterValsFromPath(in_path)
+        codes = self.getCodes()
+        diff = in_vals.difference(codes)
+        if len(diff) > 0:
+            utils.user_error("Some values of " + str(in_path) + " are not associated to a friction value " + str(diff))
                 
     def applyReclassProcessing(self):
         utils.debug("applyReclass")
@@ -265,6 +280,7 @@ class FrictionModel(abstract_model.DictModel):
             in_path = self.bdModel.stModel.getMergedPath(st_name)
             out_path = self.bdModel.stModel.getFrictionPath(st_name)
             qgsUtils.removeRaster(out_path)
+            self.checkInVals(in_path)
             qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,boundaries_mode=2,
                                                  context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
