@@ -24,6 +24,7 @@
 
 import re
 
+from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsMapLayerProxyModel
 from qgis.gui import QgsFileWidget
 
@@ -378,14 +379,15 @@ class PonderationModel(abstract_model.DictModel):
     def applyItemWithContext(self,item,context,feedback):
         mode = int(item.dict["mode"])
         friction_layer_path = self.bdModel.getOrigPath(item.dict["friction"])
-        friction_norm_path = self.bdModel.normalizeRaster(friction_layer_path)
+        #friction_norm_path = self.bdModel.normalizeRaster(friction_layer_path)
         pond_layer_path = self.bdModel.getOrigPath(item.dict["ponderation"])
-        pond_norm_path = pond_layer_path
+        #pond_norm_path = pond_layer_path
         # pond_norm_path = self.bdModel.normalizeRaster(pond_layer_path)
         out_layer_path = self.bdModel.getOrigPath(item.dict["out_layer"])
-        weighting_params = { 'INPUT_LAYER' : layer1,
-                             'WEIGHT_LAYER' : layer2,
-                             'OUTPUT' : out_layer }
+        weighting_params = { 'INPUT_LAYER' : friction_layer_path,
+                             'WEIGHT_LAYER' : pond_layer_path,
+                             'RESAMPLING' : None,
+                             'OUTPUT' : out_layer_path }
         if mode == self.MULT_MODE:
             weighting_params['OPERATOR'] = 2
             qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,
@@ -420,6 +422,7 @@ class PonderationModel(abstract_model.DictModel):
                                              # context=context,feedback=feedback)
         else:
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
+        qgsUtils.loadRasterLayer(out_layer_path,loadProject=True)
             
     def applyItemIvalWithContext(self,item,context,feedback):
         ivals = item.dict["intervals"]
@@ -477,6 +480,9 @@ class PonderationConnector(abstract_model.AbstractConnector):
         super().__init__(ponderationModel,self.dlg.ponderationView,
                         self.dlg.pondAdd,self.dlg.pondRemove,
                         self.dlg.pondRun,self.dlg.pondRunOnlySelection)
+                        
+    def tr(self, message):
+        return QCoreApplication.translate('BioDispersal', message)
         
     def initGui(self):
         self.dlg.pondFrictLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
@@ -484,17 +490,19 @@ class PonderationConnector(abstract_model.AbstractConnector):
         self.dlg.pondOutLayer.setFilter("*.tif")
         self.dlg.pondLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.pondLayer.setStorageMode(QgsFileWidget.GetFile)
-        self.dlg.pondModeCombo.addItem("Direct")
-        self.dlg.pondModeCombo.addItem("Intervalles")
-        self.dlg.pondModeCombo.addItem("Tampons")
-        self.dlg.pondModeCombo.addItem("Maximum")
-        self.dlg.pondModeCombo.addItem("Minimum")
-        self.dlg.pondModeCombo.setCurrentText("Direct")
+        self.dlg.pondModeCombo.addItem(self.tr("Minimum"))
+        self.dlg.pondModeCombo.addItem(self.tr("Maximum"))
+        self.dlg.pondModeCombo.addItem(self.tr("Multiplication"))
+        self.dlg.pondModeCombo.addItem(self.tr("Intervalles"))
+        self.dlg.pondModeCombo.addItem(self.tr("Tampons"))
+        self.dlg.pondModeCombo.setCurrentIndex(0)
         self.activateDirectMode()
         
     def connectComponents(self):
         super().connectComponents()
         #self.dlg.pondRun.clicked.connect(self.model.applyItems)
+        self.dlg.pondFrictLayer.fileChanged.connect(self.setFrictionLayer)
+        self.dlg.pondLayer.fileChanged.connect(self.setPondLayer)
         self.valueConnector = PondValueIvalConnector(self.dlg)
         self.valueConnector.connectComponents()
         self.bufferConnector = PondBufferIvalConnector(self.dlg)
@@ -503,11 +511,13 @@ class PonderationConnector(abstract_model.AbstractConnector):
     
     def mkItem(self):
         mode = self.dlg.pondModeCombo.currentIndex()
-        if not mode:
-            utils.user_error("No ponderation mode selected")
-        friction_layer_path = params.getPathFromLayerCombo(self.dlg.pondFrictLayerCombo)
-        pond_layer_path = params.getPathFromLayerCombo(self.dlg.pondLayerCombo)
-        out_path = params.normalizePath(self.dlg.pondOutLayer.filePath())
+        # if mode is None:
+            # utils.user_error("No ponderation mode selected")
+        friction_layer = self.dlg.pondFrictLayerCombo.currentLayer()
+        friction_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(friction_layer))
+        pond_layer = self.dlg.pondLayerCombo.currentLayer()
+        pond_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(pond_layer))
+        out_path = self.model.bdModel.normalizePath(self.dlg.pondOutLayer.filePath())
         if not out_path:
             utils.user_error("No output path selected for ponderation")
         if mode in [PonderationModel.MIN_MODE,PonderationModel.MAX_MODE,PonderationModel.MULT_MODE]:
@@ -526,6 +536,14 @@ class PonderationConnector(abstract_model.AbstractConnector):
                 }
         item = PonderationItem(dict)
         return item
+        
+    def setFrictionLayer(self,path):
+        loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
+        self.dlg.pondFrictLayerCombo.setLayer(loaded_layer)
+        
+    def setPondLayer(self,path):
+        loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
+        self.dlg.pondLayerCombo.setLayer(loaded_layer)
     
     def switchPondMode(self,mode):
         if mode in [PonderationModel.MIN_MODE,PonderationModel.MAX_MODE,PonderationModel.MULT_MODE]:
