@@ -142,7 +142,7 @@ class FrictionModel(abstract_model.DictModel):
         classes_to_delete = []
         for item in self.items:
             cls_name = item.dict["class"]
-            cls_item = self.bdModel.getClassByName(cls_name)
+            cls_item = self.bdModel.classModel.getClassByName(cls_name)
             if not cls_item:
                 classes_to_delete.append(cls_name)
                 utils.debug("Removing class " + str(cls_name))
@@ -303,14 +303,45 @@ class FrictionModel(abstract_model.DictModel):
                 writer.writerow(i.dict)
         utils.info("Friction saved to file '" + str(fname) + "'")
                 
-    def fromCSV(cls,fname):
+    def fromCSVItem(self,item):
+        cls_name = item.dict["class"]
+        friction_item = self.getRowByClass(cls_name)
+        cls_item = self.bdModel.classModel.getClassByName(cls_name)
+        item_descr = item.dict["class_descr"]
+        if cls_item:
+            if item_descr:
+                cls_item.dict["descr"] = item_descr
+            if friction_item:
+                friction_item.dict["class_descr"] = item_descr
+                for st in self.bdModel.stModel.getSTList():
+                    if st in item.dict:
+                        friction_item.dict[st] = item.dict[st]
+                    else:
+                        utils.warn("No entry for class '" + cls_name + "' and subnetwork '" + st + "'")
+            else:
+                self.addItem(item)
+        else:
+            utils.warn("Ignoring imported csv row : class '" + str(cls_name)
+                       + "' does not exist.")
+            
+    def fromCSVUpdate(self,fname):
+        with open(fname,"r") as f:
+            reader = csv.DictReader(f,fieldnames=self.fields,delimiter=';')
+            first_line = next(reader)
+            for row in reader:
+                item = FrictionRowItem(row)
+                self.fromCSVItem(item)
+        self.layoutChanged.emit()
+        
+                
+    def fromCSV(self,fname):
         self.items = []
         # model = cls()
         # model.classes = classes.classModel.items
         with open(fname,"r") as f:
             reader = csv.DictReader(f,fieldnames=self.fields,delimiter=';')
             header = reader.fieldnames
-            model.fields = header
+            self.fields = header
             for st in header[3:]:
                 st_item = self.bdModel.stModel.getSTByName(st)
                 if not st_item:
@@ -320,7 +351,7 @@ class FrictionModel(abstract_model.DictModel):
                 item = FrictionRowItem(row)
                 self.addItem(item)
         self.layoutChanged.emit()
-    
+        
         
     def fromXMLRoot(self,root):
         #model = cls()
@@ -381,7 +412,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         
     def loadCSV(self,fname):
         utils.checkFileExists(fname)
-        self.model.loadCSV(fname)
+        self.model.fromCSVUpdate(fname)
         utils.info("Friction loaded from '" + str(fname))
         
     def loadCSVAction(self):
