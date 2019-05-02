@@ -30,7 +30,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks, styles
 from . import params, subnetworks, classes
 
 # Friction connector is global so that it can be relinked if model is reloaded.
@@ -283,7 +283,8 @@ class FrictionModel(abstract_model.DictModel):
             self.checkInVals(in_path)
             qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,boundaries_mode=2,
                                                  context=context,feedback=step_feedback)
-            qgsUtils.loadRasterLayer(out_path,loadProject=True)
+            loaded_layer = qgsUtils.loadRasterLayer(out_path,loadProject=True)
+            styles.setRendererPalettedGnYlRd(loaded_layer)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
         feedbacks.progressFeedback.endSection()

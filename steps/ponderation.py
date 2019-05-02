@@ -28,12 +28,12 @@ from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsMapLayerProxyModel
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks, styles
 from . import params
 
 
 
-ponderation_fields = ["mode","intervals","friction","ponderation","out_layer"]
+ponderation_fields = ["mode","friction","ponderation","intervals","out_layer"]
 
 pond_ival_fields = ["low_bound","up_bound","pond_value"]
 pond_buffer_fields = [""]
@@ -422,7 +422,9 @@ class PonderationModel(abstract_model.DictModel):
                                              # context=context,feedback=feedback)
         else:
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
-        qgsUtils.loadRasterLayer(out_layer_path,loadProject=True)
+        loaded_layer = qgsUtils.loadRasterLayer(out_layer_path,loadProject=True)
+        styles.setRendererPalettedGnYlRd(loaded_layer)
+        
             
     def applyItemIvalWithContext(self,item,context,feedback):
         ivals = item.dict["intervals"]
@@ -529,9 +531,9 @@ class PonderationConnector(abstract_model.AbstractConnector):
         else:
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
         dict = { "mode" : mode,
+                 "intervals" : ivals,
                  "friction" : friction_layer_path,
                  "ponderation" : pond_layer_path,
-                 "intervals" : ivals,
                  "out_layer" : out_path
                 }
         item = PonderationItem(dict)
