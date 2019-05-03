@@ -26,7 +26,7 @@ from PyQt5.QtGui import QIcon
 from qgis.core import QgsMapLayerProxyModel, Qgis
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import (utils, qgsUtils, abstract_model, qgsTreatments, feedbacks)
+from ..qgis_lib_mc import (utils, qgsUtils, abstract_model, qgsTreatments, feedbacks, styles)
 from . import params, subnetworks
 
 import time
@@ -129,7 +129,9 @@ class CostModel(abstract_model.DictModel):
         qgsTreatments.applyRCost(start_raster_path,perm_raster_path,cost,tmp_path,context=context,feedback=feedback)
         qgsTreatments.applyRasterCalcLE(tmp_path,out_path,cost,context=context,feedback=feedback)
         #removeRaster(tmpPath)
-        qgsUtils.loadRasterLayer(out_path,loadProject=True)
+        loaded_layer = qgsUtils.loadRasterLayer(out_path,loadProject=True)
+        styles.setRandomColorRasterRenderer(loaded_layer)
+        #styles.setRendererPalettedGnYlRd(loaded_layer)
         feedback.pushDebugInfo("End runCost")
         
     def applyItemsWithContext(self,indexes,context,feedback):

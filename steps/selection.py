@@ -276,7 +276,9 @@ class SelectionModel(abstract_model.DictModel):
         elif mode == rclasses:
             out_tmp_path = utils.mkTmpPath(out_path)
             matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
-            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,boundaries_mode=2,nodata_missing=True,
+            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,
+                                                 out_type = Qgis.Int16,
+                                                 boundaries_mode=2,nodata_missing=True,
                                                  context=context,feedback=step_feedback)
             to_warp = out_tmp_path
         elif mode == rresample:
@@ -291,7 +293,9 @@ class SelectionModel(abstract_model.DictModel):
             #in_crs = qgsUtils.getLayerCrsStr(in_layer)
             qgsTreatments.applyWarpReproject(to_warp,out_path,resampling_mode,crs.authid(),
                                              extent=extent,extent_crs=crs,resolution=resolution,
+                                             out_type=2,
                                              overwrite=True,context=context,feedback=step_feedback)
+            qgsUtils.removeRaster(to_warp)
         step_feedback.setCurrentStep(2)
             
         
@@ -315,8 +319,8 @@ class SelectionModel(abstract_model.DictModel):
         for grp_name, selections in selectionsByGroup.items():
             grp_item = self.bdModel.groupsModel.getGroupByName(grp_name)
             if not grp_item:
-                step_feedback.reportError("Group '" + grp_name + "' does not exist sqfs")
-                utils.user_error("Group '" + grp_name + "' does not exist")
+                step_feedback.reportError("Group '" + grp_name + "' does not exist.")
+                utils.user_error("Group '" + grp_name + "' does not exist.")
             grp_vector_path = self.bdModel.groupsModel.getVectorPath(grp_name)
             if os.path.isfile(grp_vector_path):
                 qgsUtils.removeVectorLayer(grp_vector_path)
@@ -327,7 +331,7 @@ class SelectionModel(abstract_model.DictModel):
                 if s.is_raster:
                     from_raster = True
                     if len(selections) > 1:
-                        step_feedback.reportError("Group '" + grp_name + "' does not exist gsdsa")
+                        step_feedback.reportError("Group '" + grp_name + "' does not exist.")
                         utils.user_error("Several selections in group '" + grp_name +"'")
             out_path = self.bdModel.groupsModel.getRasterPath(grp_name)
             if not from_raster:
@@ -335,7 +339,7 @@ class SelectionModel(abstract_model.DictModel):
                 if os.path.isfile(out_path):
                     qgsUtils.removeRaster(out_path)
                 qgsTreatments.applyRasterization(grp_vector_path,out_path,extent,resolution,
-                                                 field="Code",out_type=Qgis.UInt16,all_touch=True,
+                                                 field="Code",out_type=1,all_touch=True,
                                                  context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
