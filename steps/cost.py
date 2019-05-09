@@ -54,32 +54,6 @@ class CostItem(abstract_model.DictItem):
         same_perm = self.dict["perm_layer"] == other.dict["perm_layer"]
         same_cost = self.dict["cost"] == other.dict["cost"]
         return (same_start and same_perm and same_cost)
-        
-    # def applyItem(self,stModel):
-        # utils.debug("Start runCost")
-        # feedbacks.progressFeedback.focusLogTab()
-        # st_name = self.dict["st_name"]
-        # st_item = stModel.getSTByName(st_name)
-        # startLayer = params.getOrigPath(self.dict["start_layer"])
-        # utils.checkFileExists(startLayer,"Dispersion Start Layer ")
-        # startRaster = st_item.getStartLayerPath()
-        # params.checkInit()
-        # extent_layer_path = params.getExtentLayer()
-        # qgsTreatments.applyRasterization(startLayer,"geom",startRaster,
-                           # resolution=params.getResolution(),
-                           # extent_path=extent_layer_path,load_flag=False,to_byte=False,
-                           # more_args=['-ot','Byte','-a_nodata','0'])
-        # permRaster = params.getOrigPath(self.dict["perm_layer"])
-        # cost = self.dict["cost"]
-        # tmpPath = st_item.getDispersionTmpPath(cost)
-        # outPath = params.getOrigPath(self.dict["out_layer"])
-        # if os.path.isfile(outPath):
-            # qgsUtils.removeRaster(outPath)
-        # qgsTreatments.applyRCost(startRaster,permRaster,cost,tmpPath)
-        # qgsTreatments.applyFilterGdalFromMaxVal(tmpPath,outPath,cost)
-        # res_layer = qgsUtils.loadRasterLayer(outPath)
-        # QgsProject.instance().addMapLayer(res_layer)
-        # utils.debug("End runCost")
             
     def checkItem(self):
         pass
@@ -135,7 +109,7 @@ class CostModel(abstract_model.DictModel):
         feedback.pushDebugInfo("End runCost")
         
     def applyItemsWithContext(self,indexes,context,feedback):
-        feedbacks.progressFeedback.beginSection("Computing dispersion")
+        feedbacks.beginSection("Computing dispersion")
         self.bdModel.paramsModel.checkInit()
         if not indexes:
             utils.internal_error("No indexes in Cost applyItems")
@@ -149,22 +123,7 @@ class CostModel(abstract_model.DictModel):
             step_feedback.setCurrentStep(curr_step)        
             #i.applyItem(self.bdModel.stModel)
             #progress_section.next_step()
-        feedbacks.progressFeedback.endSection()
-        
-    # def applyItems(self,indexes):
-        # utils.debug("[applyItems]")
-        # feedbacks.progressFeedback.focusLogTab()
-        # if not indexes:
-            # utils.internal_error("No indexes in Cost applyItems")
-        # progress_section = feedbacks.ProgressFeedback("Cost",len(indexes))
-        # progress_section.start_section()
-        # params.checkInit()
-        # for n in indexes:
-            # i = self.items[n]
-            # i.applyItem(self.bdModel.stModel)
-            # progress_section.next_step()
-        # progress_section.end_section()
-        
+        feedbacks.endSection()
         
 class CostConnector(abstract_model.AbstractConnector):
 

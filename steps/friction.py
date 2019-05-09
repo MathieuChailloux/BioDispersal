@@ -254,13 +254,14 @@ class FrictionModel(abstract_model.DictModel):
         
     # Computes friction layer for each item.
     def applyItemsWithContext(self,indexes,context,feedback):
-        feedbacks.progressFeedback.beginSection("Friction")
+        feedbacks.beginSection("Friction")
         self.bdModel.paramsModel.checkInit()
         reclass_matrixes = self.getReclassifyMatrixes()
         nb_items = len(reclass_matrixes)
         step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
         curr_step = 0
         for st_name, matrix in reclass_matrixes.items():
+            feedback.setProgressText("computing subnetwork '" + st_name + "'")
             feedback.pushInfo("Friction computation for subnetwork " + str(st_name))
             in_path = self.bdModel.stModel.getMergedPath(st_name)
             out_path = self.bdModel.stModel.getFrictionPath(st_name)
@@ -272,7 +273,7 @@ class FrictionModel(abstract_model.DictModel):
             styles.setRendererPalettedGnYlRd(loaded_layer)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
-        feedbacks.progressFeedback.endSection()
+        feedbacks.endSection()
         
     # Saves friction coefficients to CSV file 'fname'
     def saveCSV(self,fname):

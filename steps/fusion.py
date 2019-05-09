@@ -34,28 +34,9 @@ from PyQt5.QtGui import QIcon
 from ..qgis_lib_mc import utils, qgsUtils, xmlUtils, qgsTreatments, abstract_model, feedbacks, config_parsing
 from . import params, subnetworks, groups
 
-#fusionModel = None
 fusion_fields = ["name","descr"]
         
-# @pyqtSlot()
-# def catchSTRemoved(name):
-    # fusionModel.removeSTFromName(name)
-        
-# @pyqtSlot()
-# def catchSTAdded(item):
-    # fusionModel.setCurrentST(item.dict["name"])
-    # utils.debug("ST addItem4, items = " + str(self.bdModel.stModel))
-        
-# @pyqtSlot()
-# def catchGroupRemoved(name):
-    # global fusionModel
-    # for st, grp_model in fusionModel.st_groups.items():
-        # grp_model.removeGroupFromName(name)
-        
-# @pyqtSlot()
-# def catchGroupAdded(item):
-    # fusionModel.addGroup(item.dict["name"])
-        
+# FusionModel works as a delegate with underlying GroupsModel.
 class FusionModel(abstract_model.AbstractGroupModel):
     
     def __init__(self,bdModel):
@@ -82,6 +63,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
     def getCurrModel(self):
         return self.st_groups[self.st_current_st]
         
+    # Switch current group model to match subnetwork 'st'
     def setCurrentST(self,st):
         utils.debug("setCurrentST " + str(st))
         utils.debug(str(self))
@@ -94,6 +76,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         utils.debug(str(self))
         utils.debug("ST addItem, items = " + str(self))
         
+    # Reloads all existing groups for current subnetwork
     def loadAllGroups(self):
         utils.debug("[loadAllGroups]")
         if self.current_st:
@@ -107,8 +90,6 @@ class FusionModel(abstract_model.AbstractGroupModel):
                     utils.debug("Adding group " + str(grp_item.dict["name"])
                                 + " to " + str(self.current_st))
                     self.current_model.addItem(grp_item)
-            #self.st_groups[self.current_st] = groups.copyGroupModel(groups.groupsModel)
-            #self.current_model = self.st_groups[self.current_st]
         else:
             utils.user_error("No sous-trame selected")
         
@@ -122,25 +103,15 @@ class FusionModel(abstract_model.AbstractGroupModel):
         return xmlStr
     
     def fromXMLRoot(self,root):
-        #checkFields(fusion_fields,dict.keys())
         utils.debug("[fromXMLRoot] FusionModel")
-        # utils.debug("config_models " + str(config_parsing.config_models))
-        eraseFlag = xmlUtils.getNbChildren(root) == 0
-        if eraseFlag:
-            utils.warn("Nothing to do for FusionModel")
-            pass#self.items = []
         for st_root in root:
             st_name = st_root.attrib["name"]
             utils.debug("parsing '" + str(st_name) + "' sous trame")
-            # utils.debug("config_models " + str(config_parsing.config_models))
             self.current_st = st_name
             nb_groups = xmlUtils.getNbChildren(st_root)
             if nb_groups == 0:
                 utils.warn("No groups for st " + str(st_name))
             for grp in st_root:
-                # utils.debug("coucou")
-                # utils.debug("config_models " + str(config_parsing.config_models))
-                #grp_model = config_parsing.parseModel(grp,new_model=True)
                 grp_model = groups.GroupModel(None)
                 for grp_item in grp:
                     item = grp_model.mkItemFromDict(grp_item.attrib)
@@ -154,18 +125,15 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 grp_model.layoutChanged.emit()
         self.layoutChanged.emit()
         
-    def testFunc(self,root):
-        utils.debug("[testFunc]")
-        utils.debug("config_models " + str(config_parsing.config_models))
-        
     def applyItemsWithContext(self,indexes,context,feedback):
-        feedbacks.progressFeedback.beginSection("Groups merge")
+        feedbacks.beginSection("Groups merge")
         self.bdModel.paramsModel.checkInit()
         nb_items = len(self.st_groups)
         feedback.pushDebugInfo("nb_items = " + str(nb_items))
         step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
         curr_step = 0
         for st in self.st_groups.keys():
+            step_feedback.setProgressText("merging subnetwork " + st)
             st_item = self.bdModel.stModel.getSTByName(st)
             groups = self.st_groups[st]
             if not groups.items:
@@ -184,63 +152,21 @@ class FusionModel(abstract_model.AbstractGroupModel):
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
-        feedbacks.progressFeedback.endSection()
-        
-        
-    # def applyItems(self,indexes):
-        # utils.info("Applying merge")
-        # feedbacks.progressfeedback.clear()
-        # params.checkInit()
-        # res = str(params.getResolution())
-        # extent_coords = params.getExtentCoords()
-        # progress_section = feedbacks.ProgressFeedback("Fusion",len(self.st_groups))
-        # progress_section.start_section()
-        # for st in self.st_groups.keys():
-            # st_item = self.bdModel.stModel.getSTByName(st)
-            # groups = self.st_groups[st]
-            # if not groups.items:
-                # utils.warn("No layer for group for subnetwork '" + str(st) + "', ignoring.")
-                # continue
-            # else:
-                # utils.info("groups = " + str(groups.items))
-            # utils.debug("apply fusion to " + st)
-            # utils.debug(str([g.dict["name"] for g in groups.items]))
-            # grp_args = [g.getRasterPath() for g in reversed(groups.items)]
-            # utils.debug(str(grp_args))
-            # out_path = st_item.getMergedPath()
-            # if os.path.isfile(out_path):
-                # qgsUtils.removeRaster(out_path)
-            # qgsTreatments.applyGdalMerge(grp_args,out_path,load_flag=True)
-            # progress_section.next_step()
-        # progress_section.end_section()
-        # utils.info("Merge succesfully applied")
+        feedbacks.endSection()
             
-    # def updateItems(self,i1,i2):
-        # k = self.current_st
-        # self.current_model.items[i1], self.current_model.items[i2] = self.current_model.items[i2], self.current_model.items[i1]
-        # self.current_model.layoutChanged.emit()
-        
-    # def upgradeElem(self,idx):
-        # row = idx.row()
-        # utils.debug("upgradeElem " + str(row))
-        # if row > 0:
-            # self.swapItems(row -1, row)
-            
-            
+    # Removes subnetwork 'name' from model
     def removeSTFromName(self,name):
         st_groups = self.st_groups.pop(name,None)
         if not st_groups:
-            utils.warn("Deleting sous-trame '" + name + "' in fusion model but could not find it")
+            utils.warn("Deleting subnetwork '" + name + "' in merge model but could not find it")
         
     def downgradeElem(self,row):
-        #row = idx.row()
         utils.debug("downgradeElem " + str(row))
         if row < len(self.current_model.items) - 1:
             self.swapItems(row, row + 1)
             
     def swapItems(self,i1,i2):
         self.current_model.swapItems(i1,i2)
-        #self.current_model.layoutChanged.emit()
         self.layoutChanged.emit()
         
     def removeItems(self,index):
@@ -254,7 +180,6 @@ class FusionModel(abstract_model.AbstractGroupModel):
         self.current_model.layoutChanged.emit()
         
     def data(self,index,role):
-        #utils.debug("[dataFusionModel]")
         return self.current_model.data(index,role)
         
     def rowCount(self,parent=QModelIndex()):
@@ -285,15 +210,9 @@ class FusionConnector(abstract_model.AbstractConnector):
                          
     def connectComponents(self):
         super().connectComponents()
-        # self.bdModel.stModel.stRemoved.connect(catchSTRemoved)
-        # self.bdModel.stModel.stAdded.connect(catchSTAdded)
-        # groups.groupsModel.groupRemoved.connect(catchGroupRemoved)
         self.dlg.fusionST.setModel(self.model.bdModel.stModel)
-        #self.dlg.fusionGroup.setModel(groups.groupsModel)
         self.dlg.fusionST.currentTextChanged.connect(self.changeST)
-        #self.dlg.fusionLoadGroups.clicked.connect(self.model.loadAllGroups)
         self.dlg.fusionLoadGroups.clicked.connect(self.loadAllGroups)
-        #self.dlg.fusionRun.clicked.connect(self.model.applyItems)
         self.dlg.fusionUp.clicked.connect(self.upgradeItem)
         self.dlg.fusionDown.clicked.connect(self.downgradeItem)
         
@@ -301,8 +220,6 @@ class FusionConnector(abstract_model.AbstractConnector):
         utils.debug("connector loadAllGroups")
         self.model.loadAllGroups()
         self.changeST(self.model.current_st)
-        #self.model.current_model.layoutChanged.emit()
-        #self.dlg.fusionView.setModel(self.model.current_model)
         
     def changeST(self,st):
         self.model.setCurrentST(st)
