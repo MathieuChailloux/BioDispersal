@@ -796,6 +796,9 @@
                        <property name="text">
                         <string>Vecteur</string>
                        </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
                       </widget>
                      </item>
                      <item row="1" column="2" colspan="2">
@@ -939,7 +942,7 @@
                         <number>1</number>
                        </property>
                        <property name="currentIndex">
-                        <number>1</number>
+                        <number>0</number>
                        </property>
                        <widget class="QWidget" name="stackSelectionModeVect">
                         <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -973,6 +976,9 @@
                            <property name="text">
                             <string>Par champ</string>
                            </property>
+                           <property name="checked">
+                            <bool>false</bool>
+                           </property>
                           </widget>
                          </item>
                          <item>
@@ -985,6 +991,9 @@
                            </property>
                            <property name="text">
                             <string>Par expression</string>
+                           </property>
+                           <property name="checked">
+                            <bool>true</bool>
                            </property>
                           </widget>
                          </item>
@@ -1067,7 +1076,7 @@
                         <number>1</number>
                        </property>
                        <property name="currentIndex">
-                        <number>0</number>
+                        <number>1</number>
                        </property>
                        <widget class="QWidget" name="stackSelectionExpr">
                         <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1108,6 +1117,9 @@
                          </item>
                          <item>
                           <widget class="QgsFieldExpressionWidget" name="selectionExpr">
+                           <property name="enabled">
+                            <bool>true</bool>
+                           </property>
                            <property name="minimumSize">
                             <size>
                              <width>100</width>
@@ -1180,6 +1192,9 @@
                          </item>
                          <item>
                           <widget class="QComboBox" name="selectionResampleCombo">
+                           <property name="enabled">
+                            <bool>false</bool>
+                           </property>
                            <property name="minimumSize">
                             <size>
                              <width>60</width>

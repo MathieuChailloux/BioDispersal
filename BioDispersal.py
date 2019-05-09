@@ -202,7 +202,6 @@ class BioDispersal:
             utils.info("unload")
             self.dlg.connectors["Group"].disconnectComponents()
             self.dlg.connectors["ST"].disconnectComponents()
-            self.dlg.initializeGlobals()
         del self.toolbar
 
     def connectComponents(self):
@@ -211,17 +210,12 @@ class BioDispersal:
     def run(self):
         utils.debug("run")
         """Run method that performs all the real work"""
-        #self.dlg.runButton.clicked.connect(self.dlg.runCost)
-        #self.dlg.connectComponents()
         # show the dialog
         self.dlg = BioDispersalDialog()
-        #self.dlg = TestDialog()
-        #self.dlg = BioDispersalDialog()
         self.dlg.initTabs()
         self.dlg.initLog()
         self.dlg.initGui()
         self.connectComponents()
-        #self.dlg.initLog()
         self.dlg.show()
         print(str(self.dlg))
         # Run the dialog event loop

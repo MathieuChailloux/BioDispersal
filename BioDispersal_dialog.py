@@ -79,9 +79,6 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         self.context = QgsProcessingContext()
         self.context.setFeedback(self.feedback)
         self.bdModel = BioDispersalModel(self.context,self.feedback)
-        # utils.debug("paramsMOdel 1 = " + str(params.paramsModel))
-        # params.paramsModel = self.bdModel.paramsModel
-        # utils.debug("paramsMOdel 2 = " + str(params.paramsModel))
         #################
         self.paramsConnector = params.ParamsConnector(self,self.bdModel.paramsModel)
         self.stConnector = subnetworks.STConnector(self,self.bdModel.stModel)
@@ -139,7 +136,8 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
             msg = '\n'.join(sections)
             utils.debug(str(msg))
             final_msg = tbinfo + "\n" + msg
-            utils.error_msg(final_msg,prefix="Unexpected error")
+            utils.debug("traceback : " + str(tbinfo))
+            utils.error_msg(errmsg,prefix="Unexpected error")
         self.mTabWidget.setCurrentWidget(self.logTab)
         feedbacks.progressFeedback.clear()
         
@@ -156,20 +154,12 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         self.langFr.clicked.connect(self.switchLangFr)
         self.aboutButton.clicked.connect(self.openHelpDialog)
         sys.excepthook = self.bioDispHook
-        
-    # Initialize or re-initialize global variables.
-    def initializeGlobals(self):
-        pass
-        #groups.groupsModel = None
-        #classes.classModel = None
-        #classes.class_fields = ["name","code","descr"]
-        #subnetworks.stModel = None
-        #fusion.fusionModel = None
-        #friction.frictionModel = None
-        #friction.frictionFields = ["class_descr","class","code"]
-        
+                
     def initLog(self):
         utils.print_func = self.txtLog.append
+        
+    def tr(self, message):
+        return QCoreApplication.translate('BioDispersal', message)
    
     def switchLang(self,lang):
         utils.debug("switchLang " + str(lang))
@@ -220,12 +210,6 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
     # Return XML string describing project
     def toXML(self):
         return self.bdModel.toXML()
-        # xmlStr = "<ModelConfig>\n"
-        # for k, m in self.parsers.items():
-            # xmlStr += m.toXML() + "\n"
-        # xmlStr += "</ModelConfig>\n"
-        # utils.debug("Final xml : \n" + xmlStr)
-        # return xmlStr
 
     # Save project to 'fname'
     def saveModelAs(self,fname):
