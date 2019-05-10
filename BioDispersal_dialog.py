@@ -164,7 +164,7 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
     def switchLang(self,lang):
         utils.debug("switchLang " + str(lang))
         plugin_dir = os.path.dirname(__file__)
-        lang_path = os.path.join(plugin_dir,'i18n','FragScape_' + lang + '.qm')
+        lang_path = os.path.join(plugin_dir,'i18n','BioDispersal_' + lang + '.qm')
         if os.path.exists(lang_path):
             self.translator = QTranslator()
             self.translator.load(lang_path)
