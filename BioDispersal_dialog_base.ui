@@ -194,6 +194,9 @@
              <property name="checkable">
               <bool>true</bool>
              </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
              <property name="autoRaise">
               <bool>true</bool>
              </property>
@@ -209,6 +212,9 @@
                <normaloff>:/plugins/BioDispersal/icons/frFlag.svg</normaloff>:/plugins/BioDispersal/icons/frFlag.svg</iconset>
              </property>
              <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
               <bool>true</bool>
              </property>
              <property name="autoRaise">

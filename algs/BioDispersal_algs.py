@@ -63,7 +63,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         SelectVFieldAlg(),
                         WeightingBasics(),
                         WeightingByIntervals(),
-                        WeightingByDistance()]
+                        WeightingByDistance(),
+                        RasterSelectionByValue()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -84,62 +85,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
         for a in self.alglist:
             self.addAlgorithm(a)
             
-            
-# class TestAlg(QgsProcessingAlgorithm):
-
-    # ALG_NAME = "testalg"
-
-    # LAYERS = "LAYERS"
-    # EXTENT = "EXTENT"
-    # NUMBER = "NUMBER"
-    # MATRIX = "MATRIX"
-    # OUTPUT = "OUTPUT"
-
-    # def tr(self, string):
-        # return QCoreApplication.translate('Processing', string)
-        
-    # def createInstance(self):
-        # return TestAlg()
-        
-    # def name(self):
-        # return self.ALG_NAME
-        
-    # def displayName(self):
-        # return self.tr("1 - Prepare landscape")
-        
-    # def shortHelpString(self):
-        # return self.tr("This algorithms prepares land cover data by applying selection (from expression) and dissolving geometries")
-
-    # def initAlgorithm(self, config=None):
-        # self.addParameter(
-            # QgsProcessingParameterMultipleLayers(
-                # self.LAYERS,
-                # self.tr("Raster layers")))
-        # self.addParameter(
-            # QgsProcessingParameterExtent (
-                # self.EXTENT,
-                # description=self.tr("Extent"),
-                # optional=True))
-        # self.addParameter(
-            # QgsProcessingParameterNumber (
-                # self.NUMBER,
-                # description=self.tr("Number"),
-                # optional=True))
-        # self.addParameter(
-            # QgsProcessingParameterMatrix (
-                # self.MATRIX,
-                # "Matrix",
-                # numberRows=1,
-                # hasFixedNumberRows=False,
-                # headers=['c1','c2','c3']))
-        # self.addParameter(
-            # QgsProcessingParameterFeatureSink(
-                # self.OUTPUT,
-                # self.tr("Output layer")))
-                
-    # def processAlgorithm(self,parameters,context,feedback):
-        # return None
-        
+                   
 class SelectVExprAlg(QgsProcessingAlgorithm):
 
     ALG_NAME = 'selectvexpr'
@@ -627,126 +573,93 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
                                                      context=context,feedback=feedback)
         return { 'OUTPUT' : weighted }
    
-# class WeightingByValueBis(QgsProcessingAlgorithm):
+class RasterSelectionByValue(QgsProcessingAlgorithm):
 
-    # ALG_NAME = 'weightingbyvaluebis'
-    
-    # INPUT_LAYER = 'INPUT_LAYER'
-    # WEIGHT_LAYER = 'WEIGHT_LAYER'
-    # RESAMPLING = 'RESAMPLING'
-    # INTERVALS = 'INTERVALS'
-    # RANGE_BOUNDARIES = 'RANGE_BOUNDARIES'
-    # OUTPUT = 'OUTPUT'
-    
-    # LOW_BOUND = 'LOW_BOUND'
-    # UP_BOUND = 'UP_BOUND'
-    # POND_VAL = 'POND_VALUE'
-    
-    # def tr(self, string):
-        # return QCoreApplication.translate('Processing', string)
-        
-    # def createInstance(self):
-        # return WeightingByValueBis()
-        
-    # def name(self):
-        # return self.ALG_NAME
-        
-    # def displayName(self):
-        # return self.tr('Weighting (By value bis)')
-        
-    # def shortHelpString(self):
-        # return self.tr('TODO')
+    ALG_NAME = 'rasterselectionbyvalue'
 
-    # def initAlgorithm(self, config=None):
-        # self.methods = ((self.tr('Nearest neighbour'), 'near'),
-                        # (self.tr('Bilinear'), 'bilinear'),
-                        # (self.tr('Cubic'), 'cubic'),
-                        # (self.tr('Cubic spline'), 'cubicspline'),
-                        # (self.tr('Lanczos windowed sinc'), 'lanczos'),
-                        # (self.tr('Average'), 'average'),
-                        # (self.tr('Mode'), 'mode'),
-                        # (self.tr('Maximum'), 'max'),
-                        # (self.tr('Minimum'), 'min'),
-                        # (self.tr('Median'), 'med'),
-                        # (self.tr('First quartile'), 'q1'),
-                        # (self.tr('Third quartile'), 'q3'))
-        # self.range_boundaries = [self.tr('min < value <= max'),
-                                 # self.tr('min <= value < max'),
-                                 # self.tr('min <= value <= max'),
-                                 # self.tr('min < value < max')]
-                        
-        # self.addParameter(
-            # QgsProcessingParameterRasterLayer(
-                # self.INPUT_LAYER,
-                # description=self.tr('Input layer')))
-        # self.addParameter(
-            # QgsProcessingParameterRasterLayer(
-                # self.WEIGHT_LAYER,
-                # description=self.tr('Weighting layer')))
-        # self.addParameter(QgsProcessingParameterEnum(self.RESAMPLING,
-                                                     # self.tr('Resampling method to use'),
-                                                     # options=[i[0] for i in self.methods],
-                                                     # defaultValue=0))
-        # self.addParameter(
-            # QgsProcessingParameterMatrix (
-                # self.INTERVALS,
-                # description=self.tr('Value intervals'),
-                # numberRows=1,
-                # hasFixedNumberRows=False,
-                # headers=[self.LOW_BOUND,self.UP_BOUND,self.POND_VAL]))
-        # self.addParameter(QgsProcessingParameterEnum(self.RANGE_BOUNDARIES,
-                                                     # self.tr('Range boundaries'),
-                                                     # options=self.range_boundaries,
-                                                     # defaultValue=0))
-        # self.addParameter(
-            # QgsProcessingParameterRasterDestination(
-                # self.OUTPUT,
-                # self.tr("Output layer")))
+    INPUT = 'INPUT'
+    OPERATOR = 'OPERATOR'
+    VALUE = 'VALUE'
+    OUTPUT = 'OUTPUT'
+    
+    OPERATORS = ['<','<=','>','>=','==']
+    
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def createInstance(self):
+        return RasterSelectionByValue()
+        
+    def name(self):
+        return self.ALG_NAME
+        
+    def displayName(self):
+        return self.tr('Raster selection by value')
+        
+    def shortHelpString(self):
+        return self.tr('Creates new raster with input raster values veryfing specified operation.')
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterEnum(self.OPERATOR,
+                                       self.tr('Operator'),
+                                       options=self.OPERATORS,
+                                       defaultValue=4))
+        self.addParameter(
+            QgsProcessingParameterNumber (
+                self.VALUE,
+                description=self.tr('Value'),
+                defaultValue=0.0,
+                type=QgsProcessingParameterNumber.Double))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
                 
-    # def processAlgorithm(self,parameters,context,feedback):
-        # input = self.parameterAsRasterLayer(parameters,self.INPUT_LAYER,context)
-        # if input is None:
-            # raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT_LAYER))
-        # weighting = self.parameterAsRasterLayer(parameters,self.WEIGHT_LAYER,context)
-        # if weighting is None:
-            # raise QgsProcessingException(self.invalidRasterError(parameters, self.WEIGHT_LAYER))
-        # range_boundaries = self.parameterAsEnum(parameters,self.RANGE_BOUNDARIES,context)
-        # output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+    def getDataType(self,in_type):
+        typeAssoc = { Qgis.Byte : 0,
+                      Qgis.Int16 : 1,
+                      Qgis.UInt16 : 2,
+                      Qgis.UInt32 : 3,
+                      Qgis.Int32 : 4,
+                      Qgis.Float32 : 5,
+                      Qgis.Float64 : 6 }
+        if in_type in typeAssoc:
+            #return typeAssoc[in_type]
+            return 5
+        else:
+            return 5
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        operator = self.parameterAsEnum(parameters,self.OPERATOR,context)
+        value = self.parameterAsDouble(parameters,self.VALUE,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Type
+        input_type = input.dataProvider().sourceDataType(1)
+        out_type = self.getDataType(input_type)
+        # Expression
+        input_nodata_val = input.dataProvider().sourceNoDataValue(1)
+        #input_name = input.name()
+        #band1_str = input_name + "@1"
+        #input_str = 'A'
+        operator_str = self.OPERATORS[operator]
+        value_str = str(value)
+        nodata_str = str(input_nodata_val)
+        cmp_expr = '(A {} {})'.format(operator_str,value_str)
+        expr = 'A * {} + {} * (1 - {})'.format(cmp_expr,nodata_str,cmp_expr)
+        #expr = 'A == 2'
+        feedback.pushDebugInfo("gdalcalc expr = " + str(expr))
+        # Call
+        out = qgsTreatments.applyRasterCalc(input,output,expr,
+                                            nodata_val=input_nodata_val,out_type=out_type,
+                                            context=context,feedback=feedback)
+        return { 'OUTPUT' : out }
         
-        # input_dp = input.dataProvider()
-        # nodata_val = input_dp.sourceNoDataValue(1)
-        # resolution = input.rasterUnitsPerPixelX()
-        # crs = input.crs()
-        # warp_params = { 'INPUT' : weighting,
-                        # 'TARGET_CRS' : crs,
-                        # 'RESAMPLING' : parameters[self.RESAMPLING],
-                        # 'NODATA' : nodata_val,
-                        # 'TARGET_RESOLUTION' : resolution,
-                        # 'TARGET_EXTENT' : input.extent(),
-                        # 'TARGET_EXTENT_CRS' : crs,
-                        # 'OUTPUT' : 'TEMPORARY_OUTPUT' }
-        # warped = processing.run('gdal:warpreproject',warp_params,context=context,feedback=feedback)
-        # warped_layer = warped['OUTPUT']
-        
-        # reclass_params = { 'DATA_TYPE' : 5,
-                           # 'INPUT_RASTER' : warped_layer,
-                           # 'NODATA_FOR_MISSING' : True,
-                           # 'NO_DATA' : nodata_val,
-                           # 'OUTPUT' : 'TEMPORARY_OUTPUT',
-                           # 'RANGE_BOUNDARIES' : range_boundaries,
-                           # 'RASTER_BAND' : 1,
-                           # 'TABLE' : parameters[self.INTERVALS] }
-        # reclassed = processing.run('native:reclassifybytable',reclass_params,context=context,feedback=feedback)
-        # reclassed_layer = reclassed['OUTPUT']
-        
-        # expr = "A*B"
-        # rastercalc_params = { 'BAND_A' : 1,
-                              # 'BAND_B' : 1,
-                              # 'FORMULA' : expr,
-                              # 'INPUT_A' : input,
-                              # 'INPUT_B' : reclassed_layer,
-                              # 'NO_DATA' : nodata_val,
-                              # 'OUTPUT' : output,
-                              # 'RTYPE' : 5 }
-        # calc = processing.run('gdal:rastercalculator',rastercalc_params,context=context,feedback=feedback)
-        # return calc
+    
