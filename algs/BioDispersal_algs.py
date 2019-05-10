@@ -52,7 +52,7 @@ import processing
 
 from ..qgis_lib_mc import qgsUtils, qgsTreatments
 
-MEMORY_LAYER_NAME = 'TEMPORARY_OUTPUT'
+MEMORY_LAYER_NAME = qgsTreatments.MEMORY_LAYER_NAME
 
 class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
 
@@ -362,6 +362,7 @@ class WeightingAlgorithm(QgsProcessingAlgorithm):
         nodata_val = input_dp.sourceNoDataValue(1)
         resolution = input.rasterUnitsPerPixelX()
         crs = input.crs()
+        out = QgsProcessingUtils.generateTempFilename('warped.tif')
         warp_params = { 'INPUT' : weighting,
                         'TARGET_CRS' : crs,
                         'RESAMPLING' : resampling,
@@ -369,7 +370,7 @@ class WeightingAlgorithm(QgsProcessingAlgorithm):
                         'TARGET_RESOLUTION' : resolution,
                         'TARGET_EXTENT' : input.extent(),
                         'TARGET_EXTENT_CRS' : crs,
-                        'OUTPUT' : MEMORY_LAYER_NAME }
+                        'OUTPUT' : out }
         warped = processing.run('gdal:warpreproject',warp_params,context=context,feedback=feedback)
         return warped['OUTPUT']
         
@@ -418,9 +419,10 @@ class WeightingBasics(WeightingAlgorithm):
     def processAlgorithm(self,parameters,context,feedback):
         input, weighting, resampling, output = self.prepareParameters(parameters,context,feedback)
         operator = self.parameterAsEnum(parameters,self.OPERATOR,context)
-        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        #output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         warped_layer = self.warpWeightingLayer(parameters,context,feedback)
         nodata_val = input.dataProvider().sourceNoDataValue(1)
+        feedback.pushDebugInfo('warped_layer = ' + str(warped_layer))
         if operator == 0:
             out = qgsTreatments.applyRasterCalcMin(input,warped_layer,output,
                                                    nodata_val=nodata_val,
@@ -491,11 +493,12 @@ class WeightingByIntervals(WeightingIntervalsAlgorithm):
         warped_layer = self.warpWeightingLayer(parameters,context,feedback)
         # RECLASSIFY
         nodata_val = input.dataProvider().sourceNoDataValue(1)
+        out_reclassed = QgsProcessingUtils.generateTempFilename('Reclassed.tif')
         reclass_params = { 'DATA_TYPE' : 5,
                            'INPUT_RASTER' : warped_layer,
                            'NODATA_FOR_MISSING' : True,
                            'NO_DATA' : nodata_val,
-                           'OUTPUT' : 'TEMPORARY_OUTPUT',
+                           'OUTPUT' : out_reclassed,
                            'RANGE_BOUNDARIES' : range_boundaries,
                            'RASTER_BAND' : 1,
                            'TABLE' : parameters[self.INTERVALS] }
@@ -554,11 +557,12 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
         feedback.pushDebugInfo("buffered_layer = " + str(buffered_layer))
         # RECLASSIFY
         nodata_val = input.dataProvider().sourceNoDataValue(1)
+        out_reclassed = QgsProcessingUtils.generateTempFilename('Reclassed.tif')
         reclass_params = { 'DATA_TYPE' : 5,
                            'INPUT_RASTER' : buffered_layer,
                            'NODATA_FOR_MISSING' : True,
                            'NO_DATA' : nodata_val,
-                           'OUTPUT' : 'TEMPORARY_OUTPUT',
+                           'OUTPUT' : out_reclassed,
                            'RANGE_BOUNDARIES' : range_boundaries,
                            'RASTER_BAND' : 1,
                            'TABLE' : parameters[self.INTERVALS] }

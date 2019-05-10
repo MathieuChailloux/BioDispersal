@@ -81,9 +81,21 @@ class CostModel(abstract_model.DictModel):
         
     def applyItemWithContext(self,item,context,feedback):
         feedback.pushDebugInfo("Start runCost")
+        # Parameters
         st_name = item.dict["st_name"]
         start_layer_path = self.bdModel.getOrigPath(item.dict["start_layer"])
         start_layer, start_layer_type = qgsUtils.loadLayerGetType(start_layer_path)
+        cost = item.dict["cost"]
+        perm_raster_path = self.bdModel.getOrigPath(item.dict["perm_layer"])
+        tmp_path = self.bdModel.stModel.getDispersionTmpPath(st_name,cost)
+        out_path = self.bdModel.getOrigPath(item.dict["out_layer"])
+        if os.path.isfile(out_path):
+            qgsUtils.removeRaster(out_path)
+        # Feedback
+        feedback.setProgressText("subnetwork " + st_name + ", max_cost : " + str(cost))
+        step_feedback = feedbacks.ProgressMultiStepFeedback(10,feedback)
+        step_feedback.setCurrentStep(0)
+        # Processing
         if start_layer_type == 'Raster':
             start_raster_path = start_layer_path
             # TODO : WARP
@@ -92,24 +104,18 @@ class CostModel(abstract_model.DictModel):
             crs, extent, resolution = self.bdModel.getRasterParams()
             qgsTreatments.applyRasterization(start_layer_path,start_raster_path,extent,resolution,
                                              burn_val=1,out_type=Qgis.Byte,nodata_val=0,all_touch=True,
-                                             context=context,feedback=feedback)
-        perm_raster_path = self.bdModel.getOrigPath(item.dict["perm_layer"])
-        cost = item.dict["cost"]
-        tmp_path = self.bdModel.stModel.getDispersionTmpPath(st_name,cost)
-        #outPath = st_item.getDispersionPath(cost)
-        out_path = self.bdModel.getOrigPath(item.dict["out_layer"])
-        if os.path.isfile(out_path):
-            qgsUtils.removeRaster(out_path)
-        qgsTreatments.applyRCost(start_raster_path,perm_raster_path,cost,tmp_path,context=context,feedback=feedback)
-        qgsTreatments.applyRasterCalcLE(tmp_path,out_path,cost,context=context,feedback=feedback)
-        #removeRaster(tmpPath)
+                                             context=context,feedback=step_feedback)
+        step_feedback.setCurrentStep(1)
+        qgsTreatments.applyRCost(start_raster_path,perm_raster_path,cost,tmp_path,context=context,feedback=step_feedback)
+        step_feedback.setCurrentStep(9)
+        qgsTreatments.applyRasterCalcLE(tmp_path,out_path,cost,context=context,feedback=step_feedback)
+        step_feedback.setCurrentStep(10)
         loaded_layer = qgsUtils.loadRasterLayer(out_path,loadProject=True)
         styles.setRandomColorRasterRenderer(loaded_layer)
-        #styles.setRendererPalettedGnYlRd(loaded_layer)
         feedback.pushDebugInfo("End runCost")
         
     def applyItemsWithContext(self,indexes,context,feedback):
-        feedbacks.beginSection("Computing dispersion")
+        feedbacks.beginSection("Computing dispersal")
         self.bdModel.paramsModel.checkInit()
         if not indexes:
             utils.internal_error("No indexes in Cost applyItems")

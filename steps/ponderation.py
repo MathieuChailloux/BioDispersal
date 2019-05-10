@@ -305,6 +305,7 @@ class PonderationModel(abstract_model.DictModel):
         friction_layer_path = self.bdModel.getOrigPath(item.dict["friction"])
         pond_layer_path = self.bdModel.getOrigPath(item.dict["ponderation"])
         out_layer_path = self.bdModel.getOrigPath(item.dict["out_layer"])
+        feedback.setProgressText("weighted layer " + item.dict["out_layer"])
         weighting_params = { 'INPUT_LAYER' : friction_layer_path,
                              'WEIGHT_LAYER' : pond_layer_path,
                              'RESAMPLING' : None,
@@ -337,54 +338,8 @@ class PonderationModel(abstract_model.DictModel):
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
         loaded_layer = qgsUtils.loadRasterLayer(out_layer_path,loadProject=True)
         styles.setRendererPalettedGnYlRd(loaded_layer)
-            
-    # def applyItemIvalWithContext(self,item,context,feedback):
-        # ivals = item.dict["intervals"]
-        # ival_model = PondValueIvalModel.fromStr(ivals)
-        # ival_model.checkModel()
-        # gdalc_calc_expr = ival_model.toGdalCalcExpr()
-            
-    # def applyItemBufferWithContext(self,item,out_path,context,feedback):
-        # pond_buf_path = utils.mkTmpPath(pond_path,suffix="_buf")
-        # tmp_path = utils.mkTmpPath(out_path)
-        # ivals = item.dict["intervals"]
-        # ival_model = PondBufferIvalModel.fromStr(ivals)
-        # ival_model.checkModel()
-        # buffer_distances = ival_model.toDistances()
-        # qgsTreatments.applyRBuffer(pond_path,buffer_distances,pond_buf_path,context,feedback)
-        # gdal_calc_expr = ival_model.toGdalCalcExpr()
-        # pond_buf_reclassed = utils.mkTmpPath(pond_buf_path,suffix="_reclassed")
-        # qgsTreatments.applyRasterCalc(pond_buf_path,pond_buf_reclassed,gdal_calc_expr,
-                                      # context=context,feedback=feedback)
-        # pond_buf_norm = utils.mkTmpPath(pond_buf_path,suffix="_norm")
-        # crs = params.paramsModel.crs
-        # crs, extent, resolution = self.bdModel.getRasterParams()
-        # qgsTreatments.applyWarpReproject(pond_buf_reclassed,pond_buf_norm,'near',
-                                         # dst_crs=crs,resolution=resolution,extent = extent,
-                                         # context=context,feedback=feedback)
-        # pond_buf_nonull = utils.mkTmpPath(pond_buf_path,suffix="_nonull")
-        # qgsTreatments.applyRNull(pond_buf_norm,1,pond_buf_nonull)
-        # self.applyPonderation(friction_path,pond_buf_nonull,out_path)
-        # qgsUtils.removeRaster(pond_buf_path)
-        # qgsUtils.removeRaster(pond_buf_reclassed)
-        # qgsUtils.removeRaster(pond_buf_norm)
-        # qgsUtils.removeRaster(pond_buf_nonull)
-            
-    # def applyItems(self,indexes):
-        # utils.debug("[applyItems]")
-        # if not indexes:
-            # utils.internal_error("No indexes in Ponderation applyItems")
-        # progress_section = feedbacks.ProgressFeedback("Ponderation",len(indexes))
-        # progress_section.start_section()
-        # self.bdModel.checkInit()
-        # for n in indexes:
-            # i = self.items[n]
-            # i.applyItem()
-            # progress_section.next_step()
-        # progress_section.end_section()
-        
-            
-        
+                  
+                    
 class PonderationConnector(abstract_model.AbstractConnector):
 
     def __init__(self,dlg,ponderationModel):
