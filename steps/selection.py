@@ -344,6 +344,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
                 if not mode_val:
                     utils.user_error("No field selected")
                 vals = qgsUtils.getVectorVals(in_layer,mode_val)
+                utils.debug("vals = " + str(vals))
                 class_names = self.getClassesFromVals(grp_name,vals)
             elif self.dlg.exprSelectionMode.isChecked():
                 mode = vexpr
@@ -356,7 +357,16 @@ class SelectionConnector(abstract_model.AbstractConnector):
             in_geom = "Raster"
             if self.dlg.selectionCreateClasses.isChecked():
                 mode = rclasses
-                vals = qgsUtils.getRasterVals(in_layer)
+                feedbacks.beginSection("Fetching unique values")
+                vals = qgsTreatments.getRasterUniqueVals(in_layer,feedback=self.dlg.feedback)
+                # hist = qgsUtils.getHistogram(in_layer)
+                # utils.debug("hist = " + str(hist))
+                # hist_vect = hist.histogramVector
+                # utils.debug("hist_vect = " + str(hist_vect))
+                # hist_vect_list = list(hist.histogramVector)
+                # utils.debug("hist_vect_list = " + str(hist_vect_list))
+                # vals = hist_vect_list
+                feedbacks.endSection()
                 class_names = self.getClassesFromVals(grp_name,vals)
             else:
                 mode = rresample

@@ -28,6 +28,7 @@ import os
 from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
+from qgis.core import Qgis
 from qgis.gui import QgsFileWidget
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks, styles
@@ -267,7 +268,8 @@ class FrictionModel(abstract_model.DictModel):
             out_path = self.bdModel.stModel.getFrictionPath(st_name)
             qgsUtils.removeRaster(out_path)
             self.checkInVals(in_path)
-            qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,boundaries_mode=2,
+            qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,
+                                                 out_type=3,boundaries_mode=2,
                                                  context=context,feedback=step_feedback)
             loaded_layer = qgsUtils.loadRasterLayer(out_path,loadProject=True)
             styles.setRendererPalettedGnYlRd(loaded_layer)

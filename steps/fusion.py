@@ -148,7 +148,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
             out_path = self.bdModel.stModel.getMergedPath(st_item.name)
             if os.path.isfile(out_path):
                 qgsUtils.removeRaster(out_path)
-            qgsTreatments.applyMergeRaster(grp_args,out_path,context=context,feedback=step_feedback)
+            qgsTreatments.applyMergeRaster(grp_args,out_path,out_type=1,
+                                           context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)

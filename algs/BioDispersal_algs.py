@@ -425,15 +425,15 @@ class WeightingBasics(WeightingAlgorithm):
         feedback.pushDebugInfo('warped_layer = ' + str(warped_layer))
         if operator == 0:
             out = qgsTreatments.applyRasterCalcMin(input,warped_layer,output,
-                                                   nodata_val=nodata_val,
+                                                   nodata_val=nodata_val,out_type=4,
                                                    context=context,feedback=feedback)
         elif operator == 1:
             out = qgsTreatments.applyRasterCalcMax(input,warped_layer,output,
-                                                   nodata_val=nodata_val,
+                                                   nodata_val=nodata_val,out_type=4,
                                                    context=context,feedback=feedback)
         elif operator == 1:
             out = qgsTreatments.applyRasterCalcMult(input,warped_layer,output,
-                                                    nodata_val=nodata_val,
+                                                    nodata_val=nodata_val,out_type=4,
                                                     context=context,feedback=feedback)
         else:
             assert(False)
@@ -558,7 +558,7 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
         # RECLASSIFY
         nodata_val = input.dataProvider().sourceNoDataValue(1)
         out_reclassed = QgsProcessingUtils.generateTempFilename('Reclassed.tif')
-        reclass_params = { 'DATA_TYPE' : 5,
+        reclass_params = { 'DATA_TYPE' : 3,
                            'INPUT_RASTER' : buffered_layer,
                            'NODATA_FOR_MISSING' : True,
                            'NO_DATA' : nodata_val,
