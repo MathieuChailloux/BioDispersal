@@ -43,14 +43,30 @@ SOURCES = \
 PLUGINNAME = BioDispersal
 
 PY_FILES = \
-	__init__.py \
-	BioDispersal.py BioDispersal_dialog.py
+	*.py
 
-UI_FILES = BioDispersal_dialog_base.ui
+UI_FILES = BioDispersal_dialog_base.ui \
+	BioDispersalAbout_dialog_base.ui
 
-EXTRAS = metadata.txt icon.png
+EXTRAS = metadata.txt
 
-EXTRA_DIRS =
+EXTRA_DIRS = \
+	docs \
+	help \
+	icons \
+	sample_data
+
+EXTRA_PY_DIRS = \
+	algs \
+	steps \
+	qgis_lib_mc
+
+EXCLUDE_DIRS = \
+	sample_data/BousquetOrb/Groups \
+	sample_data/BousquetOrb/Subnetworks \
+	sample_data/BousquetOrbWeighting/Groups \
+	sample_data/BousquetOrbWeighting/Subnetworks \
+	help/source
 
 COMPILED_RESOURCE_FILES = resources.py
 
@@ -68,6 +84,8 @@ PLUGIN_UPLOAD = $(c)/plugin_upload.py
 RESOURCE_SRC=$(shell grep '^ *<file' resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
 
 QGISDIR=.qgis2
+
+.PHONY: mytest archive
 
 default: compile
 
@@ -227,3 +245,21 @@ pep8:
 	@echo "-----------"
 	@echo "Ignored in PEP8 check:"
 	@echo $(PEP8EXCLUDE)
+
+archive:
+	rm -f $(PLUGINNAME).zip
+	rm -rf $(PLUGINNAME)
+	mkdir -p $(PLUGINNAME)
+	cp -vf $(PY_FILES) $(PLUGINNAME)
+	cp -vf $(UI_FILES) $(PLUGINNAME)
+	cp -vf $(COMPILED_RESOURCE_FILES) $(PLUGINNAME)
+	cp -vf $(EXTRAS) $(PLUGINNAME)
+	cp -vfr i18n $(PLUGINNAME)
+	$(foreach EXTRA_PY_DIR,$(EXTRA_PY_DIRS), mkdir $(PLUGINNAME)/$(EXTRA_PY_DIR);)
+	$(foreach EXTRA_PY_DIR,$(EXTRA_PY_DIRS), cp $(EXTRA_PY_DIR)/*.py $(PLUGINNAME)/$(EXTRA_PY_DIR);)
+	$(foreach EXTRA_DIR,$(EXTRA_DIRS), cp -R $(EXTRA_DIR) $(PLUGINNAME)/;)
+	$(foreach EXCLUDE_DIR,$(EXCLUDE_DIRS), rm -rf $(PLUGINNAME)/$(EXCLUDE_DIR);)
+	zip -r $(PLUGINNAME).zip $(PLUGINNAME)
+
+mytest:
+	echo $(PY_FILES)
