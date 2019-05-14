@@ -237,7 +237,7 @@ class SelectionModel(abstract_model.DictModel):
                 crs, extent, resolution = self.bdModel.getRasterParams()
                 if os.path.isfile(out_path):
                     qgsUtils.removeRaster(out_path)
-                qgsTreatments.applyRasterization(grp_vector_path,out_path,extent,resolution,
+                BioDispersal_algs.applyRasterizationFixAllTouch(grp_vector_path,out_path,extent,resolution,
                                                  field="Code",out_type=1,all_touch=True,
                                                  context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
