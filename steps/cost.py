@@ -85,6 +85,8 @@ class CostModel(abstract_model.DictModel):
         st_name = item.dict["st_name"]
         start_layer_path = self.bdModel.getOrigPath(item.dict["start_layer"])
         start_layer, start_layer_type = qgsUtils.loadLayerGetType(start_layer_path)
+        feedback.pushDebugInfo("Start layer " + str(start_layer_path)
+                               + " of type " + str(start_layer_type))
         cost = item.dict["cost"]
         perm_raster_path = self.bdModel.getOrigPath(item.dict["perm_layer"])
         tmp_path = self.bdModel.stModel.getDispersionTmpPath(st_name,cost)
@@ -141,7 +143,7 @@ class CostConnector(abstract_model.AbstractConnector):
                          self.dlg.costRun,self.dlg.costRunOnlySelection)
         
     def initGui(self):
-        self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        #self.dlg.costStartLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.dlg.costStartLayer.setFilter(qgsUtils.getVectorFilters())
         self.dlg.costPermRasterCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.costPermRaster.setFilter("*.tif")
@@ -160,7 +162,8 @@ class CostConnector(abstract_model.AbstractConnector):
         self.dlg.costPermRaster.lineEdit().setValue(st_friction_path)
         
     def setStartLayer(self,path):
-        layer = qgsUtils.loadVectorLayer(path,loadProject=True)
+        utils.debug("setStartLayer : " + path)
+        layer = qgsUtils.loadLayer(path,loadProject=True)
         self.dlg.costStartLayerCombo.setLayer(layer)
         
     def setPermRaster(self,path):
