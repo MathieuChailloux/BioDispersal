@@ -283,7 +283,7 @@ class ParamsModel(QAbstractTableModel):
         extent_path = self.getOrigPath(self.extentLayer)
         extent_layer = qgsUtils.loadLayer(extent_path)
         extent = extent_layer.extent()
-        transformed_extent = self.getBoundingBox(extent,extent_layer.sourceCrs())
+        transformed_extent = self.getBoundingBox(extent,extent_layer.crs())
         res = str(transformed_extent.xMinimum())
         res += ',' + str(transformed_extent.xMaximum())
         res += ',' + str(transformed_extent.yMinimum())
