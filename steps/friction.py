@@ -184,9 +184,9 @@ class FrictionModel(abstract_model.DictModel):
                     assert(False)
                     utils.internal_error("Reclassify to nodata in " + str(item))
                 try:
-                    int(new_val)
+                    float(new_val)
                 except ValueError:
-                    utils.debug("Ignoring non-integer value " + str(new_val))
+                    utils.warn("Ignoring non-numeric value " + str(new_val))
                     new_val = qgsTreatments.nodata_val
                 matrixes[st] += [ item.dict["code"], item.dict["code"], new_val ]
         return matrixes
@@ -269,7 +269,7 @@ class FrictionModel(abstract_model.DictModel):
             qgsUtils.removeRaster(out_path)
             self.checkInVals(in_path)
             qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,
-                                                 out_type=3,boundaries_mode=2,
+                                                 out_type=5,boundaries_mode=2,
                                                  context=context,feedback=step_feedback)
             loaded_layer = qgsUtils.loadRasterLayer(out_path,loadProject=True)
             styles.setRendererPalettedGnYlRd(loaded_layer)
