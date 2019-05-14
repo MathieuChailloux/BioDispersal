@@ -72,6 +72,9 @@ COMPILED_RESOURCE_FILES = resources.py
 
 PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
 
+BIODISPERSAL_COMMIT = $(shell git rev-parse HEAD)
+LIB_COMMIT = $(shell cd qgis_lib_mc; git rev-parse HEAD; cd ..)
+COMMIT_FILE = $(PLUGINNAME)/git-versions.txt
 
 #################################################
 # Normally you would not need to edit below here
@@ -246,6 +249,12 @@ pep8:
 	@echo "Ignored in PEP8 check:"
 	@echo $(PEP8EXCLUDE)
 
+version-file:
+	echo "BioDispersal commit number "  > $(COMMIT_FILE)
+	echo $(BIODISPERSAL_COMMIT) >> $(COMMIT_FILE)
+	echo "\nqgis_lib_mc commit number "  >> $(COMMIT_FILE)
+	echo $(LIB_COMMIT) >> $(COMMIT_FILE)
+
 archive:
 	rm -f $(PLUGINNAME).zip
 	rm -rf $(PLUGINNAME)
@@ -259,6 +268,10 @@ archive:
 	$(foreach EXTRA_PY_DIR,$(EXTRA_PY_DIRS), cp $(EXTRA_PY_DIR)/*.py $(PLUGINNAME)/$(EXTRA_PY_DIR);)
 	$(foreach EXTRA_DIR,$(EXTRA_DIRS), cp -R $(EXTRA_DIR) $(PLUGINNAME)/;)
 	$(foreach EXCLUDE_DIR,$(EXCLUDE_DIRS), rm -rf $(PLUGINNAME)/$(EXCLUDE_DIR);)
+	echo "BioDispersal commit number "  > $(COMMIT_FILE)
+	echo $(BIODISPERSAL_COMMIT) >> $(COMMIT_FILE)
+	echo "\nqgis_lib_mc commit number "  >> $(COMMIT_FILE)
+	echo $(LIB_COMMIT) >> $(COMMIT_FILE)
 	zip -r $(PLUGINNAME).zip $(PLUGINNAME)
 
 mytest:
