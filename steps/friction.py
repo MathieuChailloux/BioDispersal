@@ -265,6 +265,7 @@ class FrictionModel(abstract_model.DictModel):
             feedback.setProgressText("computing subnetwork '" + st_name + "'")
             feedback.pushInfo("Friction computation for subnetwork " + str(st_name))
             in_path = self.bdModel.stModel.getMergedPath(st_name)
+            utils.checkFileExists(in_path)
             out_path = self.bdModel.stModel.getFrictionPath(st_name)
             qgsUtils.removeRaster(out_path)
             self.checkInVals(in_path)
