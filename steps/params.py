@@ -27,7 +27,7 @@ import pathlib
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsRectangle, QgsProject, QgsCoordinateTransform
 from qgis.gui import QgsFileWidget
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt
+from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt, QCoreApplication
 from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
@@ -365,9 +365,22 @@ class ParamsConnector:
         header = self.dlg.paramsView.horizontalHeader()     
         header.setSectionResizeMode(0, QHeaderView.Stretch)
         self.model.layoutChanged.emit()
-
-    def setProjectFile(self,fname):
-        self.model.projectFile = fname
+        
+    def tr(self, message):
+        return QCoreApplication.translate('BioDispersal', message)
+        
+    def refreshProjectName(self):
+        fname = self.model.projectFile
         basename = os.path.basename(fname)
         if basename:
-            self.dlg.projectName.setText("Current project : " + basename)
+            self.dlg.projectName.setText(self.tr("Projet BioDispersal : ") + basename)
+        else:
+            self.dlg.projectName.setText(self.tr("Le projet n'est pas sauvegardé"))
+        
+        
+    def setProjectFile(self,fname):
+        self.model.projectFile = fname
+        self.refreshProjectName()
+        # basename = os.path.basename(fname)
+        # if basename:
+            # self.dlg.projectName.setText(self.tr("Current project : ") + basename)

@@ -176,6 +176,7 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         else:
             utils.warn("No translation file : " + str(lang_path))
         self.retranslateUi(self)
+        self.paramsConnector.refreshProjectName()
         utils.curr_language = lang
         self.connectors["Tabs"].loadHelpFile()
         
