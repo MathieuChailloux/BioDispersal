@@ -365,4 +365,9 @@ class ParamsConnector:
         header = self.dlg.paramsView.horizontalHeader()     
         header.setSectionResizeMode(0, QHeaderView.Stretch)
         self.model.layoutChanged.emit()
-        
+
+    def setProjectFile(self,fname):
+        self.model.projectFile = fname
+        basename = os.path.basename(fname)
+        if basename:
+            self.dlg.projectName.setText("Current project : " + basename)

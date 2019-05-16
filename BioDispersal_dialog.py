@@ -215,7 +215,8 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
     def saveModelAs(self,fname):
         self.recomputeParsers()
         xmlStr = self.toXML()
-        self.bdModel.paramsModel.projectFile = fname
+        #self.bdModel.paramsModel.projectFile = fname
+        self.paramsConnector.setProjectFile(fname)
         utils.writeFile(fname,xmlStr)
         utils.info("BioDispersal model saved into file '" + fname + "'")
         
@@ -235,7 +236,8 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         utils.debug("loadModel " + str(fname))
         utils.checkFileExists(fname)
         config_parsing.setConfigParsers(self.parsers)
-        self.bdModel.paramsModel.projectFile = fname
+        #self.bdModel.paramsModel.projectFile = fname
+        self.paramsConnector.setProjectFile(fname)
         config_parsing.parseConfig(fname)
         utils.info("BioDispersal model loaded from file '" + fname + "'")
         
