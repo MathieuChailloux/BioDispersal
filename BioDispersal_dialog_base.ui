@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>924</width>
-    <height>708</height>
+    <width>927</width>
+    <height>713</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -76,8 +76,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>689</width>
-            <height>614</height>
+            <width>692</width>
+            <height>619</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -98,6 +98,52 @@
              <property name="icon">
               <iconset resource="resources.qrc">
                <normaloff>:/plugins/BioDispersal/icons/iconHelpConsole.svg</normaloff>:/plugins/BioDispersal/icons/iconHelpConsole.svg</iconset>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5">
+            <widget class="QToolButton" name="langEn">
+             <property name="toolTip">
+              <string>English</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/plugins/BioDispersal/icons/enFlag.svg</normaloff>:/plugins/BioDispersal/icons/enFlag.svg</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QToolButton" name="saveProject">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Enregistrer le projet BioDispersal</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -133,95 +179,6 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QToolButton" name="saveProjectAs">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Enregistrer le projet BioDispersal sous</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="resources.qrc">
-               <normaloff>:/plugins/BioDispersal/icons/mActionFileSaveAs.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSaveAs.svg</iconset>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QToolButton" name="saveProject">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Enregistrer le projet BioDispersal</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="resources.qrc">
-               <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="5">
-            <widget class="QToolButton" name="langEn">
-             <property name="toolTip">
-              <string>English</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="resources.qrc">
-               <normaloff>:/plugins/BioDispersal/icons/enFlag.svg</normaloff>:/plugins/BioDispersal/icons/enFlag.svg</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="6">
-            <widget class="QToolButton" name="langFr">
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset resource="resources.qrc">
-               <normaloff>:/plugins/BioDispersal/icons/frFlag.svg</normaloff>:/plugins/BioDispersal/icons/frFlag.svg</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="4">
             <spacer name="horizontalSpacer_7">
              <property name="orientation">
@@ -238,7 +195,7 @@
            <item row="1" column="0" colspan="7">
             <widget class="QTabWidget" name="mTabWidget">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                <horstretch>2</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -256,21 +213,48 @@
               <attribute name="title">
                <string>1 - Paramètres</string>
               </attribute>
-              <layout class="QGridLayout" name="gridLayout_5">
-               <item row="3" column="1">
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <widget class="QFrame" name="frame_14">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
-                 <property name="sizeHint" stdset="0">
+                 <property name="maximumSize">
                   <size>
-                   <width>20</width>
-                   <height>40</height>
+                   <width>16777213</width>
+                   <height>130</height>
                   </size>
                  </property>
-                </spacer>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_5">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_11">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bienvenue dans BioDispersal !&lt;/p&gt;&lt;p&gt;Page web : &lt;a href=&quot;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Tutoriels vidéos : bientôt disponibles&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Pensez à sauvegarder régulièrement la configuration (boutons &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSaveAs.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSave.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; en haut à gauche).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
                </item>
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="paramlabel">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -290,35 +274,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="2">
-                <widget class="QTableView" name="paramsView">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>180</height>
-                  </size>
-                 </property>
-                 <property name="editTriggers">
-                  <set>QAbstractItemView::NoEditTriggers</set>
-                 </property>
-                 <property name="dragEnabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alternatingRowColors">
-                  <bool>false</bool>
-                 </property>
-                 <property name="selectionBehavior">
-                  <enum>QAbstractItemView::SelectItems</enum>
-                 </property>
-                 <property name="sortingEnabled">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" colspan="2">
+               <item>
                 <widget class="QFrame" name="frame_12">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -446,14 +402,70 @@
                  </layout>
                 </widget>
                </item>
+               <item>
+                <widget class="QTableView" name="paramsView">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>180</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>180</height>
+                  </size>
+                 </property>
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <property name="dragEnabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alternatingRowColors">
+                  <bool>false</bool>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectItems</enum>
+                 </property>
+                 <property name="sortingEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Expanding</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
               </layout>
              </widget>
              <widget class="QWidget" name="stTab">
               <attribute name="title">
                <string>2 - Sous-trames</string>
               </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <item>
+              <layout class="QGridLayout" name="gridLayout_8">
+               <item row="0" column="0">
                 <widget class="QLabel" name="label_102">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -473,7 +485,7 @@
                  </property>
                 </widget>
                </item>
-               <item>
+               <item row="1" column="0">
                 <widget class="QFrame" name="frame_28">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -4163,6 +4175,49 @@
                </item>
               </layout>
              </widget>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="saveProjectAs">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Enregistrer le projet BioDispersal sous</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/plugins/BioDispersal/icons/mActionFileSaveAs.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSaveAs.svg</iconset>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="6">
+            <widget class="QToolButton" name="langFr">
+             <property name="text">
+              <string>...</string>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/plugins/BioDispersal/icons/frFlag.svg</normaloff>:/plugins/BioDispersal/icons/frFlag.svg</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
           </layout>
