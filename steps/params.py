@@ -375,7 +375,7 @@ class ParamsConnector:
         if basename:
             self.dlg.projectName.setText(self.tr("Projet BioDispersal : ") + basename)
         else:
-            self.dlg.projectName.setText(self.tr("Le projet n'est pas sauvegardé"))
+            self.dlg.projectName.setText(self.tr("Pas de projet BioDispersal"))
         
         
     def setProjectFile(self,fname):
