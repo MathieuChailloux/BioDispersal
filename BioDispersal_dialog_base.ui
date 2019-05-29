@@ -278,7 +278,7 @@
                   </size>
                  </property>
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -293,7 +293,7 @@
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bienvenue dans BioDispersal !&lt;/p&gt;&lt;p&gt;Page web : &lt;a href=&quot;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Tutoriels vidéos : bientôt disponibles&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Pensez à sauvegarder régulièrement la configuration (boutons &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSaveAs.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSave.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; en haut à gauche).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bienvenue dans BioDispersal !&lt;/p&gt;&lt;p&gt;Page web : &lt;a href=&quot;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Tutoriels vidéos : &lt;a href=&quot;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Pensez à sauvegarder régulièrement la configuration (boutons &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSaveAs.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSave.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; en haut à gauche).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="wordWrap">
                      <bool>true</bool>
