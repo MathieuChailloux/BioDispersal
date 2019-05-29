@@ -44,16 +44,16 @@ from .steps import (params, subnetworks, classes, groups, selection, fusion, fri
 from . import tabs
 from .BioDispersal_model import BioDispersalModel
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-  os.path.dirname(__file__), 'BioDispersal_dialog_base.ui'))
+#FORM_CLASS, _ = uic.loadUiType(os.path.join(
+#  os.path.dirname(__file__), 'BioDispersal_dialog_base.ui'))
 
 #FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'test_dialog.ui'))
     
 from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
     
-#class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
-class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
+class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
+#class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
 
     def __init__(self, parent=None):
         """Constructor."""
@@ -220,7 +220,9 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         utils.info("BioDispersal model saved into file '" + fname + "'")
         
     def saveModelAsAction(self):
-        fname = qgsUtils.saveFileDialog(parent=self,msg="Sauvegarder le projet sous",filter="*.xml")
+        fname = qgsUtils.saveFileDialog(parent=self,
+                                        msg=self.tr("Save BioDispersal project as"),
+                                        filter="*.xml")
         if fname:
             self.saveModelAs(fname)
         
@@ -241,6 +243,8 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         utils.info("BioDispersal model loaded from file '" + fname + "'")
         
     def loadModelAction(self):
-        fname = qgsUtils.openFileDialog(parent=self,msg="Ouvrir le projet",filter="*.xml")
+        fname = qgsUtils.openFileDialog(parent=self,
+                                        msg=self.tr("Open BioDispersal project"),
+                                        filter="*.xml")
         if fname:
             self.loadModel(fname)

@@ -388,7 +388,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
     def loadCSVAction(self):
         utils.debug("loadCSVAction " + str(self))
         fname = qgsUtils.openFileDialog(parent=self.dlg,
-                                      msg="Ouvrir le tableau de friction",
+                                      msg=self.tr("Open CSV file"),
                                       filter="*.csv")
         if fname:
             self.loadCSV(fname)
@@ -399,7 +399,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
     def saveCSVAction(self):
         utils.debug("saveCSVAction")
         fname = qgsUtils.saveFileDialog(parent=self.dlg,
-                                      msg="Sauvegarder le tableau de friction sous",
+                                      msg="Save friction as CSV file",
                                       filter="*.csv")
         if fname:
             self.saveCSV(fname)

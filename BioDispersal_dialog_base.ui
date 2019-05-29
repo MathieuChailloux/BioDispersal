@@ -76,7 +76,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>698</width>
+            <width>699</width>
             <height>628</height>
            </rect>
           </property>
@@ -96,7 +96,7 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Enregistrer le projet BioDispersal</string>
+              <string>Save BioDispersal project</string>
              </property>
              <property name="text">
               <string/>
@@ -126,7 +126,7 @@
               <bool>true</bool>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -142,7 +142,7 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Enregistrer le projet BioDispersal sous</string>
+              <string>Save BioDispersal project as</string>
              </property>
              <property name="text">
               <string/>
@@ -182,7 +182,7 @@
               <bool>true</bool>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -204,7 +204,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>Ouvrir un projet BioDispersal</string>
+              <string>Open BioDispersal project</string>
              </property>
              <property name="text">
               <string/>
@@ -221,7 +221,7 @@
            <item row="0" column="3">
             <widget class="QToolButton" name="aboutButton">
              <property name="toolTip">
-              <string>À propos</string>
+              <string>About</string>
              </property>
              <property name="text">
               <string/>
@@ -260,7 +260,7 @@
              </property>
              <widget class="QWidget" name="paramsTab">
               <attribute name="title">
-               <string>1 - Paramètres</string>
+               <string>1 - Parameters</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
@@ -293,7 +293,7 @@
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bienvenue dans BioDispersal !&lt;/p&gt;&lt;p&gt;Page web : &lt;a href=&quot;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Tutoriels vidéos : &lt;a href=&quot;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Pensez à sauvegarder régulièrement la configuration (boutons &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSaveAs.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSave.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; en haut à gauche).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Welcome in BioDispersal !&lt;/p&gt;&lt;p&gt;Homepage : &lt;a href=&quot;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.umr-tetis.fr/index.php/en/production/donnees-et-plateformes/plateformes/415-biodispersal&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Video tutorials : &lt;a href=&quot;https://www.youtube.com/channel/UCx865nT9i8fh-9-tQbTRY6w/playlists?view=50&amp;amp;sort=dd&amp;amp;shelf_id=8&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.youtube.com/channel/UCx865nT9i8fh-9-tQbTRY6w/playlists?view=50&amp;amp;sort=dd&amp;amp;shelf_id=8&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Configuration should be frequently saved (buttons &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSaveAs.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSave.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; in top left corner).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="wordWrap">
                      <bool>true</bool>
@@ -319,7 +319,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Paramètres</string>
+                  <string>Parameters</string>
                  </property>
                 </widget>
                </item>
@@ -353,7 +353,7 @@
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Dossier de travail</string>
+                     <string>Workspace</string>
                     </property>
                    </widget>
                   </item>
@@ -376,7 +376,7 @@
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Couche d'emprise</string>
+                     <string>Extent layer</string>
                     </property>
                    </widget>
                   </item>
@@ -399,7 +399,7 @@
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Résolution raster</string>
+                     <string>Resolution</string>
                     </property>
                    </widget>
                   </item>
@@ -511,7 +511,7 @@
              </widget>
              <widget class="QWidget" name="stTab">
               <attribute name="title">
-               <string>2 - Sous-trames</string>
+               <string>2 - Subnetworks</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="0">
@@ -530,7 +530,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Sous-trames</string>
+                  <string>Subnetworks</string>
                  </property>
                 </widget>
                </item>
@@ -564,7 +564,7 @@
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Nom</string>
+                     <string>Name</string>
                     </property>
                    </widget>
                   </item>
@@ -646,7 +646,7 @@
                         </size>
                        </property>
                        <property name="toolTip">
-                        <string>Ajouter la sous-trame</string>
+                        <string>Add subnetwork</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -675,7 +675,7 @@
                         </size>
                        </property>
                        <property name="toolTip">
-                        <string>Supprimer les sous-trames sélectionnées</string>
+                        <string>Delete selected subnetworks</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -737,7 +737,7 @@
              </widget>
              <widget class="QWidget" name="selectionTab">
               <attribute name="title">
-               <string>3 - Sélection</string>
+               <string>3 - Selection</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
@@ -756,7 +756,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Sélection</string>
+                  <string>Selection</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -829,7 +829,7 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>1 - Couche</string>
+                        <string>1 - Layer</string>
                        </property>
                       </widget>
                      </item>
@@ -867,7 +867,7 @@
                         </size>
                        </property>
                        <property name="text">
-                        <string>Vecteur</string>
+                        <string>Vector</string>
                        </property>
                        <property name="checked">
                         <bool>true</bool>
@@ -911,7 +911,7 @@
                         <enum>Qt::LeftToRight</enum>
                        </property>
                        <property name="text">
-                        <string>Sélectionner couche</string>
+                        <string>Select layer</string>
                        </property>
                       </widget>
                      </item>
@@ -946,7 +946,7 @@
                         </size>
                        </property>
                        <property name="text">
-                        <string>Ouvrir couche</string>
+                        <string>Open layer</string>
                        </property>
                       </widget>
                      </item>
@@ -987,7 +987,7 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>2- Mode de sélection</string>
+                        <string>2- Selection mode</string>
                        </property>
                       </widget>
                      </item>
@@ -1002,7 +1002,7 @@
                        <property name="minimumSize">
                         <size>
                          <width>110</width>
-                         <height>16</height>
+                         <height>19</height>
                         </size>
                        </property>
                        <property name="maximumSize">
@@ -1015,113 +1015,117 @@
                         <number>1</number>
                        </property>
                        <property name="currentIndex">
-                        <number>0</number>
+                        <number>1</number>
                        </property>
                        <widget class="QWidget" name="stackSelectionModeVect">
-                        <layout class="QHBoxLayout" name="horizontalLayout_24">
-                         <item>
-                          <widget class="QLabel" name="selectionModeLabel">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="minimumSize">
-                            <size>
-                             <width>86</width>
-                             <height>13</height>
-                            </size>
-                           </property>
-                           <property name="text">
-                            <string>Mode de sélection</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="fieldSelectionMode">
-                           <property name="minimumSize">
-                            <size>
-                             <width>0</width>
-                             <height>13</height>
-                            </size>
-                           </property>
-                           <property name="text">
-                            <string>Par champ</string>
-                           </property>
-                           <property name="checked">
-                            <bool>false</bool>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="exprSelectionMode">
-                           <property name="minimumSize">
-                            <size>
-                             <width>0</width>
-                             <height>13</height>
-                            </size>
-                           </property>
-                           <property name="text">
-                            <string>Par expression</string>
-                           </property>
-                           <property name="checked">
-                            <bool>true</bool>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
+                        <widget class="QLabel" name="selectionModeLabel">
+                         <property name="geometry">
+                          <rect>
+                           <x>9</x>
+                           <y>0</y>
+                           <width>134</width>
+                           <height>16</height>
+                          </rect>
+                         </property>
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>86</width>
+                           <height>13</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string>Selection mode</string>
+                         </property>
+                        </widget>
+                        <widget class="QCheckBox" name="fieldSelectionMode">
+                         <property name="geometry">
+                          <rect>
+                           <x>149</x>
+                           <y>0</y>
+                           <width>133</width>
+                           <height>16</height>
+                          </rect>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>13</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string>By field</string>
+                         </property>
+                         <property name="checked">
+                          <bool>false</bool>
+                         </property>
+                        </widget>
+                        <widget class="QCheckBox" name="exprSelectionMode">
+                         <property name="geometry">
+                          <rect>
+                           <x>288</x>
+                           <y>0</y>
+                           <width>134</width>
+                           <height>16</height>
+                          </rect>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>13</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string>By expression</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
                        </widget>
                        <widget class="QWidget" name="stackSelectionModeRaster">
-                        <layout class="QHBoxLayout" name="horizontalLayout_4">
-                         <item>
-                          <widget class="QCheckBox" name="selectionCreateClasses">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="minimumSize">
-                            <size>
-                             <width>0</width>
-                             <height>16</height>
-                            </size>
-                           </property>
-                           <property name="maximumSize">
-                            <size>
-                             <width>116</width>
-                             <height>16777215</height>
-                            </size>
-                           </property>
-                           <property name="layoutDirection">
-                            <enum>Qt::RightToLeft</enum>
-                           </property>
-                           <property name="text">
-                            <string>Créer classes</string>
-                           </property>
-                           <property name="checked">
-                            <bool>true</bool>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <spacer name="horizontalSpacer_27">
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                           <property name="sizeType">
-                            <enum>QSizePolicy::Expanding</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>338</width>
-                             <height>10</height>
-                            </size>
-                           </property>
-                          </spacer>
-                         </item>
-                        </layout>
+                        <widget class="QCheckBox" name="selectionCreateClasses">
+                         <property name="geometry">
+                          <rect>
+                           <x>10</x>
+                           <y>0</y>
+                           <width>116</width>
+                           <height>20</height>
+                          </rect>
+                         </property>
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>16</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>116</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="layoutDirection">
+                          <enum>Qt::RightToLeft</enum>
+                         </property>
+                         <property name="text">
+                          <string>Create classes</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
                        </widget>
                       </widget>
                      </item>
@@ -1149,7 +1153,7 @@
                         <number>1</number>
                        </property>
                        <property name="currentIndex">
-                        <number>1</number>
+                        <number>2</number>
                        </property>
                        <widget class="QWidget" name="stackSelectionExpr">
                         <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1220,7 +1224,7 @@
                             </size>
                            </property>
                            <property name="text">
-                            <string>Champ</string>
+                            <string>Field</string>
                            </property>
                           </widget>
                          </item>
@@ -1259,7 +1263,7 @@
                             </size>
                            </property>
                            <property name="text">
-                            <string>Mode de ré-échantillonage</string>
+                            <string>Resampling mode</string>
                            </property>
                           </widget>
                          </item>
@@ -1311,7 +1315,7 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>3 - Groupe</string>
+                        <string>3 - Group</string>
                        </property>
                       </widget>
                      </item>
@@ -1330,7 +1334,7 @@
                         </size>
                        </property>
                        <property name="text">
-                        <string>Ajouter au groupe</string>
+                        <string>Add to group</string>
                        </property>
                       </widget>
                      </item>
@@ -1365,7 +1369,7 @@
                         </size>
                        </property>
                        <property name="text">
-                        <string>Nouveau groupe</string>
+                        <string>Create new group</string>
                        </property>
                       </widget>
                      </item>
@@ -1378,7 +1382,7 @@
                         </size>
                        </property>
                        <property name="placeholderText">
-                        <string>[nom]</string>
+                        <string>[name]</string>
                        </property>
                       </widget>
                      </item>
@@ -1410,10 +1414,10 @@
                         </size>
                        </property>
                        <property name="toolTip">
-                        <string>Ajoute un nouveau groupe</string>
+                        <string>Add new group</string>
                        </property>
                        <property name="text">
-                        <string>Ajouter</string>
+                        <string>Add</string>
                        </property>
                       </widget>
                      </item>
@@ -1453,7 +1457,7 @@
                            </sizepolicy>
                           </property>
                           <property name="text">
-                           <string>Enregistrer sélection</string>
+                           <string>Save selection</string>
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
@@ -1482,7 +1486,7 @@
                      </size>
                     </property>
                     <property name="currentIndex">
-                     <number>1</number>
+                     <number>0</number>
                     </property>
                     <widget class="QWidget" name="stackGroup">
                      <layout class="QGridLayout" name="gridLayout_12">
@@ -1535,7 +1539,7 @@
                             </font>
                            </property>
                            <property name="text">
-                            <string>Groupes</string>
+                            <string>Groups</string>
                            </property>
                           </widget>
                          </item>
@@ -1567,7 +1571,7 @@
                             </size>
                            </property>
                            <property name="toolTip">
-                            <string>Supprimer les groupes sélectionnées</string>
+                            <string>Delete selected groups</string>
                            </property>
                            <property name="text">
                             <string/>
@@ -1590,7 +1594,7 @@
                             </sizepolicy>
                            </property>
                            <property name="text">
-                            <string>Afficher classes</string>
+                            <string>Show classes</string>
                            </property>
                           </widget>
                          </item>
@@ -1683,7 +1687,7 @@
                             </sizepolicy>
                            </property>
                            <property name="text">
-                            <string>Afficher groupes</string>
+                            <string>Show groups</string>
                            </property>
                           </widget>
                          </item>
@@ -1709,7 +1713,7 @@
                             </sizepolicy>
                            </property>
                            <property name="toolTip">
-                            <string>Supprimer les classes sélectionnées</string>
+                            <string>Delete selected classes</string>
                            </property>
                            <property name="text">
                             <string/>
@@ -1800,7 +1804,7 @@
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Appliquer seulement aux lignes sélectionnées</string>
+                     <string>Apply only to selected lines</string>
                     </property>
                    </widget>
                   </item>
@@ -1813,7 +1817,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>Supprimer les lignes sélectionnées</string>
+                     <string>Delete selected lines</string>
                     </property>
                     <property name="text">
                      <string/>
@@ -1863,7 +1867,7 @@
                         </size>
                        </property>
                        <property name="toolTip">
-                        <string>Promouvoir la sélection</string>
+                        <string>Upgrade selection</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -1892,7 +1896,7 @@
                         </size>
                        </property>
                        <property name="toolTip">
-                        <string>Rétrograder la sélection</string>
+                        <string>Downgrade selection</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -1963,7 +1967,7 @@
                         <enum>Qt::LeftToRight</enum>
                        </property>
                        <property name="text">
-                        <string>Lancer les sélections</string>
+                        <string>Launch selections</string>
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
@@ -1981,7 +1985,7 @@
              </widget>
              <widget class="QWidget" name="fusionTab">
               <attribute name="title">
-               <string>4 - Fusion</string>
+               <string>4 - Merge</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_16">
                <item row="1" column="0">
@@ -2048,7 +2052,7 @@
                         </sizepolicy>
                        </property>
                        <property name="text">
-                        <string>Sous-trame</string>
+                        <string>Subnetwork</string>
                        </property>
                       </widget>
                      </item>
@@ -2075,13 +2079,13 @@
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>8</pointsize>
+                      <pointsize>11</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
                     </property>
                     <property name="text">
-                     <string>Hiérarchiser les couches</string>
+                     <string>Rank layers </string>
                     </property>
                    </widget>
                   </item>
@@ -2146,7 +2150,7 @@
                         </size>
                        </property>
                        <property name="toolTip">
-                        <string>Supprimer la couche sélectionnée</string>
+                        <string>Delete selected layer</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -2178,7 +2182,7 @@
                         </size>
                        </property>
                        <property name="toolTip">
-                        <string>Recharger les couches</string>
+                        <string>Reload layers</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -2277,7 +2281,7 @@
                            </size>
                           </property>
                           <property name="toolTip">
-                           <string>Promouvoir la couche</string>
+                           <string>Upgrade layer</string>
                           </property>
                           <property name="text">
                            <string/>
@@ -2312,7 +2316,7 @@
                            </size>
                           </property>
                           <property name="toolTip">
-                           <string>Rétrograder la couche</string>
+                           <string>Downgrade layer</string>
                           </property>
                           <property name="text">
                            <string/>
@@ -2366,7 +2370,7 @@
                      </size>
                     </property>
                     <property name="text">
-                     <string>Fusionner seulement la sous-trame courante</string>
+                     <string>Merge only current subnetwork</string>
                     </property>
                    </widget>
                   </item>
@@ -2412,7 +2416,7 @@
                         </sizepolicy>
                        </property>
                        <property name="text">
-                        <string>Fusionner</string>
+                        <string>Merge</string>
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
@@ -2442,7 +2446,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Fusion</string>
+                  <string>Merge</string>
                  </property>
                 </widget>
                </item>
@@ -2518,7 +2522,7 @@
                       </size>
                      </property>
                      <property name="toolTip">
-                      <string>Recharger les classes</string>
+                      <string>Reload classes</string>
                      </property>
                      <property name="text">
                       <string/>
@@ -2547,7 +2551,7 @@
                       </size>
                      </property>
                      <property name="toolTip">
-                      <string>Ouvrir un tableau de friction</string>
+                      <string>Import friction from CSV file</string>
                      </property>
                      <property name="text">
                       <string/>
@@ -2576,7 +2580,7 @@
                       </size>
                      </property>
                      <property name="toolTip">
-                      <string>Enregistrer le tableau de friction sous</string>
+                      <string>Save friction as CSV file</string>
                      </property>
                      <property name="text">
                       <string/>
@@ -2616,7 +2620,7 @@
                      </size>
                     </property>
                     <property name="text">
-                     <string>Appliquer seulement aux sous-trames sélectionnées</string>
+                     <string>Apply only to selected subnetwork</string>
                     </property>
                    </widget>
                   </item>
@@ -2671,7 +2675,7 @@
                         </size>
                        </property>
                        <property name="text">
-                        <string>Produire les couches de friction</string>
+                        <string>Compute friction layer</string>
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
@@ -2689,7 +2693,7 @@
              </widget>
              <widget class="QWidget" name="pondTab">
               <attribute name="title">
-               <string>6 - Pondération</string>
+               <string>6 - Weighting</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_15">
                <item>
@@ -2702,7 +2706,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Pondération</string>
+                  <string>Weighting</string>
                  </property>
                 </widget>
                </item>
@@ -2763,7 +2767,7 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>1 - Mode de pondération</string>
+                        <string>1 - Weighting mode</string>
                        </property>
                       </widget>
                      </item>
@@ -2798,7 +2802,7 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>2 - Couche de friction</string>
+                        <string>2 - Friction layer</string>
                        </property>
                       </widget>
                      </item>
@@ -2817,7 +2821,7 @@
                         </size>
                        </property>
                        <property name="text">
-                        <string>Sélectionner couche</string>
+                        <string>Select layer</string>
                        </property>
                       </widget>
                      </item>
@@ -2840,7 +2844,7 @@
                      <item row="3" column="0">
                       <widget class="QLabel" name="pondFrictLayerLabel">
                        <property name="text">
-                        <string>Ouvrir couche</string>
+                        <string>Open layer</string>
                        </property>
                       </widget>
                      </item>
@@ -2881,7 +2885,7 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>3 - Couche de sortie</string>
+                        <string>3 - Output layer</string>
                        </property>
                       </widget>
                      </item>
@@ -2910,14 +2914,14 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>4 - Pondération</string>
+                        <string>4 - Weighting</string>
                        </property>
                       </widget>
                      </item>
                      <item row="6" column="0">
                       <widget class="QLabel" name="pondLayerComboLabel">
                        <property name="text">
-                        <string>Sélectionner couche</string>
+                        <string>Select layer</string>
                        </property>
                       </widget>
                      </item>
@@ -2934,7 +2938,7 @@
                      <item row="7" column="0">
                       <widget class="QLabel" name="pondLayerLabel">
                        <property name="text">
-                        <string>Ouvrir couche</string>
+                        <string>Open layer</string>
                        </property>
                       </widget>
                      </item>
@@ -3029,7 +3033,7 @@
                             </size>
                            </property>
                            <property name="toolTip">
-                            <string>Ajouter un intervalle</string>
+                            <string>Add interval</string>
                            </property>
                            <property name="text">
                             <string>...</string>
@@ -3052,7 +3056,7 @@
                             </size>
                            </property>
                            <property name="toolTip">
-                            <string>Supprimer l'intervalle sélectionné</string>
+                            <string>Remove selected interval</string>
                            </property>
                            <property name="text">
                             <string>...</string>
@@ -3075,7 +3079,7 @@
                             </sizepolicy>
                            </property>
                            <property name="text">
-                            <string>Intervalles</string>
+                            <string>Intervals</string>
                            </property>
                           </widget>
                          </item>
@@ -3138,14 +3142,14 @@
                             </sizepolicy>
                            </property>
                            <property name="text">
-                            <string>Tampons</string>
+                            <string>Buffers</string>
                            </property>
                           </widget>
                          </item>
                          <item row="0" column="2">
                           <widget class="QToolButton" name="pondBufferPlus">
                            <property name="toolTip">
-                            <string>Ajouter un nouveau tampon</string>
+                            <string>Add new interval</string>
                            </property>
                            <property name="text">
                             <string>...</string>
@@ -3162,7 +3166,7 @@
                          <item row="0" column="3">
                           <widget class="QToolButton" name="pondBufferMinus">
                            <property name="toolTip">
-                            <string>Supprimer le tampon sélectionné</string>
+                            <string>Delete selected interval</string>
                            </property>
                            <property name="text">
                             <string>...</string>
@@ -3279,7 +3283,7 @@
                            </sizepolicy>
                           </property>
                           <property name="text">
-                           <string>Enregistrer pondération</string>
+                           <string>Save weighting</string>
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
@@ -3339,7 +3343,7 @@
                         <item>
                          <widget class="QToolButton" name="pondRemove">
                           <property name="toolTip">
-                           <string>Supprimer les lignes sélectionnées</string>
+                           <string>Delete selected lines</string>
                           </property>
                           <property name="text">
                            <string>...</string>
@@ -3397,7 +3401,7 @@
                            </size>
                           </property>
                           <property name="text">
-                           <string>Appliquer seulement aux lignes sélectionnées</string>
+                           <string>Apply only to selected lines</string>
                           </property>
                          </widget>
                         </item>
@@ -3462,7 +3466,7 @@
                            </sizepolicy>
                           </property>
                           <property name="text">
-                           <string>Pondérer les couches de friction</string>
+                           <string>Weight friction layers</string>
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
@@ -3483,7 +3487,7 @@
              </widget>
              <widget class="QWidget" name="dispersionTab">
               <attribute name="title">
-               <string>7 - Dispersion</string>
+               <string>7 - Dispersal</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_17">
                <item>
@@ -3496,7 +3500,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Dispersion</string>
+                  <string>Dispersal</string>
                  </property>
                 </widget>
                </item>
@@ -3530,7 +3534,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>1 - Sous-trame</string>
+                     <string>1 - Subnetwork</string>
                     </property>
                    </widget>
                   </item>
@@ -3571,7 +3575,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>2 - Réservoirs de biodiversité</string>
+                     <string>2 - Biodiviersity reservoirs</string>
                     </property>
                    </widget>
                   </item>
@@ -3606,7 +3610,7 @@
                      </size>
                     </property>
                     <property name="text">
-                     <string>Sélectionner couche</string>
+                     <string>Select layer</string>
                     </property>
                    </widget>
                   </item>
@@ -3657,7 +3661,7 @@
                      </size>
                     </property>
                     <property name="text">
-                     <string>Ouvrir couche</string>
+                     <string>Open layer</string>
                     </property>
                    </widget>
                   </item>
@@ -3692,7 +3696,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>3 - Raster de friction</string>
+                     <string>3 - Friction layer</string>
                     </property>
                    </widget>
                   </item>
@@ -3727,7 +3731,7 @@
                      </size>
                     </property>
                     <property name="text">
-                     <string>Sélectionner couche</string>
+                     <string>Select layer</string>
                     </property>
                    </widget>
                   </item>
@@ -3778,7 +3782,7 @@
                      </size>
                     </property>
                     <property name="text">
-                     <string>Ouvrir couche</string>
+                     <string>Open layer</string>
                     </property>
                    </widget>
                   </item>
@@ -3813,7 +3817,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>4 - Coût max</string>
+                     <string>4 - Maximal cost</string>
                     </property>
                    </widget>
                   </item>
@@ -3852,13 +3856,13 @@
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>8</pointsize>
+                      <pointsize>11</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
                     </property>
                     <property name="text">
-                     <string>5 - Couche de sortie</string>
+                     <string>5 - Output layer</string>
                     </property>
                    </widget>
                   </item>
@@ -3938,7 +3942,7 @@
                         </size>
                        </property>
                        <property name="text">
-                        <string>Enregistrer dispersion</string>
+                        <string>Save dispersal</string>
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
@@ -3976,7 +3980,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
-                      <height>16</height>
+                      <height>19</height>
                      </size>
                     </property>
                     <property name="frameShape">
@@ -4010,7 +4014,7 @@
                         </size>
                        </property>
                        <property name="toolTip">
-                        <string>Supprimer les lignes sélectionnées</string>
+                        <string>Delete selected lines</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -4055,7 +4059,7 @@
                         </size>
                        </property>
                        <property name="text">
-                        <string>Appliquer seulement aux lignes sélectionnées</string>
+                        <string>Apply only to selected lines</string>
                        </property>
                       </widget>
                      </item>
@@ -4111,7 +4115,7 @@
                         </sizepolicy>
                        </property>
                        <property name="text">
-                        <string>Lancer la modélisation</string>
+                        <string>Launch dispersal</string>
                        </property>
                        <property name="icon">
                         <iconset resource="resources.qrc">
@@ -4129,7 +4133,7 @@
              </widget>
              <widget class="QWidget" name="logTab">
               <attribute name="title">
-               <string>Journal</string>
+               <string>Log</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_3">
                <property name="spacing">
@@ -4175,7 +4179,7 @@
                  <item>
                   <widget class="QToolButton" name="debugButton">
                    <property name="toolTip">
-                    <string>Activer le mode debug</string>
+                    <string>Debug mode</string>
                    </property>
                    <property name="text">
                     <string>...</string>
@@ -4195,7 +4199,7 @@
                  <item>
                   <widget class="QToolButton" name="logSaveAs">
                    <property name="toolTip">
-                    <string>Enregistrer le journal sous</string>
+                    <string>Save log as</string>
                    </property>
                    <property name="text">
                     <string>...</string>
@@ -4212,7 +4216,7 @@
                  <item>
                   <widget class="QToolButton" name="logClear">
                    <property name="toolTip">
-                    <string>Effacer le journal</string>
+                    <string>Clear log</string>
                    </property>
                    <property name="text">
                     <string>...</string>
@@ -4235,7 +4239,7 @@
            <item row="0" column="4">
             <widget class="QLabel" name="projectName">
              <property name="text">
-              <string>Pas de projet BioDispersal</string>
+              <string>No project loaded</string>
              </property>
             </widget>
            </item>
@@ -4271,18 +4275,18 @@
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Nom étape&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Description générale&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est une description générale&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Description détaillée&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;param1&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; : description du param 1&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;param2&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; : description du param 2&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;Nom étape&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Description générale&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Ceci est une description générale&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Description détaillée&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt;param1&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; : description du param 1&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt;param2&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; : description du param 2&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="openLinks">
           <bool>false</bool>

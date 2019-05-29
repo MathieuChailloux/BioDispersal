@@ -1,5 +1,6 @@
 
-FILES=$(shell find .. -name *.py -not -path "../algs/*")
+#FILES=$(shell find .. -name *.py -not -path "../algs/*" -not -path "../BioDispersal/*")
+FILES=$(shell find .. -name *.py -not -path "../BioDispersal/*")
 
 TOOL=BioDispersal
 

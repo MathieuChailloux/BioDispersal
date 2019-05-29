@@ -276,3 +276,7 @@ archive:
 
 mytest:
 	echo $(PY_FILES)
+
+ui:
+	pyuic5 -o BioDispersal_dialog_base.py BioDispersal_dialog_base.ui
+	pyuic5 -o BioDispersalAbout_dialog_base.py BioDispersalAbout_dialog_base.ui
