@@ -26,6 +26,7 @@ import os
 import sys
 import traceback
 from io import StringIO
+import locale
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
@@ -161,6 +162,8 @@ class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
    
     def switchLang(self,lang):
         utils.debug("switchLang " + str(lang))
+        #loc_lang = locale.getdefaultlocale()
+        #utils.info("locale = " + str(loc_lang))
         plugin_dir = os.path.dirname(__file__)
         lang_path = os.path.join(plugin_dir,'i18n','BioDispersal_' + lang + '.qm')
         if os.path.exists(lang_path):

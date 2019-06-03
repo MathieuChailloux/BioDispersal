@@ -183,6 +183,7 @@ class BioDispersal:
             
         self.dlg.initTabs()
         self.dlg.initGui()
+        self.dlg.switchLangEn()
         self.connectComponents()
 
 
