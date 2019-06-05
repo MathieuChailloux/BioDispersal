@@ -224,6 +224,9 @@ class SelectionModel(abstract_model.DictModel):
             grp_vector_path = self.bdModel.groupsModel.getVectorPath(grp_name)
             if os.path.isfile(grp_vector_path):
                 qgsUtils.removeVectorLayer(grp_vector_path)
+            grp_raster_path = self.bdModel.groupsModel.getRasterPath(grp_name)
+            if os.path.isfile(grp_raster_path):
+                qgsUtils.removeRaster(grp_raster_path)
             from_raster = False
             for s in selections:
                 self.applyItemWithContext(s,grp_item,context,step_feedback)
@@ -232,14 +235,15 @@ class SelectionModel(abstract_model.DictModel):
                     if len(selections) > 1:
                         step_feedback.reportError("Group '" + grp_name + "' does not exist.")
                         utils.user_error("Several selections in group '" + grp_name +"'")
-            out_path = self.bdModel.groupsModel.getRasterPath(grp_name)
+            out_path = self.bdModel.groupsModel.getOutPath(grp_name)
+            if os.path.isfile(out_path):
+                qgsUtils.removeRaster(out_path)
             if not from_raster:
                 crs, extent, resolution = self.bdModel.getRasterParams()
-                if os.path.isfile(out_path):
-                    qgsUtils.removeRaster(out_path)
-                BioDispersal_algs.applyRasterizationFixAllTouch(grp_vector_path,out_path,extent,resolution,
+                BioDispersal_algs.applyRasterizationFixAllTouch(grp_vector_path,grp_raster_path,extent,resolution,
                                                  field="Code",out_type=1,all_touch=True,
                                                  context=context,feedback=step_feedback)
+            self.bdModel.paramsModel.normalizeRaster(grp_raster_path,out_path=out_path)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)

@@ -25,12 +25,14 @@
 import os.path
 import pathlib
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsRectangle, QgsProject, QgsCoordinateTransform
+from qgis.core import (QgsCoordinateReferenceSystem, QgsRectangle, QgsProject,
+                       QgsCoordinateTransform, QgsProcessingUtils)
 from qgis.gui import QgsFileWidget
 from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt, QCoreApplication
 from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
+from ..algs import BioDispersal_algs
 
 # BioDispersal global parameters
 
@@ -310,35 +312,37 @@ class ParamsModel(QAbstractTableModel):
         coords = self.getExtentCoords()
         rect = QgsRectangle(float(coords[0]),float(coords[1]),
                             float(coords[2]),float(coords[3]))
-        return rect
-        
+        return rect 
+                
     # Normalize given raster layer to match global extent and resolution
-    def normalizeRaster(self,path,resampling_mode="near"):
+    def normalizeRaster(self,path,out_path=None,resampling_mode="near"):
         layer = qgsUtils.loadRasterLayer(path)
         # extent
+        extent_path = self.getExtentLayer()
+        extent_layer, extent_layer_type = qgsUtils.loadLayerGetType(extent_path)
+        utils.debug("extent_layer_type = " + str(extent_layer_type))
         params_coords = self.getExtentCoords()
         layer_coords = qgsUtils.coordsOfExtentPath(path)
         same_extent = self.equalsParamsExtent(path)
-        # resolution
         resolution = self.getResolution()
-        layer_res_x = layer.rasterUnitsPerPixelX()
-        layer_res_y = layer.rasterUnitsPerPixelX()
-        same_res = (layer_res_x == resolution and layer_res_y == resolution)
-        if not same_extent:
-            utils.debug("Diff coords : '" + str(params_coords) + "' vs '" + str(layer_coords))
-        if not same_res:
-            utils.debug("Diff resolution : '(" + str(resolution) + ")' vs '("
-                        + str(layer_res_x) + "," + str(layer_res_y) + ")'")
-        if not (same_extent and same_res):
-            new_path = utils.mkTmpPath(path)
-            utils.warn("Normalizing raster '" + str(path)+ "' to '" + str(new_path) + "'")
-            extent_path = self.getExtentLayer()
-            qgsTreatments.applyWarpGdal(path,new_path,resampling_mode,self.crs,
+        # layer_res_x = layer.rasterUnitsPerPixelX()
+        # layer_res_y = layer.rasterUnitsPerPixelX()
+        # same_res = (layer_res_x == resolution and layer_res_y == resolution)
+        # if not same_extent:
+            # utils.debug("Diff coords : '" + str(params_coords) + "' vs '" + str(layer_coords))
+        # if not same_res:
+            # utils.debug("Diff resolution : '(" + str(resolution) + ")' vs '("
+                        # + str(layer_res_x) + "," + str(layer_res_y) + ")'")
+        if extent_layer_type == 'Vector':
+            clipped_path = QgsProcessingUtils.generateTempFilename('clipped.tif')
+            qgsTreatments.clipRasterFromVector(path,extent_path,out_path,resolution=resolution)
+        # elif not (same_extent and same_res):
+        else:
+            warped_path = QgsProcessingUtils.generateTempFilename('warped.tif')
+            utils.warn("Normalizing raster '" + str(path)+ "' to '" + str(warped_path) + "'")
+            qgsTreatments.applyWarpGdal(path,out_path,resampling_mode,self.crs,
                                         resolution,extent_path,
                                         load_flag=False,to_byte=False)
-            return new_path
-        else:
-            return path
 
 class ParamsConnector:
 

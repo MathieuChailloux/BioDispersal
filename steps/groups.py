@@ -190,6 +190,11 @@ class GroupModel(abstract_model.DictModel):
         grp_path = self.getGroupPath(name)
         return utils.joinPath(grp_path,basename)
         
+    def getOutPath(self,name):
+        basename = name + ".tif"
+        grp_path = self.getGroupPath(name)
+        return utils.joinPath(grp_path,basename)
+        
     def getRasterTmpPath(self,name):
         basename = name + "_raster_tmp.tif"
         grp_path = self.getGroupPath(name)
