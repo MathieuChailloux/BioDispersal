@@ -243,7 +243,7 @@
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="1994"/>
         <source>Create new group</source>
-        <translation>Créer un nouveau groupe</translation>
+        <translation type="unfinished">Créer nouveau groupe</translation>
     </message>
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="1995"/>
@@ -358,7 +358,7 @@
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="2021"/>
         <source>4 - Merge</source>
-        <translation>4 - Fusionner</translation>
+        <translation type="unfinished">4 - Fusion</translation>
     </message>
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="2022"/>
@@ -493,7 +493,7 @@
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="2063"/>
         <source>5 - Output layer</source>
-        <translation>Couche de sortie</translation>
+        <translation type="unfinished">5 - Couche de sortie</translation>
     </message>
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="2064"/>
