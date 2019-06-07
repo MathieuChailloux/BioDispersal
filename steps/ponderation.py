@@ -337,7 +337,13 @@ class PonderationModel(abstract_model.DictModel):
         else:
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
         loaded_layer = qgsUtils.loadRasterLayer(out_layer_path,loadProject=True)
-        styles.setRendererPalettedGnYlRd(loaded_layer)
+        data_type = loaded_layer.dataProvider().dataType(1)
+        feedback.pushDebugInfo("data_type = " + str(data_type))
+        if qgsUtils.qgisTypeIsInteger(data_type):
+            styles.setRendererPalettedGnYlRd(loaded_layer)
+        else:
+            styles.setRendererPalettedGnYlRd(loaded_layer)
+            #styles.setRendererSBPCGnYlRd(loaded_layer)
                   
                     
 class PonderationConnector(abstract_model.AbstractConnector):

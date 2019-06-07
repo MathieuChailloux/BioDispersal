@@ -169,7 +169,7 @@ class ParamsModel(QAbstractTableModel):
     
     def fromXMLDict(self,dict):
         if "workspace" in dict:
-            if os.path.isdir(dict["workspace"]):
+            if os.path.isdir(dict["workspace"]) and not self.workspace:
                 self.setWorkspace(dict["workspace"])
         if "extent" in dict:
             self.setExtentLayer(dict["extent"])

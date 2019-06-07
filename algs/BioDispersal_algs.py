@@ -559,16 +559,26 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
         buffered_layer = buffered['output']
         feedback.pushDebugInfo("buffered_layer = " + str(buffered_layer))
         # RECLASSIFY
+        pond_vals = intervals[2::3]
+        feedback.pushDebugInfo('pond_vals = ' + str(pond_vals))
+        pv1 = pond_vals[0]
+        pond_table = [1,1,pv1]
+        for idx, pv in enumerate(pond_vals,2):
+            pond_table.append(idx)
+            pond_table.append(idx)
+            pond_table.append(pv)
+        feedback.pushDebugInfo('pond_table = ' + str(pond_table))
         nodata_val = input.dataProvider().sourceNoDataValue(1)
         out_reclassed = QgsProcessingUtils.generateTempFilename('Reclassed.tif')
-        reclass_params = { 'DATA_TYPE' : 3,
+        reclass_params = { 'DATA_TYPE' : 5,
                            'INPUT_RASTER' : buffered_layer,
                            'NODATA_FOR_MISSING' : True,
                            'NO_DATA' : nodata_val,
                            'OUTPUT' : out_reclassed,
                            'RANGE_BOUNDARIES' : range_boundaries,
                            'RASTER_BAND' : 1,
-                           'TABLE' : parameters[self.INTERVALS] }
+                           'TABLE' : pond_table }
+        feedback.pushDebugInfo("reclass_params = " + str(reclass_params))
         reclassed = processing.run('native:reclassifybytable',reclass_params,context=context,feedback=feedback)
         reclassed_layer = reclassed['OUTPUT']
         # NODATA
