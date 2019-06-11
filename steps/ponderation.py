@@ -25,7 +25,7 @@
 import re
 
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import QgsMapLayerProxyModel
+from qgis.core import QgsMapLayerProxyModel, QgsProcessingUtils
 from qgis.gui import QgsFileWidget
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks, styles
@@ -324,8 +324,11 @@ class PonderationModel(abstract_model.DictModel):
             ival_model = PondBufferIvalModel.fromStr(item.dict["intervals"])
             matrix = ival_model.toProcessingMatrix()
             weighting_params['INTERVALS'] = matrix
+            tmp_path = QgsProcessingUtils.generateTempFilename('buffer_tmp.tif')
+            weighting_params['OUTPUT'] = tmp_path
             qgsTreatments.applyProcessingAlg('BioDispersal','weightingbydistance',weighting_params,
                                              context=context,feedback=feedback)
+            qgsTreatments.applyTranslate(tmp_path,out_layer_path,context=context,feedback=feedback)
         elif mode == self.MAX_MODE:
             weighting_params['OPERATOR'] = 1
             qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,
