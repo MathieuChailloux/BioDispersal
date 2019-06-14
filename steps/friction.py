@@ -177,9 +177,9 @@ class FrictionModel(abstract_model.DictModel):
                     utils.internal_error("Subnetwork '" + str(st) + "' not found in friction model")
                 new_val = item.dict[st]
                 if new_val is None:
-                    utils.user_error("No friction assigned to subnetwork " + str(st)
-                                     + " for class " + str(item.dict["class"])
-                                     + ", please type an integer value or 'None' string")
+                    utils.warn("No friction assigned to subnetwork " + str(st)
+                                     + " for class " + str(item.dict["class"]))
+                    new_val = qgsTreatments.nodata_val
                 if new_val == qgsTreatments.nodata_val:
                     assert(False)
                     utils.internal_error("Reclassify to nodata in " + str(item))

@@ -383,6 +383,8 @@ class PonderationConnector(abstract_model.AbstractConnector):
         self.bufferConnector = PondBufferIvalConnector(self.dlg)
         self.bufferConnector.connectComponents()
         self.dlg.pondModeCombo.currentIndexChanged.connect(self.switchPondMode)
+        self.dlg.weightingUp.clicked.connect(self.upgradeItem)
+        self.dlg.weightingDown.clicked.connect(self.downgradeItem)
     
     def mkItem(self):
         mode = self.dlg.pondModeCombo.currentIndex()

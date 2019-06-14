@@ -22,6 +22,8 @@
  ***************************************************************************/
 """
 
+import os
+
 from PyQt5.QtCore import QCoreApplication, QVariant
 from qgis.core import (Qgis,
                        QgsProject,
@@ -423,18 +425,31 @@ class WeightingBasics(WeightingAlgorithm):
         input, weighting, resampling, output = self.prepareParameters(parameters,context,feedback)
         operator = self.parameterAsEnum(parameters,self.OPERATOR,context)
         #output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        warped_layer = self.warpWeightingLayer(parameters,context,feedback)
+        warped_path = self.warpWeightingLayer(parameters,context,feedback)
+        feedback.pushDebugInfo('warped_path = ' + str(warped_path))
+        warped_layer = qgsUtils.loadRasterLayer(warped_path)
         nodata_val = input.dataProvider().sourceNoDataValue(1)
-        feedback.pushDebugInfo('warped_layer = ' + str(warped_layer))
+        min, max = qgsUtils.getRastersMinMax([input,weighting])
+        range = [min,max]
+        layers = [qgsUtils.pathOfLayer(input),qgsUtils.pathOfLayer(weighting)]
+        out_path = parameters['OUTPUT']
+        feedback.pushDebugInfo('out_path = ' + str(out_path))
+        feedback.pushDebugInfo('output = ' + str(output))
+        # if os.path.isfile(out_path):
+            # qgsUtils.removeRaster(out_path)
         if operator == 0:
+            # out = qgsTreatments.applyRSeries(layers,4,range,output,
+                                             # context=context,feedback=feedback)
             out = qgsTreatments.applyRasterCalcMin(input,warped_layer,output,
                                                    nodata_val=nodata_val,out_type=4,
                                                    context=context,feedback=feedback)
         elif operator == 1:
+            # out = qgsTreatments.applyRSeries(layers,6,range,output,
+                                             # context=context,feedback=feedback)
             out = qgsTreatments.applyRasterCalcMax(input,warped_layer,output,
                                                    nodata_val=nodata_val,out_type=4,
                                                    context=context,feedback=feedback)
-        elif operator == 1:
+        elif operator == 2:
             out = qgsTreatments.applyRasterCalcMult(input,warped_layer,output,
                                                     nodata_val=nodata_val,out_type=4,
                                                     context=context,feedback=feedback)
