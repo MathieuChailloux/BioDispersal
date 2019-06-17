@@ -1,0 +1,28 @@
+<BioDispersalModel>
+ <ParamsModel workspace="C:/Users/mathieu.chailloux/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/BioDispersal/sample_data/BousquetOrb" resolution="10.0" extent="Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
+ <STModel>
+  <STItem   name="grasslands"   descr="Grasslands and meadows"/>
+  <STItem   name="forest"   descr="Hardwood and coniferous forests"/>
+  <STItem   name="wetlands"   descr="Wetlands and water courses"/>
+ </STModel>
+ <GroupModel>
+ </GroupModel>
+ <ClassModel>
+ </ClassModel>
+ <SelectionModel>
+ </SelectionModel>
+ <FusionModel>
+  <ST name="grasslands">
+   <GroupModel>
+   </GroupModel>  </ST>  <ST name="forest">
+   <GroupModel>
+   </GroupModel>  </ST>  <ST name="wetlands">
+   <GroupModel>
+   </GroupModel>  </ST> </FusionModel>
+ <FrictionModel>
+ </FrictionModel>
+ <PonderationModel>
+ </PonderationModel>
+ <CostModel>
+ </CostModel>
+</BioDispersalModel>
