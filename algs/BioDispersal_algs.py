@@ -25,6 +25,7 @@
 import os
 
 from PyQt5.QtCore import QCoreApplication, QVariant
+from PyQt5.QtGui import QIcon
 from qgis.core import (Qgis,
                        QgsProject,
                        QgsFields,
@@ -85,6 +86,11 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
         
     def longName(self):
         return self.name()
+        
+    def icon(self):
+        icon_path = os.path.join(os.path.dirname(__file__), "..", "icons", "cerf.png")
+        return QIcon(icon_path)
+
         
     def loadAlgorithms(self):
         for a in self.alglist:
@@ -409,7 +415,12 @@ class WeightingBasics(WeightingAlgorithm):
         return self.tr('Weighting (Basics)')
         
     def shortHelpString(self):
-        return self.tr('TODO')
+        helpStr = "Weighting of friction layer A by another layer B. Layers must be aligned.\n"
+        helpStr += "Available weighting operations :\n"
+        helpStr += " * Minimum (pixResult = min(pixA, pixB))\n"
+        helpStr += " * Maximum (pixResult = max(pixA, pixB))\n"
+        helpStr += " * Multiplication (pixResult = pixA * pixB)"
+        return self.tr(helpStr)
 
     def initAlgorithm(self, config=None):
         self.operators = [ self.tr('Minimum'),
@@ -499,7 +510,10 @@ class WeightingByIntervals(WeightingIntervalsAlgorithm):
         return self.tr('Weighting (By intervals)')
         
     def shortHelpString(self):
-        return self.tr('TODO')
+        helpStr = "Weighting of friction layer A by another layer B. Layers must be aligned.\n"
+        helpStr += "Value intervals [lowBound, upBound] and weighting value 'pond_val' are defined for layer B.\n"
+        helpStr += "If pixB belongs to [lowBound, upBound] then pixResult = pixA * pond_val."
+        return self.tr(helpStr)
 
     def initAlgorithm(self, config=None):
         super().initAlgorithm(config)
@@ -539,7 +553,11 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
         return self.tr('Weighting (By distance)')
         
     def shortHelpString(self):
-        return self.tr('TODO')
+        helpStr = "Weighting of friction layer A by distance to another layer B. Layers must be aligned.\n"
+        helpStr += "Distance intervals [lowBound, upBound] and weighting value 'pond_val' are defined for layer B.\n"
+        helpStr += "Distance of pixA to layer B is computed as the minimum distance from pixA to a pixel of B that is not NoData"
+        helpStr += "If distance(pixA,B) belongs to [lowBound, upBound] then pixResult = pixA * pond_val."
+        return self.tr(helpStr)
 
     def initAlgorithm(self, config=None):
         super().initAlgorithm(config)
@@ -710,7 +728,7 @@ class RasterizeFixAllTouch(rasterize):
         return self.tr('Rasterize (with ALL_TOUCH fix)')
         
     def shortHelpString(self):
-        return self.tr('TODO')
+        return self.tr('Wrapper for gdal:rasterize algorithm allowing to use ALL_TOUCH option (every pixel touching input geometry are rasterized).')
 
     def initAlgorithm(self, config=None):
         super().initAlgorithm(config)
