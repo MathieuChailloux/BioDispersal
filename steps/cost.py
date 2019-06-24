@@ -32,18 +32,16 @@ from . import params, subnetworks
 import time
 import os
 
-cost_fields = ["st_name","start_layer","perm_layer","cost","out_layer"]
+cost_fields = ["start_layer","perm_layer","cost","out_layer"]
 
 # CostItem implements DictItem and contains below fields :
-#   - 'st_name' : sous-trame name
 #   - 'start_layer' : vector layer containing starting points
 #   - 'perm_layer' : raster layer containing cost for each pixel
 #   - 'cost' : maximal cost
 class CostItem(abstract_model.DictItem):
 
-    def __init__(self,st_name,start_layer,perm_layer,cost,out_layer):
-        dict = {"st_name" : st_name,
-                "start_layer" : start_layer,
+    def __init__(self,start_layer,perm_layer,cost,out_layer):
+        dict = {"start_layer" : start_layer,
                 "perm_layer" : perm_layer,
                 "cost" : cost,
                 "out_layer" : out_layer}
@@ -67,48 +65,48 @@ class CostModel(abstract_model.DictModel):
         super().__init__(self,cost_fields)
     
     def mkItemFromDict(self,dict):
-        if "out_layer" in dict:
-            utils.checkFields(cost_fields,dict.keys())
-            item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
-                            dict["cost"],dict["out_layer"])
-        else:
-            st_name = dict["st_name"]
-            st_item = self.bdModel.stModel.getSTByName(st_name)
-            out_path = st_item.getDispersionPath(dict["cost"])
-            item = CostItem(dict["st_name"],dict["start_layer"],dict["perm_layer"],
-                            dict["cost"],out_path)
+        utils.checkFields(cost_fields,dict.keys())
+        item = CostItem(dict["start_layer"],dict["perm_layer"],
+                        dict["cost"],dict["out_layer"])
         return item
         
     def applyItemWithContext(self,item,context,feedback):
         feedback.pushDebugInfo("Start runCost")
         # Parameters
-        st_name = item.dict["st_name"]
         start_layer_path = self.bdModel.getOrigPath(item.dict["start_layer"])
         start_layer, start_layer_type = qgsUtils.loadLayerGetType(start_layer_path)
         feedback.pushDebugInfo("Start layer " + str(start_layer_path)
                                + " of type " + str(start_layer_type))
         cost = item.dict["cost"]
         perm_raster_path = self.bdModel.getOrigPath(item.dict["perm_layer"])
-        tmp_path = self.bdModel.stModel.getDispersionTmpPath(st_name,cost)
         out_path = self.bdModel.getOrigPath(item.dict["out_layer"])
         if os.path.isfile(out_path):
             qgsUtils.removeRaster(out_path)
+        tmp_path = utils.mkTmpPath(out_path,suffix="_disp_tmp")
+        if os.path.isfile(tmp_path):
+            qgsUtils.removeRaster(tmp_path)
+        start_raster_path = utils.mkTmpPath(out_path,suffix="_start")
+        if os.path.isfile(start_raster_path):
+            qgsUtils.removeRaster(start_raster_path)
         # Feedback
-        feedback.setProgressText("subnetwork " + st_name + ", max_cost : " + str(cost))
+        feedback.setProgressText("Computing " + str(out_path))
         step_feedback = feedbacks.ProgressMultiStepFeedback(10,feedback)
         step_feedback.setCurrentStep(0)
         # Processing
+        crs, extent, resolution = self.bdModel.getRasterParams()
         if start_layer_type == 'Raster':
-            start_raster_path = start_layer_path
-            # TODO : WARP
+            # Warp : 'near' resampling, output type = input type
+            qgsTreatments.applyWarpReproject(start_layer_path,start_raster_path,"near",crs.authid(),
+                                             extent=extent,extent_crs=crs,resolution=resolution,
+                                             out_type=0,context=context,feedback=step_feedback)
         else:
-            start_raster_path = self.bdModel.stModel.getStartLayerPath(st_name)
-            crs, extent, resolution = self.bdModel.getRasterParams()
+            # Burning all vals to 1, nodata 0, Byte data type
             qgsTreatments.applyRasterization(start_layer_path,start_raster_path,extent,resolution,
                                              burn_val=1,out_type=Qgis.Byte,nodata_val=0,all_touch=True,
                                              context=context,feedback=step_feedback)
         step_feedback.setCurrentStep(1)
-        qgsTreatments.applyRCost(start_raster_path,perm_raster_path,cost,tmp_path,context=context,feedback=step_feedback)
+        qgsTreatments.applyRCost(start_raster_path,perm_raster_path,cost,tmp_path,
+                                 context=context,feedback=step_feedback)
         step_feedback.setCurrentStep(9)
         qgsTreatments.applyRasterCalcLE(tmp_path,out_path,cost,context=context,feedback=step_feedback)
         step_feedback.setCurrentStep(10)
@@ -152,7 +150,6 @@ class CostConnector(abstract_model.AbstractConnector):
         
     def connectComponents(self):
         super().connectComponents()
-        self.dlg.costSTCombo.setModel(self.model.bdModel.stModel)
         self.dlg.costStartLayer.fileChanged.connect(self.setStartLayer)
         self.dlg.costPermRaster.fileChanged.connect(self.setPermRaster)
         
@@ -183,9 +180,6 @@ class CostConnector(abstract_model.AbstractConnector):
             self.dlg.costPermRaster.lineEdit().setValue(path)
         
     def mkItem(self):
-        st_name = self.dlg.costSTCombo.currentText()
-        if not st_name:
-            utils.user_error("No Sous-Trame selected")
         start_layer = self.dlg.costStartLayerCombo.currentLayer()
         if not start_layer:
             utils.user_error("No start layer selected")
@@ -196,6 +190,6 @@ class CostConnector(abstract_model.AbstractConnector):
         perm_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(perm_layer))
         cost = str(self.dlg.costMaxVal.value())
         out_layer_path = self.model.bdModel.normalizePath(self.dlg.costOutLayer.filePath())
-        cost_item = CostItem(st_name,start_layer_path,perm_layer_path,cost,out_layer_path)
+        cost_item = CostItem(start_layer_path,perm_layer_path,cost,out_layer_path)
         return cost_item
         
