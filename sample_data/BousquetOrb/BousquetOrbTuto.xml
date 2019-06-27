@@ -1,5 +1,5 @@
 <BioDispersalModel>
- <ParamsModel workspace="C:/Users/fdrmc/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/BioDispersal/sample_data/BousquetOrb" resolution="10.0" extent="Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
+ <ParamsModel workspace="/home/mtd/Projets/BioDispersal/BioDispersal/sample_data/BousquetOrb" resolution="10.0" extent="Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
  <STModel>
   <STItem   name="Grasslands"   descr="Grasslands and meadows"/>
   <STItem   name="Forest"   descr="Hardwood and coniferous forest"/>
@@ -117,7 +117,7 @@
   <PonderationItem   mode="4"   intervals="([0.0,50.0],2.0) - ([50.0,100.0],1.5) - ([100.0,200.0],1.2)"   friction="Subnetworks/max_grasslands_roads.tif"   ponderation="Subnetworks/Roads/Roads_friction.tif"   out_layer="Subnetworks/max_grasslands_roads_distance.tif"/>
  </PonderationModel>
  <CostModel>
-  <CostItem   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="Subnetworks/Wetlands/Wetlands_friction.tif"   cost="1000"   out_layer="Subnetworks/wetlands/wetlands_disp_1000.tif"/>
   <CostItem   start_layer="Source/Reservoirs/RBP_PRAIRIE.shp"   perm_layer="Subnetworks/max_grasslands_roads_distance.tif"   cost="2500"   out_layer="Subnetworks/max_grasslands_roads_distance_disp_2500.tif"/>
+  <CostItem   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="Subnetworks/Wetlands/Wetlands_friction.tif"   cost="1000"   out_layer="Subnetworks/Wetlands/wetlands_disp_1000.tif"/>
  </CostModel>
 </BioDispersalModel>
