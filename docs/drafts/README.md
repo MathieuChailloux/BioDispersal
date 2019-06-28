@@ -1,5 +1,5 @@
 
-[[English](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README.md]
+[[English](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README.md) | [Français](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README_fr.md)]
 
 # Overview
 
@@ -15,7 +15,7 @@ Below is an example of dispersal map created by *BioDispersal*:
 
 ![dispEx](/docs/pictures/BioDispersalExamplePicture.png)
 
-It has been developped by [UMR TETIS](https://www.umr-tetis.fr) - [*IRSTEA*](http://www.irstea.fr), 
+*BioDispersal* has been developped by [*UMR TETIS*](https://www.umr-tetis.fr) - [*IRSTEA*](http://www.irstea.fr), 
 on mission for the [*French ecological network resource center*](http://www.trameverteetbleue.fr/) 
 (driven by [*French ministry of ecology*](https://www.ecologique-solidaire.gouv.fr/)).
 
@@ -31,28 +31,27 @@ on mission for the [*French ecological network resource center*](http://www.tram
 
 # Installation
 
-*BioDispersal* requires QGIS 3 and GRASS.
+*BioDispersal* requires QGIS 3.4 (or superior version) and GRASS.
 
-Go to plugins menu, install/manage plugins, activate experimental plugins and *BioDispersal* should be available.
-Install it and a dear icon should appear. Otherwise, it is available in plugins menu.
+Go to plugins menu, *Install/manage plugins*, type *BioDispersal* and click on *Install* button. A dear icon should appear. Otherwise, it is available in plugins menu.
 
 # Documentation
 
 Available documentation (only in french for now):
- - [Video tutorial](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
- - [User guide](https://www.umr-tetis.fr/jdownloads/plateformes/Notice_Plugin_BioDispersal1.0.pdf)
- - [Modelling method description](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf)
+ - [Video tutorials](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
+ - [User guide](https://www.umr-tetis.fr/jdownloads/plateformes/Notice_Plugin_BioDispersal1.0.pdf) (only in french)
+ - [Modelling method description](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf) (only in french)
 
 # Sample data
 
-A sample data set can be downloaded [here](https://github.com/MathieuChailloux/BioDispersal/tree/master/sample_data/BousquetOrb).
+Sample data is provided with plugin (directory *sample_data/BousquetOrb*).
 
 To produce above dispersal map, open configuration file *BousquetOrb.xml* 
 and run steps 3,4,5,6,7.
  
 # Steps
 
-BioDispersal is a **7 steps** plugin :
+BioDispersal is a **7 steps** plugin:
  1. Parameters setting
  2. Subnetworks definition
  3. Selection and classification from input data
@@ -64,7 +63,7 @@ BioDispersal is a **7 steps** plugin :
 Each step is detailed in plugin help panel.
     
 # Links
- - [BioDispersal homepage](https://www.umr-tetis.fr/index.php/fr/production/donnees-et-plateformes/plateformes/415-biodispersal)
+ - [*BioDispersal* homepage](https://www.umr-tetis.fr/index.php/fr/production/donnees-et-plateformes/plateformes/415-biodispersal)
  - [BioDispersal git repository](https://github.com/MathieuChailloux/BioDispersal)
  - [IRSTEA](http://www.irstea.fr)
  - [UMR TETIS](https://www.umr-tetis.fr)
