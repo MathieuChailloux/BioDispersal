@@ -1,0 +1,67 @@
+
+
+# Aperçu
+
+*BioDispersal* est un plugin QGIS qui permet de modéliser les continuités écologiques par le calcul d’aires potentielles de dispersion des espèces en se basant sur la perméabilité des milieux.
+
+*BioDispersal* déinit une procédure en 7 étapes depuis le prétraitements des données jusqu'au calcul des aires de dispersion.
+
+Le paramétrage de l'outil peut être exporté et importé par le biais d'un fichier de configuration.
+
+Voici un exemple de carte de dispersion produite par *BioDispersal* :
+![dispEx](/docs/pictures/BioDispersalExamplePicture.png)
+
+*BioDispersal* a été développé par l'[UMR TETIS](https://www.umr-tetis.fr) - [*IRSTEA*](http://www.irstea.fr), 
+en mission pour le [*centre de ressources Trame verte et bleue*](http://www.trameverteetbleue.fr/) 
+(piloté par le [*Ministrère de la Transition Écologique et Solidaire*](https://www.ecologique-solidaire.gouv.fr/)).
+
+# Contact
+
+*Développement* : Mathieu Chailloux (mathieu@chailloux.org)
+*Coordination* : Jennifer Amsallem (jennifer.amsallem@irstea.fr)
+
+# Citation
+
+> Chailloux, M. & Amsallem, J. (2018) BioDispersal : a QGIS plugin for modelling potential dispersal areas
+
+# Installation
+
+*BioDispersal* requires QGIS 3.
+*BioDispersal* doit être lancé depuis QGIS 3.4 ou version supérieure avec la bilbiothèque GRASS.
+
+Aller dans le menu *Installer/gérer les extensions*, taper *BioDispersal* dans la barre de recherche et appuyer sur installer. Une icône de cerf apparaît alors dans la barre d'outils.
+
+# Documentation
+
+Documentation disponible :
+ - [Tutoriel vidéo](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
+ - [Notice d'utilisation](https://www.umr-tetis.fr/jdownloads/plateformes/Notice_Plugin_BioDispersal1.0.pdf)
+ - [Présentation de la méthode](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf)
+
+# Exemple
+
+Des données d'exemple peuvent être téléchargées [ici](https://github.com/MathieuChailloux/BioDispersal/tree/master/sample_data/BousquetOrb) (ou dans le répertoire du plugin une fois installé).
+
+Pour produire la carte ci-dessus, ouvrir le fichier de configuration *BousquetOrb.xml* depuis *BioDispersal* et lancer les étapes 3,4,5,6,7.
+ 
+# Étapes
+
+*BioDispersal* définit une procédure en **7 étapes** :
+ 1. Définition des paramètres généraux
+ 2. Déclaration des sous-trames
+ 3. Sélection et classification des données d'entrée
+ 4. Fusion et hiérarchisation des données sélectionnées
+ 5. Définition des coefficients de friction
+ 6. Pondération des couches de friction si nécessaire (étape optionnelle)
+ 7. Calcul des aires de dispersion
+    
+Chaque étape est détaillée dans le panneau d'aide.
+    
+# Liens
+ - [Page web *BioDispersal*](https://www.umr-tetis.fr/index.php/fr/production/donnees-et-plateformes/plateformes/415-biodispersal)
+ - [Dépôt GitHub](https://github.com/MathieuChailloux/BioDispersal)
+ - [IRSTEA](http://www.irstea.fr)
+ - [UMR TETIS](https://www.umr-tetis.fr)
+ - [Centre de ressources Trame verte et bleue](http://www.trameverteetbleue.fr/)
+ - [Ministrère de la Transition Écologique et Solidaire](https://www.ecologique-solidaire.gouv.fr/)
+
