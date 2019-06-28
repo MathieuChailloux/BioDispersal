@@ -1,4 +1,5 @@
 
+[[English](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README.md]
 
 # Overview
 
@@ -11,6 +12,7 @@ the final dispersal areas computation.
 Parameters settings can be saved to and loaded from a configuration file.
 
 Below is an example of dispersal map created by *BioDispersal*:
+
 ![dispEx](/docs/pictures/BioDispersalExamplePicture.png)
 
 It has been developped by [UMR TETIS](https://www.umr-tetis.fr) - [*IRSTEA*](http://www.irstea.fr), 
@@ -20,6 +22,7 @@ on mission for the [*French ecological network resource center*](http://www.tram
 # Contact
 
 *Development* : Mathieu Chailloux (mathieu@chailloux.org)
+
 *Coordination* : Jennifer Amsallem (jennifer.amsallem@irstea.fr)
 
 # Quotation
@@ -28,14 +31,15 @@ on mission for the [*French ecological network resource center*](http://www.tram
 
 # Installation
 
-*BioDispersal* requires QGIS 3.
+*BioDispersal* requires QGIS 3 and GRASS.
+
 Go to plugins menu, install/manage plugins, activate experimental plugins and *BioDispersal* should be available.
 Install it and a dear icon should appear. Otherwise, it is available in plugins menu.
 
 # Documentation
 
 Available documentation (only in french for now):
- - [video tutorial](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
+ - [Video tutorial](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
  - [User guide](https://www.umr-tetis.fr/jdownloads/plateformes/Notice_Plugin_BioDispersal1.0.pdf)
  - [Modelling method description](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf)
 

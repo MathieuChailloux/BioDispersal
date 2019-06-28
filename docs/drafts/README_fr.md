@@ -1,4 +1,5 @@
 
+[[English](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README.md) | [Français](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README_fr.md)]
 
 # Aperçu
 
@@ -9,6 +10,7 @@
 Le paramétrage de l'outil peut être exporté et importé par le biais d'un fichier de configuration.
 
 Voici un exemple de carte de dispersion produite par *BioDispersal* :
+
 ![dispEx](/docs/pictures/BioDispersalExamplePicture.png)
 
 *BioDispersal* a été développé par l'[UMR TETIS](https://www.umr-tetis.fr) - [*IRSTEA*](http://www.irstea.fr), 
@@ -18,15 +20,15 @@ en mission pour le [*centre de ressources Trame verte et bleue*](http://www.tram
 # Contact
 
 *Développement* : Mathieu Chailloux (mathieu@chailloux.org)
-*Coordination* : Jennifer Amsallem (jennifer.amsallem@irstea.fr)
 
+*Coordination* : Jennifer Amsallem (jennifer.amsallem@irstea.fr)
+    
 # Citation
 
 > Chailloux, M. & Amsallem, J. (2018) BioDispersal : a QGIS plugin for modelling potential dispersal areas
 
 # Installation
 
-*BioDispersal* requires QGIS 3.
 *BioDispersal* doit être lancé depuis QGIS 3.4 ou version supérieure avec la bilbiothèque GRASS.
 
 Aller dans le menu *Installer/gérer les extensions*, taper *BioDispersal* dans la barre de recherche et appuyer sur installer. Une icône de cerf apparaît alors dans la barre d'outils.
