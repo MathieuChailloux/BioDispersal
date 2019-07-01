@@ -1,5 +1,5 @@
 
-[[English](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README.md) | [Français](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README_fr.md)]
+[[English](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README.md) | [Français](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README_fr.md)]
 
 # Aperçu
 
@@ -36,7 +36,7 @@ Aller dans le menu *Installer/gérer les extensions*, taper *BioDispersal* dans 
 
 Documentation disponible :
  - [Tutoriels vidéo](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
- - [Notice d'utilisation](https://www.umr-tetis.fr/jdownloads/plateformes/Notice_Plugin_BioDispersal1.0.pdf)
+ - [Notice d'utilisation](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/fr/Notice_Plugin_BioDispersal1.1.pdf)
  - [Présentation de la méthode](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf)
 
 # Exemple
