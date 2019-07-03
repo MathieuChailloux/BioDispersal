@@ -15,11 +15,11 @@ This step is optional.
     <p>
 <i>Weighting mode</i>
  <ul>
-    <li> Direct : friction and ponderation layers are multiplied</li>
-    <li> Intervals : friction layer pixel is multiplied by ponderation value if ponderation layer pixel belongs to matching interval, and remains unchanged if no interval matches.</li>
-    <li> Buffers : friction layer pixel is multiplied by ponderation value if it belongs to a buffer area around ponderation layer specified by upper and lower bounds (distance in meters).</li>
-    <li> Maximum : result is the maximal value of friction and ponderation layers pixels.</li>
-    <li> Minimum : result is the minimal value of friction and ponderation layers pixels.</li>
+    <li> Minimum: result is the minimum value of friction and weighting pixels</li>
+    <li> Maximum: result is the maximum value of friction and weighting pixels</li>
+    <li> Multiplication: result is the product of  friction and weighting pixels</li>
+    <li> Intervals: friction pixel is multiplied by weighting coefficient if ponderation pixel belongs to matching interval, and remains unchanged if no interval matches. This mode is used to perform weighting by slope for instance</li>
+    <li> Buffers: friction pixel is multiplied by weighting coefficient if distance to weighting layer belongs to matching interval. Distance to weighting layer is the minimum distance (in meters) to a pixel that is not NoData. This mode is used to perform weighting by distance to roads</li>
  </ul>
     </p>
   </body>

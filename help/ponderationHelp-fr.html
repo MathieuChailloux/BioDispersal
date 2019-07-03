@@ -16,11 +16,12 @@ Cette &eacute;tape est optionnelle
     <p>
 <i>Modes de pond&eacute;ration</i>
  <ul>
-    <li> Direct : les 2 couches sont multipli&eacute;es</li>
-    <li> Intervalles : le pixel de la couche de friction est multipli&eacute; par la valeur de pond&eacute;ration si le pixel de la couche de pond&eacute;ration appartient &agrave; l'intervalle de valeurs correspondant, il reste inchang&eacute; sinon.</li>
-    <li> Tampons : le pixel de la couche de friction est multipli&eacute; par la valeur de pond&eacute;ration si la distance minimale de ce pixel &agrave; un pixel de la couche de pond&eacute;ration appartient &agrave; l'intervalle de distance correspondant. La distance est exprim&eacute;e en m&egrave;tres. Cela peut servir &agrave; mod&eacute;liser des nuisances indirectes comme la proximit&eacute; au b&acirc;ti ou aux routes.</li>
-    <li> Maximum : chaque pixel correspond au maximum entre valeur de friction et de pond&eacute;ration.</li>
-    <li> Minimum : chaque pixel correspond au minimum entre valeur de friction et de pond&eacute;ration.</li>
+    <li> Minimum : pour deux couches de friction d&eacute;j&agrave; existantes, la valeur minimale de chaque pixel est retenue.</li> 
+    <li> Maximum : pour deux couches de friction d&eacute;j&agrave; existantes, la valeur maximale de chaque pixel est retenue.    </li>
+    <li> Multiplication : la couche de friction produite dans l’&eacute;tape 5 est multipli&eacute;e avec une couche raster d&eacute;j&agrave; existante contenant pour chaque pixel un coefficient de pond&eacute;ration.</li>
+    <li> Intervalles : le pixel de friction est multipli&eacute; par la valeur de pond&eacute;ration si le pixel de pond&eacute;ration appartient &agrave; l'intervalle de valeurs correspondant, il reste inchang&eacute; sinon.</li>
+    <li> Tampons : le pixel de friction est multipli&eacute; par la valeur de pond&eacute;ration si la distance minimale de ce pixel &agrave; un pixel de la couche de pond&eacute;ration (diff&eacute;rent de NoData) appartient &agrave; l'intervalle de distance correspondant. La distance est exprim&eacute;e en m&egrave;tres. Cela peut servir &agrave; mod&eacute;liser des nuisances indirectes comme la proximit&eacute; au b&acirc;ti ou aux routes.</li>
+
  </ul>
     </p>
   </body>
