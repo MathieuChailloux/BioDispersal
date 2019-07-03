@@ -366,11 +366,6 @@ class PonderationConnector(abstract_model.AbstractConnector):
         self.dlg.pondOutLayer.setFilter("*.tif")
         self.dlg.pondLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.pondLayer.setStorageMode(QgsFileWidget.GetFile)
-        self.dlg.pondModeCombo.addItem(self.tr("Minimum"))
-        self.dlg.pondModeCombo.addItem(self.tr("Maximum"))
-        self.dlg.pondModeCombo.addItem(self.tr("Multiplication"))
-        self.dlg.pondModeCombo.addItem(self.tr("Intervalles"))
-        self.dlg.pondModeCombo.addItem(self.tr("Tampons"))
         self.dlg.pondModeCombo.setCurrentIndex(0)
         self.activateDirectMode()
         
