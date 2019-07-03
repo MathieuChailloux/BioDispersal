@@ -87,7 +87,7 @@ class GroupItem(abstract_model.DictItem):
         return (self.dict["name"] == other.dict["name"])
         
     def getVectorPath(self,grp_path):
-        basename = self.name + "_vector.shp"
+        basename = self.name + "_vector.gpkg"
         return utils.joinPath(grp_path,basename)
         
     def getRasterPath(selfgrp_path):
