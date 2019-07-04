@@ -1,0 +1,123 @@
+<BioDispersalModel>
+ <ParamsModel workspace="C:/Users/mathieu.chailloux/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/BioDispersal/sample_data/BousquetOrb" resolution="10.0" extent="Source/ZoneEtude/EPCI_GrandOrb_Buf4000.shp"/>
+ <STModel>
+  <STItem   name="Grasslands"   descr="Grasslands and meadows"/>
+  <STItem   name="Forest"   descr="Hardwood and coniferous forest"/>
+  <STItem   name="Wetlands"   descr="Wetlands and water courses"/>
+  <STItem   name="Roads"   descr=""/>
+ </STModel>
+ <GroupModel>
+  <GroupItem   name="os"   descr="Occupation du sol"   geom="Raster"/>
+  <GroupItem   name="r1"   descr="Routes locales"   geom="Line"/>
+  <GroupItem   name="r2"   descr="Routes régionales"   geom="Line"/>
+  <GroupItem   name="r3"   descr="Routes principales"   geom="Line"/>
+  <GroupItem   name="ce"   descr="Cours d'eau"   geom="Line"/>
+  <GroupItem   name="vf"   descr="Voies ferrées"   geom="Line"/>
+ </GroupModel>
+ <ClassModel>
+  <ClassItem   name="os_512"   code="1"   descr="Plans d'eau"   group="os"/>
+  <ClassItem   name="os_131"   code="2"   descr="Extraction de matériaux"   group="os"/>
+  <ClassItem   name="os_142"   code="3"   descr="Equipements sportifs et de loisirs"   group="os"/>
+  <ClassItem   name="os_311"   code="4"   descr="Forêts de feuillus"   group="os"/>
+  <ClassItem   name="os_312"   code="5"   descr="Forêts de conifères"   group="os"/>
+  <ClassItem   name="os_313"   code="6"   descr="Forêts mélangées"   group="os"/>
+  <ClassItem   name="os_321"   code="7"   descr="Pelouses et pâturages naturels"   group="os"/>
+  <ClassItem   name="os_322"   code="8"   descr="Landes et broussailles"   group="os"/>
+  <ClassItem   name="os_323"   code="9"   descr="Végétation sclérophylle"   group="os"/>
+  <ClassItem   name="os_324"   code="10"   descr="Forêt et végétation arbustive en mutation"   group="os"/>
+  <ClassItem   name="os_332"   code="11"   descr="Roches nues"   group="os"/>
+  <ClassItem   name="os_333"   code="12"   descr="Végétation clairsemée"   group="os"/>
+  <ClassItem   name="os_211"   code="13"   descr="Terres arables hors périmètres d'irrigation"   group="os"/>
+  <ClassItem   name="os_221"   code="14"   descr="Vignobles"   group="os"/>
+  <ClassItem   name="os_222"   code="15"   descr="Vergers et petits fruits"   group="os"/>
+  <ClassItem   name="os_231"   code="16"   descr="Prairies et autres surfaces toujours en herbe à usage agricole"   group="os"/>
+  <ClassItem   name="os_112"   code="17"   descr="Tissu urbain discontinu"   group="os"/>
+  <ClassItem   name="os_242"   code="18"   descr="Systèmes culturaux et parcellaires complexes"   group="os"/>
+  <ClassItem   name="os_243"   code="19"   descr="Surfaces essentiellement agricoles, interrompues par des espaces naturels importants"   group="os"/>
+  <ClassItem   name="os_121"   code="20"   descr="Zones industrielles et commerciales"   group="os"/>
+  <ClassItem   name="r1"   code="21"   descr="Routes locales"   group="r1"/>
+  <ClassItem   name="r2"   code="22"   descr="Routes régionales"   group="r2"/>
+  <ClassItem   name="r3"   code="23"   descr="Routes principales"   group="r3"/>
+  <ClassItem   name="ce_Entre 15 et 50 mètres"   code="24"   descr="Moyen cours d’eau"   group="ce"/>
+  <ClassItem   name="ce_Plus de 50 mètres"   code="25"   descr="Large cours d’eau"   group="ce"/>
+  <ClassItem   name="ce_Sans objet"   code="26"   descr="Cours d’eau sans objet"   group="ce"/>
+  <ClassItem   name="ce_De 0 à 15 mètres"   code="27"   descr="Petit cours d’eau"   group="ce"/>
+  <ClassItem   name="vf"   code="28"   descr="Voies ferrées"   group="vf"/>
+ </ClassModel>
+ <SelectionModel>
+  <SelectionItem   in_layer="Source/CorineLandCover/CLC12_BOUSQUET_ORB_BUF.tif"   mode="RClasses"   mode_val="near"   group="os"/>
+  <SelectionItem   in_layer="Source/Routes/TRONCON_ROUTE_BOUSQUET_ORB.shp"   mode="VExpr"   mode_val=" &quot;VOCATION&quot;  =  'Liaison locale' "   group="r1"/>
+  <SelectionItem   in_layer="Source/Routes/TRONCON_ROUTE_BOUSQUET_ORB.shp"   mode="VExpr"   mode_val=" &quot;VOCATION&quot;  =    'Liaison régionale' "   group="r2"/>
+  <SelectionItem   in_layer="Source/Routes/TRONCON_ROUTE_BOUSQUET_ORB.shp"   mode="VExpr"   mode_val=" &quot;VOCATION&quot;  =    'Liaison principale' "   group="r3"/>
+  <SelectionItem   in_layer="Source/Hydro/TRONCON_HYDRO_BOUSQUET_ORB.shp"   mode="VField"   mode_val="LARGEUR"   group="ce"/>
+  <SelectionItem   in_layer="Source/VoiesFerrees/TRONCON_VOIE_FERREE_BOUSQUET_ORB.shp"   mode="VExpr"   mode_val=""   group="vf"/>
+ </SelectionModel>
+ <FusionModel>
+  <ST name="Grasslands">
+   <GroupModel>
+    <GroupItem     name="ce"     descr="Cours d'eau"     geom="Line"/>
+    <GroupItem     name="vf"     descr="Voies ferrées"     geom="Line"/>
+    <GroupItem     name="os"     descr="Occupation du sol"     geom="Raster"/>
+   </GroupModel>  </ST>  <ST name="Forest">
+   <GroupModel>
+    <GroupItem     name="r3"     descr="Routes principales"     geom="Line"/>
+    <GroupItem     name="r2"     descr="Routes régionales"     geom="Line"/>
+    <GroupItem     name="r1"     descr="Routes locales"     geom="Line"/>
+    <GroupItem     name="ce"     descr="Cours d'eau"     geom="Line"/>
+    <GroupItem     name="vf"     descr="Voies ferrées"     geom="Line"/>
+    <GroupItem     name="os"     descr="Occupation du sol"     geom="Raster"/>
+   </GroupModel>  </ST>  <ST name="Wetlands">
+   <GroupModel>
+    <GroupItem     name="ce"     descr="Cours d'eau"     geom="Line"/>
+    <GroupItem     name="r3"     descr="Routes principales"     geom="Line"/>
+    <GroupItem     name="r2"     descr="Routes régionales"     geom="Line"/>
+    <GroupItem     name="r1"     descr="Routes locales"     geom="Line"/>
+    <GroupItem     name="vf"     descr="Voies ferrées"     geom="Line"/>
+    <GroupItem     name="os"     descr="Occupation du sol"     geom="Raster"/>
+   </GroupModel>  </ST>  <ST name="Roads">
+   <GroupModel>
+    <GroupItem     name="r3"     descr="Routes principales"     geom="Line"/>
+    <GroupItem     name="r2"     descr="Routes régionales"     geom="Line"/>
+    <GroupItem     name="r1"     descr="Routes locales"     geom="Line"/>
+   </GroupModel>  </ST> </FusionModel>
+ <FrictionModel>
+  <FrictionRowItem   class_descr="Tissu urbain discontinu"   class="os_112"   code="17"   Grasslands="100"   Forest="10000"   Wetlands="10000"   Roads=""/>
+  <FrictionRowItem   class_descr="Zones industrielles et commerciales"   class="os_121"   code="20"   Grasslands="100"   Forest="100"   Wetlands="10000"   Roads=""/>
+  <FrictionRowItem   class_descr="Extraction de matériaux"   class="os_131"   code="2"   Grasslands="10000"   Forest="10000"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Equipements sportifs et de loisirs"   class="os_142"   code="3"   Grasslands="100"   Forest="10000"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Terres arables hors périmètres d'irrigation"   class="os_211"   code="13"   Grasslands="30"   Forest="100"   Wetlands="10000"   Roads=""/>
+  <FrictionRowItem   class_descr="Vignobles"   class="os_221"   code="14"   Grasslands="30"   Forest="100"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Vergers et petits fruits"   class="os_222"   code="15"   Grasslands="30"   Forest="100"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Prairies et autres surfaces toujours en herbe à usage agricole"   class="os_231"   code="16"   Grasslands="1"   Forest="100"   Wetlands="30"   Roads=""/>
+  <FrictionRowItem   class_descr="Systèmes culturaux et parcellaires complexes"   class="os_242"   code="18"   Grasslands="30"   Forest="100"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Surfaces essentiellement agricoles, interrompues par des espaces naturels importants"   class="os_243"   code="19"   Grasslands="5"   Forest="100"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Forêts de feuillus"   class="os_311"   code="4"   Grasslands="100"   Forest="1"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Forêts de conifères"   class="os_312"   code="5"   Grasslands="100"   Forest="5"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Forêts mélangées"   class="os_313"   code="6"   Grasslands="100"   Forest="1"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Pelouses et pâturages naturels"   class="os_321"   code="7"   Grasslands="1"   Forest="100"   Wetlands="30"   Roads=""/>
+  <FrictionRowItem   class_descr="Landes et broussailles"   class="os_322"   code="8"   Grasslands="30"   Forest="30"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Végétation sclérophylle"   class="os_323"   code="9"   Grasslands="30"   Forest="30"   Wetlands="30"   Roads=""/>
+  <FrictionRowItem   class_descr="Forêt et végétation arbustive en mutation"   class="os_324"   code="10"   Grasslands="100"   Forest="5"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Roches nues"   class="os_332"   code="11"   Grasslands="100"   Forest="30"   Wetlands="1000"   Roads=""/>
+  <FrictionRowItem   class_descr="Végétation clairsemée"   class="os_333"   code="12"   Grasslands="30"   Forest="100"   Wetlands="100"   Roads=""/>
+  <FrictionRowItem   class_descr="Plans d'eau"   class="os_512"   code="1"   Grasslands="30"   Forest="100"   Wetlands="1"   Roads=""/>
+  <FrictionRowItem   class_descr="Petit cours d’eau"   class="ce_De 0 à 15 mètres"   code="27"   Grasslands="100"   Forest="10000"   Wetlands="1"   Roads=""/>
+  <FrictionRowItem   class_descr="Moyen cours d’eau"   class="ce_Entre 15 et 50 mètres"   code="24"   Grasslands="10000"   Forest="10000"   Wetlands="1"   Roads=""/>
+  <FrictionRowItem   class_descr="Large cours d’eau"   class="ce_Plus de 50 mètres"   code="25"   Grasslands="10000"   Forest="10000"   Wetlands="1"   Roads=""/>
+  <FrictionRowItem   class_descr="Cours d’eau sans objet"   class="ce_Sans objet"   code="26"   Grasslands=""   Forest=""   Wetlands=""   Roads=""/>
+  <FrictionRowItem   class_descr="Routes locales"   class="r1"   code="21"   Grasslands=""   Forest="100"   Wetlands="100"   Roads="30"/>
+  <FrictionRowItem   class_descr="Routes principales"   class="r3"   code="23"   Grasslands=""   Forest="10000"   Wetlands="10000"   Roads="10000"/>
+  <FrictionRowItem   class_descr="Routes régionales"   class="r2"   code="22"   Grasslands=""   Forest="10000"   Wetlands="10000"   Roads="100"/>
+  <FrictionRowItem   class_descr="Voies ferrées"   class="vf"   code="28"   Grasslands="100"   Forest="10000"   Wetlands="10000"   Roads=""/>
+ </FrictionModel>
+ <PonderationModel>
+  <PonderationItem   mode="0"   intervals=""   friction="Subnetworks/Forest/Forest_friction.tif"   ponderation="Subnetworks/Wetlands/Wetlands_friction.tif"   out_layer="Subnetworks/min_forest_wetlands.tif"/>
+  <PonderationItem   mode="1"   intervals=""   friction="Subnetworks/Grasslands/Grasslands_friction.tif"   ponderation="Subnetworks/Roads/Roads_friction.tif"   out_layer="Subnetworks/max_grasslands_roads.tif"/>
+  <PonderationItem   mode="3"   intervals="([0.0,10.0],1.0) - ([10.0,20.0],1.2) - ([20.0,30.0],1.5) - ([30.0,40.0],2.0) - ([40.0,100.0],10.0)"   friction="Subnetworks/Forest/Forest_friction.tif"   ponderation="Source/BDALTI/pente.tif"   out_layer="Subnetworks/forest_slope.tif"/>
+  <PonderationItem   mode="4"   intervals="([0.0,50.0],2.0) - ([50.0,100.0],1.5) - ([100.0,200.0],1.2)"   friction="Subnetworks/max_grasslands_roads.tif"   ponderation="Subnetworks/Roads/Roads_friction.tif"   out_layer="Subnetworks/max_grasslands_roads_distance.tif"/>
+ </PonderationModel>
+ <CostModel>
+  <CostItem   start_layer="Source/Reservoirs/RBP_PRAIRIE.shp"   perm_layer="Subnetworks/max_grasslands_roads_distance.tif"   cost="2500"   out_layer="Subnetworks/max_grasslands_roads_distance_disp_2500.tif"/>
+  <CostItem   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="Subnetworks/Wetlands/Wetlands_friction.tif"   cost="1000"   out_layer="Subnetworks/Wetlands/wetlands_disp_1000.tif"/>
+ </CostModel>
+</BioDispersalModel>
