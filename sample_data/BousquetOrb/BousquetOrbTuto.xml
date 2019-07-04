@@ -1,5 +1,5 @@
 <BioDispersalModel>
- <ParamsModel workspace="/home/mtd/Projets/BioDispersal/BioDispersal/sample_data/BousquetOrb" resolution="10.0" extent="Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
+ <ParamsModel workspace="C:/Users/mathieu.chailloux/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/BioDispersal/sample_data/BousquetOrb" resolution="10.0" extent="Source/ZoneEtude/EPCI_GrandOrb_Buf4000.shp"/>
  <STModel>
   <STItem   name="Grasslands"   descr="Grasslands and meadows"/>
   <STItem   name="Forest"   descr="Hardwood and coniferous forest"/>

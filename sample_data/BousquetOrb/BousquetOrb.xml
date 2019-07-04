@@ -1,5 +1,5 @@
 <BioDispersalModel>
- <ParamsModel workspace="C:/Users/mathieu.chailloux/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/BioDispersal/sample_data/BousquetOrb" resolution="25" extent="Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
+ <ParamsModel workspace="C:/Users/mathieu.chailloux/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/BioDispersal/sample_data/BousquetOrb" resolution="25" extent="Source/ZoneEtude/EPCI_GrandOrb_Buf4000.shp"/>
  <STModel>
   <STItem   name="grasslands"   descr="Grasslands and meadows"/>
   <STItem   name="forest"   descr="Hardwood and coniferous forests"/>
@@ -27,11 +27,9 @@
   <ClassItem   name="landuse_313"   code="6"   descr="Mixed forest"   group="landuse"/>
   <ClassItem   name="landuse_321"   code="7"   descr="Natural grasslands"   group="landuse"/>
   <ClassItem   name="landuse_322"   code="8"   descr="Moors and heathland"   group="landuse"/>
-  <ClassItem   name="landuse_323"   code="9"   descr="Sclerophyllous vegetation
-"   group="landuse"/>
+  <ClassItem   name="landuse_323"   code="9"   descr="Sclerophyllous vegetation "   group="landuse"/>
   <ClassItem   name="landuse_324"   code="10"   descr="Transitional woodland-shrub"   group="landuse"/>
-  <ClassItem   name="landuse_332"   code="11"   descr="Bare rocks
-"   group="landuse"/>
+  <ClassItem   name="landuse_332"   code="11"   descr="Bare rocks "   group="landuse"/>
   <ClassItem   name="landuse_333"   code="12"   descr="Sparsely vegetated areas"   group="landuse"/>
   <ClassItem   name="landuse_211"   code="13"   descr="Non-irrigated arable land"   group="landuse"/>
   <ClassItem   name="landuse_221"   code="14"   descr="Vineyards"   group="landuse"/>
@@ -87,11 +85,9 @@
   <FrictionRowItem   class_descr="Mixed forest"   class="landuse_313"   code="6"   grasslands="100"   forest="0"   wetlands="100"/>
   <FrictionRowItem   class_descr="Natural grasslands"   class="landuse_321"   code="7"   grasslands="0"   forest="100"   wetlands="30"/>
   <FrictionRowItem   class_descr="Moors and heathland"   class="landuse_322"   code="8"   grasslands="30"   forest="30"   wetlands="100"/>
-  <FrictionRowItem   class_descr="Sclerophyllous vegetation
-"   class="landuse_323"   code="9"   grasslands="30"   forest="30"   wetlands="30"/>
+  <FrictionRowItem   class_descr="Sclerophyllous vegetation "   class="landuse_323"   code="9"   grasslands="30"   forest="30"   wetlands="30"/>
   <FrictionRowItem   class_descr="Transitional woodland-shrub"   class="landuse_324"   code="10"   grasslands="100"   forest="5"   wetlands="100"/>
-  <FrictionRowItem   class_descr="Bare rocks
-"   class="landuse_332"   code="11"   grasslands="100"   forest="30"   wetlands="1000"/>
+  <FrictionRowItem   class_descr="Bare rocks "   class="landuse_332"   code="11"   grasslands="100"   forest="30"   wetlands="1000"/>
   <FrictionRowItem   class_descr="Sparsely vegetated areas"   class="landuse_333"   code="12"   grasslands="30"   forest="100"   wetlands="100"/>
   <FrictionRowItem   class_descr="Non-irrigated arable land"   class="landuse_211"   code="13"   grasslands="30"   forest="100"   wetlands="10000"/>
   <FrictionRowItem   class_descr="Vineyards"   class="landuse_221"   code="14"   grasslands="30"   forest="100"   wetlands="100"/>
@@ -109,8 +105,8 @@
   <PonderationItem   mode="4"   friction="Subnetworks/grasslands/grasslands_friction.tif"   ponderation="Groups/roads/roads_raster.tif"   intervals="([0.0,50.0],2.0) - ([50.0,100.0],1.5) - ([100.0,200.0],1.2)"   out_layer="Subnetworks/grasslands/grasslands_friction_roads.tif"/>
  </PonderationModel>
  <CostModel>
-  <CostItem   st_name="forest"   start_layer="Source/Reservoirs/RBP_MILBOISE.shp"   perm_layer="Subnetworks/forest/forest_friction.tif"   cost="1000"   out_layer="Subnetworks/forest/forest_disp_1000.tif"/>
-  <CostItem   st_name="wetlands"   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="Subnetworks/wetlands/wetlands_friction.tif"   cost="1000"   out_layer="Subnetworks/wetlands/wetlands_disp_1000.tif"/>
-  <CostItem   st_name="grasslands"   start_layer="Source/Reservoirs/RBP_PRAIRIE.shp"   perm_layer="Subnetworks/grasslands/grasslands_friction.tif"   cost="1000"   out_layer="Subnetworks/grasslands/grasslands_disp_1000.tif"/>
+  <CostItem   start_layer="Source/Reservoirs/RBP_MILBOISE.shp"   perm_layer="Subnetworks/forest/forest_friction.tif"   cost="1000"   out_layer="Subnetworks/forest/forest_disp_1000.tif"/>
+  <CostItem   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="Subnetworks/wetlands/wetlands_friction.tif"   cost="1000"   out_layer="Subnetworks/wetlands/wetlands_disp_1000.tif"/>
+  <CostItem   start_layer="Source/Reservoirs/RBP_PRAIRIE.shp"   perm_layer="Subnetworks/grasslands/grasslands_friction.tif"   cost="1000"   out_layer="Subnetworks/grasslands/grasslands_disp_1000.tif"/>
  </CostModel>
 </BioDispersalModel>
