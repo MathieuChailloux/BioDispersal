@@ -1,5 +1,5 @@
 
-[[English](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README.md) | [Français](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/drafts/README_fr.md)]
+[[English](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README.md) | [Français](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README_fr.md)]
 
 # Overview
 
@@ -39,7 +39,7 @@ Go to plugins menu, *Install/manage plugins*, type *BioDispersal* and click on *
 
 Available documentation:
  - [Video tutorials](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
- - [User guide](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/en/BioDispersalUserGuide.pdf)
+ - [User guide](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/en/BioDispersalUserGuide.pdf)
  - [Modelling method description](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf) (only in french)
 
 # Sample data
