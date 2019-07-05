@@ -33,7 +33,7 @@ repository=https://github.com/MathieuChailloux/BioDispersal
     1.0.1 : Issue #3 fix
     1.1 : - GDAL called through processing API
         - BioDispersal treatments provided as processing algorithms
-        - Video turorials
+        - Video tutorials
         - Compatible with mac OS
         - Render styles automatically generated for friction and dispersion layers
 

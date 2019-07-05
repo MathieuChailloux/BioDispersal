@@ -51,7 +51,6 @@ UI_FILES = BioDispersal_dialog_base.ui \
 EXTRAS = metadata.txt
 
 EXTRA_DIRS = \
-	docs \
 	help \
 	icons \
 	sample_data

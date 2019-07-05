@@ -37,9 +37,9 @@ Go to plugins menu, *Install/manage plugins*, type *BioDispersal* and click on *
 
 # Documentation
 
-Available documentation (only in french for now):
+Available documentation:
  - [Video tutorials](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
- - [User guide](https://www.umr-tetis.fr/jdownloads/plateformes/Notice_Plugin_BioDispersal1.0.pdf) (only in french)
+ - [User guide](https://github.com/MathieuChailloux/BioDispersal/blob/qgis_lib_mc/docs/en/BioDispersalUserGuide.pdf)
  - [Modelling method description](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf) (only in french)
 
 # Sample data
@@ -51,7 +51,7 @@ and run steps 3,4,5,6,7.
  
 # Steps
 
-BioDispersal is a **7 steps** plugin:
+*BioDispersal* is a **7 steps** plugin:
  1. Parameters setting
  2. Subnetworks definition
  3. Selection and classification from input data
