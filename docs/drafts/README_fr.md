@@ -36,7 +36,7 @@ Aller dans le menu *Installer/gérer les extensions*, taper *BioDispersal* dans 
 
 Documentation disponible :
  - [Tutoriels vidéo](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
- - [Notice d'utilisation](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/fr/Notice_Plugin_BioDispersal1.1.pdf)
+ - [Notice d'utilisation](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/fr/NoticeUtilisation_BioDispersal_v1.1.pdf)
  - [Présentation de la méthode](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf)
 
 # Exemple
