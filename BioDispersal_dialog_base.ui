@@ -1287,12 +1287,62 @@
                            </property>
                            <item>
                             <property name="text">
-                             <string>Plus proche voisin</string>
+                             <string>Nearest neighbor</string>
                             </property>
                            </item>
                            <item>
                             <property name="text">
-                             <string>Moyenne</string>
+                             <string>Bilinear</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Cubic</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Cubic spline</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Lanczos windowed sinc</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Average</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Mode</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Maximum</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Minimum</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Median</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>First quartile</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Third quartile</string>
                             </property>
                            </item>
                           </widget>

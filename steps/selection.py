@@ -43,7 +43,8 @@ import os
 
 selection_fields = ["in_layer","mode","mode_val","group"]
 
-resampling_modes = ["near","average"]
+resampling_modes = ["near","bilinear", "cubic", "cubicspline", "lanczos", "average",
+		    "mode", "max", "min", "med", "q1", "q3"]
         
 # Selection modes :
 #   - VField (Vector by field)
