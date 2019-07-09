@@ -488,10 +488,11 @@ class SelectionConnector(abstract_model.AbstractConnector):
     # Class / Resample modes
     
     def switchRClassMode(self,checked):
-        if checked:
-            self.activateRClassMode()
-        else:
-            self.activateRResampleMode()
+        pass
+        # if checked:
+            # self.activateRClassMode()
+        # else:
+            # self.activateRResampleMode()
         
     def activateRClassMode(self):
         utils.debug("activateRClassMode")
