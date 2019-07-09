@@ -633,7 +633,7 @@ class Ui_BioDispersalDialogBase(object):
         self.selectionResampleLabel.setObjectName("selectionResampleLabel")
         self.horizontalLayout_23.addWidget(self.selectionResampleLabel)
         self.selectionResampleCombo = QtWidgets.QComboBox(self.stackSelectionResampling)
-        self.selectionResampleCombo.setEnabled(False)
+        self.selectionResampleCombo.setEnabled(True)
         self.selectionResampleCombo.setMinimumSize(QtCore.QSize(60, 20))
         self.selectionResampleCombo.setObjectName("selectionResampleCombo")
         self.selectionResampleCombo.addItem("")
