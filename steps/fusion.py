@@ -143,7 +143,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 step_feedback.pushInfo("groups = " + str(groups.items))
             step_feedback.pushDebugInfo("apply fusion to " + st)
             step_feedback.pushDebugInfo(str([g.dict["name"] for g in groups.items]))
-            grp_args = [self.bdModel.groupsModel.getRasterPath(g.name) for g in reversed(groups.items)]
+            grp_args = [self.bdModel.groupsModel.getOutPath(g.name) for g in reversed(groups.items)]
             step_feedback.pushDebugInfo(str(grp_args))
             out_path = self.bdModel.stModel.getMergedPath(st_item.name)
             if os.path.isfile(out_path):

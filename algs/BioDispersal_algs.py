@@ -50,12 +50,15 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterRasterLayer,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFile,
+                       QgsProcessingParameterFileDestination,
                        QgsFeatureSink)
 
 import processing
 from processing.algs.gdal.rasterize import rasterize
 
-from ..qgis_lib_mc import qgsUtils, qgsTreatments
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks
+from ..BioDispersal_model import BioDispersalModel
 
 MEMORY_LAYER_NAME = qgsTreatments.MEMORY_LAYER_NAME
 
@@ -70,6 +73,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         WeightingByIntervals(),
                         WeightingByDistance(),
                         RasterSelectionByValue(),
+                        BioDispersalAlgorithm(),
                         RasterizeFixAllTouch()]
         for a in self.alglist:
             a.initAlgorithm()
@@ -96,7 +100,73 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
         for a in self.alglist:
             self.addAlgorithm(a)
             
-                   
+               
+class BioDispersalAlgorithm(QgsProcessingAlgorithm):
+
+    # Algorithm parameters
+    INPUT_CONFIG = "INPUT"
+    LOG_FILE = "LOG"
+    OUTPUT = "OUTPUT"
+    
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def createInstance(self):
+        return BioDispersalAlgorithm()
+        
+    def name(self):
+        return "BioDispersalAlgorithm"
+        
+    def displayName(self):
+        return self.tr("Run BioDispersal from configuration file")
+        
+    def shortHelpString(self):
+        return self.tr("Executes complete process from XML configuration file")
+
+    def initAlgorithm(self,config=None):
+        self.addParameter(
+            QgsProcessingParameterFile(
+                self.INPUT_CONFIG,
+                description=self.tr("Input configuration file")))
+        self.addParameter(
+            QgsProcessingParameterFileDestination(
+                self.LOG_FILE,
+                description=self.tr("Log file")))
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT,
+                description=self.tr("Output layer"),
+                type=QgsProcessing.TypeVectorPolygon))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        feedback.pushInfo("begin")
+        print("coucou")
+        utils.print_func = feedback.pushInfo
+        # Parameters
+        log_file = self.parameterAsFile(parameters,self.LOG_FILE,context)
+        print("lof_file = " + str(log_file))
+        if utils.fileExists(log_file):
+            os.remove(log_file)
+        with open(log_file,"w+") as f:
+            f.write("BioDispersal from configuration file " + str(log_file) + "\n")
+            #raise QgsProcessingException("Log file " + str(log_file) + " already exists")
+        print("args ok")
+        log_feedback = feedbacks.FileFeedback(log_file)
+        print("args ok")
+        log_feedback.pushInfo("test")
+        config_file = self.parameterAsFile(parameters,self.INPUT_CONFIG,context)
+        print("args ok : " + str(config_file))
+        config_tree = ET.parse(config_file)
+        print("args ok")
+        config_root = config_tree.getroot()
+        print("args ok")
+        bdModel = BioDispersalModel(context,log_feedback)
+        print("fs ok")
+        bdModel.runModel()
+        outputs = [bdModel.getOrigPath(item.dict["out_layer"]) for item in bdModel.costModel.items]
+        #qgsUtils.loadVectorLayer(res,loadProject=True)
+        return {self.OUTPUT: outputs}
+               
 class SelectVExprAlg(QgsProcessingAlgorithm):
 
     ALG_NAME = 'selectvexpr'
