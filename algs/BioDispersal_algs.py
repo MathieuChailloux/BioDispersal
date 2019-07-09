@@ -23,6 +23,7 @@
 """
 
 import os
+import xml.etree.ElementTree as ET
 
 from PyQt5.QtCore import QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
@@ -132,11 +133,6 @@ class BioDispersalAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFileDestination(
                 self.LOG_FILE,
                 description=self.tr("Log file")))
-        self.addParameter(
-            QgsProcessingParameterVectorDestination(
-                self.OUTPUT,
-                description=self.tr("Output layer"),
-                type=QgsProcessing.TypeVectorPolygon))
                 
     def processAlgorithm(self,parameters,context,feedback):
         feedback.pushInfo("begin")
@@ -162,6 +158,8 @@ class BioDispersalAlgorithm(QgsProcessingAlgorithm):
         print("args ok")
         bdModel = BioDispersalModel(context,log_feedback)
         print("fs ok")
+        bdModel.fromXMLRoot(config_root)
+        print("fs2 ok")
         bdModel.runModel()
         outputs = [bdModel.getOrigPath(item.dict["out_layer"]) for item in bdModel.costModel.items]
         #qgsUtils.loadVectorLayer(res,loadProject=True)

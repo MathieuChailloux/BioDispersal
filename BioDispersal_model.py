@@ -71,8 +71,11 @@ class BioDispersalModel:
     def runModel(self):
         utils.debug("feedback fs rm = " + str(self.feedback))
         for model in self.models:
-            if model.isRunnable:
-                model.applyItemsWithContext(self.context,self.feedback)
+            if model.is_runnable:
+                nb_items = len(model.items)
+                if nb_items > 0:
+                    indexes = range(nb_items)
+                    model.applyItemsWithContext(indexes,self.context,self.feedback)
                 
     """ Model update """
     

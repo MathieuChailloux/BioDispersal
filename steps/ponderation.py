@@ -293,6 +293,7 @@ class PonderationModel(abstract_model.DictModel):
     def __init__(self,bdModel):
         self.parser_name = "PonderationModel"
         self.bdModel = bdModel
+        self.is_runnable = True
         super().__init__(self,ponderation_fields)
         
     def mkItemFromDict(self,dict):
