@@ -115,7 +115,7 @@ class CostModel(abstract_model.DictModel):
         feedback.pushDebugInfo("End runCost")
         
     def applyItemsWithContext(self,indexes,context,feedback):
-        feedbacks.beginSection("Computing dispersal")
+        feedback.beginSection("Computing dispersal")
         self.bdModel.paramsModel.checkInit()
         if not indexes:
             utils.internal_error("No indexes in Cost applyItems")
@@ -129,7 +129,7 @@ class CostModel(abstract_model.DictModel):
             step_feedback.setCurrentStep(curr_step)        
             #i.applyItem(self.bdModel.stModel)
             #progress_section.next_step()
-        feedbacks.endSection()
+        feedback.endSection()
         
 class CostConnector(abstract_model.AbstractConnector):
 

@@ -255,7 +255,7 @@ class FrictionModel(abstract_model.DictModel):
         
     # Computes friction layer for each item.
     def applyItemsWithContext(self,indexes,context,feedback):
-        feedbacks.beginSection("Friction")
+        feedback.beginSection("Friction")
         self.bdModel.paramsModel.checkInit()
         reclass_matrixes = self.getReclassifyMatrixes()
         nb_items = len(reclass_matrixes)
@@ -276,7 +276,7 @@ class FrictionModel(abstract_model.DictModel):
             styles.setRendererPalettedGnYlRd(loaded_layer)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
-        feedbacks.endSection()
+        feedback.endSection()
         
     # Saves friction coefficients to CSV file 'fname'
     def saveCSV(self,fname):
