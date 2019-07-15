@@ -109,6 +109,8 @@ class CostModel(abstract_model.DictModel):
                                  context=context,feedback=step_feedback)
         step_feedback.setCurrentStep(9)
         qgsTreatments.applyRasterCalcLE(tmp_path,out_path,cost,context=context,feedback=step_feedback)
+        if os.path.isfile(tmp_path):
+            qgsUtils.removeRaster(tmp_path)
         step_feedback.setCurrentStep(10)
         loaded_layer = qgsUtils.loadRasterLayer(out_path,loadProject=True)
         styles.setRandomColorRasterRenderer(loaded_layer)
