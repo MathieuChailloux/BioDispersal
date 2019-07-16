@@ -202,6 +202,7 @@ class SelectionModel(abstract_model.DictModel):
     # Selections are performed group by group.
     # Group vector layers are then rasterized (group_vector.shp to group_raster.tif)
     def applyItemsWithContext(self,indexes,context,feedback):
+        feedback.beginSection("Selection")
         self.bdModel.paramsModel.checkInit()
         selectionsByGroup = {}
         nb_items = len(indexes)
@@ -248,6 +249,7 @@ class SelectionModel(abstract_model.DictModel):
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
+        feedback.endSection()
             
         
 class SelectionConnector(abstract_model.AbstractConnector):
@@ -295,9 +297,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         else:
             indexes = range(0,len(self.model.items))
         utils.debug(str(indexes))
-        feedbacks.beginSection("Selection")
         self.model.applyItemsWithContext(indexes,self.dlg.context,self.dlg.feedback)
-        feedbacks.endSection()
                         
     # Fetches or create
     def getOrCreateGroup(self):
@@ -362,16 +362,9 @@ class SelectionConnector(abstract_model.AbstractConnector):
             in_geom = "Raster"
             if self.dlg.selectionCreateClasses.isChecked():
                 mode = rclasses
-                feedbacks.beginSection("Fetching unique values")
+                self.model.bdModel.feedback.beginSection("Fetching unique values")
                 vals = qgsTreatments.getRasterUniqueVals(in_layer,feedback=self.dlg.feedback)
-                # hist = qgsUtils.getHistogram(in_layer)
-                # utils.debug("hist = " + str(hist))
-                # hist_vect = hist.histogramVector
-                # utils.debug("hist_vect = " + str(hist_vect))
-                # hist_vect_list = list(hist.histogramVector)
-                # utils.debug("hist_vect_list = " + str(hist_vect_list))
-                # vals = hist_vect_list
-                feedbacks.endSection()
+                self.model.bdModel.feedback.endSection()
                 class_names = self.getClassesFromVals(grp_name,vals)
             else:
                 mode = rresample

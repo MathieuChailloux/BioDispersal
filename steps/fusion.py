@@ -103,10 +103,10 @@ class FusionModel(abstract_model.AbstractGroupModel):
         return xmlStr
     
     def fromXMLRoot(self,root):
-        utils.debug("[fromXMLRoot] FusionModel")
+        utils.info("[fromXMLRoot] FusionModel")
         for st_root in root:
             st_name = st_root.attrib["name"]
-            utils.debug("parsing '" + str(st_name) + "' sous trame")
+            utils.debug("parsing '" + str(st_name) + "' subnetwork")
             self.current_st = st_name
             nb_groups = xmlUtils.getNbChildren(st_root)
             if nb_groups == 0:
@@ -126,7 +126,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         self.layoutChanged.emit()
         
     def applyItemsWithContext(self,indexes,context,feedback):
-        feedbacks.beginSection("Groups merge")
+        feedback.beginSection("Groups merge")
         self.bdModel.paramsModel.checkInit()
         nb_items = len(self.st_groups)
         feedback.pushDebugInfo("nb_items = " + str(nb_items))
@@ -153,7 +153,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
-        feedbacks.endSection()
+        feedback.endSection()
             
     # Removes subnetwork 'name' from model
     def removeSTFromName(self,name):
@@ -194,6 +194,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
             return self.current_model.columnCount(parent)
         else:
             return 0
+            
+    def getNbItems(self):
+        return len(self.st_groups)
         
 
 class FusionConnector(abstract_model.AbstractConnector):

@@ -69,13 +69,17 @@ class BioDispersalModel:
         return (crs, extent, resolution)
         
     def runModel(self):
-        utils.debug("feedback fs rm = " + str(self.feedback))
+        self.feedback.pushDebugInfo("feedback fs rm = " + str(self.feedback))
         for model in self.models:
+            self.feedback.pushInfo("model : " + str(model.parser_name))
             if model.is_runnable:
+                self.feedback.pushDebugInfo("runnable model : " + str(model.parser_name))
                 nb_items = len(model.items)
-                if nb_items > 0:
+                if model.getNbItems() > 0:
                     indexes = range(nb_items)
                     model.applyItemsWithContext(indexes,self.context,self.feedback)
+                else:
+                    self.feedback.reportError("Empty model : " + str(model.parser_name))
                 
     """ Model update """
     

@@ -409,9 +409,9 @@ class PonderationConnector(abstract_model.AbstractConnector):
         return item
         
     def applyItems(self):
-        feedbacks.beginSection("Weighting")
+        self.model.feedback.beginSection("Weighting")
         super().applyItems()
-        feedbacks.endSection()
+        self.model.feedback.endSection()
         
     def setFrictionLayer(self,path):
         loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
