@@ -349,6 +349,11 @@ class PonderationModel(abstract_model.DictModel):
             styles.setRendererPalettedGnYlRd(loaded_layer)
             #styles.setRendererSBPCGnYlRd(loaded_layer)
                   
+    def applyItemsWithContext(self,indexes,context,feedback):
+        feedback.beginSection("Weighting")
+        super().applyItemsWithContext(indexes,context,feedback)
+        feedback.endSection()
+                  
                     
 class PonderationConnector(abstract_model.AbstractConnector):
 
@@ -408,10 +413,10 @@ class PonderationConnector(abstract_model.AbstractConnector):
         item = PonderationItem(dict)
         return item
         
-    def applyItems(self):
-        self.model.feedback.beginSection("Weighting")
-        super().applyItems()
-        self.model.feedback.endSection()
+    # def applyItems(self):
+        # self.model.bdModel.feedback.beginSection("Weighting")
+        # super().applyItems()
+        # self.model.bdModel.feedback.endSection()
         
     def setFrictionLayer(self,path):
         loaded_layer = qgsUtils.loadRasterLayer(path,loadProject=True)
