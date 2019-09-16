@@ -90,7 +90,7 @@ class CostModel(abstract_model.DictModel):
             qgsUtils.removeRaster(start_raster_path)
         # Feedback
         out_name =  os.path.basename(out_path)
-        feedback.setProgressText("Computing " + str(out_name))
+        feedback.setProgressText(" " + str(out_name))
         step_feedback = feedbacks.ProgressMultiStepFeedback(10,feedback)
         step_feedback.setCurrentStep(0)
         # Processing

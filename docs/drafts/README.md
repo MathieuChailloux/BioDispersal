@@ -38,7 +38,7 @@ Go to plugins menu, *Install/manage plugins*, type *BioDispersal* and click on *
 # Documentation
 
 Available documentation:
- - [Video tutorials](https://www.youtube.com/channel/UCP4b6bnbXWO9FtzP1HAUQdw)
+ - [Video tutorials](https://www.youtube.com/watch?v=cX53sSp4JQw)
  - [User guide](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/en/BioDispersalUserGuide_v1.1.pdf)
  - [Modelling method description](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf) (only in french)
 
