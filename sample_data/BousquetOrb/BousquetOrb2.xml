@@ -1,5 +1,5 @@
 <BioDispersalModel>
- <ParamsModel workspace="C:/Users/mathieu.chailloux/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/BioDispersal/sample_data/BousquetOrb" resolution="25" extent="Source/ZoneEtude/EPCIBousquetOrbBuf4000.shp"/>
+ <ParamsModel workspace="/home/mtd/Projets/BioDispersal/BioDispersal/sample_data/BousquetOrb" resolution="25" extent="Source/ZoneEtude/EPCI_GrandOrb_Buf4000.shp"/>
  <STModel>
   <STItem   name="grasslands"   descr="Grasslands and meadows"/>
   <STItem   name="forest"   descr="Hardwood and coniferous forests"/>
@@ -108,8 +108,8 @@
   <PonderationItem   mode="0"   friction="Subnetworks/forest/forest_friction.tif"   ponderation="Subnetworks/wetlands/wetlands_friction.tif"   intervals=""   out_layer="Subnetworks/min_forest_wetlands.tif"/>
  </PonderationModel>
  <CostModel>
-  <CostItem   st_name="forest"   start_layer="Source/Reservoirs/RBP_MILBOISE.shp"   perm_layer="Subnetworks/forest/forest_friction.tif"   cost="1000"   out_layer="Subnetworks/forest/forest_disp_1000.tif"/>
-  <CostItem   st_name="wetlands"   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="Subnetworks/wetlands/wetlands_friction.tif"   cost="1000"   out_layer="Subnetworks/wetlands/wetlands_disp_1000.tif"/>
-  <CostItem   st_name="grasslands"   start_layer="Source/Reservoirs/RBP_PRAIRIE.shp"   perm_layer="Subnetworks/grasslands/grasslands_friction.tif"   cost="1000"   out_layer="Subnetworks/grasslands/grasslands_disp_1000.tif"/>
+  <CostItem   start_layer="Source/Reservoirs/RBP_MILBOISE.shp"   perm_layer="Subnetworks/forest/forest_friction.tif"   cost="1000"   out_layer="Subnetworks/forest/forest_disp_1000.tif"/>
+  <CostItem   start_layer="Source/Reservoirs/RBP_MILIEUX_HUMIDES.shp"   perm_layer="Subnetworks/wetlands/wetlands_friction.tif"   cost="1000"   out_layer="Subnetworks/wetlands/wetlands_disp_1000.tif"/>
+  <CostItem   start_layer="Source/Reservoirs/RBP_PRAIRIE.shp"   perm_layer="Subnetworks/grasslands/grasslands_friction.tif"   cost="1000"   out_layer="Subnetworks/grasslands/grasslands_disp_1000.tif"/>
  </CostModel>
 </BioDispersalModel>

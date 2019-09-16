@@ -135,6 +135,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
         for st in self.st_groups.keys():
             step_feedback.setProgressText("merging subnetwork " + st)
             st_item = self.bdModel.stModel.getSTByName(st)
+            if st_item is None:
+                utils.internal_error("No subnetwork '" + st + "' found")
             groups = self.st_groups[st]
             if not groups.items:
                 step_feedback.pushInfo("No layer for group for subnetwork '" + str(st) + "', ignoring.")
