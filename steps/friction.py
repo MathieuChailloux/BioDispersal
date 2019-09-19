@@ -168,8 +168,7 @@ class FrictionModel(abstract_model.DictModel):
                     f.write(str(in_class) + " = " + str(out_class) + "\n")
                     
     # Returns reclassify matrix (list) for native:reclassifybytable call.
-    def getReclassifyMatrixes(self):
-        st_list = self.bdModel.stModel.getSTList()
+    def getReclassifyMatrixes(self,st_list):
         matrixes = { st_name : [] for st_name in st_list }
         for item in self.items:
             for st in st_list:
@@ -257,7 +256,10 @@ class FrictionModel(abstract_model.DictModel):
     def applyItemsWithContext(self,indexes,context,feedback):
         feedback.beginSection("Friction")
         self.bdModel.paramsModel.checkInit()
-        reclass_matrixes = self.getReclassifyMatrixes()
+        all_st = self.bdModel.stModel.getSTList()
+        st_list = [all_st[idx - 3] for idx in indexes]
+        feedback.pushDebugInfo("st_list = " + str(st_list))
+        reclass_matrixes = self.getReclassifyMatrixes(st_list)
         nb_items = len(reclass_matrixes)
         step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
         curr_step = 0
@@ -358,7 +360,8 @@ class FrictionConnector(abstract_model.AbstractConnector):
     
     def __init__(self,dlg,frictionModel):
         self.dlg = dlg
-        super().__init__(frictionModel,self.dlg.frictionView,None,None)
+        super().__init__(frictionModel,self.dlg.frictionView,
+                         selectionCheckbox=self.dlg.frictRunOnlySelection)
         
     def initGui(self):
         pass
@@ -376,6 +379,12 @@ class FrictionConnector(abstract_model.AbstractConnector):
             indexes = list(set([i.column() for i in self.view.selectedIndexes()]))
         else:
             indexes = range(3,len(self.model.fields))
+        nb_indexes = len(indexes)
+        if nb_indexes == 0:
+            utils.user_error("No subnetwork selected for friction step")
+        min_idx = indexes[0]
+        if min_idx < 3:
+            utils.user_error("Column " + str(min_idx) + " selected is not a subnetwork")
         return indexes
         
     # Updates model with items loaded from file 'fname'
