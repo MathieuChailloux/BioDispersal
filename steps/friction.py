@@ -178,10 +178,10 @@ class FrictionModel(abstract_model.DictModel):
                 if new_val is None:
                     utils.warn("No friction assigned to subnetwork " + str(st)
                                      + " for class " + str(item.dict["class"]))
-                    new_val = qgsTreatments.nodata_val
+                    # float(new_val) causes exception is new_val = None
+                    new_val = ''
                 if new_val == qgsTreatments.nodata_val:
-                    assert(False)
-                    utils.internal_error("Reclassify to nodata in " + str(item))
+                    utils.internal_error("Reclassify to nodata " + str(new_val) + "in " + str(item))
                 try:
                     float(new_val)
                 except ValueError:
@@ -382,9 +382,12 @@ class FrictionConnector(abstract_model.AbstractConnector):
         nb_indexes = len(indexes)
         if nb_indexes == 0:
             utils.user_error("No subnetwork selected for friction step")
-        min_idx = indexes[0]
-        if min_idx < 3:
-            utils.user_error("Column " + str(min_idx) + " selected is not a subnetwork")
+        nb_st = len(self.model.bdModel.stModel.getSTList())
+        utils.debug("nb_st = " + str(nb_st))
+        for idx in indexes:
+            st_idx = idx - 3
+            if st_idx < 0 or st_idx >= nb_st:
+                utils.user_error("Column " + str(idx) + " selected is not a subnetwork")
         return indexes
         
     # Updates model with items loaded from file 'fname'
