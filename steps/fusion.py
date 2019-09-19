@@ -125,14 +125,23 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 grp_model.layoutChanged.emit()
         self.layoutChanged.emit()
         
-    def applyItemsWithContext(self,indexes,context,feedback):
+    def applyItemsWithContext(self,onlyCurrent,context,feedback):
         feedback.beginSection("Groups merge")
         self.bdModel.paramsModel.checkInit()
-        nb_items = len(self.st_groups)
+        if onlyCurrent:
+            if self.current_st:
+                groups_keys = [self.current_st]
+            else:
+                utils.user_error("No current subnetwork, please load one")
+        else:
+            groups_keys = list(self.st_groups.keys())
+        nb_items = len(groups_keys)
+        #nb_items = len(self.st_groups)
         feedback.pushDebugInfo("nb_items = " + str(nb_items))
         step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
         curr_step = 0
-        for st in self.st_groups.keys():
+        #for st in self.st_groups.keys():
+        for st in groups_keys:
             step_feedback.setProgressText("merging subnetwork " + st)
             st_item = self.bdModel.stModel.getSTByName(st)
             if st_item is None:
@@ -146,6 +155,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
             step_feedback.pushDebugInfo("apply fusion to " + st)
             step_feedback.pushDebugInfo(str([g.dict["name"] for g in groups.items]))
             grp_args = [self.bdModel.groupsModel.getOutPath(g.name) for g in reversed(groups.items)]
+            for grp_layer_file in grp_args:
+                utils.checkFileExists(grp_layer_file,prefix="Group ")
             step_feedback.pushDebugInfo(str(grp_args))
             out_path = self.bdModel.stModel.getMergedPath(st_item.name)
             if os.path.isfile(out_path):
@@ -221,6 +232,10 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.dlg.fusionLoadGroups.clicked.connect(self.loadAllGroups)
         self.dlg.fusionUp.clicked.connect(self.upgradeItem)
         self.dlg.fusionDown.clicked.connect(self.downgradeItem)
+        
+    # Workaround to return only boolean value of onlySelection (only current subentwork here)
+    def getSelectedIndexes(self):
+        return self.onlySelection
         
     def loadAllGroups(self):
         utils.debug("connector loadAllGroups")
