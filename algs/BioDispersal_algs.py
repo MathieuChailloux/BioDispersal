@@ -75,7 +75,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         WeightingByDistance(),
                         RasterSelectionByValue(),
                         BioDispersalAlgorithm(),
-                        RasterizeFixAllTouch()]
+                        RasterizeFixAllTouch(),
+                        ExportToGraphab()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -827,3 +828,63 @@ def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
                    'WIDTH' : resolution }
     res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
     return res
+    
+    
+    
+class ExportToGraphab(QgsProcessingAlgorithm):
+
+    ALG_NAME = 'exporttographab'
+    
+    INPUT = 'INPUT'
+    OUTPUT = 'OUTPUT'
+
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def createInstance(self):
+        return ExportToGraphab()
+        
+    def name(self):
+        return self.ALG_NAME
+        
+    def displayName(self):
+        return self.tr('Export to Graphab')
+        
+    def shortHelpString(self):
+        return self.tr('Ensures that friction layer is compatible with Graphab.')
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT,
+                description=self.tr('Input cost layer')))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output cost layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        input_nodata_val = input.dataProvider().sourceNoDataValue(1)
+        feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
+        #input_vals = qgsUtils.getRasterValsBis(input)
+        input_vals = qgsTreatments.getRasterUniqueVals(input)
+        feedback.pushDebugInfo("Input values = " + str(input_vals))
+        if input_vals == []:
+            raise QgsProcessingException("Empty input layer (no input values)")
+        for v in input_vals:
+            if v <= 0:
+                raise QgsProcessingException("Input layer contains value '"
+                        + str(v) + "', but Graphab expects strictly positive (> 0) values")
+                
+        # if input_nodata_val == 0 and 0 in input_vals:
+            # raise QgsProcessingException("Input layer contains value 0, but 0 represents NoData in Graphab")
+        tmp = QgsProcessingUtils.generateTempFilename('tmp.tif')
+        qgsTreatments.applyRNull(input,0,tmp,context,feedback)
+        #output.dataProvider().setNoDataValue(1,0)
+        qgsTreatments.applyRSetNull(tmp,0,output,context,feedback)
+        return {'OUTPUT' : output }
+    
