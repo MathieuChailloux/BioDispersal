@@ -76,7 +76,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         RasterSelectionByValue(),
                         BioDispersalAlgorithm(),
                         RasterizeFixAllTouch(),
-                        ExportToGraphab()]
+                        ExportToGraphab(),
+                        ChangeNoDataVal()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -790,6 +791,12 @@ class RasterizeFixAllTouch(rasterize):
     def displayName(self):
         return self.tr('Rasterize (with ALL_TOUCH fix)')
         
+    def group(self):
+        return "Auxiliary algorithms"
+        
+    def groupId(self):
+        return 'aux'
+        
     def shortHelpString(self):
         return self.tr('Wrapper for gdal:rasterize algorithm allowing to use ALL_TOUCH option (every pixel touching input geometry are rasterized).')
 
@@ -802,33 +809,98 @@ class RasterizeFixAllTouch(rasterize):
                 defaultValue=False,
                 optional=True))
     
-# Apply rasterization on field 'field' of vector layer 'in_path'.
-# Output raster layer in 'out_path'.
-# Resolution set to 25 if not given.
-# Extent can be given through 'extent_path'. If not, it is extracted from input layer.
-# Output raster layer is loaded in QGIS if 'load_flag' is True.
-def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
-                       field=None,burn_val=None,out_type=Qgis.Float32,
-                       nodata_val=qgsTreatments.nodata_val,all_touch=False,overwrite=False,
-                       context=None,feedback=None):
-    TYPES = ['Byte', 'Int16', 'UInt16', 'UInt32', 'Int32', 'Float32',
-             'Float64', 'CInt16', 'CInt32', 'CFloat32', 'CFloat64']
-    if overwrite:
-        qgsUtils.removeRaster(out_path)
-    parameters = { 'ALL_TOUCH' : True,
-                   'BURN' : burn_val,
-                   'DATA_TYPE' : out_type,
-                   'EXTENT' : extent,
-                   'FIELD' : field,
-                   'HEIGHT' : resolution,
-                   'INPUT' : in_path,
-                   'NODATA' : nodata_val,
-                   'OUTPUT' : out_path,
-                   'UNITS' : 1, 
-                   'WIDTH' : resolution }
-    res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
-    return res
+    # Apply rasterization on field 'field' of vector layer 'in_path'.
+    # Output raster layer in 'out_path'.
+    # Resolution set to 25 if not given.
+    # Extent can be given through 'extent_path'. If not, it is extracted from input layer.
+    # Output raster layer is loaded in QGIS if 'load_flag' is True.
+    def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
+                           field=None,burn_val=None,out_type=Qgis.Float32,
+                           nodata_val=qgsTreatments.nodata_val,all_touch=False,overwrite=False,
+                           context=None,feedback=None):
+        TYPES = ['Byte', 'Int16', 'UInt16', 'UInt32', 'Int32', 'Float32',
+                 'Float64', 'CInt16', 'CInt32', 'CFloat32', 'CFloat64']
+        if overwrite:
+            qgsUtils.removeRaster(out_path)
+        parameters = { 'ALL_TOUCH' : True,
+                       'BURN' : burn_val,
+                       'DATA_TYPE' : out_type,
+                       'EXTENT' : extent,
+                       'FIELD' : field,
+                       'HEIGHT' : resolution,
+                       'INPUT' : in_path,
+                       'NODATA' : nodata_val,
+                       'OUTPUT' : out_path,
+                       'UNITS' : 1, 
+                       'WIDTH' : resolution }
+        res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
+        return res
     
+    
+class ChangeNoDataVal(QgsProcessingAlgorithm):
+
+    ALG_NAME = 'changenodata'
+    
+    INPUT = 'INPUT'
+    NODATA_VAL = 'NODATA_VAL'
+    OUTPUT = 'OUTPUT'
+
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def createInstance(self):
+        return ChangeNoDataVal()
+        
+    def name(self):
+        return self.ALG_NAME
+        
+    def group(self):
+        return "Auxiliary algorithms"
+        
+    def groupId(self):
+        return 'aux'
+        
+    def displayName(self):
+        return self.tr('Change NoData value')
+        
+    def shortHelpString(self):
+        return self.tr('Change NoData value and reclassifies old NoData pixels to new NoData value.')
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterNumber (
+                self.NODATA_VAL,
+                description=self.tr('New NoData value'),
+                type=QgsProcessingParameterNumber.Double))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        new_val = self.parameterAsDouble(parameters,self.NODATA_VAL,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        input_nodata_val = input.dataProvider().sourceNoDataValue(1)
+        feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
+        #input_vals = qgsUtils.getRasterValsBis(input)
+        input_vals = qgsTreatments.getRasterUniqueVals(input)
+        feedback.pushDebugInfo("Input values = " + str(input_vals))
+        if input_vals == []:
+            feedback.pushInfo("Empty input layer (no input values)")
+        if new_val in input_vals:
+            raise QgsProcessingException("Input layer contains pixels with new NoData value '"
+                    + str(new_val) + "'.")
+        tmp = QgsProcessingUtils.generateTempFilename('tmp.tif')
+        qgsTreatments.applyRNull(input,new_val,tmp,context,feedback)
+        qgsTreatments.applyRSetNull(tmp,new_val,output,context,feedback)
+        return { 'OUTPUT' : output }
     
     
 class ExportToGraphab(QgsProcessingAlgorithm):
