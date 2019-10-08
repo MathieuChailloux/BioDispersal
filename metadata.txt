@@ -10,11 +10,11 @@
 name=BioDispersal
 qgisMinimumVersion=3.4
 description=Computes dispersal areas based on landscape permeability
-version=1.1
+version=1.1.1
 author=Mathieu Chailloux
 email=mathieu@chailloux.org
 
-about=BioDispersal is a QGIS 3 plugin computing potential dispersal areas based on landscape permeability in order to model ecological continuities. It defines a procedure easing data preparation and performing effective dispersal computation. For each subnetwork (for instance grasslands, wetlands, a specific species) :
+about=NEW: Video tutorials available !</br></br>BioDispersal is a QGIS 3 plugin computing potential dispersal areas based on landscape permeability in order to model ecological continuities. It defines a procedure easing data preparation and performing effective dispersal computation. For each subnetwork (for instance grasslands, wetlands, a specific species) :
  - input data is selected, classified and rasterized according to specified extent and resolution
  - rasterized layers are merged
  - friction coefficients are assigned to merged layer classes
@@ -36,14 +36,17 @@ repository=https://github.com/MathieuChailloux/BioDispersal
         - Video tutorials
         - Compatible with mac OS
         - Render styles automatically generated for friction and dispersion layers
+    1.1.1 : - ExportToGraphab algorithm
+	- Bug fixes on "Launch only selected line" operations
 
 # Tags are comma separated with spaces allowed
 tags=python, ecology, dispersal, ecological continuities, permeability, animal, landscape
 
-homepage=http://umr-tetis.fr/index.php/fr/production/donnees-et-plateformes/plateformes/415-biodispersal
+homepage=https://github.com/MathieuChailloux/BioDispersal/blob/master/README.md
 category=Plugins
 icon=icons/cerf.png
 # experimental flag
+
 experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
