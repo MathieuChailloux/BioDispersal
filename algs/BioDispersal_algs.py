@@ -809,32 +809,32 @@ class RasterizeFixAllTouch(rasterize):
                 defaultValue=False,
                 optional=True))
     
-    # Apply rasterization on field 'field' of vector layer 'in_path'.
-    # Output raster layer in 'out_path'.
-    # Resolution set to 25 if not given.
-    # Extent can be given through 'extent_path'. If not, it is extracted from input layer.
-    # Output raster layer is loaded in QGIS if 'load_flag' is True.
-    def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
-                           field=None,burn_val=None,out_type=Qgis.Float32,
-                           nodata_val=qgsTreatments.nodata_val,all_touch=False,overwrite=False,
-                           context=None,feedback=None):
-        TYPES = ['Byte', 'Int16', 'UInt16', 'UInt32', 'Int32', 'Float32',
-                 'Float64', 'CInt16', 'CInt32', 'CFloat32', 'CFloat64']
-        if overwrite:
-            qgsUtils.removeRaster(out_path)
-        parameters = { 'ALL_TOUCH' : True,
-                       'BURN' : burn_val,
-                       'DATA_TYPE' : out_type,
-                       'EXTENT' : extent,
-                       'FIELD' : field,
-                       'HEIGHT' : resolution,
-                       'INPUT' : in_path,
-                       'NODATA' : nodata_val,
-                       'OUTPUT' : out_path,
-                       'UNITS' : 1, 
-                       'WIDTH' : resolution }
-        res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
-        return res
+# Apply rasterization on field 'field' of vector layer 'in_path'.
+# Output raster layer in 'out_path'.
+# Resolution set to 25 if not given.
+# Extent can be given through 'extent_path'. If not, it is extracted from input layer.
+# Output raster layer is loaded in QGIS if 'load_flag' is True.
+def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
+                   field=None,burn_val=None,out_type=Qgis.Float32,
+                   nodata_val=qgsTreatments.nodata_val,all_touch=False,overwrite=False,
+                   context=None,feedback=None):
+	TYPES = ['Byte', 'Int16', 'UInt16', 'UInt32', 'Int32', 'Float32',
+		 'Float64', 'CInt16', 'CInt32', 'CFloat32', 'CFloat64']
+	if overwrite:
+	    qgsUtils.removeRaster(out_path)
+	parameters = { 'ALL_TOUCH' : True,
+		       'BURN' : burn_val,
+		       'DATA_TYPE' : out_type,
+		       'EXTENT' : extent,
+		       'FIELD' : field,
+		       'HEIGHT' : resolution,
+		       'INPUT' : in_path,
+		       'NODATA' : nodata_val,
+		       'OUTPUT' : out_path,
+		       'UNITS' : 1, 
+		       'WIDTH' : resolution }
+	res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
+	return res
     
     
 class ChangeNoDataVal(QgsProcessingAlgorithm):
