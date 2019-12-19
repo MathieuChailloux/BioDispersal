@@ -253,7 +253,7 @@ class FrictionModel(abstract_model.DictModel):
         progress_section.end_section()
         
     # Computes friction layer for each item.
-    def applyItemsWithContext(self,indexes,context,feedback):
+    def applyItemsWithContext(self,context,feedback,indexes):
         feedback.beginSection("Friction")
         self.bdModel.paramsModel.checkInit()
         all_st = self.bdModel.stModel.getSTList()

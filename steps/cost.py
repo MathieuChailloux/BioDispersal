@@ -117,7 +117,7 @@ class CostModel(abstract_model.DictModel):
         styles.setRandomColorRasterRenderer(loaded_layer)
         feedback.pushDebugInfo("End runCost")
         
-    def applyItemsWithContext(self,indexes,context,feedback):
+    def applyItemsWithContext(self,context,feedback,indexes):
         feedback.beginSection("Computing dispersal")
         self.bdModel.paramsModel.checkInit()
         if not indexes:

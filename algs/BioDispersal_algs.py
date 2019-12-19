@@ -941,7 +941,7 @@ class ExportToGraphab(QgsProcessingAlgorithm):
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         input_nodata_val = input.dataProvider().sourceNoDataValue(1)
-        feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
+        # feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
         #input_vals = qgsUtils.getRasterValsBis(input)
         input_vals = qgsTreatments.getRasterUniqueVals(input)
         feedback.pushDebugInfo("Input values = " + str(input_vals))

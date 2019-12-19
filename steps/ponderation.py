@@ -349,9 +349,9 @@ class PonderationModel(abstract_model.DictModel):
             styles.setRendererPalettedGnYlRd(loaded_layer)
             #styles.setRendererSBPCGnYlRd(loaded_layer)
                   
-    def applyItemsWithContext(self,indexes,context,feedback):
+    def applyItemsWithContext(self,context,feedback,indexes):
         feedback.beginSection("Weighting")
-        super().applyItemsWithContext(indexes,context,feedback)
+        super().applyItemsWithContext(context,feedback,indexes)
         feedback.endSection()
                   
                     

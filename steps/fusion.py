@@ -125,7 +125,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 grp_model.layoutChanged.emit()
         self.layoutChanged.emit()
         
-    def applyItemsWithContext(self,onlyCurrent,context,feedback):
+    def applyItemsWithContext(self,context,feedback,onlyCurrent=False):
         feedback.beginSection("Groups merge")
         self.bdModel.paramsModel.checkInit()
         if onlyCurrent:
