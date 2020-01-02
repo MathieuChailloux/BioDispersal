@@ -890,7 +890,7 @@ class ChangeNoDataVal(QgsProcessingAlgorithm):
         input_nodata_val = input.dataProvider().sourceNoDataValue(1)
         feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
         #input_vals = qgsUtils.getRasterValsBis(input)
-        input_vals = qgsTreatments.getRasterUniqueVals(input)
+        input_vals = qgsTreatments.getRasterUniqueVals(input,feedback)
         feedback.pushDebugInfo("Input values = " + str(input_vals))
         if input_vals == []:
             feedback.pushInfo("Empty input layer (no input values)")
@@ -941,9 +941,9 @@ class ExportToGraphab(QgsProcessingAlgorithm):
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         input_nodata_val = input.dataProvider().sourceNoDataValue(1)
-        # feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
+        feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
         #input_vals = qgsUtils.getRasterValsBis(input)
-        input_vals = qgsTreatments.getRasterUniqueVals(input)
+        input_vals = qgsTreatments.getRasterUniqueVals(input,feedback)
         feedback.pushDebugInfo("Input values = " + str(input_vals))
         if input_vals == []:
             raise QgsProcessingException("Empty input layer (no input values)")
@@ -952,11 +952,10 @@ class ExportToGraphab(QgsProcessingAlgorithm):
                 raise QgsProcessingException("Input layer contains value '"
                         + str(v) + "', but Graphab expects strictly positive (> 0) values")
                 
-        # if input_nodata_val == 0 and 0 in input_vals:
-            # raise QgsProcessingException("Input layer contains value 0, but 0 represents NoData in Graphab")
+        if input_nodata_val == 0 and 0 in input_vals:
+            raise QgsProcessingException("Input layer contains value 0, but 0 represents NoData in Graphab")
         tmp = QgsProcessingUtils.generateTempFilename('tmp.tif')
         qgsTreatments.applyRNull(input,0,tmp,context,feedback)
-        #output.dataProvider().setNoDataValue(1,0)
         qgsTreatments.applyRSetNull(tmp,0,output,context,feedback)
         return {'OUTPUT' : output }
     
