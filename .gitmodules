@@ -1,0 +1,3 @@
+[submodule "qgis_lib_mc"]
+	path = qgis_lib_mc
+	url = https://github.com/MathieuChailloux/qgis_lib_mc.git
