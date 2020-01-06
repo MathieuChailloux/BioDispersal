@@ -23,6 +23,7 @@
 """
 
 import os
+import math
 import xml.etree.ElementTree as ET
 
 from PyQt5.QtCore import QCoreApplication, QVariant
@@ -696,7 +697,8 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
     VALUE = 'VALUE'
     OUTPUT = 'OUTPUT'
     
-    OPERATORS = ['<','<=','>','>=','==']
+    OPERATORS = ['<','<=','>','>=','==','!=']
+    OPERATORS_CMPL = ['>=','>','<=','<','!=','==']
     
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
@@ -743,8 +745,8 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
                       Qgis.Float32 : 5,
                       Qgis.Float64 : 6 }
         if in_type in typeAssoc:
-            #return typeAssoc[in_type]
-            return 5
+            return typeAssoc[in_type]
+            #return 5
         else:
             return 5
                 
@@ -760,20 +762,26 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
         out_type = self.getDataType(input_type)
         # Expression
         input_nodata_val = input.dataProvider().sourceNoDataValue(1)
-        #input_name = input.name()
-        #band1_str = input_name + "@1"
-        #input_str = 'A'
         operator_str = self.OPERATORS[operator]
+        operator_cmpl_str = self.OPERATORS_CMPL[operator]
         value_str = str(value)
         nodata_str = str(input_nodata_val)
         cmp_expr = '(A {} {})'.format(operator_str,value_str)
-        expr = 'A * {} + {} * (1 - {})'.format(cmp_expr,nodata_str,cmp_expr)
-        #expr = 'A == 2'
+        cmp_expr_cmpl = '(A {} {})'.format(operator_cmpl_str,value_str)
+        expr = "A * " + str(cmp_expr)
+        mult_expr = "A * B"
+        if math.isnan(input_nodata_val):
+            nodata_val = None
+        else:
+            nodata_val = input_nodata_val
+        feedback.pushDebugInfo("nodata_val = " + nodata_str)
         feedback.pushDebugInfo("gdalcalc expr = " + str(expr))
         # Call
-        out = qgsTreatments.applyRasterCalc(input,output,expr,
-                                            nodata_val=input_nodata_val,out_type=out_type,
-                                            context=context,feedback=feedback)
+        tmp = QgsProcessingUtils.generateTempFilename('tmp.tif')
+        out = qgsTreatments.applyRasterCalc(input,tmp,expr,
+                                      nodata_val=nodata_val,out_type=out_type,
+                                      context=context,feedback=feedback)
+        out = qgsTreatments.applyRSetNull(tmp,0,output,context,feedback)
         return { 'OUTPUT' : out }
         
     
