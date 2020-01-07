@@ -826,23 +826,29 @@ def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
                    field=None,burn_val=None,out_type=Qgis.Float32,
                    nodata_val=qgsTreatments.nodata_val,all_touch=False,overwrite=False,
                    context=None,feedback=None):
-	TYPES = ['Byte', 'Int16', 'UInt16', 'UInt32', 'Int32', 'Float32',
-		 'Float64', 'CInt16', 'CInt32', 'CFloat32', 'CFloat64']
-	if overwrite:
-	    qgsUtils.removeRaster(out_path)
-	parameters = { 'ALL_TOUCH' : True,
-		       'BURN' : burn_val,
-		       'DATA_TYPE' : out_type,
-		       'EXTENT' : extent,
-		       'FIELD' : field,
-		       'HEIGHT' : resolution,
-		       'INPUT' : in_path,
-		       'NODATA' : nodata_val,
-		       'OUTPUT' : out_path,
-		       'UNITS' : 1, 
-		       'WIDTH' : resolution }
-	res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
-	return res
+    TYPES = ['Byte', 'Int16', 'UInt16', 'UInt32', 'Int32', 'Float32',
+         'Float64', 'CInt16', 'CInt32', 'CFloat32', 'CFloat64']
+    if overwrite:
+        qgsUtils.removeRaster(out_path)
+    extra_param_name = 'EXTRA'
+    if hasattr(rasterize,extra_param_name):
+        res = qgsTreatments.applyRasterization(in_path,out_path,extent,resolution,
+                field,burn_val,out_type,nodata_val,all_touch,overwrite,
+                context,feedback)
+    else:
+        parameters = { 'ALL_TOUCH' : True,
+                   'BURN' : burn_val,
+                   'DATA_TYPE' : out_type,
+                   'EXTENT' : extent,
+                   'FIELD' : field,
+                   'HEIGHT' : resolution,
+                   'INPUT' : in_path,
+                   'NODATA' : nodata_val,
+                   'OUTPUT' : out_path,
+                   'UNITS' : 1, 
+                   'WIDTH' : resolution }
+        res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
+    return res
     
     
 class ChangeNoDataVal(QgsProcessingAlgorithm):
