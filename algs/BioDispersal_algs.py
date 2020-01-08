@@ -26,6 +26,13 @@ import os
 import math
 import xml.etree.ElementTree as ET
 
+try:
+    import scipy
+    import numpy as np
+    import_scipy_ok = True
+except ImportError:
+    import_scipy_ok = False
+
 from PyQt5.QtCore import QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
 from qgis.core import (Qgis,
@@ -78,6 +85,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         BioDispersalAlgorithm(),
                         RasterizeFixAllTouch(),
                         ExportToGraphab(),
+                        ExportPatchesToCircuitscape(),
                         ChangeNoDataVal()]
         for a in self.alglist:
             a.initAlgorithm()
@@ -779,7 +787,7 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
         # Call
         tmp = QgsProcessingUtils.generateTempFilename('tmp.tif')
         out = qgsTreatments.applyRasterCalc(input,tmp,expr,
-                                      nodata_val=nodata_val,out_type=out_type,
+                                      nodata_val=0,out_type=out_type,
                                       context=context,feedback=feedback)
         out = qgsTreatments.applyRSetNull(tmp,0,output,context,feedback)
         return { 'OUTPUT' : out }
@@ -973,3 +981,81 @@ class ExportToGraphab(QgsProcessingAlgorithm):
         qgsTreatments.applyRSetNull(tmp,0,output,context,feedback)
         return {'OUTPUT' : output }
     
+    
+class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
+
+    ALG_NAME = 'exportpatchestocircuitscape'
+    
+    INPUT = 'INPUT'
+    CLASS = 'CLASS'
+    OUTPUT = 'OUTPUT'
+
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def createInstance(self):
+        return ExportPatchesToCircuitscape()
+        
+    def name(self):
+        return self.ALG_NAME
+        
+    def displayName(self):
+        return self.tr('Export patch layer to Circuitscape')
+        
+    def shortHelpString(self):
+        return self.tr('Export patch layer (focal nodes, biodiversity reservois, ...) to Circuitscape')
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT,
+                description=self.tr('Input cost layer')))
+        self.addParameter(QgsProcessingParameterNumber(
+            self.CLASS, "Choose Landscape Class", type=QgsProcessingParameterNumber.Integer,
+            defaultValue=1,optional=True))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output cost layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        if not import_scipy_ok:
+            msg = "Scipy (python library) import failed. You can install it through OSGEO installer"
+            raise QgsProcessingException(msg)
+    
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        cl = self.parameterAsInt(parameters, self.CLASS, context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+                
+        input_filename = input.source()
+        input_nodata_val = input.dataProvider().sourceNoDataValue(1)
+        if input_nodata_val == 1:
+            raise QgsProcessingException("Input NoData value cannot be equal to 1.")
+        input_type = input.dataProvider().dataType(1)
+        feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
+        input_vals = qgsTreatments.getRasterUniqueVals(input,feedback)
+        feedback.pushDebugInfo("Input values = " + str(input_vals))
+        if input_vals == []:
+            raise QgsProcessingException("Empty input layer (no input values)")
+        # if 0 in input_vals:
+            # raise QgsProcessingException("Input layer contains 0 value")
+        feedback.pushDebugInfo("output = " + str(output))
+        output_basename, ext = os.path.splitext(output)
+        output_filename = output_basename + ".asc"
+                
+        classes, array = qgsUtils.getRasterValsAndArray(str(input_filename))
+        new_array = np.copy(array)
+        new_array[new_array!=cl] = 0
+        new_array[array==cl] = 1
+        struct = scipy.ndimage.generate_binary_structure(2,2)
+        labeled_array, nb_patches = scipy.ndimage.label(new_array,struct)
+        labeled_array[labeled_array==0] = input_nodata_val
+        
+        out = qgsUtils.exportRaster(labeled_array,input_filename,output,
+            nodata=input_nodata_val,type=input_type)
+        qgsTreatments.applyTranslate(output,output_filename,nodata_val=input_nodata_val,
+            context=context,feedback=feedback)
+        return {'OUTPUT' : out }
+        
