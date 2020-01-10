@@ -111,7 +111,18 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
     def loadAlgorithms(self):
         for a in self.alglist:
             self.addAlgorithm(a)
-            
+    
+class ExportAlgorithm(QgsProcessingAlgorithm):
+    def group(self):
+        return "Exports"
+    def groupId(self):
+        return 'export'
+    
+class SelectionAlgorithm(QgsProcessingAlgorithm):
+    def group(self):
+        return "Selection step"
+    def groupId(self):
+        return 'selection'
                
 class BioDispersalAlgorithm(QgsProcessingAlgorithm):
 
@@ -170,7 +181,7 @@ class BioDispersalAlgorithm(QgsProcessingAlgorithm):
         #qgsUtils.loadVectorLayer(res,loadProject=True)
         return {self.OUTPUT: outputs}
                
-class SelectVExprAlg(QgsProcessingAlgorithm):
+class SelectVExprAlg(SelectionAlgorithm):
 
     ALG_NAME = 'selectvexpr'
     
@@ -274,7 +285,7 @@ class SelectVExprAlg(QgsProcessingAlgorithm):
         return res
 
         
-class SelectVFieldAlg(QgsProcessingAlgorithm):
+class SelectVFieldAlg(SelectionAlgorithm):
 
     ALG_NAME = 'selectvfield'
     
@@ -396,6 +407,12 @@ class WeightingAlgorithm(QgsProcessingAlgorithm):
         
     def name(self):
         return self.ALG_NAME
+        
+    def group(self):
+        return "Weighting step"
+        
+    def groupId(self):
+        return 'weighting'
 
     def initAlgorithm(self, config=None):
         self.methods = ((self.tr('Nearest neighbour'), 'near'),
