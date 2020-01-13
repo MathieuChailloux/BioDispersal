@@ -86,6 +86,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         RasterizeFixAllTouch(),
                         ExportToGraphab(),
                         ExportPatchesToCircuitscape(),
+                        ExportFrictionToCircuitscape(),
                         ChangeNoDataVal()]
         for a in self.alglist:
             a.initAlgorithm()
@@ -107,10 +108,12 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
         icon_path = os.path.join(os.path.dirname(__file__), "..", "icons", "cerf.png")
         return QIcon(icon_path)
 
-        
     def loadAlgorithms(self):
         for a in self.alglist:
             self.addAlgorithm(a)
+            
+    def supportedOutputRasterLayerExtensions(self):
+        return ['tif','asc']
     
 class ExportAlgorithm(QgsProcessingAlgorithm):
     def group(self):
@@ -999,6 +1002,14 @@ class ExportToGraphab(QgsProcessingAlgorithm):
         return {'OUTPUT' : output }
     
     
+class ASCIIOutput(QgsProcessingParameterRasterDestination):
+    def __init__(self, name, description):
+        super().__init__(name, description)
+    def defaultFileExtension(self):
+        return 'asc'
+    def supportedOutputRasterLayerExtensions(self):
+        return ['asc']
+    
 class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
 
     ALG_NAME = 'exportpatchestocircuitscape'
@@ -1017,7 +1028,7 @@ class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
         return self.ALG_NAME
         
     def displayName(self):
-        return self.tr('Export patch layer to Circuitscape')
+        return self.tr('Export to Circuitscape (start points)')
         
     def shortHelpString(self):
         return self.tr('Export patch layer (focal nodes, biodiversity reservois, ...) to Circuitscape')
@@ -1031,7 +1042,7 @@ class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
             self.CLASS, "Choose Landscape Class", type=QgsProcessingParameterNumber.Integer,
             defaultValue=1,optional=True))
         self.addParameter(
-            QgsProcessingParameterRasterDestination(
+            ASCIIOutput(
                 self.OUTPUT,
                 self.tr("Output cost layer")))
                 
@@ -1060,7 +1071,7 @@ class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
             # raise QgsProcessingException("Input layer contains 0 value")
         feedback.pushDebugInfo("output = " + str(output))
         output_basename, ext = os.path.splitext(output)
-        output_filename = output_basename + ".asc"
+        output_tif = output_basename + ".tif"
                 
         classes, array = qgsUtils.getRasterValsAndArray(str(input_filename))
         new_array = np.copy(array)
@@ -1070,9 +1081,68 @@ class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
         labeled_array, nb_patches = scipy.ndimage.label(new_array,struct)
         labeled_array[labeled_array==0] = input_nodata_val
         
-        out = qgsUtils.exportRaster(labeled_array,input_filename,output,
+        qgsUtils.exportRaster(labeled_array,input_filename,output_tif,
             nodata=input_nodata_val,type=input_type)
-        qgsTreatments.applyTranslate(output,output_filename,nodata_val=input_nodata_val,
-            context=context,feedback=feedback)
+        out = qgsTreatments.applyTranslate(output_tif,output,data_type=input_type,
+            nodata_val=input_nodata_val,context=context,feedback=feedback)
+        # Data type coule be problematic if input layer has small type 
+        # (suchs as Byte but BioDispersal exports Float32) and lot of patches.
         return {'OUTPUT' : out }
         
+class ExportFrictionToCircuitscape(QgsProcessingAlgorithm):
+
+    ALG_NAME = 'exportfrictiontocircuitscape'
+    
+    INPUT = 'INPUT'
+    OUTPUT = 'OUTPUT'
+
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+    def createInstance(self):
+        return ExportFrictionToCircuitscape()
+        
+    def name(self):
+        return self.ALG_NAME
+        
+    def displayName(self):
+        return self.tr('Export to Circuitscape (friction layer)')
+        
+    def shortHelpString(self):
+        return self.tr('Export friction (resistance) layer to Circuitscape, converting existing layer to ASCII format.')
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT,
+                description=self.tr('Input resistance layer')))
+        self.addParameter(
+            ASCIIOutput(
+                self.OUTPUT,
+                self.tr("Output layer (ASCII file)")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # if not import_scipy_ok:
+            # msg = "Scipy (python library) import failed. You can install it through OSGEO installer"
+            # raise QgsProcessingException(msg)
+    
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)        
+                
+        if output is None:
+            raise QgsProcessingException("Empty output layer")
+        base, ext = os.path.splitext(output)
+        if ext != '.asc':
+            raise QgsProcessingException("Invalid extension for output ASCII file : " + str(output))
+        input_filename = input.source()
+        input_nodata_val = input.dataProvider().sourceNoDataValue(1)
+        feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
+        if input_nodata_val == 1:
+            raise QgsProcessingException("Input NoData value cannot be equal to 1.")
+            
+        input_type = input.dataProvider().dataType(1)
+        out = qgsTreatments.applyTranslate(input_filename,output,data_type=input_type,
+            nodata_val=input_nodata_val,context=context,feedback=feedback)
+        return {'OUTPUT' : output }
