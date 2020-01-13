@@ -971,11 +971,11 @@ class ExportToGraphab(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT,
-                description=self.tr('Input cost layer')))
+                description=self.tr('Input layer (friction)')))
         self.addParameter(
             QgsProcessingParameterRasterDestination(
                 self.OUTPUT,
-                self.tr("Output cost layer")))
+                self.tr("Exported layer (friction)")))
                 
     def processAlgorithm(self,parameters,context,feedback):
         input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
@@ -1040,11 +1040,11 @@ class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
                 description=self.tr('Input cost layer')))
         self.addParameter(QgsProcessingParameterNumber(
             self.CLASS, "Choose Landscape Class", type=QgsProcessingParameterNumber.Integer,
-            defaultValue=1,optional=True))
+            defaultValue=None,optional=True))
         self.addParameter(
             ASCIIOutput(
                 self.OUTPUT,
-                self.tr("Output cost layer")))
+                self.tr("Exported layer (start points)")))
                 
     def processAlgorithm(self,parameters,context,feedback):
         if not import_scipy_ok:
@@ -1055,18 +1055,16 @@ class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
         if input is None:
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
         cl = self.parameterAsInt(parameters, self.CLASS, context)
+        cl_param = parameters[self.CLASS]
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
                 
         input_filename = input.source()
         input_nodata_val = input.dataProvider().sourceNoDataValue(1)
+        feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
         if input_nodata_val == 1:
             raise QgsProcessingException("Input NoData value cannot be equal to 1.")
         input_type = input.dataProvider().dataType(1)
-        feedback.pushDebugInfo("Input NoData value = " + str(input_nodata_val))
-        input_vals = qgsTreatments.getRasterUniqueVals(input,feedback)
-        feedback.pushDebugInfo("Input values = " + str(input_vals))
-        if input_vals == []:
-            raise QgsProcessingException("Empty input layer (no input values)")
+        feedback.pushDebugInfo("Input type = " + str(input_type))
         # if 0 in input_vals:
             # raise QgsProcessingException("Input layer contains 0 value")
         feedback.pushDebugInfo("output = " + str(output))
@@ -1075,8 +1073,18 @@ class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
                 
         classes, array = qgsUtils.getRasterValsAndArray(str(input_filename))
         new_array = np.copy(array)
-        new_array[new_array!=cl] = 0
-        new_array[array==cl] = 1
+        feedback.pushDebugInfo("class = " + str(cl) + ", " + str(parameters[self.CLASS]))
+        feedback.pushDebugInfo("array = " + str(array[0][0]))
+        feedback.pushDebugInfo("new_array = " + str(new_array[0][0]))
+        if cl_param is None:
+            new_array[array!=input_nodata_val] = 1
+            new_array[array==input_nodata_val] = 0
+            new_array[array!=array] = 0
+        elif cl not in classes:
+            raise QgsProcessingException("No pixel found with class value " + str(cl))
+        else:
+            new_array[new_array!=cl] = 0
+            new_array[array==cl] = 1
         struct = scipy.ndimage.generate_binary_structure(2,2)
         labeled_array, nb_patches = scipy.ndimage.label(new_array,struct)
         labeled_array[labeled_array==0] = input_nodata_val
@@ -1119,13 +1127,9 @@ class ExportFrictionToCircuitscape(QgsProcessingAlgorithm):
         self.addParameter(
             ASCIIOutput(
                 self.OUTPUT,
-                self.tr("Output layer (ASCII file)")))
+                self.tr("Exported layer (resistance)")))
                 
-    def processAlgorithm(self,parameters,context,feedback):
-        # if not import_scipy_ok:
-            # msg = "Scipy (python library) import failed. You can install it through OSGEO installer"
-            # raise QgsProcessingException(msg)
-    
+    def processAlgorithm(self,parameters,context,feedback):    
         input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
         if input is None:
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
