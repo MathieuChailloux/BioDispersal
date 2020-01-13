@@ -17,8 +17,8 @@ class Ui_BioDispersalDialogBase(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(BioDispersalDialogBase.sizePolicy().hasHeightForWidth())
         BioDispersalDialogBase.setSizePolicy(sizePolicy)
-        self.gridLayout_22 = QtWidgets.QGridLayout(BioDispersalDialogBase)
-        self.gridLayout_22.setObjectName("gridLayout_22")
+        self.gridLayout_18 = QtWidgets.QGridLayout(BioDispersalDialogBase)
+        self.gridLayout_18.setObjectName("gridLayout_18")
         self.frame = QtWidgets.QFrame(BioDispersalDialogBase)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -50,7 +50,7 @@ class Ui_BioDispersalDialogBase(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 699, 628))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 698, 628))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1933,7 +1933,7 @@ class Ui_BioDispersalDialogBase(object):
         self.textShortHelp.setOpenLinks(False)
         self.textShortHelp.setObjectName("textShortHelp")
         self.gridLayout_3.addWidget(self.splitter, 0, 0, 1, 1)
-        self.gridLayout_22.addWidget(self.frame, 0, 0, 1, 2)
+        self.gridLayout_18.addWidget(self.frame, 0, 0, 1, 2)
         self.lblProgress = QtWidgets.QLabel(BioDispersalDialogBase)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -1942,31 +1942,28 @@ class Ui_BioDispersalDialogBase(object):
         self.lblProgress.setSizePolicy(sizePolicy)
         self.lblProgress.setText("")
         self.lblProgress.setObjectName("lblProgress")
-        self.gridLayout_22.addWidget(self.lblProgress, 1, 0, 1, 1)
-        self.progressBar = QtWidgets.QProgressBar(BioDispersalDialogBase)
-        self.progressBar.setProperty("value", 0)
-        self.progressBar.setObjectName("progressBar")
-        self.gridLayout_22.addWidget(self.progressBar, 2, 0, 1, 1)
+        self.gridLayout_18.addWidget(self.lblProgress, 1, 0, 1, 1)
         self.frame_10 = QtWidgets.QFrame(BioDispersalDialogBase)
         self.frame_10.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_10.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_10.setObjectName("frame_10")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.frame_10)
-        self.horizontalLayout_3.setContentsMargins(-1, 0, -1, 0)
+        self.horizontalLayout_3.setContentsMargins(-1, 0, 0, 0)
+        self.horizontalLayout_3.setSpacing(0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.label_2 = QtWidgets.QLabel(self.frame_10)
+        self.label_3 = QtWidgets.QLabel(self.frame_10)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
-        self.label_2.setSizePolicy(sizePolicy)
-        self.label_2.setMinimumSize(QtCore.QSize(61, 61))
-        self.label_2.setMaximumSize(QtCore.QSize(61, 61))
-        self.label_2.setText("")
-        self.label_2.setPixmap(QtGui.QPixmap(":/plugins/BioDispersal/icons/logoIrstea.png"))
-        self.label_2.setScaledContents(True)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout_3.addWidget(self.label_2)
+        sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        self.label_3.setSizePolicy(sizePolicy)
+        self.label_3.setMaximumSize(QtCore.QSize(85, 21))
+        self.label_3.setText("")
+        self.label_3.setPixmap(QtGui.QPixmap(":/plugins/BioDispersal/icons/logoINRAE.png"))
+        self.label_3.setScaledContents(True)
+        self.label_3.setWordWrap(False)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_3.addWidget(self.label_3)
         self.label = QtWidgets.QLabel(self.frame_10)
         self.label.setMinimumSize(QtCore.QSize(122, 61))
         self.label.setMaximumSize(QtCore.QSize(122, 61))
@@ -1975,7 +1972,11 @@ class Ui_BioDispersalDialogBase(object):
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.horizontalLayout_3.addWidget(self.label)
-        self.gridLayout_22.addWidget(self.frame_10, 1, 1, 2, 1)
+        self.gridLayout_18.addWidget(self.frame_10, 1, 1, 2, 1)
+        self.progressBar = QtWidgets.QProgressBar(BioDispersalDialogBase)
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setObjectName("progressBar")
+        self.gridLayout_18.addWidget(self.progressBar, 2, 0, 1, 1)
 
         self.retranslateUi(BioDispersalDialogBase)
         self.mTabWidget.setCurrentIndex(0)
@@ -2128,19 +2129,18 @@ class Ui_BioDispersalDialogBase(object):
         self.textShortHelp.setHtml(_translate("BioDispersalDialogBase", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">Nom étape</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\">Description générale</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Ceci est une description générale</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:600;\">Description détaillée</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">  </span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-style:italic;\">param1</span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"> : description du param 1</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\">  </span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-style:italic;\">param2</span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"> : description du param 2</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:14pt; font-weight:600;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Ceci est un test</span></p></body></html>"))
-        self.label_2.setToolTip(_translate("BioDispersalDialogBase", "http://www.irstea.fr"))
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">Nom étape</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Description générale</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Ceci est une description générale</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Description détaillée</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">  </span><span style=\" font-size:8pt; font-style:italic;\">param1</span><span style=\" font-size:8pt;\"> : description du param 1</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">  </span><span style=\" font-size:8pt; font-style:italic;\">param2</span><span style=\" font-size:8pt;\"> : description du param 2</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Ceci est un test</span></p></body></html>"))
 
 from qgis import gui
 from qgis.gui import QgsScrollArea
