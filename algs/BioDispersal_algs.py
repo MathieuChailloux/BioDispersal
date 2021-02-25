@@ -115,17 +115,37 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
     def supportedOutputRasterLayerExtensions(self):
         return ['tif','asc']
     
-class ExportAlgorithm(QgsProcessingAlgorithm):
-    def group(self):
-        return "Exports"
-    def groupId(self):
-        return 'export'
-    
 class SelectionAlgorithm(QgsProcessingAlgorithm):
     def group(self):
         return "Selection step"
     def groupId(self):
         return 'selection'
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+    
+class WeightingAlgorithm(QgsProcessingAlgorithm):
+    def group(self):
+        return "Weighting step"
+    def groupId(self):
+        return 'weighting'
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+class GraphabAlgorithm(QgsProcessingAlgorithm):
+    def group(self):
+        return "Graphab"
+    def groupId(self):
+        return 'graphab'
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+        
+class CircuitscapeAlgorithm(QgsProcessingAlgorithm):
+    def group(self):
+        return "Circuitscape"
+    def groupId(self):
+        return 'circuitscape'
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
                
 class BioDispersalAlgorithm(QgsProcessingAlgorithm):
 
@@ -945,15 +965,12 @@ class ChangeNoDataVal(QgsProcessingAlgorithm):
         return { 'OUTPUT' : output }
     
     
-class ExportToGraphab(QgsProcessingAlgorithm):
+class ExportToGraphab(GraphabAlgorithm):
 
     ALG_NAME = 'exporttographab'
     
     INPUT = 'INPUT'
     OUTPUT = 'OUTPUT'
-
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
         
     def createInstance(self):
         return ExportToGraphab()
@@ -1010,7 +1027,7 @@ class ASCIIOutput(QgsProcessingParameterRasterDestination):
     def supportedOutputRasterLayerExtensions(self):
         return ['asc']
     
-class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
+class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
 
     ALG_NAME = 'exportpatchestocircuitscape'
     
@@ -1097,7 +1114,7 @@ class ExportPatchesToCircuitscape(QgsProcessingAlgorithm):
         # (suchs as Byte but BioDispersal exports Float32) and lot of patches.
         return {'OUTPUT' : out }
         
-class ExportFrictionToCircuitscape(QgsProcessingAlgorithm):
+class ExportFrictionToCircuitscape(CircuitscapeAlgorithm):
 
     ALG_NAME = 'exportfrictiontocircuitscape'
     
@@ -1150,3 +1167,4 @@ class ExportFrictionToCircuitscape(QgsProcessingAlgorithm):
         out = qgsTreatments.applyTranslate(input_filename,output,data_type=input_type,
             nodata_val=input_nodata_val,context=context,feedback=feedback)
         return {'OUTPUT' : output }
+        

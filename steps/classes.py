@@ -79,10 +79,12 @@ class ClassItem(abstract_model.DictItem):
         
     def getFieldValue(self):
         name = self.dict["name"]
-        if "_" not in name:
-            utils.internal_error("Attempt to get field value from ill-formed class " + str(name))
-        parts = name.split("_")
-        val = parts[-1]
+        group = self.dict["group"]
+        prefix = str(group) + "_"
+        if not name.startswith(prefix):
+            utils.internal_error("Attempt to get field value from ill-formed class "
+                + str(name) + " of group " + str(group))
+        val = name[len(prefix):]
         if not val:
             assert(False)
         return val
