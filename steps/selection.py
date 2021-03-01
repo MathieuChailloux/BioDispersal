@@ -245,7 +245,8 @@ class SelectionModel(abstract_model.DictModel):
                 BioDispersal_algs.applyRasterizationFixAllTouch(grp_vector_path,grp_raster_path,extent,resolution,
                                                  field="Code",out_type=1,all_touch=True,
                                                  context=context,feedback=step_feedback)
-            self.bdModel.paramsModel.normalizeRaster(grp_raster_path,out_path=out_path)
+            self.bdModel.paramsModel.normalizeRaster(grp_raster_path,
+                out_path=out_path,context=context,feedback=feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)

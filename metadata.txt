@@ -39,7 +39,7 @@ repository=https://github.com/MathieuChailloux/BioDispersal
     1.1.1 : - ExportToGraphab algorithm
             - Bug fixes on "Launch only selected line" operations
     1.1.2 : - Fix issue #12 + new video link
-    1.1.3 : - Fix issue #13 + circuitscape export algorithms
+    1.1.3 : - Fix issues #13 and # 14 + circuitscape export algorithms
 
 # Tags are comma separated with spaces allowed
 tags=python, ecology, dispersal, ecological continuities, permeability, animal, landscape
