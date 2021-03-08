@@ -23,8 +23,10 @@
 """
 
 import os
+import stat
 import math
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 try:
     import scipy
@@ -56,11 +58,12 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterField,
                        QgsProcessingParameterVectorDestination,
                        QgsProcessingParameterRasterDestination,
+                       QgsProcessingParameterFileDestination,
+                       QgsProcessingParameterFolderDestination,
                        QgsProcessingParameterRasterLayer,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterFile,
-                       QgsProcessingParameterFileDestination,
                        QgsFeatureSink)
 
 import processing
@@ -87,6 +90,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         ExportToGraphab(),
                         ExportPatchesToCircuitscape(),
                         ExportFrictionToCircuitscape(),
+                        RandomStartPointsCircuitscape(),
                         ChangeNoDataVal()]
         for a in self.alglist:
             a.initAlgorithm()
@@ -146,6 +150,10 @@ class CircuitscapeAlgorithm(QgsProcessingAlgorithm):
         return 'circuitscape'
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+    def name(self):
+        return self.ALG_NAME
+    def createInstance(self):
+        return type(self)()
                
 class BioDispersalAlgorithm(QgsProcessingAlgorithm):
 
@@ -1027,6 +1035,7 @@ class ASCIIOutput(QgsProcessingParameterRasterDestination):
     def supportedOutputRasterLayerExtensions(self):
         return ['asc']
     
+    
 class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
 
     ALG_NAME = 'exportpatchestocircuitscape'
@@ -1034,15 +1043,9 @@ class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
     INPUT = 'INPUT'
     CLASS = 'CLASS'
     OUTPUT = 'OUTPUT'
-
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
         
-    def createInstance(self):
-        return ExportPatchesToCircuitscape()
-        
-    def name(self):
-        return self.ALG_NAME
+    # def createInstance(self):
+        # return ExportPatchesToCircuitscape()
         
     def displayName(self):
         return self.tr('Export to Circuitscape (start points)')
@@ -1113,22 +1116,17 @@ class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
         # Data type coule be problematic if input layer has small type 
         # (suchs as Byte but BioDispersal exports Float32) and lot of patches.
         return {'OUTPUT' : out }
-        
+      
+      
 class ExportFrictionToCircuitscape(CircuitscapeAlgorithm):
 
     ALG_NAME = 'exportfrictiontocircuitscape'
     
     INPUT = 'INPUT'
     OUTPUT = 'OUTPUT'
-
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
         
-    def createInstance(self):
-        return ExportFrictionToCircuitscape()
-        
-    def name(self):
-        return self.ALG_NAME
+    # def createInstance(self):
+        # return ExportFrictionToCircuitscape()
         
     def displayName(self):
         return self.tr('Export to Circuitscape (friction layer)')
@@ -1168,3 +1166,128 @@ class ExportFrictionToCircuitscape(CircuitscapeAlgorithm):
             nodata_val=input_nodata_val,context=context,feedback=feedback)
         return {'OUTPUT' : output }
         
+        
+class RandomStartPointsCircuitscape(CircuitscapeAlgorithm):
+
+    ALG_NAME = 'randomStartPointsCircuitscape'
+    
+    def displayName(self):
+        return self.tr('Random start points (Circuitscape)')
+        
+    def shortHelpString(self):
+        return self.tr('Generates random start points layer for circuitscape input')
+        
+    PATCH_LAYER = 'PATCH_LAYER'
+    NB_POINTS = 'NB_POINTS'
+    NB_LAUNCHES = 'NB_LAUNCHES'
+    DEFAULT_NB_LAUNCHES = 1
+    RESISTANCE_LAYER = 'RESISTANCE_LAYER'
+    # OUTPUT_DIR = 'OUTPUT_DIR'
+    OUTPUT = 'OUTPUT'
+
+    POINTS_VECTOR = 'POINTS_VECTOR'
+
+    def initAlgorithm(self,config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.PATCH_LAYER,
+                description=self.tr('Patch layer')))
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.RESISTANCE_LAYER,
+                description=self.tr('Resistance layer')))
+        self.addParameter(
+            QgsProcessingParameterNumber (
+                self.NB_POINTS,
+                description=self.tr('Number of points'),
+                type=QgsProcessingParameterNumber.Integer))
+        self.addParameter(
+            QgsProcessingParameterNumber (
+                self.NB_LAUNCHES,
+                description=self.tr('Number of launches'),
+                type=QgsProcessingParameterNumber.Integer,
+                defaultValue=self.DEFAULT_NB_LAUNCHES))
+        self.addParameter(
+            QgsProcessingParameterFolderDestination (
+                self.OUTPUT,
+                description=self.tr('Output directory')))
+        
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        patch_source, patch_layer = qgsTreatments.parameterAsSourceLayer(
+            self,parameters,self.PATCH_LAYER,context,feedback=feedback)
+        resistance_layer = self.parameterAsRasterLayer(parameters,self.RESISTANCE_LAYER,context)
+        nb_points = self.parameterAsInt(parameters, self.NB_POINTS, context)
+        nb_launches = self.parameterAsInt(parameters, self.NB_LAUNCHES, context)
+        out_dir = self.parameterAsFileOutput(parameters,self.OUTPUT,context)
+        resistance_path = qgsUtils.pathOfLayer(resistance_layer)
+        # Init input / output
+        utils.mkDir(out_dir)
+        dirname = os.path.dirname(__file__)
+        base_config_file = os.path.join(dirname,"baseConfig.ini")
+        fin = open(base_config_file,"rt")
+        config_content = fin.read()
+        fin.close()
+        # Resistance translation
+        EPT = ExportFrictionToCircuitscape
+        out_resistance = os.path.join(out_dir,'resistance.asc')
+        parameters = { EPT.INPUT : resistance_layer , EPT.OUTPUT : out_resistance } 
+        qgsTreatments.applyProcessingAlg('BioDispersal',EPT.ALG_NAME,
+            parameters,context=context,feedback=feedback)
+        # Loop
+        step_feedback = feedbacks.ProgressMultiStepFeedback(nb_launches*4,feedback)
+        outfiles = []
+        for i in range(nb_launches):
+            bname = "launch" + str(i)
+            basepath = os.path.join(out_dir,bname)
+            # Sort random points from patch layer
+            points_vector = basepath + "_start.gpkg"
+            qgsTreatments.applyVRandom(patch_layer,nb_points,points_vector,
+                context=context,feedback=step_feedback)
+            #qgsUtils.loadVectorLayer(points_vector,loadProject=True)
+            step_feedback.setCurrentStep(4*i+1)
+            # Rasterize points layer
+            extent = resistance_layer.extent()
+            resolution = resistance_layer.rasterUnitsPerPixelX()
+            #points_tif = QgsProcessingUtils.generateTempFilename('points_raster.tif')
+            points_tif = basepath + "_start.tif"
+            qgsUtils.removeRaster(points_tif)
+            qgsTreatments.applyRasterization(points_vector,points_tif,extent,resolution,
+                field='cat',out_type=Qgis.Int16,nodata_val=-9999,
+                context=context,feedback=step_feedback)
+            #qgsUtils.loadRasterLayer(points_tif,loadProject=True)
+            step_feedback.setCurrentStep(4*i+2)
+            # Convert to asc
+            #points_asc = QgsProcessingUtils.generateTempFilename('points_raster.asc')
+            points_asc = basepath + "_start.asc"
+            qgsUtils.removeRaster(points_asc)
+            qgsTreatments.applyTranslate(points_tif,points_asc,
+                nodata_val=0,context=context,feedback=step_feedback)
+            #qgsUtils.loadRasterLayer(points_asc,loadProject=True)
+            step_feedback.setCurrentStep(4*i+3)
+            # Out config file
+            out_content = config_content.replace('OUTPUT_DIR',out_dir)
+            out_content = out_content.replace('OUTPUT_BNAME',bname)
+            out_content = out_content.replace('START_LAYER',points_asc)
+            out_content = out_content.replace('RESISTANCE_LAYER',out_resistance)
+            outfile = basepath + "_config.ini"
+            with open(outfile,"wt") as fout:
+                fout.write(out_content)
+            outfiles.append(outfile)
+            step_feedback.setCurrentStep(4*i+4)
+        # Output Julia script
+        script_text = "using Circuitscape\n"
+        for outfile in outfiles:
+            f_posix = str(Path(outfile))
+            script_text += "compute(" + f_posix + ")\n"
+        outscript = os.path.join(out_dir,"launchCircuitscape.jl")
+        utils.removeFile(outscript)
+        with open(outscript,"w+") as fout:
+            fout.write(script_text)
+        os.chmod(outscript,0o7242)
+        #os.chmod(outscript,stat.S_IXUSR)
+        return { self.OUTPUT : out_dir }
+        
+    # { '-a' : False, '-z' : False, 'GRASS_MIN_AREA_PARAMETER' : 0.0001, 'GRASS_OUTPUT_TYPE_PARAMETER' : 0, 'GRASS_REGION_PARAMETER' : None, 'GRASS_SNAP_TOLERANCE_PARAMETER' : -1, 'GRASS_VECTOR_DSCO' : '', 'GRASS_VECTOR_EXPORT_NOCAT' : False, 'GRASS_VECTOR_LCO' : '', 'column' : 'z', 'column_type' : 0, 'npoints' : 100, 'output' : 'TEMPORARY_OUTPUT', 'restrict' : 'E:/IRSTEA/BioDispersal/Tests/BousquetOrbExtended/Source/Reservoirs/RBP_PRAIRIE.shp', 'seed' : None, 'where' : '', 'zmax' : 0, 'zmin' : 0 }
+
