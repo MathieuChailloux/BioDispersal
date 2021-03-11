@@ -69,7 +69,7 @@ from qgis.core import (Qgis,
 import processing
 from processing.algs.gdal.rasterize import rasterize
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
 from ..BioDispersal_model import BioDispersalModel
 
 MEMORY_LAYER_NAME = qgsTreatments.MEMORY_LAYER_NAME
@@ -91,6 +91,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         ExportPatchesToCircuitscape(),
                         ExportFrictionToCircuitscape(),
                         RandomStartPointsCircuitscape(),
+                        AggregateCirctuitscapeCurrentMaps(),
+                        AggregateCirctuitscapeResults(),
                         ChangeNoDataVal()]
         for a in self.alglist:
             a.initAlgorithm()
@@ -1280,6 +1282,7 @@ class RandomStartPointsCircuitscape(CircuitscapeAlgorithm):
         script_text = "using Circuitscape\n"
         for outfile in outfiles:
             f_posix = str(Path(outfile))
+            f_posix = f_posix.replace("\\","/")
             script_text += "compute(" + f_posix + ")\n"
         outscript = os.path.join(out_dir,"launchCircuitscape.jl")
         utils.removeFile(outscript)
@@ -1289,5 +1292,113 @@ class RandomStartPointsCircuitscape(CircuitscapeAlgorithm):
         #os.chmod(outscript,stat.S_IXUSR)
         return { self.OUTPUT : out_dir }
         
-    # { '-a' : False, '-z' : False, 'GRASS_MIN_AREA_PARAMETER' : 0.0001, 'GRASS_OUTPUT_TYPE_PARAMETER' : 0, 'GRASS_REGION_PARAMETER' : None, 'GRASS_SNAP_TOLERANCE_PARAMETER' : -1, 'GRASS_VECTOR_DSCO' : '', 'GRASS_VECTOR_EXPORT_NOCAT' : False, 'GRASS_VECTOR_LCO' : '', 'column' : 'z', 'column_type' : 0, 'npoints' : 100, 'output' : 'TEMPORARY_OUTPUT', 'restrict' : 'E:/IRSTEA/BioDispersal/Tests/BousquetOrbExtended/Source/Reservoirs/RBP_PRAIRIE.shp', 'seed' : None, 'where' : '', 'zmax' : 0, 'zmin' : 0 }
+        
+class AggregateCirctuitscapeCurrentMaps(CircuitscapeAlgorithm):
 
+    ALG_NAME = 'aggrCurrMapsLayers'
+    
+    def displayName(self):
+        return self.tr('Aggregates current maps')
+        
+    def shortHelpString(self):
+        return self.tr('Aggregates current maps (Circuitscape output) into one cumulative current map')
+        
+    INPUT_LAYERS = 'INPUT_LAYERS'
+    OUTPUT = 'OUTPUT'
+
+    def initAlgorithm(self,config=None):
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.INPUT_LAYERS,
+                description=self.tr('Input layers'),
+                layerType=QgsProcessing.TypeRaster))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    # def createFileFilter(self):
+        # return "*.asc"
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        input_layers = self.parameterAsLayerList(parameters,self.INPUT_LAYERS,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Serie
+        aggregate = QgsProcessingUtils.generateTempFilename('aggregate.tif')
+        qgsTreatments.applyRSeries(input_layers,aggr_func=0,output=aggregate,
+            context=context,feedback=feedback)
+        # Set null
+        qgsTreatments.applyRSetNull(aggregate,0,output,context=context,feedback=feedback)
+        # Set style
+        # self.output = output
+        # self.out_layer = qgsUtils.loadRasterLayer(output)
+        return { self.OUTPUT : output }
+
+    # def postProcessAlgorithm(self, context, feedback):
+        # out_layer = self.out_layer#qgsUtils.loadRasterLayer(output)
+        # color_ramp = styles.mkColorRamp('Plasma')
+        # shader = styles.mkRasterShader(out_layer,color_ramp)
+        # styles.setSBPCRasterRenderer(out_layer,shader)
+        # out_layer.triggerRepaint()
+        # return { self.OUTPUT : self.out_layer }
+        
+        
+class AggregateCirctuitscapeResults(CircuitscapeAlgorithm):
+
+    ALG_NAME = 'aggrCircuitscapeResults'
+    
+    def displayName(self):
+        return self.tr('Aggregates Circuitscape results')
+        
+    def shortHelpString(self):
+        return self.tr('Aggregates Circuitscape results (start points and current maps) from directory')
+        
+    RESULTS_DIR = 'RESULTS_DIR'
+    AGGR_CURR = 'AGGR_CURR'
+    AGGR_START = 'AGGR_START'
+
+    def initAlgorithm(self,config=None):
+        self.addParameter(
+            QgsProcessingParameterFile(
+                self.RESULTS_DIR,
+                description=self.tr('Results directory'),
+                behavior=QgsProcessingParameterFile.Folder))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.AGGR_CURR,
+                self.tr("Aggregate current map")))
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.AGGR_START,
+                self.tr("Aggregate start points")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        input_dir = self.parameterAsFile(parameters,self.RESULTS_DIR,context)
+        aggr_curr = self.parameterAsOutputLayer(parameters, self.AGGR_CURR, context)
+        aggr_start = self.parameterAsOutputLayer(parameters, self.AGGR_START, context)
+        # Retrieve files
+        files = os.listdir(input_dir)
+        curr_maps = [os.path.join(input_dir,f) for f in files if f.endswith("_cum_curmap.asc")]
+        start_layers = [os.path.join(input_dir,f) for f in files if f.endswith("_start.gpkg")]
+        nb_curr_maps, nb_start_layers = len(curr_maps), len(start_layers)
+        if nb_curr_maps != nb_start_layers:
+            raise QgsProcessingException("Inconsistent number of maps : "
+                + str(nb_curr_maps) + " current maps vs "
+                + str(nb_start_layers) + " start points layers")
+        if nb_curr_maps == 0:
+            raise QgsProcessingException("No layers found in " + str(input_dir))
+        # Aggregate current
+        ACC = AggregateCirctuitscapeCurrentMaps
+        parameters = { ACC.INPUT_LAYERS : curr_maps, ACC.OUTPUT : aggr_curr} 
+        qgsTreatments.applyProcessingAlg('BioDispersal',ACC.ALG_NAME,parameters,
+            context=context,feedback=feedback)
+        # Aggregate start points
+        layer = qgsUtils.loadVectorLayer(start_layers[0])
+        crs = layer.crs()
+        qgsTreatments.mergeVectorLayers(start_layers,crs,aggr_start,
+            context=context,feedback=feedback)
+        # Return
+        return { self.AGGR_CURR : aggr_curr, self.AGGR_START : aggr_start }
+    
