@@ -120,22 +120,23 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             
     def supportedOutputRasterLayerExtensions(self):
         return ['tif','asc']
-    
-class SelectionAlgorithm(QgsProcessingAlgorithm):
+
+class BaseAlgorithm(QgsProcessingAlgorithm):
+    def tr(self, string):
+        return QCoreApplication.translate(self.__class__.__name__, string)
+class SelectionAlgorithm(BaseAlgorithm):
     def group(self):
         return "Selection step"
     def groupId(self):
         return 'selection'
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate(self.__class__.__name__, string)
     
-class WeightingAlgorithm(QgsProcessingAlgorithm):
+class WeightingBaseAlgorithm(BaseAlgorithm):
     def group(self):
         return "Weighting step"
     def groupId(self):
         return 'weighting'
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
         
 class GraphabAlgorithm(QgsProcessingAlgorithm):
     def group(self):
@@ -224,8 +225,8 @@ class SelectVExprAlg(SelectionAlgorithm):
     CODE = 'CODE'
     OUTPUT = 'OUTPUT'
     
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+    #def tr(self, string):
+    #    return QCoreApplication.translate(self.__class__.__name__, string)
         
     def createInstance(self):
         return SelectVExprAlg()
@@ -428,15 +429,12 @@ class SelectVFieldAlg(SelectionAlgorithm):
         res = { self.OUTPUT : dest_id }
         return res        
       
-class WeightingAlgorithm(QgsProcessingAlgorithm):
+class WeightingAlgorithm(WeightingBaseAlgorithm):
     
     INPUT_LAYER = 'INPUT_LAYER'
     WEIGHT_LAYER = 'WEIGHT_LAYER'
     RESAMPLING = 'RESAMPLING'
     OUTPUT = 'OUTPUT'
-    
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
         
     def name(self):
         return self.ALG_NAME
