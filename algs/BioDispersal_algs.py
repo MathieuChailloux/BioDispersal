@@ -1279,12 +1279,15 @@ class RandomStartPointsCircuitscape(CircuitscapeAlgorithm):
             outfiles.append(outfile)
             step_feedback.setCurrentStep(4*i+4)
         # Output Julia script
-        script_text = "using Circuitscape\n"
-        for outfile in outfiles:
-            f_posix = str(Path(outfile))
-            f_posix = f_posix.replace("\\","/")
-            script_text += "compute(" + f_posix + ")\n"
         outscript = os.path.join(out_dir,"launchCircuitscape.jl")
+        outscript = utils.normPath(outscript)
+        script_text = "#include(\"" + outscript +"\")\n"
+        script_text += "using Circuitscape\n"
+        for outfile in outfiles:
+            # f_posix = str(Path(outfile))
+            # f_posix = f_posix.replace("\\","/")
+            f_posix = utils.normPath(outfile)
+            script_text += "compute(\"" + f_posix + "\")\n"
         utils.removeFile(outscript)
         with open(outscript,"w+") as fout:
             fout.write(script_text)
