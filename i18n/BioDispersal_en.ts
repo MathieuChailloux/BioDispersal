@@ -12,52 +12,60 @@
 <context>
     <name>AggregateCirctuitscapeCurrentMaps</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1305"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1221"/>
         <source>Aggregates current maps</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggregates current maps</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1308"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1224"/>
         <source>Aggregates current maps (Circuitscape output) into one cumulative current map</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggregates current maps (Circuitscape output) into one cumulative current map</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1314"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1230"/>
         <source>Input layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Input layers</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1319"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1235"/>
         <source>Output layer</source>
-        <translation type="unfinished">Output layer</translation>
+        <translation>Output layer</translation>
     </message>
 </context>
 <context>
     <name>AggregateCirctuitscapeResults</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1356"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1272"/>
         <source>Aggregates Circuitscape results</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggregates Circuitscape results</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1359"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1275"/>
         <source>Aggregates Circuitscape results (start points and current maps) from directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggregates Circuitscape results (start points and current maps) from directory</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1366"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1282"/>
         <source>Results directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Results directory</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1371"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1287"/>
         <source>Aggregate current map</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggregate current map</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1375"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1291"/>
         <source>Aggregate start points</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggregate start points</translation>
+    </message>
+</context>
+<context>
+    <name>AuxAlgorithm</name>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="149"/>
+        <source>Auxiliary algorithms</source>
+        <translation>Auxiliary algorithms</translation>
     </message>
 </context>
 <context>
@@ -93,30 +101,30 @@
     <message>
         <location filename="../BioDispersalAbout_dialog_base.py" line="86"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BioDispersal is a QGIS 3 plugin (GNU GPLv3 licence) computing potential dispersal areas based on landscape permeability. It defines a 7 step procedure easing data preparation and performing effective dispersal computation.&lt;/p&gt;&lt;p&gt;BioDispersal has been developped by research unit UMR TETIS at INRAE in 2018. This project has been funded by French ministry of ecology for the ecological network resource center.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Designer / Developper &lt;/span&gt;: Mathieu Chailloux&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Project initiator&lt;/span&gt; : Jennifer Amsallem&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Links:&lt;/span&gt; :&lt;/p&gt;&lt;p&gt;- BioDispersal GitHub: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- BioDispersal bugtracker: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal/issues&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- French ecological network resource center: &lt;a href=&quot;http://www.trameverteetbleue.fr/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.trameverteetbleue.fr/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- UMR TETIS: &lt;a href=&quot;https://tetis.teledetection.fr&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://tetis.teledetection.fr&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- INRAE: &lt;a href=&quot;https://www.inrae.fr/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.inrae.fr/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BioDispersal is a QGIS 3 plugin (GNU GPLv3 licence) computing potential dispersal areas based on landscape permeability. It defines a 7 step procedure easing data preparation and performing effective dispersal computation.&lt;/p&gt;&lt;p&gt;BioDispersal has been developped by research unit UMR TETIS at INRAE in 2018. This project has been funded by French ministry of ecology for the ecological network resource center.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Designer / Developper &lt;/span&gt;: Mathieu Chailloux&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Project initiator&lt;/span&gt; : Jennifer Amsallem&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Links:&lt;/span&gt; :&lt;/p&gt;&lt;p&gt;- BioDispersal GitHub: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- BioDispersal bugtracker: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal/issues&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- French ecological network resource center: &lt;a href=&quot;http://www.trameverteetbleue.fr/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.trameverteetbleue.fr/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- UMR TETIS: &lt;a href=&quot;https://tetis.teledetection.fr&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://tetis.teledetection.fr&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- INRAE: &lt;a href=&quot;https://www.inrae.fr/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.inrae.fr/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>BioDispersalAlgorithm</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="178"/>
+        <location filename="../algs/BioDispersal_algs.py" line="163"/>
         <source>Run BioDispersal from configuration file</source>
-        <translation type="unfinished"></translation>
+        <translation>Run BioDispersal from configuration file</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="181"/>
+        <location filename="../algs/BioDispersal_algs.py" line="166"/>
         <source>Executes complete process from XML configuration file</source>
-        <translation type="unfinished"></translation>
+        <translation>Executes complete process from XML configuration file</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="184"/>
+        <location filename="../algs/BioDispersal_algs.py" line="169"/>
         <source>Input configuration file</source>
-        <translation type="unfinished"></translation>
+        <translation>Input configuration file</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="188"/>
+        <location filename="../algs/BioDispersal_algs.py" line="173"/>
         <source>Log file</source>
-        <translation type="unfinished"></translation>
+        <translation>Log file</translation>
     </message>
 </context>
 <context>
@@ -757,7 +765,7 @@
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="1999"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Welcome in BioDispersal !&lt;/p&gt;&lt;p&gt;Homepage: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README.md&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Video tutorials (new link with Graphab interoperability): &lt;a href=&quot;https://www.youtube.com/playlist?list=PLh9oFe6PuPCXgsR9DAxP9uyhp9BEu8X3c&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.youtube.com/playlist?list=PL0Wd1JAi6QuHdwALwwJqj5TcfNYvjRbcs&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Configuration should be frequently saved (buttons &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSaveAs.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSave.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; in top left corner).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Welcome in BioDispersal !&lt;/p&gt;&lt;p&gt;Homepage: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README.md&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Video tutorials (new link with Graphab interoperability): &lt;a href=&quot;https://www.youtube.com/playlist?list=PLh9oFe6PuPCXgsR9DAxP9uyhp9BEu8X3c&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.youtube.com/playlist?list=PL0Wd1JAi6QuHdwALwwJqj5TcfNYvjRbcs&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Configuration should be frequently saved (buttons &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSaveAs.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSave.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; in top left corner).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../BioDispersal_dialog_base.py" line="2129"/>
@@ -782,98 +790,111 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChangeNoDataVal</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="937"/>
+        <location filename="../algs/BioDispersal_algs.py" line="853"/>
         <source>Change NoData value</source>
-        <translation type="unfinished"></translation>
+        <translation>Change NoData value</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="940"/>
+        <location filename="../algs/BioDispersal_algs.py" line="856"/>
         <source>Change NoData value and reclassifies old NoData pixels to new NoData value.</source>
-        <translation type="unfinished"></translation>
+        <translation>Change NoData value and reclassifies old NoData pixels to new NoData value.</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="943"/>
+        <location filename="../algs/BioDispersal_algs.py" line="859"/>
         <source>Input layer</source>
-        <translation type="unfinished">Input layer</translation>
+        <translation>Input layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="947"/>
+        <location filename="../algs/BioDispersal_algs.py" line="863"/>
         <source>New NoData value</source>
-        <translation type="unfinished"></translation>
+        <translation>New NoData value</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="952"/>
+        <location filename="../algs/BioDispersal_algs.py" line="868"/>
         <source>Output layer</source>
-        <translation type="unfinished">Output layer</translation>
+        <translation>Output layer</translation>
+    </message>
+</context>
+<context>
+    <name>CircuitscapeAlgorithm</name>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="144"/>
+        <source>Circuitscape</source>
+        <translation>Circuitscape</translation>
     </message>
 </context>
 <context>
     <name>ExportFrictionToCircuitscape</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1135"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1051"/>
         <source>Export to Circuitscape (friction layer)</source>
-        <translation type="unfinished"></translation>
+        <translation>Export to Circuitscape (friction layer)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1138"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1054"/>
         <source>Export friction (resistance) layer to Circuitscape, converting existing layer to ASCII format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Export friction (resistance) layer to Circuitscape, converting existing layer to ASCII format.</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1141"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1057"/>
         <source>Input resistance layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Input resistance layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1145"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1061"/>
         <source>Exported layer (resistance)</source>
-        <translation type="unfinished"></translation>
+        <translation>Exported layer (resistance)</translation>
     </message>
 </context>
 <context>
     <name>ExportPatchesToCircuitscape</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1054"/>
+        <location filename="../algs/BioDispersal_algs.py" line="970"/>
         <source>Export to Circuitscape (start points)</source>
-        <translation type="unfinished"></translation>
+        <translation>Export to Circuitscape (start points)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1057"/>
+        <location filename="../algs/BioDispersal_algs.py" line="973"/>
         <source>Export patch layer (focal nodes, biodiversity reservois, ...) to Circuitscape</source>
-        <translation type="unfinished"></translation>
+        <translation>Export patch layer (focal nodes, biodiversity reservois, ...) to Circuitscape</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1060"/>
+        <location filename="../algs/BioDispersal_algs.py" line="976"/>
         <source>Input cost layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Input patch layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1067"/>
+        <location filename="../algs/BioDispersal_algs.py" line="983"/>
         <source>Exported layer (start points)</source>
-        <translation type="unfinished"></translation>
+        <translation>Exported layer (start points)</translation>
+    </message>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="976"/>
+        <source>Input patch layer</source>
+        <translation>Input patch layer</translation>
     </message>
 </context>
 <context>
     <name>ExportToGraphab</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="993"/>
+        <location filename="../algs/BioDispersal_algs.py" line="909"/>
         <source>Export to Graphab</source>
-        <translation type="unfinished"></translation>
+        <translation>Export to Graphab</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="996"/>
+        <location filename="../algs/BioDispersal_algs.py" line="912"/>
         <source>Ensures that friction layer is compatible with Graphab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ensures that friction layer is compatible with Graphab.</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="999"/>
+        <location filename="../algs/BioDispersal_algs.py" line="915"/>
         <source>Input layer (friction)</source>
-        <translation type="unfinished"></translation>
+        <translation>Input layer (friction)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1003"/>
+        <location filename="../algs/BioDispersal_algs.py" line="919"/>
         <source>Exported layer (friction)</source>
-        <translation type="unfinished"></translation>
+        <translation>Exported layer (friction)</translation>
     </message>
 </context>
 <context>
@@ -885,31 +906,39 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GraphabAlgorithm</name>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="139"/>
+        <source>Graphab</source>
+        <translation>Graphab</translation>
+    </message>
+</context>
+<context>
     <name>NormalizingParamsModel</name>
     <message>
         <location filename="../qgis_lib_mc/abstract_model.py" line="482"/>
         <source>Workspace parameter not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>Workspace parameter not initialized</translation>
     </message>
     <message>
         <location filename="../qgis_lib_mc/abstract_model.py" line="488"/>
         <source>Extent parameter not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>Extent parameter not initialized</translation>
     </message>
     <message>
         <location filename="../qgis_lib_mc/abstract_model.py" line="492"/>
         <source>Resolution parameter not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>Resolution parameter not initialized</translation>
     </message>
     <message>
         <location filename="../qgis_lib_mc/abstract_model.py" line="496"/>
         <source>CRS parameter not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>CRS parameter not initialized</translation>
     </message>
     <message>
         <location filename="../qgis_lib_mc/abstract_model.py" line="498"/>
         <source>Invalid CRS</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid CRS</translation>
     </message>
 </context>
 <context>
@@ -956,70 +985,70 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RandomStartPointsCircuitscape</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1178"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1094"/>
         <source>Random start points (Circuitscape)</source>
-        <translation type="unfinished"></translation>
+        <translation>Random start points (Circuitscape)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1181"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1097"/>
         <source>Generates random start points layer for circuitscape input</source>
-        <translation type="unfinished"></translation>
+        <translation>Generates random start points layer for circuitscape input</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1194"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1110"/>
         <source>Patch layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Patch layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1198"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1114"/>
         <source>Resistance layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Resistance layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1202"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1118"/>
         <source>Number of points</source>
-        <translation type="unfinished"></translation>
+        <translation>Number of points</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1207"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1123"/>
         <source>Number of launches</source>
-        <translation type="unfinished"></translation>
+        <translation>Number of launches</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="1213"/>
+        <location filename="../algs/BioDispersal_algs.py" line="1129"/>
         <source>Output directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Output directory</translation>
     </message>
 </context>
 <context>
     <name>RasterSelectionByValue</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="772"/>
+        <location filename="../algs/BioDispersal_algs.py" line="709"/>
         <source>Raster selection by value</source>
         <translation>Raster selection by value</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="775"/>
+        <location filename="../algs/BioDispersal_algs.py" line="712"/>
         <source>Creates new raster with input raster values veryfing specified operation.</source>
         <translation>Creates new raster with input raster values veryfing specified operation.</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="778"/>
+        <location filename="../algs/BioDispersal_algs.py" line="715"/>
         <source>Input layer</source>
         <translation>Input layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="782"/>
+        <location filename="../algs/BioDispersal_algs.py" line="719"/>
         <source>Operator</source>
         <translation>Operator</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="787"/>
+        <location filename="../algs/BioDispersal_algs.py" line="724"/>
         <source>Value</source>
         <translation>Value</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="793"/>
+        <location filename="../algs/BioDispersal_algs.py" line="730"/>
         <source>Output layer</source>
         <translation>Output layer</translation>
     </message>
@@ -1027,14 +1056,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RasterizeFixAllTouch</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="859"/>
+        <location filename="../algs/BioDispersal_algs.py" line="790"/>
         <source>Rasterize (with ALL_TOUCH fix)</source>
-        <translation type="unfinished"></translation>
+        <translation>Rasterize (with ALL_TOUCH fix)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="868"/>
+        <location filename="../algs/BioDispersal_algs.py" line="799"/>
         <source>Wrapper for gdal:rasterize algorithm allowing to use ALL_TOUCH option (every pixel touching input geometry are rasterized).</source>
-        <translation type="unfinished"></translation>
+        <translation>Wrapper for gdal:rasterize algorithm allowing to use ALL_TOUCH option (every pixel touching input geometry are rasterized).</translation>
     </message>
 </context>
 <context>
@@ -1042,184 +1071,215 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="238"/>
         <source>Selection (VExpr)</source>
-        <translation>Selection (VExpr EN)</translation>
+        <translation type="obsolete">Selection (VExpr EN)</translation>
     </message>
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="241"/>
         <source>Code layer creation from input layer</source>
-        <translation>Code layer creation from input layer and expression</translation>
+        <translation type="obsolete">Code layer creation from input layer and expression</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="244"/>
+        <location filename="../algs/BioDispersal_algs.py" line="220"/>
         <source>Input layer</source>
         <translation>Input layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="248"/>
+        <location filename="../algs/BioDispersal_algs.py" line="224"/>
         <source>Expression</source>
         <translation>Expression</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="255"/>
+        <location filename="../algs/BioDispersal_algs.py" line="231"/>
         <source>Class</source>
         <translation>Class</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="259"/>
+        <location filename="../algs/BioDispersal_algs.py" line="235"/>
         <source>Code</source>
         <translation>Code</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="264"/>
+        <location filename="../algs/BioDispersal_algs.py" line="240"/>
         <source>Output layer</source>
         <translation>Output layer</translation>
+    </message>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="214"/>
+        <source>Selection (by expression)</source>
+        <translation>Selection (by expression)</translation>
+    </message>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="217"/>
+        <source>Code layer creation from input layer and expression</source>
+        <translation>Code layer creation from input layer and expression</translation>
     </message>
 </context>
 <context>
     <name>SelectVFieldAlg</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="345"/>
-        <source>Selection (VField)</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="../algs/BioDispersal_algs.py" line="348"/>
         <source>Code layer creation from input layer</source>
-        <translation>Code layer creation from input layer and field</translation>
+        <translation type="obsolete">Code layer creation from input layer and field</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="351"/>
+        <location filename="../algs/BioDispersal_algs.py" line="318"/>
         <source>Input layer</source>
         <translation>Input layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="355"/>
+        <location filename="../algs/BioDispersal_algs.py" line="322"/>
         <source>Field</source>
         <translation>Field</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="361"/>
+        <location filename="../algs/BioDispersal_algs.py" line="328"/>
         <source>Group</source>
         <translation>Group</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="365"/>
+        <location filename="../algs/BioDispersal_algs.py" line="332"/>
         <source>Value / code association</source>
         <translation>Value / code association</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="372"/>
+        <location filename="../algs/BioDispersal_algs.py" line="339"/>
         <source>Output layer</source>
         <translation>Output layer</translation>
+    </message>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="312"/>
+        <source>Selection (by field value)</source>
+        <translation>Selection (by field value)</translation>
+    </message>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="315"/>
+        <source>Code layer creation from input layer and field values</source>
+        <translation>Code layer creation from input layer and field values</translation>
+    </message>
+</context>
+<context>
+    <name>SelectionAlgorithm</name>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="129"/>
+        <source>Selection step</source>
+        <translation>Selection step</translation>
     </message>
 </context>
 <context>
     <name>WeightingAlgorithm</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Nearest neighbour</source>
         <translation>Nearest neighbour</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Bilinear</source>
         <translation>Bilinear</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Cubic</source>
         <translation>Cubic</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Cubic spline</source>
         <translation>Cubic spline</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Lanczos windowed sinc</source>
         <translation>Lanczos windowed sinc</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Average</source>
         <translation>Average</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Mode</source>
         <translation>Mode</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Maximum</source>
         <translation>Maximum</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Minimum</source>
         <translation>Minimum</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Median</source>
         <translation>Median</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>First quartile</source>
         <translation>First quartile</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="452"/>
+        <location filename="../algs/BioDispersal_algs.py" line="407"/>
         <source>Third quartile</source>
         <translation>Third quartile</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="465"/>
+        <location filename="../algs/BioDispersal_algs.py" line="420"/>
         <source>Input layer</source>
         <translation>Input layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="469"/>
+        <location filename="../algs/BioDispersal_algs.py" line="424"/>
         <source>Weighting layer</source>
         <translation>Weighting layer</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="473"/>
+        <location filename="../algs/BioDispersal_algs.py" line="428"/>
         <source>Resampling method to use</source>
         <translation>Resampling method to use</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="478"/>
+        <location filename="../algs/BioDispersal_algs.py" line="433"/>
         <source>Output layer</source>
         <translation>Output layer</translation>
     </message>
 </context>
 <context>
+    <name>WeightingBaseAlgorithm</name>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="134"/>
+        <source>Weighting step</source>
+        <translation>Weighting step</translation>
+    </message>
+</context>
+<context>
     <name>WeightingBasics</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="539"/>
+        <location filename="../algs/BioDispersal_algs.py" line="491"/>
         <source>Weighting (Basics)</source>
         <translation>Weighting (Basics)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="550"/>
+        <location filename="../algs/BioDispersal_algs.py" line="502"/>
         <source>Minimum</source>
         <translation>Minimum</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="551"/>
+        <location filename="../algs/BioDispersal_algs.py" line="503"/>
         <source>Maximum</source>
         <translation>Maximum</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="552"/>
+        <location filename="../algs/BioDispersal_algs.py" line="504"/>
         <source>Multiplication</source>
         <translation>Multiplication</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="554"/>
+        <location filename="../algs/BioDispersal_algs.py" line="506"/>
         <source>Weighting method to use</source>
         <translation>Weighting method to use</translation>
     </message>
@@ -1227,7 +1287,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>WeightingByDistance</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="677"/>
+        <location filename="../algs/BioDispersal_algs.py" line="623"/>
         <source>Weighting (By distance)</source>
         <translation>Weighting (By distance)</translation>
     </message>
@@ -1235,7 +1295,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>WeightingByIntervals</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="634"/>
+        <location filename="../algs/BioDispersal_algs.py" line="583"/>
         <source>Weighting (By intervals)</source>
         <translation>Weighting (By intervals)</translation>
     </message>
@@ -1243,32 +1303,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>WeightingIntervalsAlgorithm</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="607"/>
+        <location filename="../algs/BioDispersal_algs.py" line="559"/>
         <source>min &lt; value &lt;= max</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="608"/>
+        <location filename="../algs/BioDispersal_algs.py" line="560"/>
         <source>min &lt;= value &lt; max</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="609"/>
+        <location filename="../algs/BioDispersal_algs.py" line="561"/>
         <source>min &lt;= value &lt;= max</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="610"/>
+        <location filename="../algs/BioDispersal_algs.py" line="562"/>
         <source>min &lt; value &lt; max</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="612"/>
+        <location filename="../algs/BioDispersal_algs.py" line="564"/>
         <source>Intervals</source>
         <translation>Intervals</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="619"/>
+        <location filename="../algs/BioDispersal_algs.py" line="571"/>
         <source>Range boundaries</source>
         <translation>Range boundaries</translation>
     </message>

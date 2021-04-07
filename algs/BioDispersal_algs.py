@@ -121,58 +121,45 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
     def supportedOutputRasterLayerExtensions(self):
         return ['tif','asc']
 
-class BaseAlgorithm(QgsProcessingAlgorithm):
-    def tr(self, string):
-        return QCoreApplication.translate(self.__class__.__name__, string)
-class SelectionAlgorithm(BaseAlgorithm):
+#class BaseAlgorithm(QgsProcessingAlgorithm):
+#    def tr(self, string):
+#        return QCoreApplication.translate(self.__class__.__name__, string)
+class SelectionAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
-        return "Selection step"
+        return self.tr("Selection step")
     def groupId(self):
         return 'selection'
     def tr(self, string):
         return QCoreApplication.translate(self.__class__.__name__, string)
-    
-class WeightingBaseAlgorithm(BaseAlgorithm):
+class WeightingBaseAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
-        return "Weighting step"
+        return self.tr("Weighting step")
     def groupId(self):
         return 'weighting'
-        
-class GraphabAlgorithm(QgsProcessingAlgorithm):
+class GraphabAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
-        return "Graphab"
+        return self.tr("Graphab")
     def groupId(self):
         return 'graphab'
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
-        
-class CircuitscapeAlgorithm(QgsProcessingAlgorithm):
+class CircuitscapeAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
-        return "Circuitscape"
+        return self.tr("Circuitscape")
     def groupId(self):
         return 'circuitscape'
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
-    def name(self):
-        return self.ALG_NAME
-    def createInstance(self):
-        return type(self)()
+class AuxAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def group(self):
+        return self.tr("Auxiliary algorithms")
+    def groupId(self):
+        return 'aux'
                
-class BioDispersalAlgorithm(QgsProcessingAlgorithm):
+class BioDispersalAlgorithm(qgsUtils.BaseProcessingAlgorithm):
 
+    ALG_NAME = 'BioDispersalAlgorithm'
+    
     # Algorithm parameters
     INPUT_CONFIG = "INPUT"
     LOG_FILE = "LOG"
     OUTPUT = "OUTPUT"
-    
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
-        
-    def createInstance(self):
-        return BioDispersalAlgorithm()
-        
-    def name(self):
-        return "BioDispersalAlgorithm"
         
     def displayName(self):
         return self.tr("Run BioDispersal from configuration file")
@@ -224,21 +211,12 @@ class SelectVExprAlg(SelectionAlgorithm):
     CLASS = 'CLASS'
     CODE = 'CODE'
     OUTPUT = 'OUTPUT'
-    
-    #def tr(self, string):
-    #    return QCoreApplication.translate(self.__class__.__name__, string)
-        
-    def createInstance(self):
-        return SelectVExprAlg()
-        
-    def name(self):
-        return self.ALG_NAME
         
     def displayName(self):
-        return self.tr('Selection (VExpr)')
+        return self.tr('Selection (by expression)')
         
     def shortHelpString(self):
-        return self.tr('Code layer creation from input layer')
+        return self.tr('Code layer creation from input layer and expression')
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -331,21 +309,12 @@ class SelectVFieldAlg(SelectionAlgorithm):
     
     HEADER_FIELD_VAL = 'Field value'
     HEADER_INT_VAL = 'New integer value'
-    
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
-        
-    def createInstance(self):
-        return SelectVFieldAlg()
-        
-    def name(self):
-        return self.ALG_NAME
         
     def displayName(self):
-        return self.tr('Selection (VField)')
+        return self.tr('Selection (by field value)')
         
     def shortHelpString(self):
-        return self.tr('Code layer creation from input layer')
+        return self.tr('Code layer creation from input layer and field values')
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -435,15 +404,6 @@ class WeightingAlgorithm(WeightingBaseAlgorithm):
     WEIGHT_LAYER = 'WEIGHT_LAYER'
     RESAMPLING = 'RESAMPLING'
     OUTPUT = 'OUTPUT'
-        
-    def name(self):
-        return self.ALG_NAME
-        
-    def group(self):
-        return "Weighting step"
-        
-    def groupId(self):
-        return 'weighting'
 
     def initAlgorithm(self, config=None):
         self.methods = ((self.tr('Nearest neighbour'), 'near'),
@@ -528,9 +488,6 @@ class WeightingBasics(WeightingAlgorithm):
     ALG_NAME = 'weightingbasics'
 
     OPERATOR = 'OPERATOR'
-        
-    def createInstance(self):
-        return WeightingBasics()
         
     def displayName(self):
         return self.tr('Weighting (Basics)')
@@ -624,9 +581,6 @@ class WeightingByIntervals(WeightingIntervalsAlgorithm):
 
     ALG_NAME = 'weightingbyintervals'
         
-    def createInstance(self):
-        return WeightingByIntervals()
-        
     def displayName(self):
         return self.tr('Weighting (By intervals)')
         
@@ -666,9 +620,6 @@ class WeightingByIntervals(WeightingIntervalsAlgorithm):
 class WeightingByDistance(WeightingIntervalsAlgorithm):
 
     ALG_NAME = 'weightingbydistance'
-        
-    def createInstance(self):
-        return WeightingByDistance()
         
     def displayName(self):
         return self.tr('Weighting (By distance)')
@@ -744,7 +695,7 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
                                                      context=context,feedback=feedback)
         return { 'OUTPUT' : weighted }
    
-class RasterSelectionByValue(QgsProcessingAlgorithm):
+class RasterSelectionByValue(qgsUtils.BaseProcessingAlgorithm):
 
     ALG_NAME = 'rasterselectionbyvalue'
 
@@ -755,15 +706,6 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
     
     OPERATORS = ['<','<=','>','>=','==','!=']
     OPERATORS_CMPL = ['>=','>','<=','<','!=','==']
-    
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
-        
-    def createInstance(self):
-        return RasterSelectionByValue()
-        
-    def name(self):
-        return self.ALG_NAME
         
     def displayName(self):
         return self.tr('Raster selection by value')
@@ -842,24 +784,18 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
         
     
     
-class RasterizeFixAllTouch(rasterize):
+class RasterizeFixAllTouch(AuxAlgorithm,rasterize):
 
     ALG_NAME = 'rasterizefixalltouch'
-
-    def createInstance(self):
-        return RasterizeFixAllTouch()
-        
-    def name(self):
-        return self.ALG_NAME
         
     def displayName(self):
         return self.tr('Rasterize (with ALL_TOUCH fix)')
         
-    def group(self):
-        return "Auxiliary algorithms"
+    #def group(self):
+    #    return "Auxiliary algorithms"
         
-    def groupId(self):
-        return 'aux'
+    #def groupId(self):
+    #    return 'aux'
         
     def shortHelpString(self):
         return self.tr('Wrapper for gdal:rasterize algorithm allowing to use ALL_TOUCH option (every pixel touching input geometry are rasterized).')
@@ -907,28 +843,13 @@ def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
     return res
     
     
-class ChangeNoDataVal(QgsProcessingAlgorithm):
+class ChangeNoDataVal(AuxAlgorithm):
 
     ALG_NAME = 'changenodata'
     
     INPUT = 'INPUT'
     NODATA_VAL = 'NODATA_VAL'
     OUTPUT = 'OUTPUT'
-
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
-        
-    def createInstance(self):
-        return ChangeNoDataVal()
-        
-    def name(self):
-        return self.ALG_NAME
-        
-    def group(self):
-        return "Auxiliary algorithms"
-        
-    def groupId(self):
-        return 'aux'
         
     def displayName(self):
         return self.tr('Change NoData value')
@@ -1057,7 +978,7 @@ class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT,
-                description=self.tr('Input cost layer')))
+                description=self.tr('Input patch layer')))
         self.addParameter(QgsProcessingParameterNumber(
             self.CLASS, "Choose Landscape Class", type=QgsProcessingParameterNumber.Integer,
             defaultValue=None,optional=True))
