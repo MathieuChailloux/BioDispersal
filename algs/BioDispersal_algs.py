@@ -30,10 +30,15 @@ from pathlib import Path
 
 try:
     import scipy
-    import numpy as np
+    from scipy import ndimage
     import_scipy_ok = True
 except ImportError:
     import_scipy_ok = False
+try:
+    import numpy as np
+    import_numpy_ok = True
+except ImportError:
+    import_numpy_ok = False
 
 from PyQt5.QtCore import QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
@@ -56,6 +61,7 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterExpression,
                        QgsProcessingParameterString,
                        QgsProcessingParameterField,
+                       QgsProcessingParameterRange,
                        QgsProcessingParameterVectorDestination,
                        QgsProcessingParameterRasterDestination,
                        QgsProcessingParameterFileDestination,
@@ -85,6 +91,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         WeightingByIntervals(),
                         WeightingByDistance(),
                         RasterSelectionByValue(),
+                        ExtractPatchesR(),
                         BioDispersalAlgorithm(),
                         RasterizeFixAllTouch(),
                         ExportToGraphab(),
@@ -842,7 +849,106 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
         out = qgsTreatments.applyRSetNull(tmp,0,output,context,feedback)
         return { 'OUTPUT' : out }
         
-    
+
+class ExtractPatchesR(qgsUtils.BaseProcessingAlgorithm):
+
+    ALG_NAME = 'extractPatchesR'
+
+    INPUT = 'INPUT'
+    VALUES = 'VALUES'
+    SURFACE = 'SURFACE'
+    OUTPUT = 'OUTPUT'
+        
+    def displayName(self):
+        return self.tr('Extract patches (Raster)')
+        
+    def shortHelpString(self):
+        s = "Extract patches from land use raster layer according to"
+        s += " specified land use types and minimum surface."
+        s += "\nLand use values are integer separated by semicolons (';')."
+        return self.tr(s)
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterString (
+                self.VALUES,
+                description=self.tr('Land use values (separated by \';\')')))
+        self.addParameter(
+            QgsProcessingParameterNumber (
+                self.SURFACE,
+                description=self.tr('Patch minimum surface (expressed in pixels)'),
+                type=QgsProcessingParameterNumber.Double,
+                optional=True))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def getDataType(self,in_type):
+        typeAssoc = { Qgis.Byte : 0,
+                      Qgis.Int16 : 1,
+                      Qgis.UInt16 : 2,
+                      Qgis.UInt32 : 3,
+                      Qgis.Int32 : 4,
+                      Qgis.Float32 : 5,
+                      Qgis.Float64 : 6 }
+        if in_type in typeAssoc:
+            return typeAssoc[in_type]
+            #return 5
+        else:
+            return 5
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        values = self.parameterAsInts(parameters,self.VALUES,context)
+        surface = self.parameterAsDouble(parameters,self.SURFACE,context)
+        feedback.pushDebugInfo("values = " + str(values))
+        nb_vals = len(values)
+        if nb_vals == 0:
+            raise QgsProcessingException("No land use values specified (check string format)")
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Expression
+        input_nodata_val = input.dataProvider().sourceNoDataValue(1)
+        if nb_vals == 1:
+            expr_str = 'A == {}'.format(values[0])
+        else:
+            expr_str = ''
+            for v in values[:-1]:
+                expr_str += 'logical_or(A == {},'.format(v)
+            expr_str += 'A == {}'.format(values[-1])
+            expr_str += ")" * (nb_vals - 1)
+        feedback.pushDebugInfo("raster calc expr = " + expr_str)
+        # Raster calc
+        selection_path = QgsProcessingUtils.generateTempFilename('landuse_selection.tif')
+        out_calc = selection_path if surface else output
+        qgsTreatments.applyRasterCalc(input,out_calc,expr_str,
+                                      nodata_val=0,out_type=0,
+                                      context=context,feedback=feedback)
+        # Labelling
+        if surface:
+            if not (import_scipy_ok and import_numpy_ok):
+                raise QgsProcessingException("Import of numpy/scipy failed, please install these libraries from OSGEO installer")
+            selection = qgsUtils.loadRasterLayer(selection_path)
+            classes, array = qgsUtils.getRasterValsAndArray(selection_path)
+            struct = ndimage.generate_binary_structure(2,1)
+            labeled_array, nb_patches = ndimage.label(array,struct)
+            sizes = ndimage.sum(array,labeled_array,range(1,nb_patches+1))
+            # x_res = selection.rasterUnitsPerPixelX()
+            # y_res = selection.rasterUnitsPerPixelY()
+            indices = np.where(sizes > surface)[0] + 1
+            new_array = np.zeros(labeled_array.shape)
+            for i in indices:
+                new_array[labeled_array == i] = 1
+            qgsUtils.exportRaster(new_array,selection.source(),output,nodata=0,type=1)
+        # return
+        return { 'OUTPUT' : output }
+        
     
 class RasterizeFixAllTouch(rasterize):
 
