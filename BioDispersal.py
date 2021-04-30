@@ -54,10 +54,12 @@ class BioDispersal:
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
+        utils.info("locale = " + str(locale))
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
             'BioDispersal_{}.qm'.format(locale))
+        utils.info("locale_path = " + str(locale_path))
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -183,7 +185,11 @@ class BioDispersal:
             
         self.dlg.initTabs()
         self.dlg.initGui()
-        self.dlg.switchLangEn()
+        locale = QSettings().value('locale/userLocale')[0:2]
+        if locale.startswith('fr'):
+            self.dlg.switchLangFr()
+        else:
+            self.dlg.switchLangEn()
         self.connectComponents()
 
 
