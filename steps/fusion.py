@@ -27,7 +27,7 @@ import subprocess
 import os.path
 import xml.etree.ElementTree as ET
 
-from qgis.core import QgsProject
+from qgis.core import Qgis, QgsProject
 from PyQt5.QtCore import QModelIndex, pyqtSlot
 from PyQt5.QtGui import QIcon
 
@@ -161,7 +161,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             out_path = self.bdModel.stModel.getMergedPath(st_item.name)
             if os.path.isfile(out_path):
                 qgsUtils.removeRaster(out_path)
-            qgsTreatments.applyMergeRaster(grp_args,out_path,out_type=1,
+            qgsTreatments.applyMergeRaster(grp_args,out_path,out_type=Qgis.Int16,
                                            context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1

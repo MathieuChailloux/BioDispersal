@@ -99,7 +99,7 @@ class CostModel(abstract_model.DictModel):
             # Warp : 'near' resampling, output type = input type
             qgsTreatments.applyWarpReproject(start_layer_path,start_raster_path,"near",crs.authid(),
                                              extent=extent,extent_crs=crs,resolution=resolution,
-                                             out_type=0,context=context,feedback=step_feedback)
+                                             out_type=-1,context=context,feedback=step_feedback)
         else:
             # Burning all vals to 1, nodata 0, Byte data type
             qgsTreatments.applyRasterization(start_layer_path,start_raster_path,extent,resolution,

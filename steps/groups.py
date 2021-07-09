@@ -207,18 +207,6 @@ class GroupModel(abstract_model.DictModel):
             flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
         return flags
             
-    # def applyRasterizationItem(self,item,context=None,feedback=None):
-        # feedback.pushDebugInfo("[applyRasterizationItem]")
-        # field = "Code"
-        # group_name = item.dict["name"]
-        # in_path = self.getVectorPath(item)
-        # out_path = self.getRasterPath(item)
-        # self.bdModel.paramsModel.checkInit()
-        # resolution = self.bdModel.paramsModel.getResolution()
-        # extent = self.bdModel.paramsModel.getExtentCoords()
-        # qgsTreatments.applyRasterization(in_path,field,out_path,extent,resolution,
-                                         # field=field,out_type=Qgis.UInt16,all_touch=True,
-                                         # context=context,feedback=feedback)
 
 class GroupConnector(abstract_model.AbstractConnector):
 

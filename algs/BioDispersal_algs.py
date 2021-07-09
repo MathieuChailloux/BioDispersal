@@ -572,20 +572,16 @@ class WeightingBasics(WeightingAlgorithm):
         # if os.path.isfile(out_path):
             # qgsUtils.removeRaster(out_path)
         if operator == 0:
-            # out = qgsTreatments.applyRSeries(layers,4,range,output,
-                                             # context=context,feedback=feedback)
             out = qgsTreatments.applyRasterCalcMin(input,warped_layer,output,
-                                                   nodata_val=nodata_val,out_type=4,
+                                                   nodata_val=nodata_val,out_type=Qgis.Int32,
                                                    context=context,feedback=feedback)
         elif operator == 1:
-            # out = qgsTreatments.applyRSeries(layers,6,range,output,
-                                             # context=context,feedback=feedback)
             out = qgsTreatments.applyRasterCalcMax(input,warped_layer,output,
-                                                   nodata_val=nodata_val,out_type=4,
+                                                   nodata_val=nodata_val,out_type=Qgis.Int32,
                                                    context=context,feedback=feedback)
         elif operator == 2:
             out = qgsTreatments.applyRasterCalcMult(input,warped_layer,output,
-                                                    nodata_val=nodata_val,out_type=4,
+                                                    nodata_val=nodata_val,out_type=Qgis.Int32,
                                                     context=context,feedback=feedback)
         else:
             assert(False)
@@ -661,7 +657,7 @@ class WeightingByIntervals(WeightingIntervalsAlgorithm):
         reclassed_layer = reclassed['OUTPUT']
         # WEIGHTING
         weighted = qgsTreatments.applyRasterCalcMult(input,reclassed_layer,output,
-                                                     nodata_val=nodata_val,out_type=5,
+                                                     nodata_val=nodata_val,out_type=Qgis.Float32,
                                                      context=context,feedback=feedback)
         return { 'OUTPUT' : weighted }
    
@@ -742,7 +738,7 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
         nonull = qgsTreatments.applyRNull(reclassed_layer,1,reclassed_nonull,context=context,feedback=feedback)
         # WEIGHTING
         weighted = qgsTreatments.applyRasterCalcMult(input,nonull,output,
-                                                     nodata_val=nodata_val,out_type=5,
+                                                     nodata_val=nodata_val,out_type=Qgis.Float32,
                                                      context=context,feedback=feedback)
         return { 'OUTPUT' : weighted }
    
@@ -794,19 +790,6 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
                 self.OUTPUT,
                 self.tr("Output layer")))
                 
-    def getDataType(self,in_type):
-        typeAssoc = { Qgis.Byte : 0,
-                      Qgis.Int16 : 1,
-                      Qgis.UInt16 : 2,
-                      Qgis.UInt32 : 3,
-                      Qgis.Int32 : 4,
-                      Qgis.Float32 : 5,
-                      Qgis.Float64 : 6 }
-        if in_type in typeAssoc:
-            return typeAssoc[in_type]
-            #return 5
-        else:
-            return 5
                 
     def processAlgorithm(self,parameters,context,feedback):
         input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
@@ -817,7 +800,6 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         # Type
         input_type = input.dataProvider().sourceDataType(1)
-        out_type = self.getDataType(input_type)
         # Expression
         input_nodata_val = input.dataProvider().sourceNoDataValue(1)
         operator_str = self.OPERATORS[operator]
@@ -837,7 +819,7 @@ class RasterSelectionByValue(QgsProcessingAlgorithm):
         # Call
         tmp = QgsProcessingUtils.generateTempFilename('tmp.tif')
         out = qgsTreatments.applyRasterCalc(input,tmp,expr,
-                                      nodata_val=0,out_type=out_type,
+                                      nodata_val=0,out_type=input_type,
                                       context=context,feedback=feedback)
         out = qgsTreatments.applyRSetNull(tmp,0,output,context,feedback)
         return { 'OUTPUT' : out }
@@ -884,8 +866,8 @@ def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
                    field=None,burn_val=None,out_type=Qgis.Float32,
                    nodata_val=qgsTreatments.nodata_val,all_touch=False,overwrite=False,
                    context=None,feedback=None):
-    TYPES = ['Byte', 'Int16', 'UInt16', 'UInt32', 'Int32', 'Float32',
-         'Float64', 'CInt16', 'CInt32', 'CFloat32', 'CFloat64']
+    #TYPES = ['Byte', 'Int16', 'UInt16', 'UInt32', 'Int32', 'Float32', 'Float64', 'CInt16', 'CInt32', 'CFloat32', 'CFloat64']
+    out_type = qgsTreatments.qgsTypeToInt(out_type,shift=True)
     if overwrite:
         qgsUtils.removeRaster(out_path)
     extra_param_name = 'EXTRA'

@@ -193,7 +193,7 @@ class SelectionModel(abstract_model.DictModel):
             # Output type set to Int16.
             qgsTreatments.applyWarpReproject(to_warp,out_path,resampling_mode,crs.authid(),
                                              extent=extent,extent_crs=crs,resolution=resolution,
-                                             out_type=2,
+                                             out_type=Qgis.Int16,
                                              overwrite=True,context=context,feedback=step_feedback)
             qgsUtils.removeRaster(to_warp)
         step_feedback.setCurrentStep(2)
@@ -243,10 +243,10 @@ class SelectionModel(abstract_model.DictModel):
             if not from_raster:
                 crs, extent, resolution = self.bdModel.getRasterParams()
                 BioDispersal_algs.applyRasterizationFixAllTouch(grp_vector_path,grp_raster_path,extent,resolution,
-                                                 field="Code",out_type=1,all_touch=True,
+                                                 field="Code",out_type=Qgis.Int16,all_touch=True,
                                                  context=context,feedback=step_feedback)
             self.bdModel.paramsModel.normalizeRaster(grp_raster_path,
-                out_path=out_path,context=context,feedback=feedback)
+                out_path=out_path,context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
