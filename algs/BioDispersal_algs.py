@@ -72,6 +72,13 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterFile,
                        QgsFeatureSink)
 
+try:
+    from scipy import ndimage
+    import numpy as np
+    import_scipy_ok = True
+except ModuleNotFoundError:
+    import_scipy_ok = False
+
 import processing
 from processing.algs.gdal.rasterize import rasterize
 
@@ -100,7 +107,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         RandomStartPointsCircuitscape(),
                         AggregateCirctuitscapeCurrentMaps(),
                         AggregateCirctuitscapeResults(),
-                        ChangeNoDataVal()]
+                        ChangeNoDataVal(),
+                        TestIMBE()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -158,6 +166,11 @@ class AuxAlgorithm(qgsUtils.BaseProcessingAlgorithm):
         return self.tr("Auxiliary algorithms")
     def groupId(self):
         return 'aux'
+class IMBEAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def group(self):
+        return self.tr("IMBE")
+    def groupId(self):
+        return 'imbe'
                
 class BioDispersalAlgorithm(qgsUtils.BaseProcessingAlgorithm):
 
@@ -1412,3 +1425,58 @@ class AggregateCirctuitscapeResults(CircuitscapeAlgorithm):
         # Return
         return { self.AGGR_CURR : aggr_curr, self.AGGR_START : aggr_start }
     
+
+class TestIMBE(IMBEAlgorithm):
+
+    ALG_NAME = 'testimbe'
+    
+    INPUT = 'INPUT'
+    CLASS = 'CLASS'
+    OUTPUT = 'OUTPUT'
+    
+    def createInstance(self):
+        return TestIMBE()
+        
+    def displayName(self):
+        return self.tr("Test IMBE")
+        
+    def shortHelpString(self):
+        return self.tr("test imbe")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT, "Input raster layer",
+            optional=False))
+        self.addParameter(QgsProcessingParameterNumber(
+            self.CLASS, "Choose Landscape Class",
+            type=QgsProcessingParameterNumber.Integer,
+            defaultValue=1))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def filterFunc(self,arr):
+        return ndimage.median(arr)
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        input = self.parameterAsRasterLayer(parameters, self.INPUT, context)
+        cl = self.parameterAsInt(parameters, self.CLASS, context)
+        output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        if not output:
+            raise QgsProcessingException("No output layer given")
+        # Prepare
+        if not import_scipy_ok:
+            raise QgsProcessingException("Import of libraries scipy/numpy failed")
+        in_path = qgsUtils.pathOfLayer(input)
+        classes, array = qgsUtils.getRasterValsAndArray(in_path)
+        feedback.pushDebugInfo("ndim = " + str(array.ndim))
+        feedback.pushDebugInfo("shape = " + str(array.shape))
+        size = (100,100)
+        #size = 3
+        footprint=np.ones((3,3))
+        # Processing
+        out_array = ndimage.generic_filter(array,self.filterFunc,size=size)
+        qgsUtils.exportRaster(out_array,in_path,output)
+        return { self.OUTPUT : output }
