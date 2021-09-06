@@ -47,11 +47,13 @@ from qgis.core import (Qgis,
                        QgsFields,
                        QgsField,
                        QgsFeature,
+                       #QgsMapLayer,
                        QgsProcessing,
                        QgsProcessingUtils,
                        QgsProcessingAlgorithm,
                        QgsProcessingException,
                        QgsProcessingProvider,
+                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterExtent,
@@ -67,6 +69,7 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterFileDestination,
                        QgsProcessingParameterFolderDestination,
                        QgsProcessingParameterRasterLayer,
+                       QgsProcessingParameterMapLayer,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterFile,
@@ -108,7 +111,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         AggregateCirctuitscapeCurrentMaps(),
                         AggregateCirctuitscapeResults(),
                         ChangeNoDataVal(),
-                        TestIMBE()]
+                        TestIMBE(),
+                        DistanceToBorderRaster()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -179,7 +183,6 @@ class BioDispersalAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     # Algorithm parameters
     INPUT_CONFIG = "INPUT"
     LOG_FILE = "LOG"
-    OUTPUT = "OUTPUT"
         
     def displayName(self):
         return self.tr("Run BioDispersal from configuration file")
@@ -226,11 +229,9 @@ class SelectVExprAlg(SelectionAlgorithm):
 
     ALG_NAME = 'selectvexpr'
     
-    INPUT = 'INPUT'
     EXPR = 'EXPR'
     CLASS = 'CLASS'
     CODE = 'CODE'
-    OUTPUT = 'OUTPUT'
         
     def displayName(self):
         return self.tr('Selection (by expression)')
@@ -321,11 +322,9 @@ class SelectVFieldAlg(SelectionAlgorithm):
 
     ALG_NAME = 'selectvfield'
     
-    INPUT = 'INPUT'
     FIELD = 'FIELD'
     GROUP = 'GROUP'
     ASSOC = 'ASSOC'
-    OUTPUT = 'OUTPUT'
     
     HEADER_FIELD_VAL = 'Field value'
     HEADER_INT_VAL = 'New integer value'
@@ -423,7 +422,6 @@ class WeightingAlgorithm(WeightingBaseAlgorithm):
     INPUT_LAYER = 'INPUT_LAYER'
     WEIGHT_LAYER = 'WEIGHT_LAYER'
     RESAMPLING = 'RESAMPLING'
-    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config=None):
         self.methods = ((self.tr('Nearest neighbour'), 'near'),
@@ -715,10 +713,8 @@ class RasterSelectionByValue(qgsUtils.BaseProcessingAlgorithm):
 
     ALG_NAME = 'rasterselectionbyvalue'
 
-    INPUT = 'INPUT'
     OPERATOR = 'OPERATOR'
     VALUE = 'VALUE'
-    OUTPUT = 'OUTPUT'
     
     OPERATORS = ['<','<=','>','>=','==','!=']
     OPERATORS_CMPL = ['>=','>','<=','<','!=','==']
@@ -789,10 +785,8 @@ class ExtractPatchesR(qgsUtils.BaseProcessingAlgorithm):
 
     ALG_NAME = 'extractPatchesR'
 
-    INPUT = 'INPUT'
     VALUES = 'VALUES'
     SURFACE = 'SURFACE'
-    OUTPUT = 'OUTPUT'
         
     def displayName(self):
         return self.tr('Extract patches (Raster)')
@@ -948,9 +942,7 @@ class ChangeNoDataVal(AuxAlgorithm):
 
     ALG_NAME = 'changenodata'
     
-    INPUT = 'INPUT'
     NODATA_VAL = 'NODATA_VAL'
-    OUTPUT = 'OUTPUT'
         
     def displayName(self):
         return self.tr('Change NoData value')
@@ -998,12 +990,6 @@ class ChangeNoDataVal(AuxAlgorithm):
 class ExportToGraphab(GraphabAlgorithm):
 
     ALG_NAME = 'exporttographab'
-    
-    INPUT = 'INPUT'
-    OUTPUT = 'OUTPUT'
-        
-    def createInstance(self):
-        return ExportToGraphab()
         
     def name(self):
         return self.ALG_NAME
@@ -1062,12 +1048,7 @@ class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
 
     ALG_NAME = 'exportpatchestocircuitscape'
     
-    INPUT = 'INPUT'
     CLASS = 'CLASS'
-    OUTPUT = 'OUTPUT'
-        
-    # def createInstance(self):
-        # return ExportPatchesToCircuitscape()
         
     def displayName(self):
         return self.tr('Export to Circuitscape (start points)')
@@ -1143,12 +1124,6 @@ class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
 class ExportFrictionToCircuitscape(CircuitscapeAlgorithm):
 
     ALG_NAME = 'exportfrictiontocircuitscape'
-    
-    INPUT = 'INPUT'
-    OUTPUT = 'OUTPUT'
-        
-    # def createInstance(self):
-        # return ExportFrictionToCircuitscape()
         
     def displayName(self):
         return self.tr('Export to Circuitscape (friction layer)')
@@ -1327,7 +1302,6 @@ class AggregateCirctuitscapeCurrentMaps(CircuitscapeAlgorithm):
         return self.tr('Aggregates current maps (Circuitscape output) into one cumulative current map')
         
     INPUT_LAYERS = 'INPUT_LAYERS'
-    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self,config=None):
         self.addParameter(
@@ -1430,12 +1404,7 @@ class TestIMBE(IMBEAlgorithm):
 
     ALG_NAME = 'testimbe'
     
-    INPUT = 'INPUT'
     CLASS = 'CLASS'
-    OUTPUT = 'OUTPUT'
-    
-    def createInstance(self):
-        return TestIMBE()
         
     def displayName(self):
         return self.tr("Test IMBE")
@@ -1480,3 +1449,109 @@ class TestIMBE(IMBEAlgorithm):
         out_array = ndimage.generic_filter(array,self.filterFunc,size=size)
         qgsUtils.exportRaster(out_array,in_path,output)
         return { self.OUTPUT : output }
+        
+
+class DistanceToBorderVector(IMBEAlgorithm):
+
+    ALG_NAME = 'distanceToBorderVector'
+    
+    EXTENT = 'EXTENT'
+    RESOLUTION = 'RESOLUTION'
+    
+    def displayName(self):
+        return self.tr("Distance to borders (vector)")
+        
+    def shortHelpString(self):
+        return self.tr("TODO")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterMapLayer(
+            self.INPUT,
+            "Input landuse layer",
+            types=[Qgis.Polygon]))
+        self.addParameter(QgsProcessingParameterExtent(
+            self.EXTENT,
+            "Output extent"))
+        self.addParameter(QgsProcessingParameterNumber(
+            self.RESOLUTION,
+            "Output resolution",
+            defaultValue=10.0,
+            type=QgsProcessingParameterNumber.Double))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsMapLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        extent = self.parameterAsExtent(parameters,self.EXTENT,context)
+        resolution = self.parameterAsDouble(parameters,self.RESOLUTION,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        border_path = self.mkTmpPath('borders.gpkg')
+        # type = 2 <=> LineString
+        qgsTreatments.convertGeomType(input,2,border_path,context,feedback)
+        border_raster_path = self.mkTmpPath('borders.tif')
+        qgsTreatments.applyRasterization(border_path,border_raster_path,
+            extent,resolution,burn_val=1,out_type=Qgis.Byte,
+            context=context,feedback=feedback)
+
+   
+
+class DistanceToBorderRaster(IMBEAlgorithm):
+
+    ALG_NAME = 'distanceToBorderRaster'
+    
+    def displayName(self):
+        return self.tr("Distance to borders (Raster)")
+        
+    def shortHelpString(self):
+        return self.tr("TODO")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input landuse layer"))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        extent = input.extent()
+        input_nodata = input.dataProvider().sourceNoDataValue(1)
+        unique_vals = qgsTreatments.getRasterUniqueVals(input,feedback)
+        nb_vals = len(unique_vals)
+        mf = QgsProcessingMultiStepFeedback(nb_vals * 2 + 1, feedback)
+        prox_layers = []
+        mf.pushDebugInfo("classes = " + str(unique_vals))
+        for count, v in enumerate(unique_vals,start=0):
+            classes = list(unique_vals)
+            classes.remove(v)
+            mf.pushDebugInfo("classes = " + str(classes))
+            classes_str = ",".join([str(c) for c in classes])
+            mf.pushDebugInfo("classes_str = " + str(classes_str))
+            prox_v_path = self.mkTmpPath("proximity_" + str(v) + ".tif")
+            qgsTreatments.applyProximity(input,prox_v_path,classes=classes_str,context=context,feedback=mf)
+            mf.setCurrentStep(count * 2 + 1)
+            prox_vnull_path = self.mkTmpPath("proximity_" + str(v) + "_null.tif")
+            expr_v = "logical_and(A != " + str(v) + ", A != " + str(input_nodata) + ") * B"
+            qgsTreatments.applyRasterCalcAB(input,prox_v_path,prox_vnull_path,expr_v,
+                nodata_val=0,context=context,feedback=mf)
+            prox_layers.append(prox_vnull_path)
+            # qgsUtils.removeRaster(prox_v_path)
+            mf.setCurrentStep(count * 2 + 2)
+        # min_prox_path = self.mkTmpPath("min_prox.tif")
+        qgsTreatments.applyRSeries(prox_layers,4,output,context=context,feedback=mf)
+        mf.setCurrentStep(nb_vals+1)
+        # expr = "((A != " + str(input_nodata) + ") * B) - (A == " + str(input_nodata) + ")"
+        # qgsTreatments.applyRasterCalcAB(input,min_prox_path,output,expr,
+            # nodata_val=-1,context=context,feedback=mf)
+        # mf.setCurrentStep(nb_vals+2)
+        return { self.OUTPUT : output }
+    
