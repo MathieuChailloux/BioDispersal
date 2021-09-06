@@ -39,7 +39,11 @@ try:
     import_numpy_ok = True
 except ImportError:
     import_numpy_ok = False
-
+try:
+    from osgeo import gdal
+except ImportError:
+    import gdal
+    
 from PyQt5.QtCore import QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
 from qgis.core import (Qgis,
@@ -75,13 +79,6 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterFile,
                        QgsFeatureSink)
 
-try:
-    from scipy import ndimage
-    import numpy as np
-    import_scipy_ok = True
-except ModuleNotFoundError:
-    import_scipy_ok = False
-
 import processing
 from processing.algs.gdal.rasterize import rasterize
 
@@ -112,7 +109,9 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         AggregateCirctuitscapeResults(),
                         ChangeNoDataVal(),
                         TestIMBE(),
-                        DistanceToBorderRaster()]
+                        DistanceToBorderRaster(),
+                        LabelPatches(),
+                        PatchSizeRaster()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -1554,4 +1553,100 @@ class DistanceToBorderRaster(IMBEAlgorithm):
             # nodata_val=-1,context=context,feedback=mf)
         # mf.setCurrentStep(nb_vals+2)
         return { self.OUTPUT : output }
+        
+        
+   
+
+class LabelPatches(IMBEAlgorithm):
+
+    ALG_NAME = 'labelPatches'
     
+    def displayName(self):
+        return self.tr("Label patches")
+        
+    def shortHelpString(self):
+        return self.tr("TODO")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input layer"))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        input_path = qgsUtils.pathOfLayer(input)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        classes, array = qgsUtils.getRasterValsAndArray(input_path)
+        mf = QgsProcessingMultiStepFeedback(len(classes), feedback)
+        struct = scipy.ndimage.generate_binary_structure(2,2)
+        res_array = np.zeros(array.shape)
+        class_array = np.copy(array)
+        for count, c in enumerate(classes,start=1):
+            mf.pushDebugInfo("Labelling class " + str(c))
+            class_array[array==c] = 1
+            class_array[array!=c] = 0
+            labeled_array, nb_patches = ndimage.label(class_array,struct)
+            tmp_path = self.mkTmpPath("labeled_" + str(c) + ".tif")
+            # qgsUtils.exportRaster(res_array,input_path,tmp_path)
+            res_array = np.add(res_array,labeled_array)
+            mf.setCurrentStep(count)
+        qgsUtils.exportRaster(res_array,input_path,output,nodata=0,type=gdal.GDT_UInt16)
+        return {self.OUTPUT : output}
+    
+
+class PatchSizeRaster(IMBEAlgorithm):
+
+    ALG_NAME = 'patchSizeRaster'
+    LABELLED = 'LABELLED'
+    
+    def displayName(self):
+        return self.tr("Patch size (Raster)")
+        
+    def shortHelpString(self):
+        return self.tr("TODO")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input layer"))
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.LABELLED,
+                description = 'Input is already labelled',
+                defaultValue=False,
+                optional=True))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        input_path = qgsUtils.pathOfLayer(input)
+        is_labelled = self.parameterAsBool(parameters,self.LABELLED,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        if is_labelled:
+            labelled_path = input_path
+        else:
+            labelled_path = self.mkTmpPath("labelled.tif")
+            label_params = { LabelPatches.INPUT : input, LabelPatches.OUTPUT : labelled_path }
+            processing.run("BioDispersal:" + LabelPatches.ALG_NAME,
+                label_params,context=context,feedback=feedback)
+        classes, array = qgsUtils.getRasterValsAndArray(labelled_path)
+        mf = QgsProcessingMultiStepFeedback(len(classes), feedback)
+        res_array = np.zeros(array.shape)
+        for count, c in enumerate(classes,start=1):
+            mf.pushDebugInfo("Labelling class " + str(c))
+            nb_pix = np.count_nonzero(array == c)
+            res_array[array==c] = nb_pix
+            mf.setCurrentStep(count)
+        qgsUtils.exportRaster(res_array,input_path,output,nodata=0,type=gdal.GDT_UInt32)
+        return {self.OUTPUT : output}
