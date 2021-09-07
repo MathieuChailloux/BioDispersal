@@ -1526,7 +1526,7 @@ class DistanceToBorderRaster(IMBEAlgorithm):
         input_nodata = input.dataProvider().sourceNoDataValue(1)
         unique_vals = qgsTreatments.getRasterUniqueVals(input,feedback)
         nb_vals = len(unique_vals)
-        mf = QgsProcessingMultiStepFeedback(nb_vals * 2 + 1, feedback)
+        mf = QgsProcessingMultiStepFeedback(nb_vals * 2 + 2, feedback)
         prox_layers = []
         mf.pushDebugInfo("classes = " + str(unique_vals))
         for count, v in enumerate(unique_vals,start=0):
@@ -1539,19 +1539,27 @@ class DistanceToBorderRaster(IMBEAlgorithm):
             qgsTreatments.applyProximity(input,prox_v_path,classes=classes_str,context=context,feedback=mf)
             mf.setCurrentStep(count * 2 + 1)
             prox_vnull_path = self.mkTmpPath("proximity_" + str(v) + "_null.tif")
-            expr_v = "logical_and(A != " + str(v) + ", A != " + str(input_nodata) + ") * B"
-            qgsTreatments.applyRasterCalcAB(input,prox_v_path,prox_vnull_path,expr_v,
-                nodata_val=0,context=context,feedback=mf)
+            # expr_v = "logical_and(A != " + str(v) + ", A != " + str(input_nodata) + ") * B"
+            # qgsTreatments.applyRasterCalcAB(input,prox_v_path,prox_vnull_path,expr_v,
+                # nodata_val=0,context=context,feedback=mf)
+            extract_params = { RasterSelectionByValue.INPUT : prox_v_path,
+                RasterSelectionByValue.OPERATOR : 2,
+                RasterSelectionByValue.VALUE : 0,
+                RasterSelectionByValue.OUTPUT : prox_vnull_path
+            }
+            processing.run("BioDispersal:" + RasterSelectionByValue.ALG_NAME,
+                extract_params,context=context,feedback=mf)
             prox_layers.append(prox_vnull_path)
             # qgsUtils.removeRaster(prox_v_path)
             mf.setCurrentStep(count * 2 + 2)
-        # min_prox_path = self.mkTmpPath("min_prox.tif")
-        qgsTreatments.applyRSeries(prox_layers,4,output,context=context,feedback=mf)
+        min_prox_path = self.mkTmpPath("min_prox.tif")
+        qgsTreatments.applyRSeries(prox_layers,4,min_prox_path,
+            context=context,feedback=mf)
         mf.setCurrentStep(nb_vals+1)
-        # expr = "((A != " + str(input_nodata) + ") * B) - (A == " + str(input_nodata) + ")"
-        # qgsTreatments.applyRasterCalcAB(input,min_prox_path,output,expr,
-            # nodata_val=-1,context=context,feedback=mf)
-        # mf.setCurrentStep(nb_vals+2)
+        expr = "((A != " + str(input_nodata) + ") * B)"
+        qgsTreatments.applyRasterCalcAB(input,min_prox_path,output,expr,
+            nodata_val=0,context=context,feedback=mf)
+        mf.setCurrentStep(nb_vals+2)
         return { self.OUTPUT : output }
         
         
