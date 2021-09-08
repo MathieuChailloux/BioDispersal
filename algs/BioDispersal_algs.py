@@ -111,7 +111,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         TestIMBE(),
                         DistanceToBorderRaster(),
                         LabelPatches(),
-                        PatchSizeRaster()]
+                        PatchSizeRaster(),
+                        MovingWindow()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -1658,3 +1659,113 @@ class PatchSizeRaster(IMBEAlgorithm):
             mf.setCurrentStep(count)
         qgsUtils.exportRaster(res_array,input_path,output,nodata=0,type=gdal.GDT_UInt32)
         return {self.OUTPUT : output}
+        
+        
+
+class MovingWindow(IMBEAlgorithm):
+
+    ALG_NAME = 'movingWindow'
+    
+    WINDOW_SIZE = 'WINDOW_SIZE'
+    INDICATOR = 'INDICATOR'
+    # METHOD = "METHOD"
+    # METHODsel = ["mean", "sum","minimum","maximum","standard deviation","variance","median","variety"]
+    MODE = "MODE"
+    m = ["reflect", "constant", "nearest", "mirror", "wrap"]
+    OUTPUT_FILE = "OUTPUT_FILE"
+    
+    def displayName(self):
+        return self.tr("Moving window")
+        
+    def shortHelpString(self):
+        return self.tr("TODO")
+        
+    # def icon(self):
+        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input layer"))
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.WINDOW_SIZE,
+                description = self.tr('Window size (pixels)'),
+                type=QgsProcessingParameterNumber.Integer,
+                defaultValue=5))
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.MODE,
+                description = self.tr('Behaviour at Edges'),
+                options=self.m,
+                defaultValue=0))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        input_path = qgsUtils.pathOfLayer(input)
+        self.size = self.parameterAsInt(parameters,self.WINDOW_SIZE,context)
+        mode = self.m[self.parameterAsEnum(parameters, self.MODE, context)]
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        self.nodata = input.dataProvider().sourceNoDataValue(1)
+        self.out_nodata = 0
+        classes, array = qgsUtils.getRasterValsAndArray(str(input_path))
+        
+        # Check for nodata value
+        # if self.nodata == None:
+            # ln = str(path.basename(inputFilename))
+            # raise QgsProcessingException("The layer %s has no valid nodata value (no number)!" % (ln))
+        # Format nodata to numpy.nan
+        # array[array==self.nodata] = numpy.nan
+        self.array_size = self.size * 2 + 1
+        self.val_idx = int((self.array_size + 1) / 2)
+        self.center = self.size
+        feedback.pushDebugInfo("center = " + str(self.center))
+        self.dist_shape = (self.array_size, self.array_size)
+        self.feedback = feedback
+        self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
+        feedback.pushDebugInfo("dist_arry = " + str(self.dist_array))
+        self.dist_array[self.dist_array > self.size] = math.nan
+        feedback.pushDebugInfo("dist_array = " + str(self.dist_array))
+        self.dist_array2 = self.dist_array.flatten()
+        feedback.pushDebugInfo("self.dist_array2 = " + str(self.dist_array2))
+        result = ndimage.generic_filter(array, self.connexity_index, size=self.array_size, mode=mode)
+        qgsUtils.exportRaster(result,input_path,output,nodata=self.out_nodata,type=gdal.GDT_Float32)
+        return {self.OUTPUT_FILE: output}
+
+    def distFromCenter(self,X,Y):
+        self.feedback.pushDebugInfo("X = " + str(X))
+        self.feedback.pushDebugInfo("Y = " + str(Y))
+        return np.sqrt(((X.astype(int) - self.center) ** 2) + ((Y.astype(int) - self.center) ** 2))
+
+    # Return number of unique classes
+    def connexity_index(self,array):
+        # self.feedback.pushDebugInfo("array = " + str(array))
+        cell_val = array[self.val_idx]
+        if cell_val == self.nodata:
+            res = self.out_nodata
+        else:
+            dist_val = self.dist_array2[array==cell_val]
+            val_median = np.nanmedian(dist_val)
+            dist_noval = self.dist_array2[array!=cell_val]
+            noval_median = float(np.nanmedian(dist_noval))
+            if val_median == 0:
+                self.feedback.pushDebugInfo("array = " + str(array))
+                assert(False)
+            if noval_median == 0 or math.isnan(noval_median):
+                res = val_median
+            else:
+                res = noval_median / val_median
+        # if math.isnan(res):
+            # self.feedback.pushDebugInfo("array = " + str(array))
+            # self.feedback.pushDebugInfo("dist_val = " + str(dist_val))
+            # self.feedback.pushDebugInfo("dist_noval = " + str(dist_noval))
+            # self.feedback.pushDebugInfo("val_median = " + str(val_median))
+            # self.feedback.pushDebugInfo("noval_median = " + str(noval_median))
+            # self.feedback.pushDebugInfo("res = " + str(res))
+        return res
