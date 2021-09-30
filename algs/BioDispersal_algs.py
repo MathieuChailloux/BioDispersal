@@ -1713,9 +1713,12 @@ class MovingWindow(IMBEAlgorithm):
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         # Processing
         self.nodata = input.dataProvider().sourceNoDataValue(1)
+        feedback.pushDebugInfo("nodata = " + str(self.nodata))
         self.out_nodata = 0
         classes, array = qgsUtils.getRasterValsAndArray(str(input_path))
-        
+        self.nb_vals = len(classes)
+        # for cpt, c in enumerate(classes):
+            # array[array==c] = cpt
         # Check for nodata value
         # if self.nodata == None:
             # ln = str(path.basename(inputFilename))
@@ -1730,12 +1733,24 @@ class MovingWindow(IMBEAlgorithm):
         self.feedback = feedback
         self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
         feedback.pushDebugInfo("dist_arry = " + str(self.dist_array))
+        self.footprint = np.ones(self.dist_shape,dtype='bool')
+        self.footprint[self.dist_array > self.size] = False
+        feedback.pushDebugInfo("footprint = " + str(self.footprint))
         self.dist_array[self.dist_array > self.size] = math.nan
         feedback.pushDebugInfo("dist_array = " + str(self.dist_array))
         self.dist_array2 = self.dist_array.flatten()
         feedback.pushDebugInfo("self.dist_array2 = " + str(self.dist_array2))
-        result = ndimage.generic_filter(array, self.connexity_index, size=self.array_size, mode=mode)
-        qgsUtils.exportRaster(result,input_path,output,nodata=self.out_nodata,type=gdal.GDT_Float32)
+        # result = ndimage.generic_filter(array, self.connexity_index,
+            # size=self.array_size, mode=mode)
+        result = ndimage.generic_filter(array, self.connexity_index,
+            footprint=self.footprint, mode=mode)
+        # result = ndimage.generic_filter(array, self.contact_count,
+            # footprint=self.footprint, mode=mode)
+        self.feedback.pushDebugInfo("res = " + str(result))
+        qgsUtils.exportRaster(result,input_path,output,
+            nodata=self.out_nodata,type=gdal.GDT_Float32)
+        # qgsUtils.exportRaster(result,input_path,output,
+            # nodata=self.out_nodata,type=gdal.GDT_UInt16)
         return {self.OUTPUT_FILE: output}
 
     def distFromCenter(self,X,Y):
@@ -1743,17 +1758,41 @@ class MovingWindow(IMBEAlgorithm):
         self.feedback.pushDebugInfo("Y = " + str(Y))
         return np.sqrt(((X.astype(int) - self.center) ** 2) + ((Y.astype(int) - self.center) ** 2))
 
+    def contact_count(self,array):
+        # reshaped = np.reshape(array,self.dist_shape)
+        # struct = np.generate_binary_structure(2,1)
+        # self.contact_count = np.zeros(self.nb_vals)
+        # self.feedback.pushDebugInfo("contact_count = " + str(self.contact_count))
+        cell_val = array[self.val_idx]
+        
+        # nb_neighbours_arr = ndimage.generic_filter(reshaped,
+            # self.contact_count_aux,footprint=struct, mode=mode)
+        # res = []
+        # res = nb_neighbours_arr[reshaped==cell_val].sum()
+        # return res
+        return cell_val
+        # for cpt, c in enumerate(self.classes):
+            # res[cpt] = nb_neighbours_arr[reshaped==c].sum()
+        # return res[0]
+        
+    def contact_count_aux(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
+
     # Return number of unique classes
     def connexity_index(self,array):
         # self.feedback.pushDebugInfo("array = " + str(array))
         cell_val = array[self.val_idx]
+        self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
         if cell_val == self.nodata:
             res = self.out_nodata
         else:
             dist_val = self.dist_array2[array==cell_val]
             val_median = np.nanmedian(dist_val)
+            self.feedback.pushDebugInfo("val_median = " + str(val_median))
             dist_noval = self.dist_array2[array!=cell_val]
             noval_median = float(np.nanmedian(dist_noval))
+            self.feedback.pushDebugInfo("noval_median = " + str(noval_median))
             if val_median == 0:
                 self.feedback.pushDebugInfo("array = " + str(array))
                 assert(False)
@@ -1768,4 +1807,5 @@ class MovingWindow(IMBEAlgorithm):
             # self.feedback.pushDebugInfo("val_median = " + str(val_median))
             # self.feedback.pushDebugInfo("noval_median = " + str(noval_median))
             # self.feedback.pushDebugInfo("res = " + str(res))
+        self.feedback.pushDebugInfo("res = " + str(res))
         return res

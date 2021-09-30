@@ -243,7 +243,7 @@ class SelectionModel(abstract_model.DictModel):
             if not from_raster:
                 crs, extent, resolution = self.bdModel.getRasterParams()
                 BioDispersal_algs.applyRasterizationFixAllTouch(grp_vector_path,grp_raster_path,extent,resolution,
-                                                 field="Code",out_type=Qgis.Int16,all_touch=True,
+                                                 field="Code",out_type=Qgis.Int16,all_touch=False,
                                                  context=context,feedback=step_feedback)
             self.bdModel.paramsModel.normalizeRaster(grp_raster_path,
                 out_path=out_path,context=context,feedback=step_feedback)
