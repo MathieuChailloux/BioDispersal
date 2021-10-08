@@ -1734,18 +1734,23 @@ class MovingWindow(IMBEAlgorithm):
         self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
         feedback.pushDebugInfo("dist_arry = " + str(self.dist_array))
         self.footprint = np.ones(self.dist_shape,dtype='bool')
+        self.feedback.pushDebugInfo("foot_shape = " + str(self.footprint.shape))
+        self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
         self.footprint[self.dist_array > self.size] = False
         feedback.pushDebugInfo("footprint = " + str(self.footprint))
+        self.footprint_flatten = self.footprint.flatten()
+        feedback.pushDebugInfo("footprint_flatten = " + str(self.footprint_flatten))
         self.dist_array[self.dist_array > self.size] = math.nan
         feedback.pushDebugInfo("dist_array = " + str(self.dist_array))
         self.dist_array2 = self.dist_array.flatten()
         feedback.pushDebugInfo("self.dist_array2 = " + str(self.dist_array2))
         # result = ndimage.generic_filter(array, self.connexity_index,
             # size=self.array_size, mode=mode)
-        result = ndimage.generic_filter(array, self.connexity_index,
-            footprint=self.footprint, mode=mode)
-        # result = ndimage.generic_filter(array, self.contact_count,
+        # result = ndimage.generic_filter(array, self.connexity_index,
             # footprint=self.footprint, mode=mode)
+        self.feedback.pushDebugInfo("foot_shape = " + str(self.footprint.shape))
+        result = ndimage.generic_filter(array, self.contact_count,
+            size=self.array_size, mode=mode)
         self.feedback.pushDebugInfo("res = " + str(result))
         qgsUtils.exportRaster(result,input_path,output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
@@ -1759,18 +1764,24 @@ class MovingWindow(IMBEAlgorithm):
         return np.sqrt(((X.astype(int) - self.center) ** 2) + ((Y.astype(int) - self.center) ** 2))
 
     def contact_count(self,array):
-        # reshaped = np.reshape(array,self.dist_shape)
-        # struct = np.generate_binary_structure(2,1)
+        # self.feedback.pushDebugInfo("array_shape = " + str(array.shape))
+        # self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
+        cell_val = array[self.val_idx]
+        array[array!= cell_val] = 0
+        array[self.footprint_flatten != 0] = 0
+        # self.feedback.pushDebugInfo("array_shape = " + str(array.shape))
+        # self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape))
+        reshaped = np.reshape(array,self.dist_shape)
+        struct = ndimage.generate_binary_structure(2,1)
         # self.contact_count = np.zeros(self.nb_vals)
         # self.feedback.pushDebugInfo("contact_count = " + str(self.contact_count))
-        cell_val = array[self.val_idx]
         
-        # nb_neighbours_arr = ndimage.generic_filter(reshaped,
-            # self.contact_count_aux,footprint=struct, mode=mode)
+        nb_neighbours_arr = ndimage.generic_filter(reshaped,
+            self.contact_count_aux,footprint=struct, mode="constant")
         # res = []
-        # res = nb_neighbours_arr[reshaped==cell_val].sum()
-        # return res
-        return cell_val
+        res = nb_neighbours_arr[reshaped==cell_val].sum()
+        return res
+        # return cell_val
         # for cpt, c in enumerate(self.classes):
             # res[cpt] = nb_neighbours_arr[reshaped==c].sum()
         # return res[0]
@@ -1783,7 +1794,7 @@ class MovingWindow(IMBEAlgorithm):
     def connexity_index(self,array):
         # self.feedback.pushDebugInfo("array = " + str(array))
         cell_val = array[self.val_idx]
-        self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
+        #self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
         if cell_val == self.nodata:
             res = self.out_nodata
         else:
