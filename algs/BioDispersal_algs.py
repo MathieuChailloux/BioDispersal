@@ -112,7 +112,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         DistanceToBorderRaster(),
                         LabelPatches(),
                         PatchSizeRaster(),
-                        MovingWindow()]
+                        MovingWindow(),
+                        NeighboursCount()]
         for a in self.alglist:
             a.initAlgorithm()
         super().__init__()
@@ -1660,7 +1661,43 @@ class PatchSizeRaster(IMBEAlgorithm):
         qgsUtils.exportRaster(res_array,input_path,output,nodata=0,type=gdal.GDT_UInt32)
         return {self.OUTPUT : output}
         
+
+class NeighboursCount(IMBEAlgorithm):
+
+    ALG_NAME = 'neigboursCount'
+    
+    def displayName(self):
+        return self.tr("Neigbours count")
         
+    def shortHelpString(self):
+        return self.tr("TODO")
+    
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input layer"))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        in_path = qgsUtils.pathOfLayer(input)
+        in_nodata = input.dataProvider().sourceNoDataValue(1)
+        classes, array = qgsUtils.getRasterValsAndArray(in_path)
+        struct = ndimage.generate_binary_structure(2,1)
+        nb_neighbours_arr = ndimage.generic_filter(array,
+            self.countNeighbours,footprint=struct, mode="constant")#,cval=in_nodata)
+        qgsUtils.exportRaster(nb_neighbours_arr,input.source(),output)
+        return {self.OUTPUT : output}
+            
+    def countNeighbours(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
 
 class MovingWindow(IMBEAlgorithm):
 
