@@ -1740,6 +1740,14 @@ class MovingWindow(IMBEAlgorithm):
             self.OUTPUT,
             self.tr("Output layer")))
             
+    def rolling_window(self, a, window_size):
+        shape = (a.shape[0] - window_size + 1, window_size) + a.shape[1:]
+        strides = (a.strides[0],) + a.strides
+        return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
+    def countNeighbours(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
+            
     def processAlgorithm(self,parameters,context,feedback):
         input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
         if input is None:
@@ -1785,15 +1793,88 @@ class MovingWindow(IMBEAlgorithm):
             # size=self.array_size, mode=mode)
         # result = ndimage.generic_filter(array, self.connexity_index,
             # footprint=self.footprint, mode=mode)
-        self.feedback.pushDebugInfo("foot_shape = " + str(self.footprint.shape))
-        result = ndimage.generic_filter(array, self.contact_count,
-            size=self.array_size, mode=mode)
-        self.feedback.pushDebugInfo("res = " + str(result))
-        qgsUtils.exportRaster(result,input_path,output,
+            
+        # self.feedback.pushDebugInfo("foot_shape = " + str(self.footprint.shape))
+        # result = ndimage.generic_filter(array, self.contact_count,
+            # size=self.array_size, mode=mode)
+        # self.feedback.pushDebugInfo("res = " + str(result))
+        
+        # view_array = self.rolling_window(array,self.size)
+        # feedback.pushDebugInfo("array shape = " + str(array.shape))
+        # view_array = np.lib.stride_tricks.sliding_window_view(array,(self.size,self.size))
+        # feedback.pushDebugInfo("view_array shape = " + str(view_array.shape))
+        # result = np.mean(view_array)
+        # feedback.pushDebugInfo("result shape = " + str(result.shape))
+        
+
+        feedback.pushDebugInfo("array shape = " + str(array.shape))
+        ncount_struct = ndimage.generate_binary_structure(2,1)
+        nb_neighbours_arr = ndimage.generic_filter(array,
+            self.countNeighbours,footprint=ncount_struct, mode="constant")#,cval=in_nodata)
+        feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
+            
+        # zip_arr = np.dstack((array,nb_neighbours_arr))
+        # feedback.pushDebugInfo("zip_arr shape = " + str(zip_arr.shape))
+        # feedback.pushDebugInfo("zip_arr type = " + str(zip_arr.dtype))
+        # zip_arr_int = np.int_(zip_arr)
+        # feedback.pushDebugInfo("zip_arr_int shape = " + str(zip_arr_int.shape))
+        # feedback.pushDebugInfo("zip_arr_int type = " + str(zip_arr_int.dtype))
+        
+        new_arr = array * 10 + nb_neighbours_arr
+        feedback.pushDebugInfo("new_arr shape = " + str(new_arr.shape))
+        
+        # nb_contact_arr = ndimage.generic_filter(zip_arr,
+            # self.count_neighbours,footprint=self.footprint, mode="constant")
+        self.feedback = feedback
+        # new_size = (self.array_size,self.array_size,2)
+        new_size = (self.array_size,self.array_size)
+        feedback.pushDebugInfo("new_size = " + str(new_size))
+        nb_contact_arr = ndimage.generic_filter(new_arr,
+            self.count_neighbours,size=new_size, mode="reflect")
+        feedback.pushDebugInfo("nb_contact_arr shape = " + str(nb_contact_arr.shape))
+                
+        qgsUtils.exportRaster(nb_contact_arr,input_path,output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         # qgsUtils.exportRaster(result,input_path,output,
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
-        return {self.OUTPUT_FILE: output}
+        return { self.OUTPUT_FILE : output }
+        
+    def count_neighbours(self,array):
+        self.feedback.pushDebugInfo("array  = " + str(array))
+        # self.feedback.pushDebugInfo("array shape  = " + str(array.shape))
+        # self.feedback.pushDebugInfo("array elem type  = " + str(array.dtype))
+        # self.feedback.pushDebugInfo("array size  = " + str(self.array_size))
+        
+        # reshaped_arr = np.reshape(array,(self.array_size,self.array_size,2))
+        # self.feedback.pushDebugInfo("reshaped_arr  = " + str(reshaped_arr))
+        # self.feedback.pushDebugInfo("reshaped_arr shape  = " + str(reshaped_arr.shape))
+        # self.feedback.pushDebugInfo("reshaped_arr elem type  = " + str(reshaped_arr.dtype))
+        
+        reshaped_arr = np.reshape(array,self.dist_shape)
+        self.feedback.pushDebugInfo("reshaped_arr  = " + str(reshaped_arr))
+        res = {}
+        center_val = array[int(len(array)/2)]
+        self.feedback.pushDebugInfo("center_val = " + str(center_val))
+        center_val = (center_val - (center_val % 10)) / 10
+        self.feedback.pushDebugInfo("center_val = " + str(center_val))
+        for cpt, a in enumerate(array):
+            neigbours = a % 10
+            val = (a - neigbours) / 10
+            if val in res:
+                res[val] += neigbours
+            else:
+                res[val] = neigbours
+        self.feedback.pushDebugInfo("res = " + str(res))
+        return res[center_val]
+        # cell_val, cell_count = reshaped[self.val_idx]
+        # d = {}
+        # for (v, c) in reshaped:
+            # if v in d:
+                # d[v] += c
+            # else:
+                # d[v] = c
+        # return d[cell_val]
+        # return cell_val
 
     def distFromCenter(self,X,Y):
         self.feedback.pushDebugInfo("X = " + str(X))

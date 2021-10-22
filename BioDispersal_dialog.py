@@ -70,11 +70,11 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         
     # Initialize plugin tabs and connectors.
     def initTabs(self):
-        global progressFeedback, paramsModel
+        #global progressFeedback, paramsModel
         logConnector = log.LogConnector(self)
         logConnector.initGui()
         self.feedback =  feedbacks.ProgressFeedback(self)
-        feedbacks.progressFeedback = self.feedback
+        #feedbacks.progressFeedback = self.feedback
         self.context = QgsProcessingContext()
         self.context.setFeedback(self.feedback)
         self.bdModel = BioDispersalModel(self.context,self.feedback)
@@ -99,7 +99,7 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
                            "Ponderation" : self.ponderationConnector,
                            "Cost" : self.costConnector,
                            "Log" : logConnector,
-                           "Progress" : feedbacks.progressFeedback,
+                           "Progress" : self.feedback,
                            "Tabs" : tabConnector}
         self.recomputeParsers()
         
