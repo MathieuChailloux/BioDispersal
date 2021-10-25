@@ -1691,7 +1691,7 @@ class NeighboursCount(IMBEAlgorithm):
         classes, array = qgsUtils.getRasterValsAndArray(in_path)
         struct = ndimage.generate_binary_structure(2,1)
         nb_neighbours_arr = ndimage.generic_filter(array,
-            self.countNeighbours,footprint=struct, mode="constant")#,cval=in_nodata)
+            self.countNeighbours,footprint=struct, mode="constant",cval=in_nodata)
         qgsUtils.exportRaster(nb_neighbours_arr,input.source(),output)
         return {self.OUTPUT : output}
             
@@ -1758,6 +1758,7 @@ class MovingWindow(IMBEAlgorithm):
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         # Processing
         self.nodata = input.dataProvider().sourceNoDataValue(1)
+        in_nodata = input.dataProvider().sourceNoDataValue(1)
         feedback.pushDebugInfo("nodata = " + str(self.nodata))
         self.out_nodata = 0
         classes, array = qgsUtils.getRasterValsAndArray(str(input_path))
@@ -1810,7 +1811,7 @@ class MovingWindow(IMBEAlgorithm):
         feedback.pushDebugInfo("array shape = " + str(array.shape))
         ncount_struct = ndimage.generate_binary_structure(2,1)
         nb_neighbours_arr = ndimage.generic_filter(array,
-            self.countNeighbours,footprint=ncount_struct, mode="constant")#,cval=in_nodata)
+            self.countNeighbours,footprint=ncount_struct, mode="constant",cval=in_nodata)
         feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
             
         # zip_arr = np.dstack((array,nb_neighbours_arr))
@@ -1830,7 +1831,7 @@ class MovingWindow(IMBEAlgorithm):
         new_size = (self.array_size,self.array_size)
         feedback.pushDebugInfo("new_size = " + str(new_size))
         nb_contact_arr = ndimage.generic_filter(new_arr,
-            self.count_neighbours,size=new_size, mode="reflect")
+            self.count_neighbours,footprint=self.footprint, mode="reflect")
         feedback.pushDebugInfo("nb_contact_arr shape = " + str(nb_contact_arr.shape))
                 
         qgsUtils.exportRaster(nb_contact_arr,input_path,output,
@@ -1840,7 +1841,7 @@ class MovingWindow(IMBEAlgorithm):
         return { self.OUTPUT_FILE : output }
         
     def count_neighbours(self,array):
-        self.feedback.pushDebugInfo("array  = " + str(array))
+        # self.feedback.pushDebugInfo("array  = " + str(array))
         # self.feedback.pushDebugInfo("array shape  = " + str(array.shape))
         # self.feedback.pushDebugInfo("array elem type  = " + str(array.dtype))
         # self.feedback.pushDebugInfo("array size  = " + str(self.array_size))
@@ -1850,13 +1851,13 @@ class MovingWindow(IMBEAlgorithm):
         # self.feedback.pushDebugInfo("reshaped_arr shape  = " + str(reshaped_arr.shape))
         # self.feedback.pushDebugInfo("reshaped_arr elem type  = " + str(reshaped_arr.dtype))
         
-        reshaped_arr = np.reshape(array,self.dist_shape)
-        self.feedback.pushDebugInfo("reshaped_arr  = " + str(reshaped_arr))
+        # reshaped_arr = np.reshape(array,self.dist_shape)
+        # self.feedback.pushDebugInfo("reshaped_arr  = " + str(reshaped_arr))
         res = {}
         center_val = array[int(len(array)/2)]
-        self.feedback.pushDebugInfo("center_val = " + str(center_val))
+        #self.feedback.pushDebugInfo("center_val = " + str(center_val))
         center_val = (center_val - (center_val % 10)) / 10
-        self.feedback.pushDebugInfo("center_val = " + str(center_val))
+        #self.feedback.pushDebugInfo("center_val = " + str(center_val))
         for cpt, a in enumerate(array):
             neigbours = a % 10
             val = (a - neigbours) / 10
@@ -1864,7 +1865,7 @@ class MovingWindow(IMBEAlgorithm):
                 res[val] += neigbours
             else:
                 res[val] = neigbours
-        self.feedback.pushDebugInfo("res = " + str(res))
+        #self.feedback.pushDebugInfo("res = " + str(res))
         return res[center_val]
         # cell_val, cell_count = reshaped[self.val_idx]
         # d = {}
