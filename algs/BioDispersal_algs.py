@@ -1699,9 +1699,9 @@ class NeighboursCount(IMBEAlgorithm):
         cell_val = array[2]
         return np.count_nonzero(array == cell_val) - 1
 
-class MovingWindow(IMBEAlgorithm):
+class SlidingWindow(IMBEAlgorithm):
 
-    ALG_NAME = 'movingWindow'
+    ALG_NAME = 'SlidingWindow'
     
     WINDOW_SIZE = 'WINDOW_SIZE'
     INDICATOR = 'INDICATOR'
@@ -1712,7 +1712,7 @@ class MovingWindow(IMBEAlgorithm):
     OUTPUT_FILE = "OUTPUT_FILE"
     
     def displayName(self):
-        return self.tr("Moving window")
+        return self.tr("Sliding window")
         
     def shortHelpString(self):
         return self.tr("TODO")
@@ -1730,12 +1730,12 @@ class MovingWindow(IMBEAlgorithm):
                 description = self.tr('Window size (pixels)'),
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=5))
-        self.addParameter(
-            QgsProcessingParameterEnum(
-                self.MODE,
-                description = self.tr('Behaviour at Edges'),
-                options=self.m,
-                defaultValue=0))
+        # self.addParameter(
+            # QgsProcessingParameterEnum(
+                # self.MODE,
+                # description = self.tr('Behaviour at Edges'),
+                # options=self.m,
+                # defaultValue=0))
         self.addParameter(QgsProcessingParameterRasterDestination(
             self.OUTPUT,
             self.tr("Output layer")))
@@ -1744,9 +1744,6 @@ class MovingWindow(IMBEAlgorithm):
         shape = (a.shape[0] - window_size + 1, window_size) + a.shape[1:]
         strides = (a.strides[0],) + a.strides
         return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
-    def countNeighbours(self,array):
-        cell_val = array[2]
-        return np.count_nonzero(array == cell_val) - 1
             
     def processAlgorithm(self,parameters,context,feedback):
         input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
@@ -1754,93 +1751,62 @@ class MovingWindow(IMBEAlgorithm):
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
         input_path = qgsUtils.pathOfLayer(input)
         self.size = self.parameterAsInt(parameters,self.WINDOW_SIZE,context)
-        mode = self.m[self.parameterAsEnum(parameters, self.MODE, context)]
+        # mode = self.m[self.parameterAsEnum(parameters, self.MODE, context)]
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         # Processing
+        self.feedback = feedback
         self.nodata = input.dataProvider().sourceNoDataValue(1)
         in_nodata = input.dataProvider().sourceNoDataValue(1)
         feedback.pushDebugInfo("nodata = " + str(self.nodata))
         self.out_nodata = 0
         classes, array = qgsUtils.getRasterValsAndArray(str(input_path))
         self.nb_vals = len(classes)
-        # for cpt, c in enumerate(classes):
-            # array[array==c] = cpt
-        # Check for nodata value
-        # if self.nodata == None:
-            # ln = str(path.basename(inputFilename))
-            # raise QgsProcessingException("The layer %s has no valid nodata value (no number)!" % (ln))
-        # Format nodata to numpy.nan
-        # array[array==self.nodata] = numpy.nan
+        # Preparing footprints according to distance
         self.array_size = self.size * 2 + 1
         self.val_idx = int((self.array_size + 1) / 2)
-        self.center = self.size
-        feedback.pushDebugInfo("center = " + str(self.center))
         self.dist_shape = (self.array_size, self.array_size)
-        self.feedback = feedback
+        self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
         self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
         feedback.pushDebugInfo("dist_arry = " + str(self.dist_array))
         self.footprint = np.ones(self.dist_shape,dtype='bool')
         self.feedback.pushDebugInfo("foot_shape = " + str(self.footprint.shape))
-        self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
         self.footprint[self.dist_array > self.size] = False
         feedback.pushDebugInfo("footprint = " + str(self.footprint))
         self.footprint_flatten = self.footprint.flatten()
         feedback.pushDebugInfo("footprint_flatten = " + str(self.footprint_flatten))
+        nb_elem_footprint = np.count_nonzero(self.footprint != False)
+        self.val_idx_footprint = int(nb_elem_footprint/2)
         self.dist_array[self.dist_array > self.size] = math.nan
         feedback.pushDebugInfo("dist_array = " + str(self.dist_array))
-        self.dist_array2 = self.dist_array.flatten()
-        feedback.pushDebugInfo("self.dist_array2 = " + str(self.dist_array2))
-        # result = ndimage.generic_filter(array, self.connexity_index,
-            # size=self.array_size, mode=mode)
-        # result = ndimage.generic_filter(array, self.connexity_index,
-            # footprint=self.footprint, mode=mode)
-            
-        # self.feedback.pushDebugInfo("foot_shape = " + str(self.footprint.shape))
-        # result = ndimage.generic_filter(array, self.contact_count,
-            # size=self.array_size, mode=mode)
-        # self.feedback.pushDebugInfo("res = " + str(result))
-        
-        # view_array = self.rolling_window(array,self.size)
-        # feedback.pushDebugInfo("array shape = " + str(array.shape))
-        # view_array = np.lib.stride_tricks.sliding_window_view(array,(self.size,self.size))
-        # feedback.pushDebugInfo("view_array shape = " + str(view_array.shape))
-        # result = np.mean(view_array)
-        # feedback.pushDebugInfo("result shape = " + str(result.shape))
-        
-
+        self.dist_array_flatten = self.dist_array.flatten()
+        feedback.pushDebugInfo("self.dist_array_flatten = " + str(self.dist_array_flatten))
+        # Computing immediate neighbours (4-connexity)
         feedback.pushDebugInfo("array shape = " + str(array.shape))
         ncount_struct = ndimage.generate_binary_structure(2,1)
         nb_neighbours_arr = ndimage.generic_filter(array,
-            self.countNeighbours,footprint=ncount_struct, mode="constant",cval=in_nodata)
+            self.count_neighbours_4,footprint=ncount_struct,
+            mode="constant",cval=self.nodata)
         feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
-            
-        # zip_arr = np.dstack((array,nb_neighbours_arr))
-        # feedback.pushDebugInfo("zip_arr shape = " + str(zip_arr.shape))
-        # feedback.pushDebugInfo("zip_arr type = " + str(zip_arr.dtype))
-        # zip_arr_int = np.int_(zip_arr)
-        # feedback.pushDebugInfo("zip_arr_int shape = " + str(zip_arr_int.shape))
-        # feedback.pushDebugInfo("zip_arr_int type = " + str(zip_arr_int.dtype))
-        
+        # Encoding value with immediate neighbouts
         new_arr = array * 10 + nb_neighbours_arr
         feedback.pushDebugInfo("new_arr shape = " + str(new_arr.shape))
-        
-        # nb_contact_arr = ndimage.generic_filter(zip_arr,
-            # self.count_neighbours,footprint=self.footprint, mode="constant")
-        self.feedback = feedback
-        # new_size = (self.array_size,self.array_size,2)
-        new_size = (self.array_size,self.array_size)
-        feedback.pushDebugInfo("new_size = " + str(new_size))
+        # Computing index in sliding window of specified size
         nb_contact_arr = ndimage.generic_filter(new_arr,
-            self.count_neighbours,footprint=self.footprint, mode="reflect")
+            self.count_neighbours_decode,footprint=self.footprint,
+            mode="constant",cval=self.nodata)
         feedback.pushDebugInfo("nb_contact_arr shape = " + str(nb_contact_arr.shape))
-                
+        # Output
         qgsUtils.exportRaster(nb_contact_arr,input_path,output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         # qgsUtils.exportRaster(result,input_path,output,
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
         return { self.OUTPUT_FILE : output }
         
-    def count_neighbours(self,array):
+    def count_neighbours_4(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
+        
+    def count_neighbours_decode(self,array):
         # self.feedback.pushDebugInfo("array  = " + str(array))
         # self.feedback.pushDebugInfo("array shape  = " + str(array.shape))
         # self.feedback.pushDebugInfo("array elem type  = " + str(array.dtype))
@@ -1854,7 +1820,8 @@ class MovingWindow(IMBEAlgorithm):
         # reshaped_arr = np.reshape(array,self.dist_shape)
         # self.feedback.pushDebugInfo("reshaped_arr  = " + str(reshaped_arr))
         res = {}
-        center_val = array[int(len(array)/2)]
+        #center_val = array[int(len(array)/2)]
+        center_val = array[self.val_idx_footprint]
         #self.feedback.pushDebugInfo("center_val = " + str(center_val))
         center_val = (center_val - (center_val % 10)) / 10
         #self.feedback.pushDebugInfo("center_val = " + str(center_val))
@@ -1867,20 +1834,11 @@ class MovingWindow(IMBEAlgorithm):
                 res[val] = neigbours
         #self.feedback.pushDebugInfo("res = " + str(res))
         return res[center_val]
-        # cell_val, cell_count = reshaped[self.val_idx]
-        # d = {}
-        # for (v, c) in reshaped:
-            # if v in d:
-                # d[v] += c
-            # else:
-                # d[v] = c
-        # return d[cell_val]
-        # return cell_val
 
     def distFromCenter(self,X,Y):
         self.feedback.pushDebugInfo("X = " + str(X))
         self.feedback.pushDebugInfo("Y = " + str(Y))
-        return np.sqrt(((X.astype(int) - self.center) ** 2) + ((Y.astype(int) - self.center) ** 2))
+        return np.sqrt(((X.astype(int) - self.size) ** 2) + ((Y.astype(int) - self.size) ** 2))
 
     def contact_count(self,array):
         # self.feedback.pushDebugInfo("array_shape = " + str(array.shape))
