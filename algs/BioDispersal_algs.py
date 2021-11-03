@@ -112,7 +112,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         DistanceToBorderRaster(),
                         LabelPatches(),
                         PatchSizeRaster(),
-                        MovingWindow(),
+                        SlidingWindow(),
                         NeighboursCount()]
         for a in self.alglist:
             a.initAlgorithm()
@@ -1760,6 +1760,7 @@ class SlidingWindow(IMBEAlgorithm):
         feedback.pushDebugInfo("nodata = " + str(self.nodata))
         self.out_nodata = 0
         classes, array = qgsUtils.getRasterValsAndArray(str(input_path))
+        feedback.pushDebugInfo("classes = " + str(classes))
         self.nb_vals = len(classes)
         # Preparing footprints according to distance
         self.array_size = self.size * 2 + 1
@@ -1788,15 +1789,54 @@ class SlidingWindow(IMBEAlgorithm):
             mode="constant",cval=self.nodata)
         feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
         # Encoding value with immediate neighbouts
-        new_arr = array * 10 + nb_neighbours_arr
-        feedback.pushDebugInfo("new_arr shape = " + str(new_arr.shape))
+        # new_arr = array * 10 + nb_neighbours_arr
+        # feedback.pushDebugInfo("new_arr shape = " + str(new_arr.shape))
+        acc_arr = np.zeros(array.shape)
+        curr_q3 = 0
+        feedback.pushDebugInfo("nb_vals = " + str(self.nb_vals))
+        classes_reshaped = classes[1:] + [classes[0]]
+        feedback.pushDebugInfo("classes_reshaped = " + str(classes_reshaped))
+        for cpt, c in enumerate(classes_reshaped,start=1):
+            feedback.pushDebugInfo("class = " + str(c))
+            feedback.pushDebugInfo("cpt = " + str(cpt))
+            tmp_arr = np.copy(nb_neighbours_arr)
+            tmp_arr[array != c] = 0
+            tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
+            feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
+            qgsUtils.exportRaster(tmp_arr,input_path,tmp_path,
+                nodata=self.out_nodata,type=gdal.GDT_Float32)
+            nb_contact_arr = ndimage.generic_filter(tmp_arr,
+                np.sum,size=self.size,#♂footprint=self.footprint,
+                mode="constant",cval=0)
+            feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
+            nb_c_path = QgsProcessingUtils.generateTempFilename("nb_contact_" + str(c) + ".tif")
+            feedback.pushDebugInfo("nb_c_path = " + str(nb_c_path))
+            qgsUtils.exportRaster(acc_arr,input_path,nb_c_path,
+                nodata=self.out_nodata,type=gdal.GDT_Float32)
+            if cpt > 1:
+                nb_contact_arr = np.add(nb_contact_arr,curr_q3)
+                feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
+            if cpt == self.nb_vals:
+                acc_arr /= nb_contact_arr
+            else:
+                curr_q3 = np.quantile(nb_contact_arr,q=0.75)
+                feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
+                acc_arr += nb_contact_arr
+            acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
+            feedback.pushDebugInfo("acc_path = " + str(acc_path))
+            qgsUtils.exportRaster(acc_arr,input_path,acc_path,
+                nodata=self.out_nodata,type=gdal.GDT_Float32)
+            feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
         # Computing index in sliding window of specified size
-        nb_contact_arr = ndimage.generic_filter(new_arr,
-            self.count_neighbours_decode,footprint=self.footprint,
-            mode="constant",cval=self.nodata)
-        feedback.pushDebugInfo("nb_contact_arr shape = " + str(nb_contact_arr.shape))
+        # nb_contact_arr = ndimage.generic_filter(new_arr,
+            # self.count_neighbours_decode,footprint=self.footprint,
+            # mode="constant",cval=self.nodata)
+        # nb_contact_arr = ndimage.generic_filter(new_arr,
+            # np.sum,footprint=self.footprint,
+            # mode="constant",cval=self.nodata)
+        # feedback.pushDebugInfo("nb_contact_arr shape = " + str(nb_contact_arr.shape))
         # Output
-        qgsUtils.exportRaster(nb_contact_arr,input_path,output,
+        qgsUtils.exportRaster(acc_arr,input_path,output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         # qgsUtils.exportRaster(result,input_path,output,
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
