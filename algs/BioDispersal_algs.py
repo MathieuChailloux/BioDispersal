@@ -1711,6 +1711,8 @@ class SlidingWindow(IMBEAlgorithm):
     m = ["reflect", "constant", "nearest", "mirror", "wrap"]
     OUTPUT_FILE = "OUTPUT_FILE"
     
+    DEBUG = False
+    
     def displayName(self):
         return self.tr("Sliding window")
         
@@ -1801,46 +1803,46 @@ class SlidingWindow(IMBEAlgorithm):
             feedback.pushDebugInfo("cpt = " + str(cpt))
             tmp_arr = np.copy(nb_neighbours_arr)
             tmp_arr[array != c] = 0
-            tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
-            feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
-            qgsUtils.exportRaster(tmp_arr,input_path,tmp_path,
-                nodata=self.out_nodata,type=gdal.GDT_Float32)
+            feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
+            if self.DEBUG:
+                tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
+                feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
+                qgsUtils.exportRaster(tmp_arr,input_path,tmp_path,
+                    nodata=-1,type=gdal.GDT_Float32)
             nb_contact_arr = ndimage.generic_filter(tmp_arr,
-                np.sum,size=self.size,#♂footprint=self.footprint,
-                mode="constant",cval=0)
-            feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
-            nb_c_path = QgsProcessingUtils.generateTempFilename("nb_contact_" + str(c) + ".tif")
-            feedback.pushDebugInfo("nb_c_path = " + str(nb_c_path))
-            qgsUtils.exportRaster(acc_arr,input_path,nb_c_path,
-                nodata=self.out_nodata,type=gdal.GDT_Float32)
+                np.sum,footprint=self.footprint,
+                mode="constant",cval=0,output=np.float32)
+            if self.DEBUG:
+                feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
+                feedback.pushDebugInfo("nb_contact_arr.dtype = " + str(nb_contact_arr.dtype))
+                nb_c_path = QgsProcessingUtils.generateTempFilename("nb_contact_" + str(c) + ".tif")
+                feedback.pushDebugInfo("nb_c_path = " + str(nb_c_path))
+                qgsUtils.exportRaster(nb_contact_arr,input_path,nb_c_path,
+                    nodata=-1,type=gdal.GDT_Float32)
             if cpt > 1:
                 nb_contact_arr = np.add(nb_contact_arr,curr_q3)
-                feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
+                # feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
             if cpt == self.nb_vals:
                 acc_arr /= nb_contact_arr
             else:
                 curr_q3 = np.quantile(nb_contact_arr,q=0.75)
                 feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
                 acc_arr += nb_contact_arr
-            acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
-            feedback.pushDebugInfo("acc_path = " + str(acc_path))
-            qgsUtils.exportRaster(acc_arr,input_path,acc_path,
-                nodata=self.out_nodata,type=gdal.GDT_Float32)
-            feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
-        # Computing index in sliding window of specified size
-        # nb_contact_arr = ndimage.generic_filter(new_arr,
-            # self.count_neighbours_decode,footprint=self.footprint,
-            # mode="constant",cval=self.nodata)
-        # nb_contact_arr = ndimage.generic_filter(new_arr,
-            # np.sum,footprint=self.footprint,
-            # mode="constant",cval=self.nodata)
-        # feedback.pushDebugInfo("nb_contact_arr shape = " + str(nb_contact_arr.shape))
+            if self.DEBUG:
+                acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
+                feedback.pushDebugInfo("acc_path = " + str(acc_path))
+                qgsUtils.exportRaster(acc_arr,input_path,acc_path,
+                    nodata=-1,type=gdal.GDT_Float32)
+                feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
         # Output
         qgsUtils.exportRaster(acc_arr,input_path,output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         # qgsUtils.exportRaster(result,input_path,output,
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
         return { self.OUTPUT_FILE : output }
+        
+    def np_sum_float_warp(self,arr):
+        return np.sum(arr,dtype=np.float32)
         
     def count_neighbours_4(self,array):
         cell_val = array[2]
