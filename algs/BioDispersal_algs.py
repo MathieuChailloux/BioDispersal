@@ -1756,6 +1756,7 @@ class SlidingWindowCircle(IMBEAlgorithm):
     def prepareWindow(self,feedback):        
         self.array_size = self.size * 2 + 1
         self.val_idx = int((self.array_size + 1) / 2)
+        feedback.pushDebugInfo("val_idx = " + str(self.val_idx)) 
         self.dist_shape = (self.array_size, self.array_size)
         feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
         self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
@@ -1819,7 +1820,7 @@ class MedianDistance(SlidingWindowCircle):
 
     def filter_func(self,array):
         # self.feedback.pushDebugInfo("array = " + str(array))
-        cell_val = array[self.val_idx]        
+        cell_val = array[self.val_idx_footprint]        
         if cell_val == self.nodata:
             res = self.out_nodata
         else:
@@ -1857,7 +1858,7 @@ class PatchAreaWindow(SlidingWindowCircle):
         classes, array = qgsUtils.getRasterValsAndArray(str(labelled_path))
         # feedback.pushDebugInfo("classes = " + str(classes))
         # self.nb_vals = len(classes)
-        feedback.pushDebugInfo("labelled array  = " + str(array))
+        # feedback.pushDebugInfo("labelled array  = " + str(array))
         feedback.pushDebugInfo("labelled array shape = " + str(array.shape))
         res_arr = ndimage.generic_filter(array,
             self.filter_func,footprint=self.footprint,
@@ -1870,11 +1871,11 @@ class PatchAreaWindow(SlidingWindowCircle):
         return { self.OUTPUT_FILE : self.output }
 
     def filter_func(self,array):
-        self.feedback.pushDebugInfo("array = " + str(array))
-        cell_val = array[self.val_idx]    
-        self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
+        # self.feedback.pushDebugInfo("array = " + str(array))
+        cell_val = array[self.val_idx_footprint]    
+        # self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
         res = np.count_nonzero(array[array == cell_val])
-        self.feedback.pushDebugInfo("res = " + str(res))
+        # self.feedback.pushDebugInfo("res = " + str(res))
         return res
 
 class ConnexityArea(SlidingWindowCircle):
