@@ -27,6 +27,7 @@ import stat
 import math
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from abc import ABC, abstractmethod
 
 try:
     import scipy
@@ -112,6 +113,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         DistanceToBorderRaster(),
                         LabelPatches(),
                         PatchSizeRaster(),
+                        PatchAreaWindow(),
                         MedianDistance(),
                         ConnexityArea(),
                         NeighboursCount()]
@@ -1595,17 +1597,23 @@ class LabelPatches(IMBEAlgorithm):
         # Processing
         classes, array = qgsUtils.getRasterValsAndArray(input_path)
         mf = QgsProcessingMultiStepFeedback(len(classes), feedback)
-        struct = scipy.ndimage.generate_binary_structure(2,2)
+        struct = scipy.ndimage.generate_binary_structure(2,1)
         res_array = np.zeros(array.shape)
         class_array = np.copy(array)
+        prev_nb_patches = 0
         for count, c in enumerate(classes,start=1):
             mf.pushDebugInfo("Labelling class " + str(c))
             class_array[array==c] = 1
             class_array[array!=c] = 0
             labeled_array, nb_patches = ndimage.label(class_array,struct)
+            mf.pushDebugInfo("labeled_array = " + str(labeled_array))
+            labeled_array[array==c] += prev_nb_patches
+            mf.pushDebugInfo("labeled_array = " + str(labeled_array))
             tmp_path = self.mkTmpPath("labeled_" + str(c) + ".tif")
             # qgsUtils.exportRaster(res_array,input_path,tmp_path)
             res_array = np.add(res_array,labeled_array)
+            mf.pushDebugInfo("res_array = " + str(res_array))
+            prev_nb_patches += nb_patches
             mf.setCurrentStep(count)
         qgsUtils.exportRaster(res_array,input_path,output,nodata=0,type=gdal.GDT_UInt16)
         return {self.OUTPUT : output}
@@ -1700,9 +1708,7 @@ class NeighboursCount(IMBEAlgorithm):
         cell_val = array[2]
         return np.count_nonzero(array == cell_val) - 1
 
-class MedianDistance(IMBEAlgorithm):
-
-    ALG_NAME = 'MedianDistance'
+class SlidingWindowCircle(IMBEAlgorithm):
     
     WINDOW_SIZE = 'WINDOW_SIZE'
     # METHOD = "METHOD"
@@ -1712,15 +1718,6 @@ class MedianDistance(IMBEAlgorithm):
     OUTPUT_FILE = "OUTPUT_FILE"
     
     DEBUG = False
-    
-    def displayName(self):
-        return self.tr("Median distance")
-        
-    def shortHelpString(self):
-        return self.tr("TODO")
-        
-    # def icon(self):
-        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
         
     def initAlgorithm(self, config=None, report_opt=True):
         self.addParameter(QgsProcessingParameterRasterLayer(
@@ -1742,27 +1739,25 @@ class MedianDistance(IMBEAlgorithm):
             self.OUTPUT,
             self.tr("Output layer")))
             
-    def processAlgorithm(self,parameters,context,feedback):
-        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
-        if input is None:
+    def parseParams(self,parameters,context,feedback):
+        self.input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if self.input is None:
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
-        input_path = qgsUtils.pathOfLayer(input)
+        self.input_path = qgsUtils.pathOfLayer(self.input)
         self.size = self.parameterAsInt(parameters,self.WINDOW_SIZE,context)
         # mode = self.m[self.parameterAsEnum(parameters, self.MODE, context)]
-        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        self.output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         # Processing
         self.feedback = feedback
-        self.nodata = input.dataProvider().sourceNoDataValue(1)
+        self.nodata = self.input.dataProvider().sourceNoDataValue(1)
         feedback.pushDebugInfo("nodata = " + str(self.nodata))
         self.out_nodata = 0
-        classes, array = qgsUtils.getRasterValsAndArray(str(input_path))
-        feedback.pushDebugInfo("classes = " + str(classes))
-        self.nb_vals = len(classes)
-        # Preparing footprints according to distance
+        
+    def prepareWindow(self,feedback):        
         self.array_size = self.size * 2 + 1
         self.val_idx = int((self.array_size + 1) / 2)
         self.dist_shape = (self.array_size, self.array_size)
-        self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
+        feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
         self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
         feedback.pushDebugInfo("dist_array = " + str(self.dist_array))
         self.footprint = np.ones(self.dist_shape,dtype='bool')
@@ -1778,6 +1773,36 @@ class MedianDistance(IMBEAlgorithm):
         self.dist_array_flatten = self.dist_array2.flatten()
         feedback.pushDebugInfo("self.dist_array_flatten = " + str(self.dist_array_flatten))
         # Computing immediate neighbours (4-connexity)
+                    
+    def distFromCenter(self,X,Y):
+        self.feedback.pushDebugInfo("X = " + str(X))
+        self.feedback.pushDebugInfo("Y = " + str(Y))
+        return np.sqrt(((X.astype(int) - self.size) ** 2) + ((Y.astype(int) - self.size) ** 2))
+
+    @abstractmethod
+    def filter_func(self,array):
+        pass
+
+class MedianDistance(SlidingWindowCircle):
+
+    ALG_NAME = 'medianDistance'
+    
+    def displayName(self):
+        return self.tr("Median distance")
+        
+    def shortHelpString(self):
+        return self.tr("TODO")
+        
+    # def icon(self):
+        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
+
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        feedback.pushDebugInfo("classes = " + str(classes))
+        self.nb_vals = len(classes)
+        # Computing immediate neighbours (4-connexity)
         feedback.pushDebugInfo("array shape = " + str(array.shape))
         # Encoding value with immediate neighbouts
         # new_arr = array * 10 + nb_neighbours_arr
@@ -1786,16 +1811,11 @@ class MedianDistance(IMBEAlgorithm):
             self.filter_func,footprint=self.footprint,
             mode="constant",cval=0,output=np.float32)
         # Output
-        qgsUtils.exportRaster(res_arr,input_path,output,
+        qgsUtils.exportRaster(res_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
-        # qgsUtils.exportRaster(result,input_path,output,
+        # qgsUtils.exportRaster(result,self.input_path,output,
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
-        return { self.OUTPUT_FILE : output }
-        
-    def distFromCenter(self,X,Y):
-        self.feedback.pushDebugInfo("X = " + str(X))
-        self.feedback.pushDebugInfo("Y = " + str(Y))
-        return np.sqrt(((X.astype(int) - self.size) ** 2) + ((Y.astype(int) - self.size) ** 2))
+        return { self.OUTPUT_FILE : self.output }
 
     def filter_func(self,array):
         # self.feedback.pushDebugInfo("array = " + str(array))
@@ -1807,43 +1827,59 @@ class MedianDistance(IMBEAlgorithm):
             dist_val = self.dist_array_flatten[array==cell_val]
             # self.feedback.pushDebugInfo("dist_val = " + str(dist_val))
             val_median = np.nanmedian(dist_val)
-            # self.feedback.pushDebugInfo("val_median = " + str(val_median))
-            # dist_noval = self.dist_array2[array!=cell_val]
-            # noval_median = float(np.nanmedian(dist_noval))
-            # self.feedback.pushDebugInfo("noval_median = " + str(noval_median))
-            # if val_median == 0:
-                # self.feedback.pushDebugInfo("array = " + str(array))
-                # assert(False)
-            # if noval_median == 0 or math.isnan(noval_median):
-                # res = val_median
-            # else:
-                # res = noval_median / val_median
-            # self.feedback.pushDebugInfo("res = " + str(res))
             res = val_median
-        # if math.isnan(res):
-            # self.feedback.pushDebugInfo("array = " + str(array))
-            # self.feedback.pushDebugInfo("dist_val = " + str(dist_val))
-            # self.feedback.pushDebugInfo("dist_noval = " + str(dist_noval))
-            # self.feedback.pushDebugInfo("val_median = " + str(val_median))
-            # self.feedback.pushDebugInfo("noval_median = " + str(noval_median))
-            # self.feedback.pushDebugInfo("res = " + str(res))
-        # self.feedback.pushDebugInfo("res = " + str(res))
         return res
         
 
-class ConnexityArea(IMBEAlgorithm):
+class PatchAreaWindow(SlidingWindowCircle):
+
+    ALG_NAME = 'patchAreaWindow'
+    
+    def displayName(self):
+        return self.tr("Patch area (Sliding Window)")
+        
+    def shortHelpString(self):
+        return self.tr("Patch area inside sliding window")
+        
+    # def icon(self):
+        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
+
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # Label input
+        labelled_path = self.mkTmpPath("labelled.tif")
+        label_params = { LabelPatches.INPUT : self.input,
+            LabelPatches.OUTPUT : labelled_path }
+        processing.run("BioDispersal:" + LabelPatches.ALG_NAME,
+            label_params,context=context,feedback=feedback)
+        # Processing on labelled array
+        classes, array = qgsUtils.getRasterValsAndArray(str(labelled_path))
+        # feedback.pushDebugInfo("classes = " + str(classes))
+        # self.nb_vals = len(classes)
+        feedback.pushDebugInfo("labelled array  = " + str(array))
+        feedback.pushDebugInfo("labelled array shape = " + str(array.shape))
+        res_arr = ndimage.generic_filter(array,
+            self.filter_func,footprint=self.footprint,
+            mode="constant",cval=0,output=np.float32)
+        # Output
+        qgsUtils.exportRaster(res_arr,self.input_path,self.output,
+            nodata=-1,type=gdal.GDT_Int16)
+        # qgsUtils.exportRaster(result,self.input_path,output,
+            # nodata=self.out_nodata,type=gdal.GDT_UInt16)
+        return { self.OUTPUT_FILE : self.output }
+
+    def filter_func(self,array):
+        self.feedback.pushDebugInfo("array = " + str(array))
+        cell_val = array[self.val_idx]    
+        self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
+        res = np.count_nonzero(array[array == cell_val])
+        self.feedback.pushDebugInfo("res = " + str(res))
+        return res
+
+class ConnexityArea(SlidingWindowCircle):
 
     ALG_NAME = 'ConnexityArea'
-    
-    WINDOW_SIZE = 'WINDOW_SIZE'
-    INDICATOR = 'INDICATOR'
-    # METHOD = "METHOD"
-    # METHODsel = ["mean", "sum","minimum","maximum","standard deviation","variance","median","variety"]
-    MODE = "MODE"
-    m = ["reflect", "constant", "nearest", "mirror", "wrap"]
-    OUTPUT_FILE = "OUTPUT_FILE"
-    
-    DEBUG = False
     
     def displayName(self):
         return self.tr("ConnexityArea")
@@ -1854,67 +1890,17 @@ class ConnexityArea(IMBEAlgorithm):
     # def icon(self):
         # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
         
-    def initAlgorithm(self, config=None, report_opt=True):
-        self.addParameter(QgsProcessingParameterRasterLayer(
-            self.INPUT,
-            "Input layer"))
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.WINDOW_SIZE,
-                description = self.tr('Window size (pixels)'),
-                type=QgsProcessingParameterNumber.Integer,
-                defaultValue=5))
-        # self.addParameter(
-            # QgsProcessingParameterEnum(
-                # self.MODE,
-                # description = self.tr('Behaviour at Edges'),
-                # options=self.m,
-                # defaultValue=0))
-        self.addParameter(QgsProcessingParameterRasterDestination(
-            self.OUTPUT,
-            self.tr("Output layer")))
-            
-    def rolling_window(self, a, window_size):
-        shape = (a.shape[0] - window_size + 1, window_size) + a.shape[1:]
-        strides = (a.strides[0],) + a.strides
-        return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
+    # def rolling_window(self, a, window_size):
+        # shape = (a.shape[0] - window_size + 1, window_size) + a.shape[1:]
+        # strides = (a.strides[0],) + a.strides
+        # return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
             
     def processAlgorithm(self,parameters,context,feedback):
-        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
-        if input is None:
-            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
-        input_path = qgsUtils.pathOfLayer(input)
-        self.size = self.parameterAsInt(parameters,self.WINDOW_SIZE,context)
-        # mode = self.m[self.parameterAsEnum(parameters, self.MODE, context)]
-        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        # Processing
-        self.feedback = feedback
-        self.nodata = input.dataProvider().sourceNoDataValue(1)
-        in_nodata = input.dataProvider().sourceNoDataValue(1)
-        feedback.pushDebugInfo("nodata = " + str(self.nodata))
-        self.out_nodata = 0
-        classes, array = qgsUtils.getRasterValsAndArray(str(input_path))
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
         feedback.pushDebugInfo("classes = " + str(classes))
         self.nb_vals = len(classes)
-        # Preparing footprints according to distance
-        self.array_size = self.size * 2 + 1
-        self.val_idx = int((self.array_size + 1) / 2)
-        self.dist_shape = (self.array_size, self.array_size)
-        self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
-        self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
-        feedback.pushDebugInfo("dist_arry = " + str(self.dist_array))
-        self.footprint = np.ones(self.dist_shape,dtype='bool')
-        self.feedback.pushDebugInfo("foot_shape = " + str(self.footprint.shape))
-        self.footprint[self.dist_array > self.size] = False
-        feedback.pushDebugInfo("footprint = " + str(self.footprint))
-        self.footprint_flatten = self.footprint.flatten()
-        feedback.pushDebugInfo("footprint_flatten = " + str(self.footprint_flatten))
-        nb_elem_footprint = np.count_nonzero(self.footprint != False)
-        self.val_idx_footprint = int(nb_elem_footprint/2)
-        self.dist_array[self.dist_array > self.size] = math.nan
-        feedback.pushDebugInfo("dist_array = " + str(self.dist_array))
-        self.dist_array_flatten = self.dist_array.flatten()
-        feedback.pushDebugInfo("self.dist_array_flatten = " + str(self.dist_array_flatten))
         # Computing immediate neighbours (4-connexity)
         feedback.pushDebugInfo("array shape = " + str(array.shape))
         ncount_struct = ndimage.generate_binary_structure(2,1)
@@ -1922,9 +1908,7 @@ class ConnexityArea(IMBEAlgorithm):
             self.count_neighbours_4,footprint=ncount_struct,
             mode="constant",cval=self.nodata)
         feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
-        # Encoding value with immediate neighbouts
-        # new_arr = array * 10 + nb_neighbours_arr
-        # feedback.pushDebugInfo("new_arr shape = " + str(new_arr.shape))
+        # Accumulating connexity class by class
         acc_arr = np.zeros(array.shape)
         curr_q3 = 0
         feedback.pushDebugInfo("nb_vals = " + str(self.nb_vals))
@@ -1939,7 +1923,7 @@ class ConnexityArea(IMBEAlgorithm):
             if self.DEBUG:
                 tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
                 feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
-                qgsUtils.exportRaster(tmp_arr,input_path,tmp_path,
+                qgsUtils.exportRaster(tmp_arr,self.input_path,tmp_path,
                     nodata=-1,type=gdal.GDT_Float32)
             nb_contact_arr = ndimage.generic_filter(tmp_arr,
                 np.sum,footprint=self.footprint,
@@ -1949,7 +1933,7 @@ class ConnexityArea(IMBEAlgorithm):
                 feedback.pushDebugInfo("nb_contact_arr.dtype = " + str(nb_contact_arr.dtype))
                 nb_c_path = QgsProcessingUtils.generateTempFilename("nb_contact_" + str(c) + ".tif")
                 feedback.pushDebugInfo("nb_c_path = " + str(nb_c_path))
-                qgsUtils.exportRaster(nb_contact_arr,input_path,nb_c_path,
+                qgsUtils.exportRaster(nb_contact_arr,self.input_path,nb_c_path,
                     nodata=-1,type=gdal.GDT_Float32)
             if cpt > 1:
                 nb_contact_arr = np.add(nb_contact_arr,curr_q3)
@@ -1963,111 +1947,71 @@ class ConnexityArea(IMBEAlgorithm):
             if self.DEBUG:
                 acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
                 feedback.pushDebugInfo("acc_path = " + str(acc_path))
-                qgsUtils.exportRaster(acc_arr,input_path,acc_path,
+                qgsUtils.exportRaster(acc_arr,self.input_path,acc_path,
                     nodata=-1,type=gdal.GDT_Float32)
                 feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
         # Output
-        qgsUtils.exportRaster(acc_arr,input_path,output,
+        qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
-        # qgsUtils.exportRaster(result,input_path,output,
+        # qgsUtils.exportRaster(result,self.input_path,output,
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
-        return { self.OUTPUT_FILE : output }
-        
-    def np_sum_float_warp(self,arr):
-        return np.sum(arr,dtype=np.float32)
-        
+        return { self.OUTPUT_FILE : self.output }
+                
     def count_neighbours_4(self,array):
         cell_val = array[2]
         return np.count_nonzero(array == cell_val) - 1
         
-    def count_neighbours_decode(self,array):
-        # self.feedback.pushDebugInfo("array  = " + str(array))
-        # self.feedback.pushDebugInfo("array shape  = " + str(array.shape))
-        # self.feedback.pushDebugInfo("array elem type  = " + str(array.dtype))
-        # self.feedback.pushDebugInfo("array size  = " + str(self.array_size))
-        
-        # reshaped_arr = np.reshape(array,(self.array_size,self.array_size,2))
-        # self.feedback.pushDebugInfo("reshaped_arr  = " + str(reshaped_arr))
-        # self.feedback.pushDebugInfo("reshaped_arr shape  = " + str(reshaped_arr.shape))
-        # self.feedback.pushDebugInfo("reshaped_arr elem type  = " + str(reshaped_arr.dtype))
-        
-        # reshaped_arr = np.reshape(array,self.dist_shape)
-        # self.feedback.pushDebugInfo("reshaped_arr  = " + str(reshaped_arr))
-        res = {}
-        #center_val = array[int(len(array)/2)]
-        center_val = array[self.val_idx_footprint]
-        #self.feedback.pushDebugInfo("center_val = " + str(center_val))
-        center_val = (center_val - (center_val % 10)) / 10
-        #self.feedback.pushDebugInfo("center_val = " + str(center_val))
-        for cpt, a in enumerate(array):
-            neigbours = a % 10
-            val = (a - neigbours) / 10
-            if val in res:
-                res[val] += neigbours
-            else:
-                res[val] = neigbours
-        #self.feedback.pushDebugInfo("res = " + str(res))
-        return res[center_val]
+    # def count_neighbours_decode(self,array):
+        # res = {}
+        # center_val = array[self.val_idx_footprint]
+        # center_val = (center_val - (center_val % 10)) / 10
+        # for cpt, a in enumerate(array):
+            # neigbours = a % 10
+            # val = (a - neigbours) / 10
+            # if val in res:
+                # res[val] += neigbours
+            # else:
+                # res[val] = neigbours
+        # return res[center_val]
 
-    def distFromCenter(self,X,Y):
-        self.feedback.pushDebugInfo("X = " + str(X))
-        self.feedback.pushDebugInfo("Y = " + str(Y))
-        return np.sqrt(((X.astype(int) - self.size) ** 2) + ((Y.astype(int) - self.size) ** 2))
-
-    def contact_count(self,array):
-        # self.feedback.pushDebugInfo("array_shape = " + str(array.shape))
-        # self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
-        cell_val = array[self.val_idx]
-        array[array!= cell_val] = 0
-        array[self.footprint_flatten != 0] = 0
-        # self.feedback.pushDebugInfo("array_shape = " + str(array.shape))
-        # self.feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape))
-        reshaped = np.reshape(array,self.dist_shape)
-        struct = ndimage.generate_binary_structure(2,1)
-        # self.contact_count = np.zeros(self.nb_vals)
-        # self.feedback.pushDebugInfo("contact_count = " + str(self.contact_count))
+    # def contact_count(self,array):
+        # cell_val = array[self.val_idx]
+        # array[array!= cell_val] = 0
+        # array[self.footprint_flatten != 0] = 0
+        # reshaped = np.reshape(array,self.dist_shape)
+        # struct = ndimage.generate_binary_structure(2,1)
         
-        nb_neighbours_arr = ndimage.generic_filter(reshaped,
-            self.contact_count_aux,footprint=struct, mode="constant")
-        # res = []
-        res = nb_neighbours_arr[reshaped==cell_val].sum()
-        return res
+        # nb_neighbours_arr = ndimage.generic_filter(reshaped,
+            # self.contact_count_aux,footprint=struct, mode="constant")
+        # res = nb_neighbours_arr[reshaped==cell_val].sum()
+        # return res
         # return cell_val
         # for cpt, c in enumerate(self.classes):
             # res[cpt] = nb_neighbours_arr[reshaped==c].sum()
         # return res[0]
         
-    def contact_count_aux(self,array):
-        cell_val = array[2]
-        return np.count_nonzero(array == cell_val) - 1
+    # def contact_count_aux(self,array):
+        # cell_val = array[2]
+        # return np.count_nonzero(array == cell_val) - 1
 
     # Return number of unique classes
-    def connexity_index(self,array):
-        # self.feedback.pushDebugInfo("array = " + str(array))
-        cell_val = array[self.val_idx]
-        #self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
-        if cell_val == self.nodata:
-            res = self.out_nodata
-        else:
-            dist_val = self.dist_array2[array==cell_val]
-            val_median = np.nanmedian(dist_val)
-            self.feedback.pushDebugInfo("val_median = " + str(val_median))
-            dist_noval = self.dist_array2[array!=cell_val]
-            noval_median = float(np.nanmedian(dist_noval))
-            self.feedback.pushDebugInfo("noval_median = " + str(noval_median))
-            if val_median == 0:
-                self.feedback.pushDebugInfo("array = " + str(array))
-                assert(False)
-            if noval_median == 0 or math.isnan(noval_median):
-                res = val_median
-            else:
-                res = noval_median / val_median
-        # if math.isnan(res):
-            # self.feedback.pushDebugInfo("array = " + str(array))
-            # self.feedback.pushDebugInfo("dist_val = " + str(dist_val))
-            # self.feedback.pushDebugInfo("dist_noval = " + str(dist_noval))
+    # def connexity_index(self,array):
+        # cell_val = array[self.val_idx]
+        # if cell_val == self.nodata:
+            # res = self.out_nodata
+        # else:
+            # dist_val = self.dist_array2[array==cell_val]
+            # val_median = np.nanmedian(dist_val)
             # self.feedback.pushDebugInfo("val_median = " + str(val_median))
+            # dist_noval = self.dist_array2[array!=cell_val]
+            # noval_median = float(np.nanmedian(dist_noval))
             # self.feedback.pushDebugInfo("noval_median = " + str(noval_median))
-            # self.feedback.pushDebugInfo("res = " + str(res))
-        self.feedback.pushDebugInfo("res = " + str(res))
-        return res
+            # if val_median == 0:
+                # self.feedback.pushDebugInfo("array = " + str(array))
+                # assert(False)
+            # if noval_median == 0 or math.isnan(noval_median):
+                # res = val_median
+            # else:
+                # res = noval_median / val_median
+        # self.feedback.pushDebugInfo("res = " + str(res))
+        # return res
