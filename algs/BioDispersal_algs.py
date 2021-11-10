@@ -1878,6 +1878,63 @@ class PatchAreaWindow(SlidingWindowCircle):
         # self.feedback.pushDebugInfo("res = " + str(res))
         return res
 
+
+class SlidingWindowDistrib(SlidingWindowCircle):
+
+
+    def processDistrib(self,array,classes,feedback):
+
+        # Accumulating connexity class by class
+        acc_arr = np.zeros(array.shape)
+        curr_q3 = 0
+        feedback.pushDebugInfo("nb_vals = " + str(self.nb_vals))
+        for cpt, c in enumerate(classes,start=1):
+            feedback.pushDebugInfo("class = " + str(c))
+            feedback.pushDebugInfo("cpt = " + str(cpt))
+            tmp_arr = np.copy(nb_neighbours_arr)
+            tmp_arr[array != c] = 0
+            feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
+            if self.DEBUG:
+                tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
+                feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
+                qgsUtils.exportRaster(tmp_arr,self.input_path,tmp_path,
+                    nodata=-1,type=gdal.GDT_Float32)
+            nb_contact_arr = ndimage.generic_filter(tmp_arr,
+                np.sum,footprint=self.footprint,
+                mode="constant",cval=0,output=np.float32)
+            if self.DEBUG:
+                feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
+                feedback.pushDebugInfo("nb_contact_arr.dtype = " + str(nb_contact_arr.dtype))
+                nb_c_path = QgsProcessingUtils.generateTempFilename("nb_contact_" + str(c) + ".tif")
+                feedback.pushDebugInfo("nb_c_path = " + str(nb_c_path))
+                qgsUtils.exportRaster(nb_contact_arr,self.input_path,nb_c_path,
+                    nodata=-1,type=gdal.GDT_Float32)
+            if cpt > 1:
+                nb_contact_arr = np.add(nb_contact_arr,curr_q3)
+                # feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
+            if cpt == self.nb_vals:
+                acc_arr /= nb_contact_arr
+            else:
+                curr_q3 = np.quantile(nb_contact_arr,q=0.75)
+                feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
+                acc_arr += nb_contact_arr
+            if self.DEBUG:
+                acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
+                feedback.pushDebugInfo("acc_path = " + str(acc_path))
+                qgsUtils.exportRaster(acc_arr,self.input_path,acc_path,
+                    nodata=-1,type=gdal.GDT_Float32)
+                feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
+        # Output
+        qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
+            nodata=self.out_nodata,type=gdal.GDT_Float32)
+        # qgsUtils.exportRaster(result,self.input_path,output,
+            # nodata=self.out_nodata,type=gdal.GDT_UInt16)
+        return { self.OUTPUT_FILE : self.output }
+                
+    def count_neighbours_4(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
+
 class ConnexityArea(SlidingWindowCircle):
 
     ALG_NAME = 'ConnexityArea'
