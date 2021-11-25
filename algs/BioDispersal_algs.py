@@ -115,6 +115,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         PatchSizeRaster(),
                         PatchAreaWindow(),
                         MedianDistance(),
+                        MedianDistanceDistrib(),
                         ConnexityArea(),
                         NeighboursCount()]
         for a in self.alglist:
@@ -1715,11 +1716,12 @@ class SlidingWindowCircle(IMBEAlgorithm):
     # METHODsel = ["mean", "sum","minimum","maximum","standard deviation","variance","median","variety"]
     MODE = "MODE"
     m = ["reflect", "constant", "nearest", "mirror", "wrap"]
-    OUTPUT_FILE = "OUTPUT_FILE"
+    CLASSES_ORDER = "CLASSES_ORDER"
+    OUTPUT_FILE = "OUTPUT"
     
     DEBUG = False
         
-    def initAlgorithm(self, config=None, report_opt=True):
+    def initAlgorithm(self, classes=False, config=None, report_opt=True):
         self.addParameter(QgsProcessingParameterRasterLayer(
             self.INPUT,
             "Input layer"))
@@ -1735,17 +1737,30 @@ class SlidingWindowCircle(IMBEAlgorithm):
                 # description = self.tr('Behaviour at Edges'),
                 # options=self.m,
                 # defaultValue=0))
-        self.addParameter(QgsProcessingParameterRasterDestination(
+        if classes:
+            self.addParameter(
+                QgsProcessingParameterString(
+                    self.CLASSES_ORDER,
+                    description = self.tr('Classes order (from very favorable to unfavorable)')))        
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
             self.OUTPUT,
-            self.tr("Output layer")))
+            description = self.tr('Output layer')))
             
-    def parseParams(self,parameters,context,feedback):
+    def parseParams(self,parameters,context,feedback,classes=False):
         self.input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
         if self.input is None:
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
         self.input_path = qgsUtils.pathOfLayer(self.input)
         self.size = self.parameterAsInt(parameters,self.WINDOW_SIZE,context)
         # mode = self.m[self.parameterAsEnum(parameters, self.MODE, context)]
+        if classes:
+            self.classes_order = self.parameterAsString(parameters,self.CLASSES_ORDER,context)
+            feedback.pushDebugInfo("classes_order = " + str(self.classes_order)) 
+            self.classes_ordered = [int(c) for c in self.classes_order.split(",")]
+            feedback.pushDebugInfo("classes_ordered = " + str(self.classes_ordered))
+            if not self.classes_ordered:
+                raise QgsProcessingException("Please specify classes order (empty list)")
         self.output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         # Processing
         self.feedback = feedback
@@ -1891,7 +1906,7 @@ class SlidingWindowDistrib(SlidingWindowCircle):
         for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("class = " + str(c))
             feedback.pushDebugInfo("cpt = " + str(cpt))
-            tmp_arr = np.copy(nb_neighbours_arr)
+            tmp_arr = np.copy(array)
             tmp_arr[array != c] = 0
             feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
             if self.DEBUG:
@@ -1934,6 +1949,63 @@ class SlidingWindowDistrib(SlidingWindowCircle):
     def count_neighbours_4(self,array):
         cell_val = array[2]
         return np.count_nonzero(array == cell_val) - 1
+
+
+class MedianDistanceDistrib(MedianDistance):
+
+    ALG_NAME = 'medianDistanceDistrib'
+    
+    def initAlgorithm(self, report_opt=True):
+        super().initAlgorithm(classes=True)
+    
+    def displayName(self):
+        return self.tr("Median distance (Distrib)")
+        
+    def shortHelpString(self):
+        return self.tr("TODO")
+        
+    # def icon(self):
+        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
+
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback,classes=True)
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        feedback.pushDebugInfo("classes = " + str(classes))
+        self.nb_vals = len(classes)
+        feedback.pushDebugInfo("array shape = " + str(array.shape))
+        for c in classes:
+            if c not in self.classes_ordered:
+                feedback.pushWarnInfo("Class " + str(c) + " order not specified")
+        # Main loop
+        acc_arr = np.zeros(array.shape)
+        curr_q3 = 0
+        for cpt, c in enumerate(classes,start=1):
+            feedback.pushDebugInfo("class = " + str(c))
+            feedback.pushDebugInfo("cpt = " + str(cpt))
+            tmp_arr = np.copy(array)
+            tmp_arr[array != c] = -1
+            median_arr = ndimage.generic_filter(tmp_arr,
+                self.filter_func,footprint=self.footprint,
+                mode="constant",cval=self.nodata,output=np.float32)
+            feedback.pushDebugInfo("median_arr = " + str(median_arr))
+            feedback.pushDebugInfo("median_arr.dtype = " + str(median_arr.dtype))
+            if cpt > 1:
+                median_arr = np.add(median_arr,curr_q3)
+            if cpt == self.nb_vals:
+                acc_arr /= median_arr
+            else:
+                curr_q3 = np.quantile(median_arr,q=0.75)
+                feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
+                acc_arr += median_arr
+        # Output
+        qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
+            nodata=self.out_nodata,type=gdal.GDT_Float32)
+        # qgsUtils.exportRaster(result,self.input_path,output,
+            # nodata=self.out_nodata,type=gdal.GDT_UInt16)
+        return { self.OUTPUT_FILE : self.output }
+        
 
 class ConnexityArea(SlidingWindowCircle):
 
