@@ -106,7 +106,8 @@ class FrictionModel(abstract_model.ExtensiveTableModel):
         feedback.beginSection("Friction")
         self.parentModel.paramsModel.checkInit()
         all_st = self.parentModel.stModel.getSTList()
-        st_list = [all_st[idx - 3] for idx in indexes]
+        nbBaseFields = len(self.baseFields)
+        st_list = [all_st[idx - nbBaseFields] for idx in indexes]
         feedback.pushDebugInfo("st_list = " + str(st_list))
         reclass_matrixes = self.getReclassifyMatrixes(st_list)
         nb_items = len(reclass_matrixes)
@@ -149,17 +150,18 @@ class FrictionConnector(abstract_model.AbstractConnector):
         
     # Return indexes currently selected in friction view
     def getSelectedIndexes(self):
+        nbBaseFields = len(self.model.baseFields)
         if self.onlySelection:
             indexes = list(set([i.column() for i in self.view.selectedIndexes()]))
         else:
-            indexes = range(3,len(self.model.fields))
+            indexes = range(nbBaseFields,len(self.model.fields))
         nb_indexes = len(indexes)
         if nb_indexes == 0:
             utils.user_error("No subnetwork selected for friction step")
         nb_st = len(self.model.parentModel.stModel.getSTList())
         utils.debug("nb_st = " + str(nb_st))
         for idx in indexes:
-            st_idx = idx - 3
+            st_idx = idx - nbBaseFields
             if st_idx < 0 or st_idx >= nb_st:
                 utils.user_error("Column " + str(idx) + " selected is not a subnetwork")
         return indexes

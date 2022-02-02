@@ -944,7 +944,8 @@ def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
                    'OUTPUT' : out_path,
                    'UNITS' : 1, 
                    'WIDTH' : resolution }
-        res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
+        res = qgsTreatments.applyProcessingAlg("BioDispersal",
+            "rasterizefixalltouch",parameters,context,feedback)
     return res
     
     
