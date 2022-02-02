@@ -180,6 +180,11 @@ class IMBEAlgorithm(qgsUtils.BaseProcessingAlgorithm):
         return self.tr("IMBE")
     def groupId(self):
         return 'imbe'
+class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def group(self):
+        return self.tr("Habitat qualification")
+    def groupId(self):
+        return 'qualif'
                
 class BioDispersalAlgorithm(qgsUtils.BaseProcessingAlgorithm):
 
@@ -301,7 +306,7 @@ class SelectVExprAlg(SelectionAlgorithm):
             nb_feats = input.featureCount()
             feats = input.getFeatures()
         else:
-            qgsTreatments.selectByExpression(input,expr)
+            qgsTreatments.selectByExpression(input,expr,feedback=feedback)
             nb_feats = input.selectedFeatureCount()
             feats = input.getSelectedFeatures()
             
@@ -1603,7 +1608,7 @@ class LabelPatches(IMBEAlgorithm):
         class_array = np.copy(array)
         prev_nb_patches = 0
         for count, c in enumerate(classes,start=1):
-            mf.pushDebugInfo("Labelling class " + str(c))
+            # mf.pushDebugInfo("Labelling class " + str(c))
             class_array[array==c] = 1
             class_array[array!=c] = 0
             labeled_array, nb_patches = ndimage.label(class_array,struct)
@@ -1977,7 +1982,7 @@ class MedianDistanceDistrib(MedianDistance):
         feedback.pushDebugInfo("array shape = " + str(array.shape))
         for c in classes:
             if c not in self.classes_ordered:
-                feedback.pushWarnInfo("Class " + str(c) + " order not specified")
+                feedback.pushWarning("Class " + str(c) + " order not specified")
         # Main loop
         acc_arr = np.zeros(array.shape)
         curr_q3 = 0
@@ -2145,3 +2150,42 @@ class ConnexityArea(SlidingWindowCircle):
                 # res = noval_median / val_median
         # self.feedback.pushDebugInfo("res = " + str(res))
         # return res
+        
+class RelativeSurface(QualifAlgorithm):
+
+    ALG_NAME = 'RelativeSurface'
+    
+    LAYER_A = 'LAYER_A'
+    LAYER_B = 'LAYER_B'
+    
+    def displayName(self):
+        return self.tr("Relative surface")
+        
+    def shortHelpString(self):
+        return self.tr("Relative surface (percentage of B surface in each patch of layer A)")
+    
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.LAYER_A,
+                description=self.tr('Layer A')))
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.LAYER_B,
+                description=self.tr('Layer B')))
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
+        if layerA is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        layerB = self.parameterAsVectorLayer(parameters,self.LAYER_B,context)
+        if layerB is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
+        # Processing : todo intersection
+        pass
+        
+    

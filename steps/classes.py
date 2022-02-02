@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-import os
+import os, sys
 
 from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
 from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
@@ -33,7 +33,6 @@ from . import params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
 # classModel = None
-class_fields = ["name","code","descr","group"]
 
 # def getClassLayer(grp):
     # clsItem = classModel.getClassByName(out_name)
@@ -52,11 +51,13 @@ class_fields = ["name","code","descr","group"]
 #   - 'code' : class identifier in raster layers (automatically generated)
 class ClassItem(abstract_model.DictItem):
     
-    def __init__(self,cls,descr,code,group):
-        utils.debug("init with code " + str(code))
+    FIELDS = ["name","code","descr","group"]
+    
+    def fromValues(self,cls,descr,code,group):
+        self.feedback.pushDebugInfo("init with code " + str(code))
         if code == None:
             code = classModel.getFreeCode()
-            utils.debug("new code = " + str(code))
+            self.feedback.pushDebugInfo("new code = " + str(code))
         else:
             try:
                 code = int(code)
@@ -66,13 +67,15 @@ class ClassItem(abstract_model.DictItem):
                 "code": code,
                 "descr" : descr,
                 "group" : group}
-        self.name = cls
         super().__init__(dict)
+        
+    def getName(self):
+        return self.dict["name"]
         
     def checkItem(self):
         utils.checkName(self,prefix="Class")
         if not self.dict["descr"]:
-            utils.warn("Class '" + self.name + "' with empty description")
+            utils.warn("Class '" + self.getName() + "' with empty description")
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
@@ -98,13 +101,13 @@ class ClassModel(abstract_model.DictModel):
     # classRemoved = pyqtSignal('PyQt_PyObject')
     
     def __init__(self,bdModel):
-        self.parser_name = "ClassModel"
         self.is_runnable = False
         self.bdModel = bdModel
-        super().__init__(self,class_fields)
+        itemClass = getattr(sys.modules[__name__], ClassItem.__name__)
+        super().__init__(self,itemClass,feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
-        utils.checkFields(class_fields,dict.keys())
+        utils.checkFields(self.fields,dict.keys())
         item = ClassItem(dict["name"],dict["descr"],dict["code"],dict["group"])
         return item
         

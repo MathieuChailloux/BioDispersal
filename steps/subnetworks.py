@@ -22,8 +22,7 @@
  ***************************************************************************/
 """
 
-import os
-import re
+import os, sys, re
 
 from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon
@@ -35,45 +34,50 @@ from . import params
 #stModel = None
          
 class STItem(abstract_model.DictItem):
+    
+    NAME = "name"
+    DESCR = "descr"
+    FIELDS = [NAME,DESCR]
 
-    def __init__(self,st,descr):
-        dict = {"name" : st,
-                "descr" : descr}
-        self.name = st
+    @classmethod
+    def fromValues(self,st,descr):
+        dict = {self.NAME : st,
+                self.DESCR : descr}
         #assert(st_fields == dict.keys())
         super().__init__(dict)
         
     def checkItem(self):
-        utils.debug(self.dict["name"])
         if self.dict["name"] == "":
-            utils.user_error("Empty sous-trame name")
+            raise utils.CustomException("Empty sous-trame name")
             
+    def getName(self):
+        return self.dict[self.NAME]
         
     def equals(self,other):
-        return (self.dict["name"] == other.dict["name"])
+        return (self.getName() == other.getName())
                 
     def getMergedPath(self,st_path):
-        basename = self.name + "_merged.tif"
+        basename = self.getName() + "_merged.tif"
         return utils.joinPath(st_path,basename)
         
     def getRulesPath(self,st_path):
-        basename = self.name + "_rules.txt"
+        basename = self.getName() + "_rules.txt"
         return utils.joinPath(st_path,basename)
         
     def getFrictionPath(self,st_path):
-        basename = self.name + "_friction.tif"
+        basename = self.getName() + "_friction.tif"
         return utils.joinPath(st_path,basename)
         
     def getDispersionPath(self,st_path,cost):
-        basename = self.name + "_dispersion_" + str(cost) + ".tif"
+        basename = self.getName() + "_dispersion_" + str(cost) + ".tif"
         return utils.joinPath(st_path,basename)
         
     def getDispersionTmpPath(self,st_path,cost):
-        basename = self.name + "_dispersion_" + str(cost) + "_tmp.tif"
+        basename = self.getName() + "_dispersion_" + str(cost) + "_tmp.tif"
         return utils.joinPath(st_path,basename)
         
     def getStartLayerPath(self,st_path):
-        basename = self.name + "_start.tif"
+        basename = self.getName() + "_start.tif"
         return utils.joinPath(st_path,basename)
         
         
@@ -82,23 +86,22 @@ class STModel(abstract_model.DictModel):
 
     # stAdded = pyqtSignal('PyQt_PyObject')
     # stRemoved = pyqtSignal('PyQt_PyObject')
-    
-    ST_FIELDS = ["name","descr"]
 
     def __init__(self,bdModel):
-        self.parser_name = "STModel"
+        # self.parser_name = "STModel"
         self.is_runnable = False
         self.bdModel = bdModel
-        super().__init__(self,self.ST_FIELDS)
+        itemClass = getattr(sys.modules[__name__], STItem.__name__)
+        super().__init__(self,itemClass,feedback=bdModel.feedback)
         
     def getSTByName(self,st_name):
         for st in self.items:
-            if st.name == st_name:
+            if st.getName() == st_name:
                 return st
         return None
         
     def getSTList(self):
-        return [st.dict["name"] for st in self.items]
+        return [st.getName() for st in self.items]
         
     def getSTPath(self,st_name):
         return self.bdModel.paramsModel.getSTPath(st_name)
@@ -135,7 +138,7 @@ class STModel(abstract_model.DictModel):
         
     def mkItemFromDict(self,dict):
         utils.checkFields(self.ST_FIELDS,dict.keys())
-        item = STItem(dict["name"],dict["descr"])
+        item = STItem(dict=dict)
         return item
         
     def addItem(self,item):
@@ -181,5 +184,5 @@ class STConnector(abstract_model.AbstractConnector):
     def mkItem(self):
         name = self.dlg.stName.text()
         descr = self.dlg.stDescr.text()
-        stItem = STItem(name,descr)
+        stItem = STItem.fromValues(name,descr)
         return stItem

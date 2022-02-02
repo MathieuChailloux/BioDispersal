@@ -30,7 +30,7 @@ from ..qgis_lib_mc import (utils, qgsUtils, abstract_model, qgsTreatments, feedb
 from . import params, subnetworks
 
 import time
-import os
+import os, sys
 
 cost_fields = ["start_layer","perm_layer","cost","out_layer"]
 
@@ -40,7 +40,10 @@ cost_fields = ["start_layer","perm_layer","cost","out_layer"]
 #   - 'cost' : maximal cost
 class CostItem(abstract_model.DictItem):
 
-    def __init__(self,start_layer,perm_layer,cost,out_layer):
+    FIELDS = [ "start_layer", "perm_layer", "cost", "out_layer" ]
+
+    @classmethod
+    def fromValues(self,start_layer,perm_layer,cost,out_layer):
         dict = {"start_layer" : start_layer,
                 "perm_layer" : perm_layer,
                 "cost" : cost,
@@ -59,15 +62,14 @@ class CostItem(abstract_model.DictItem):
 class CostModel(abstract_model.DictModel):
     
     def __init__(self,bdModel):
-        self.parser_name = "CostModel"
         self.is_runnable = True
         self.bdModel = bdModel
-        super().__init__(self,cost_fields)
+        itemClass = getattr(sys.modules[__name__], CostItem.__name__)
+        super().__init__(self,itemClass,feedback=bdModel.feedback)
     
     def mkItemFromDict(self,dict):
         utils.checkFields(cost_fields,dict.keys())
-        item = CostItem(dict["start_layer"],dict["perm_layer"],
-                        dict["cost"],dict["out_layer"])
+        item = CostItem(dict)
         return item
         
     def applyItemWithContext(self,item,context,feedback):
@@ -193,6 +195,6 @@ class CostConnector(abstract_model.AbstractConnector):
         perm_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(perm_layer))
         cost = str(self.dlg.costMaxVal.value())
         out_layer_path = self.model.bdModel.normalizePath(self.dlg.costOutLayer.filePath())
-        cost_item = CostItem(start_layer_path,perm_layer_path,cost,out_layer_path)
+        cost_item = CostItem.fromValues(start_layer_path,perm_layer_path,cost,out_layer_path)
         return cost_item
         

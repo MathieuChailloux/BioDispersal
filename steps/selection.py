@@ -39,7 +39,7 @@ from ..algs import BioDispersal_algs
 from . import params, classes, groups
 
 from osgeo import gdal
-import os
+import os, sys
 
 selection_fields = ["in_layer","mode","mode_val","group"]
 
@@ -64,16 +64,23 @@ rresample = "RResample"
 #   - 'group' : group assigned to selection item
 class SelectionItem(abstract_model.DictItem):
 
-    def __init__(self,in_layer,mode,mode_val,group):
+    FIELDS = [ "in_layer", "mode", "mode_val", "group" ] 
+
+    def fromValues(self,in_layer,mode,mode_val,group):
         dict = {"in_layer" : in_layer,
                 "mode" : mode,
                 "mode_val" : mode_val,
                 "group" : group}
-        self.is_vector = (mode == vfield) or (mode == vexpr)
-        utils.debug("is_vector = " + str(self.is_vector))
-        self.is_raster = (mode == rclasses) or (mode == rresample)
-        utils.debug("is_raster = " + str(self.is_raster))
         super().__init__(dict)
+        
+    def getMode(self):
+        return self.dict["mode"]
+    def isVector(self):
+        mode = self.getMode()
+        return (mode == vfield) or (mode == vexpr)
+    def isRaster(self):
+        mode = self.getMode()
+        return (mode == rclasses) or (mode == rresample)
         
     def checkItem(self):
         pass
@@ -82,10 +89,11 @@ class SelectionItem(abstract_model.DictItem):
 class SelectionModel(abstract_model.DictModel):
     
     def __init__(self,bdModel):
-        self.parser_name = "SelectionModel"
+        # self.parser_name = "SelectionModel"
         self.is_runnable = True
         self.bdModel = bdModel
-        super().__init__(self,selection_fields)
+        itemClass = getattr(sys.modules[__name__], SelectionItem.__name__)
+        super().__init__(self,itemClass,feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
         utils.checkFields(selection_fields,dict.keys())
@@ -101,7 +109,7 @@ class SelectionModel(abstract_model.DictModel):
     # Returns absolute path of 'item' output layer
     def getItemOutPath(self,item):
         grp_name = item.dict["group"]
-        if item.is_vector:
+        if item.isVector():
             return self.bdModel.groupsModel.getVectorPath(grp_name)
         else:
             return self.bdModel.groupsModel.getRasterPath(grp_name)
@@ -186,7 +194,7 @@ class SelectionModel(abstract_model.DictModel):
         else:
             utils.user_error("Unexpected mode : " + str(mode))
         step_feedback.setCurrentStep(1)
-        if item.is_raster:
+        if item.isRaster():
             # If selection is applied to raster layer, resampling is performed to match project parameters.
             resampling_mode = item.dict["mode_val"]
             crs, extent, resolution = self.bdModel.getRasterParams()
@@ -232,7 +240,7 @@ class SelectionModel(abstract_model.DictModel):
             from_raster = False
             for s in selections:
                 self.applyItemWithContext(s,grp_item,context,step_feedback)
-                if s.is_raster:
+                if s.isRaster():
                     from_raster = True
                     if len(selections) > 1:
                         step_feedback.reportError("Group '" + grp_name + "' does not exist.")

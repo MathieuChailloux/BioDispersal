@@ -45,6 +45,7 @@ class PondIvalItem(abstract_model.DictItem):
     LB = 'low_bound'
     UB = 'up_bound'
     PV = 'pond_value'
+    FIELDS = [ LB, UB, PV ]
 
     def __init__(self,lb=0.0,ub=0.0,pv=1.0):
         dict = {"low_bound": lb,
@@ -109,7 +110,7 @@ class PondBufferIvalItem(PondIvalItem):
 class PondIvalModel(abstract_model.DictModel):
     
     def __init__(self):
-        super().__init__(self,pond_ival_fields)
+        super().__init__(self,fields=pond_ival_fields)
         
     def __str__(self):
         s = ""
@@ -294,7 +295,7 @@ class PonderationModel(abstract_model.DictModel):
         self.parser_name = "PonderationModel"
         self.bdModel = bdModel
         self.is_runnable = True
-        super().__init__(self,ponderation_fields)
+        super().__init__(self,fields=ponderation_fields,feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
         utils.checkFields(ponderation_fields,dict.keys())
