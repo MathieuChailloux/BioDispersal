@@ -116,7 +116,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         PatchAreaWindow(),
                         MedianDistance(),
                         MedianDistanceDistrib(),
-                        ConnexityArea(),
+                        NbContactDistrib(),
+                        MedianDistanceDistrib2(),
                         NeighboursCount()]
         for a in self.alglist:
             a.initAlgorithm()
@@ -1715,6 +1716,7 @@ class NeighboursCount(IMBEAlgorithm):
         cell_val = array[2]
         return np.count_nonzero(array == cell_val) - 1
 
+
 class SlidingWindowCircle(IMBEAlgorithm):
     
     WINDOW_SIZE = 'WINDOW_SIZE'
@@ -1747,11 +1749,16 @@ class SlidingWindowCircle(IMBEAlgorithm):
             self.addParameter(
                 QgsProcessingParameterString(
                     self.CLASSES_ORDER,
-                    description = self.tr('Classes order (from very favorable to unfavorable)')))        
+                    description = self.tr('Classes order (from unfavorable to very favorable)')))        
         self.addParameter(
             QgsProcessingParameterRasterDestination(
             self.OUTPUT,
             description = self.tr('Output layer')))
+            
+    def pushDebug(self,msg,feedback=None):
+        feedback = feedback if feedback else self.feedback
+        if self.DEBUG:
+            feedback.pushDebugInfo(msg)
             
     def parseParams(self,parameters,context,feedback,classes=False):
         self.input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
@@ -1772,38 +1779,111 @@ class SlidingWindowCircle(IMBEAlgorithm):
         self.feedback = feedback
         self.nodata = self.input.dataProvider().sourceNoDataValue(1)
         feedback.pushDebugInfo("nodata = " + str(self.nodata))
-        self.out_nodata = 0
+        self.out_nodata = -1
         
-    def prepareWindow(self,feedback):        
+    def prepareWindow(self,feedback=None):        
         self.array_size = self.size * 2 + 1
         self.val_idx = int((self.array_size + 1) / 2)
-        feedback.pushDebugInfo("val_idx = " + str(self.val_idx)) 
+        self.pushDebug("val_idx = " + str(self.val_idx)) 
         self.dist_shape = (self.array_size, self.array_size)
-        feedback.pushDebugInfo("dist_shape = " + str(self.dist_shape)) 
+        self.pushDebug("dist_shape = " + str(self.dist_shape)) 
         self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
-        feedback.pushDebugInfo("dist_array = " + str(self.dist_array))
+        self.pushDebug("dist_array = " + str(self.dist_array))
         self.footprint = np.ones(self.dist_shape,dtype='bool')
-        self.feedback.pushDebugInfo("foot_shape = " + str(self.footprint.shape))
+        self.pushDebug("foot_shape = " + str(self.footprint.shape))
         self.footprint[self.dist_array > self.size] = False
-        feedback.pushDebugInfo("footprint = " + str(self.footprint))
+        self.pushDebug("footprint = " + str(self.footprint))
         self.dist_array2 = self.dist_array[self.dist_array <= self.size]
-        feedback.pushDebugInfo("dist_array2 = " + str(self.dist_array2))
+        self.pushDebug("dist_array2 = " + str(self.dist_array2))
         nb_elem_footprint = np.count_nonzero(self.footprint != False)
         self.val_idx_footprint = int(nb_elem_footprint/2)
         self.dist_array[self.dist_array > self.size] = math.nan
-        feedback.pushDebugInfo("dist_array = " + str(self.dist_array))
+        self.pushDebug("dist_array = " + str(self.dist_array))
         self.dist_array_flatten = self.dist_array2.flatten()
-        feedback.pushDebugInfo("self.dist_array_flatten = " + str(self.dist_array_flatten))
+        self.pushDebug("self.dist_array_flatten = " + str(self.dist_array_flatten))
         # Computing immediate neighbours (4-connexity)
                     
     def distFromCenter(self,X,Y):
-        self.feedback.pushDebugInfo("X = " + str(X))
-        self.feedback.pushDebugInfo("Y = " + str(Y))
+        self.pushDebug("X = " + str(X))
+        self.pushDebug("Y = " + str(Y))
         return np.sqrt(((X.astype(int) - self.size) ** 2) + ((Y.astype(int) - self.size) ** 2))
 
     @abstractmethod
     def filter_func(self,array):
         pass
+        
+
+class SlidingWindowDistrib(SlidingWindowCircle):
+
+    def prepareClasses(self,classes,feedback):
+        feedback.pushDebugInfo("classes = " + str(classes))
+        excludeClasses = [c for c in classes if c not in self.classes_ordered]
+        for c in excludeClasses:
+            if c not in self.classes_ordered:
+                feedback.pushWarning("Class " + str(c) + " order not specified")
+        keepClasses = [c for c in self.classes_ordered if c in classes]
+        feedback.pushDebugInfo("classes = " + str(keepClasses))
+        keepClasses = keepClasses[1:] + keepClasses[:1]
+        feedback.pushDebugInfo("classes = " + str(keepClasses))
+        return keepClasses
+
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback,classes=True)
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        classes = self.prepareClasses(classes,feedback)
+        return self.processDistrib(array,classes,feedback)
+        
+    # def processDistrib(self,array,classes,feedback,classArray=None,neutralElem=-1):
+        # Accumulating connexity class by class
+        # acc_arr = np.zeros(array.shape)
+        # curr_q3 = 0
+        # nb_vals = len(classes)
+        # feedback.pushDebugInfo("nb_vals = " + str(nb_vals))
+        # classArray = array if classArray is None else classArray
+        # for cpt, c in enumerate(classes,start=1):
+            # feedback.pushDebugInfo("class = " + str(c))
+            # feedback.pushDebugInfo("cpt = " + str(cpt))
+            # tmp_arr = np.copy(array)
+            # tmp_arr[classArray != c] = neutralElem
+            # feedback.pushDebugInfo("neutralElem = " + str(neutralElem))
+            # feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
+            # if self.DEBUG:
+                # feedback.pushDebugInfo("tmp_arr = " + str(tmp_arr))
+                # tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
+                # feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
+                # qgsUtils.exportRaster(tmp_arr,self.input_path,tmp_path,
+                    # nodata=-1,type=gdal.GDT_Float32)
+            # computed_arr = ndimage.generic_filter(tmp_arr,
+                # self.filter_func,footprint=self.footprint,
+                # mode="constant",cval=neutralElem,output=np.float32)
+            # if self.DEBUG:
+                # feedback.pushDebugInfo("computed_arr = " + str(computed_arr))
+                # feedback.pushDebugInfo("computed_arr.dtype = " + str(computed_arr.dtype))
+                # computed_c_path = QgsProcessingUtils.generateTempFilename("computed_" + str(c) + ".tif")
+                # feedback.pushDebugInfo("computed_c_path = " + str(computed_c_path))
+                # qgsUtils.exportRaster(computed_arr,self.input_path,computed_c_path,
+                    # nodata=-1,type=gdal.GDT_Float32)
+            # if cpt > 1:
+                # computed_arr = np.add(computed_arr,curr_q3)
+            # if cpt == nb_vals:
+                # acc_arr /= computed_arr
+            # else:
+                # curr_q3 = np.quantile(computed_arr,q=0.75)
+                # feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
+                # acc_arr += computed_arr
+            # if self.DEBUG:
+                # acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
+                # feedback.pushDebugInfo("acc_path = " + str(acc_path))
+                # qgsUtils.exportRaster(acc_arr,self.input_path,acc_path,
+                    # nodata=-1,type=gdal.GDT_Float32)
+                # feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
+        # qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
+            # nodata=self.out_nodata,type=gdal.GDT_Float32)
+        # return { self.OUTPUT_FILE : self.output }
+        
+
 
 class MedianDistance(SlidingWindowCircle):
 
@@ -1840,17 +1920,29 @@ class MedianDistance(SlidingWindowCircle):
         return { self.OUTPUT_FILE : self.output }
 
     def filter_func(self,array):
-        # self.feedback.pushDebugInfo("array = " + str(array))
-        cell_val = array[self.val_idx_footprint]        
+        self.pushDebug("array = " + str(array))
+        cell_val = array[self.val_idx_footprint]
         if cell_val == self.nodata:
             res = self.out_nodata
         else:
-            # self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
+            self.pushDebug("cell_val = " + str(cell_val))
             dist_val = self.dist_array_flatten[array==cell_val]
-            # self.feedback.pushDebugInfo("dist_val = " + str(dist_val))
+            self.pushDebug("dist_val = " + str(dist_val))
             val_median = np.nanmedian(dist_val)
             res = val_median
         return res
+        
+    # def filterFuncDistrib(self,array):
+        # cell_val = array[self.val_idx_footprint]
+        # if cell_val == self.nodata:
+            # res = self.out_nodata
+        # else:
+            # for c in self.classes_ordered:
+                # dist_val = self.dist_array_flatten[array==c]
+                # val_median = np.nanmedian(dist_val)
+                
+                
+        
         
 
 class PatchAreaWindow(SlidingWindowCircle):
@@ -1900,75 +1992,99 @@ class PatchAreaWindow(SlidingWindowCircle):
         return res
 
 
-class SlidingWindowDistrib(SlidingWindowCircle):
 
-
-    def processDistrib(self,array,classes,feedback):
-
-        # Accumulating connexity class by class
-        acc_arr = np.zeros(array.shape)
-        curr_q3 = 0
-        feedback.pushDebugInfo("nb_vals = " + str(self.nb_vals))
-        for cpt, c in enumerate(classes,start=1):
-            feedback.pushDebugInfo("class = " + str(c))
-            feedback.pushDebugInfo("cpt = " + str(cpt))
-            tmp_arr = np.copy(array)
-            tmp_arr[array != c] = 0
-            feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
-            if self.DEBUG:
-                tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
-                feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
-                qgsUtils.exportRaster(tmp_arr,self.input_path,tmp_path,
-                    nodata=-1,type=gdal.GDT_Float32)
-            nb_contact_arr = ndimage.generic_filter(tmp_arr,
-                np.sum,footprint=self.footprint,
-                mode="constant",cval=0,output=np.float32)
-            if self.DEBUG:
-                feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
-                feedback.pushDebugInfo("nb_contact_arr.dtype = " + str(nb_contact_arr.dtype))
-                nb_c_path = QgsProcessingUtils.generateTempFilename("nb_contact_" + str(c) + ".tif")
-                feedback.pushDebugInfo("nb_c_path = " + str(nb_c_path))
-                qgsUtils.exportRaster(nb_contact_arr,self.input_path,nb_c_path,
-                    nodata=-1,type=gdal.GDT_Float32)
-            if cpt > 1:
-                nb_contact_arr = np.add(nb_contact_arr,curr_q3)
-                # feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
-            if cpt == self.nb_vals:
-                acc_arr /= nb_contact_arr
-            else:
-                curr_q3 = np.quantile(nb_contact_arr,q=0.75)
-                feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
-                acc_arr += nb_contact_arr
-            if self.DEBUG:
-                acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
-                feedback.pushDebugInfo("acc_path = " + str(acc_path))
-                qgsUtils.exportRaster(acc_arr,self.input_path,acc_path,
-                    nodata=-1,type=gdal.GDT_Float32)
-                feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
-        # Output
-        qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
-            nodata=self.out_nodata,type=gdal.GDT_Float32)
-        # qgsUtils.exportRaster(result,self.input_path,output,
-            # nodata=self.out_nodata,type=gdal.GDT_UInt16)
-        return { self.OUTPUT_FILE : self.output }
                 
-    def count_neighbours_4(self,array):
-        cell_val = array[2]
-        return np.count_nonzero(array == cell_val) - 1
 
 
-class MedianDistanceDistrib(MedianDistance):
+class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
 
     ALG_NAME = 'medianDistanceDistrib'
     
     def initAlgorithm(self, report_opt=True):
-        super().initAlgorithm(classes=True)
+        SlidingWindowDistrib.initAlgorithm(self,classes=True)
     
     def displayName(self):
         return self.tr("Median distance (Distrib)")
         
     def shortHelpString(self):
         return self.tr("TODO")
+    
+    def filter_func(self,array):
+        self.pushDebug("array = " + str(array))
+        self.pushDebug("cell_val = " + str(self.currVal))
+        dist_val = self.dist_array_flatten[array==self.currVal]
+        self.pushDebug("dist_val = " + str(dist_val))
+        val_median = np.nanmedian(dist_val)
+        return val_median
+        
+    def processDistrib(self,array,classes,feedback,classArray=None,neutralElem=math.nan):
+        return SlidingWindowDistrib.processDistrib(self,array,
+            classes,feedback,classArray=classArray,neutralElem=neutralElem)
+        
+    # def processAlgorithm(self,parameters,context,feedback):
+        # return SlidingWindowDistrib.processAlgorithm(self,parameters,context,feedback)
+
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback,classes=True)
+        self.prepareWindow(feedback)
+        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        classes = self.prepareClasses(classes,feedback)
+        feedback.pushDebugInfo("classes = " + str(classes))
+        self.nb_vals = len(classes)
+        feedback.pushDebugInfo("array shape = " + str(array.shape))
+        acc_arr = np.zeros(array.shape)
+        acc_q3 = 0
+        for cpt, c in enumerate(classes,start=1):
+            feedback.pushDebugInfo("class = " + str(c))
+            feedback.pushDebugInfo("cpt = " + str(cpt))
+            # tmp_arr = np.copy(array)
+            # tmp_arr[array != c] = -1
+            self.currVal = c
+            median_arr = ndimage.generic_filter(array,
+                self.filter_func,footprint=self.footprint,
+                mode="constant",cval=-1,output=np.float32)
+            self.pushDebug("median_arr = " + str(median_arr))
+            feedback.pushDebugInfo("median_arr.dtype = " + str(median_arr.dtype))
+            q3 = np.nanquantile(median_arr,q=0.75)
+            median_arr[np.isnan(median_arr)] = 0
+            self.pushDebug("median_arr nonan = " + str(median_arr))
+            if cpt > 1:
+                median_arr = np.add(median_arr,acc_q3)
+            if cpt == self.nb_vals:
+                acc_arr /= median_arr
+            else:
+                acc_arr = np.add(acc_arr,median_arr)
+                acc_q3 += q3
+                feedback.pushDebugInfo("acc_q3 = " + str(acc_q3))
+            self.pushDebug("acc_arr = " + str(acc_arr))
+        qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
+            nodata=self.out_nodata,type=gdal.GDT_Float32)
+        return { self.OUTPUT_FILE : self.output }
+        
+class MedianDistanceDistrib2(MedianDistance):
+
+    ALG_NAME = 'medianDistanceDistrib2'
+    
+    def initAlgorithm(self, report_opt=True):
+        super().initAlgorithm(classes=True)
+    
+    def displayName(self):
+        return self.tr("Median distance (Distrib  2")
+        
+    def shortHelpString(self):
+        return self.tr("TODO")
+        
+    def prepareClasses(self,classes,feedback):
+        feedback.pushDebugInfo("classes = " + str(classes))
+        excludeClasses = [c for c in classes if c not in self.classes_ordered]
+        for c in excludeClasses:
+            if c not in self.classes_ordered:
+                feedback.pushWarning("Class " + str(c) + " order not specified")
+        keepClasses = [c for c in self.classes_ordered if c in classes]
+        feedback.pushDebugInfo("classes = " + str(keepClasses))
+        keepClasses = keepClasses[1:] + keepClasses[:1]
+        feedback.pushDebugInfo("classes = " + str(keepClasses))
+        return keepClasses
         
     # def icon(self):
         # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
@@ -1978,12 +2094,10 @@ class MedianDistanceDistrib(MedianDistance):
         self.prepareWindow(feedback)
         # Retrieve classes and array
         classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        classes = self.prepareClasses(classes,feedback)
         feedback.pushDebugInfo("classes = " + str(classes))
         self.nb_vals = len(classes)
         feedback.pushDebugInfo("array shape = " + str(array.shape))
-        for c in classes:
-            if c not in self.classes_ordered:
-                feedback.pushWarning("Class " + str(c) + " order not specified")
         # Main loop
         acc_arr = np.zeros(array.shape)
         curr_q3 = 0
@@ -1994,7 +2108,7 @@ class MedianDistanceDistrib(MedianDistance):
             tmp_arr[array != c] = -1
             median_arr = ndimage.generic_filter(tmp_arr,
                 self.filter_func,footprint=self.footprint,
-                mode="constant",cval=self.nodata,output=np.float32)
+                mode="constant",cval=math.nan,output=np.float32)
             feedback.pushDebugInfo("median_arr = " + str(median_arr))
             feedback.pushDebugInfo("median_arr.dtype = " + str(median_arr.dtype))
             if cpt > 1:
@@ -2011,17 +2125,19 @@ class MedianDistanceDistrib(MedianDistance):
         # qgsUtils.exportRaster(result,self.input_path,output,
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
         return { self.OUTPUT_FILE : self.output }
-        
 
-class ConnexityArea(SlidingWindowCircle):
+class NbContactDistrib(SlidingWindowDistrib):
 
-    ALG_NAME = 'ConnexityArea'
+    ALG_NAME = 'NbContactDistrib'
     
+    def initAlgorithm(self, report_opt=True):
+        SlidingWindowDistrib.initAlgorithm(self,classes=True)
+        
     def displayName(self):
-        return self.tr("ConnexityArea")
+        return self.tr("Number of contacts (distrib)")
         
     def shortHelpString(self):
-        return self.tr("TODO")
+        return self.tr("Computes number of contacts (adjacent pixels of same value) in sliding window")
         
     # def icon(self):
         # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
@@ -2030,56 +2146,58 @@ class ConnexityArea(SlidingWindowCircle):
         # shape = (a.shape[0] - window_size + 1, window_size) + a.shape[1:]
         # strides = (a.strides[0],) + a.strides
         # return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
-            
+        
     def processAlgorithm(self,parameters,context,feedback):
-        self.parseParams(parameters,context,feedback)
+        self.parseParams(parameters,context,feedback,classes=True)
         self.prepareWindow(feedback)
+        # Retrieve classes and array
         classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
-        feedback.pushDebugInfo("classes = " + str(classes))
-        self.nb_vals = len(classes)
-        # Computing immediate neighbours (4-connexity)
-        feedback.pushDebugInfo("array shape = " + str(array.shape))
+        classes = self.prepareClasses(classes,feedback)
         ncount_struct = ndimage.generate_binary_structure(2,1)
         nb_neighbours_arr = ndimage.generic_filter(array,
             self.count_neighbours_4,footprint=ncount_struct,
             mode="constant",cval=self.nodata)
         feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
-        # Accumulating connexity class by class
+        if self.DEBUG:
+            self.feedback.pushDebugInfo("array = " + str(array))
+            feedback.pushDebugInfo("nb_neighbours_arr = " + str(nb_neighbours_arr))
+        # Process distrb
         acc_arr = np.zeros(array.shape)
         curr_q3 = 0
-        feedback.pushDebugInfo("nb_vals = " + str(self.nb_vals))
-        classes_reshaped = classes[1:] + [classes[0]]
-        feedback.pushDebugInfo("classes_reshaped = " + str(classes_reshaped))
-        for cpt, c in enumerate(classes_reshaped,start=1):
+        nb_vals = len(classes)
+        feedback.pushDebugInfo("nb_vals = " + str(nb_vals))
+        neutralElem = 0
+        feedback.pushDebugInfo("neutralElem = " + str(neutralElem))
+        for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("class = " + str(c))
             feedback.pushDebugInfo("cpt = " + str(cpt))
             tmp_arr = np.copy(nb_neighbours_arr)
-            tmp_arr[array != c] = 0
+            tmp_arr[array != c] = neutralElem
             feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
             if self.DEBUG:
+                feedback.pushDebugInfo("tmp_arr = " + str(tmp_arr))
                 tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
                 feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
                 qgsUtils.exportRaster(tmp_arr,self.input_path,tmp_path,
                     nodata=-1,type=gdal.GDT_Float32)
-            nb_contact_arr = ndimage.generic_filter(tmp_arr,
-                np.sum,footprint=self.footprint,
-                mode="constant",cval=0,output=np.float32)
+            computed_arr = ndimage.generic_filter(tmp_arr,
+                self.filter_func,footprint=self.footprint,
+                mode="constant",cval=neutralElem,output=np.float32)
             if self.DEBUG:
-                feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
-                feedback.pushDebugInfo("nb_contact_arr.dtype = " + str(nb_contact_arr.dtype))
-                nb_c_path = QgsProcessingUtils.generateTempFilename("nb_contact_" + str(c) + ".tif")
-                feedback.pushDebugInfo("nb_c_path = " + str(nb_c_path))
-                qgsUtils.exportRaster(nb_contact_arr,self.input_path,nb_c_path,
+                feedback.pushDebugInfo("computed_arr = " + str(computed_arr))
+                feedback.pushDebugInfo("computed_arr.dtype = " + str(computed_arr.dtype))
+                computed_c_path = QgsProcessingUtils.generateTempFilename("computed_" + str(c) + ".tif")
+                feedback.pushDebugInfo("computed_c_path = " + str(computed_c_path))
+                qgsUtils.exportRaster(computed_arr,self.input_path,computed_c_path,
                     nodata=-1,type=gdal.GDT_Float32)
             if cpt > 1:
-                nb_contact_arr = np.add(nb_contact_arr,curr_q3)
-                # feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
-            if cpt == self.nb_vals:
-                acc_arr /= nb_contact_arr
+                computed_arr = np.add(computed_arr,curr_q3)
+            if cpt == nb_vals:
+                acc_arr /= computed_arr
             else:
-                curr_q3 = np.quantile(nb_contact_arr,q=0.75)
+                curr_q3 = np.quantile(computed_arr,q=0.75)
                 feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
-                acc_arr += nb_contact_arr
+                acc_arr += computed_arr
             if self.DEBUG:
                 acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
                 feedback.pushDebugInfo("acc_path = " + str(acc_path))
@@ -2089,9 +2207,74 @@ class ConnexityArea(SlidingWindowCircle):
         # Output
         qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
-        # qgsUtils.exportRaster(result,self.input_path,output,
-            # nodata=self.out_nodata,type=gdal.GDT_UInt16)
         return { self.OUTPUT_FILE : self.output }
+        # return self.processDistrib(nb_neighbours_arr,classes,feedback,
+                    # classArray=array,neutralElem=0)
+    
+    def filter_func(self,array):
+        if self.DEBUG:
+            self.feedback.pushDebugInfo("arrayFilt = " + str(array))
+        return np.sum(array)
+        
+            
+    # def processAlgorithm(self,parameters,context,feedback):
+        # self.parseParams(parameters,context,feedback)
+        # self.prepareWindow(feedback)
+        # classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        # feedback.pushDebugInfo("classes = " + str(classes))
+        # self.nb_vals = len(classes)
+        # Computing immediate neighbours (4-connexity)
+        # feedback.pushDebugInfo("array shape = " + str(array.shape))
+        # ncount_struct = ndimage.generate_binary_structure(2,1)
+        # nb_neighbours_arr = ndimage.generic_filter(array,
+            # self.count_neighbours_4,footprint=ncount_struct,
+            # mode="constant",cval=self.nodata)
+        # feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
+        # Accumulating connexity class by class
+        # acc_arr = np.zeros(array.shape)
+        # curr_q3 = 0
+        # feedback.pushDebugInfo("nb_vals = " + str(self.nb_vals))
+        # classes_reshaped = classes[1:] + [classes[0]]
+        # feedback.pushDebugInfo("classes_reshaped = " + str(classes_reshaped))
+        # for cpt, c in enumerate(classes_reshaped,start=1):
+            # feedback.pushDebugInfo("class = " + str(c))
+            # feedback.pushDebugInfo("cpt = " + str(cpt))
+            # tmp_arr = np.copy(nb_neighbours_arr)
+            # tmp_arr[array != c] = 0
+            # feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
+            # if self.DEBUG:
+                # tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
+                # feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
+                # qgsUtils.exportRaster(tmp_arr,self.input_path,tmp_path,
+                    # nodata=-1,type=gdal.GDT_Float32)
+            # nb_contact_arr = ndimage.generic_filter(tmp_arr,
+                # np.sum,footprint=self.footprint,
+                # mode="constant",cval=0,output=np.float32)
+            # if self.DEBUG:
+                # feedback.pushDebugInfo("nb_contact_arr = " + str(nb_contact_arr))
+                # feedback.pushDebugInfo("nb_contact_arr.dtype = " + str(nb_contact_arr.dtype))
+                # nb_c_path = QgsProcessingUtils.generateTempFilename("nb_contact_" + str(c) + ".tif")
+                # feedback.pushDebugInfo("nb_c_path = " + str(nb_c_path))
+                # qgsUtils.exportRaster(nb_contact_arr,self.input_path,nb_c_path,
+                    # nodata=-1,type=gdal.GDT_Float32)
+            # if cpt > 1:
+                # nb_contact_arr = np.add(nb_contact_arr,curr_q3)
+            # if cpt == self.nb_vals:
+                # acc_arr /= nb_contact_arr
+            # else:
+                # curr_q3 = np.quantile(nb_contact_arr,q=0.75)
+                # feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
+                # acc_arr += nb_contact_arr
+            # if self.DEBUG:
+                # acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
+                # feedback.pushDebugInfo("acc_path = " + str(acc_path))
+                # qgsUtils.exportRaster(acc_arr,self.input_path,acc_path,
+                    # nodata=-1,type=gdal.GDT_Float32)
+                # feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
+        # Output
+        # qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
+            # nodata=self.out_nodata,type=gdal.GDT_Float32)
+        # return { self.OUTPUT_FILE : self.output }
                 
     def count_neighbours_4(self,array):
         cell_val = array[2]
