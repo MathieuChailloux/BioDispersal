@@ -2228,8 +2228,8 @@ class NbContactDistrib(SlidingWindowDistrib):
                     # classArray=array,neutralElem=0)
     
     def filter_func(self,array):
-        if self.DEBUG:
-            self.feedback.pushDebugInfo("arrayFilt = " + str(array))
+        # if self.DEBUG:
+            # self.feedback.pushDebugInfo("arrayFilt = " + str(array))
         return np.sum(array)
         
             

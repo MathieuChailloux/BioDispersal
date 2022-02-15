@@ -31,22 +31,24 @@ from PyQt5.QtWidgets import QFileDialog
 from qgis.core import Qgis
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks, styles
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
+from ..qgis_lib_mc.abstract_model import DictItem, ExtensiveTableModel, AbstractConnector, ComboDelegate
+
 from . import params, subnetworks, classes
 
 
-class FrictionRowItem(abstract_model.DictItem):
+class FrictionRowItem(DictItem):
 
     def __init__(self,dict):
         super().__init__(dict)
             
 
-class FrictionModel(abstract_model.ExtensiveTableModel):
+class FrictionModel(ExtensiveTableModel):
 
     def __init__(self,parentModel):
         self.parser_name = "FrictionModel"
         self.is_runnable = False
-        abstract_model.ExtensiveTableModel.__init__(self,parentModel)
+        ExtensiveTableModel.__init__(self,parentModel)
         self.feedback.pushDebugInfo("hey")
         
     def reload(self):
@@ -131,7 +133,11 @@ class FrictionModel(abstract_model.ExtensiveTableModel):
         feedback.endSection()
            
            
-class FrictionConnector(abstract_model.AbstractConnector):
+class FrictionConnector(AbstractConnector):
+    
+    CUSTOM_MODE = 0
+    EXP_MODE = 1
+    CONNEX_MODE = 2
     
     def __init__(self,dlg,frictionModel):
         self.dlg = dlg
@@ -147,6 +153,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
         self.dlg.frictionRun.clicked.connect(self.applyItems)
         self.dlg.frictionSave.clicked.connect(self.saveCSVAction)
         self.dlg.frictionLoad.clicked.connect(self.loadCSVAction)
+        self.dlg.frictionMethod.currentIndexChanged.connect(self.switchClassifMode)
         
     # Return indexes currently selected in friction view
     def getSelectedIndexes(self):
@@ -191,4 +198,41 @@ class FrictionConnector(abstract_model.AbstractConnector):
                                       filter="*.csv")
         if fname:
             self.saveCSV(fname)
+            
+    def switchClassifMode(self,mode):
+        # CUSTOM_MODE = 0 EXP_MODE = 1 CONNEX_MODE = 2
+        if mode == self.CUSTOM_MODE:
+            self.switchCustomMode()
+        elif mode == self.EXP_MODE:
+            self.switchExpMode()
+        elif mode == self.CONNEX_MODE:
+            self.switchConnexMode()
+        else:
+            utils.user_error(self.tr("Unexpected mode : ") + str(mode))
+            
+    def switchCustomMode(self):
+        self.dlg.frictionClassFrame.setEnabled(False)
+        self.dlg.frictionMinMaxFrame.setEnabled(False)
+        self.setValues(None)
+            
+    def switchExpMode(self):
+        self.dlg.frictionClassFrame.setEnabled(True)
+        self.dlg.frictionMinMaxFrame.setEnabled(True)
+        nbClass = self.getNbClasses()
+        minVal = self.dlg.frictionMinVal.value()
+        maxVal = self.dlg.frictionMaxVal.value()
+        self.setValues(None)
+            
+    def switchConnexMode(self):
+        self.dlg.frictionClassFrame.setEnabled(True)
+        self.dlg.frictionMinMaxFrame.setEnabled(False)
+        nbClass = self.getNbClasses()
+        self.setValues(range(1,nbClass))
         
+    def getNbClasses(self):
+        return self.dlg.frictionNbClass.value()
+        
+    def setValues(self,values):
+        self.model.setValues(values)
+        self.view.setItemDelegate(ComboDelegate(values))
+        self.model.layoutChanged.emit()
