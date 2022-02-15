@@ -1727,6 +1727,7 @@ class SlidingWindowCircle(IMBEAlgorithm):
     CLASSES_ORDER = "CLASSES_ORDER"
     OUTPUT_FILE = "OUTPUT"
     
+    DEBUG_FIELDNAME = 'DEBUG'
     DEBUG = False
         
     def initAlgorithm(self, classes=False, config=None, report_opt=True):
@@ -1749,7 +1750,13 @@ class SlidingWindowCircle(IMBEAlgorithm):
             self.addParameter(
                 QgsProcessingParameterString(
                     self.CLASSES_ORDER,
-                    description = self.tr('Classes order (from unfavorable to very favorable)')))        
+                    description = self.tr('Classes order (from unfavorable to very favorable)')))      
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.DEBUG_FIELDNAME,
+                description = self.tr('Print debug messages'),
+                defaultValue=False,
+                optional=True))
         self.addParameter(
             QgsProcessingParameterRasterDestination(
             self.OUTPUT,
@@ -1774,6 +1781,7 @@ class SlidingWindowCircle(IMBEAlgorithm):
             feedback.pushDebugInfo("classes_ordered = " + str(self.classes_ordered))
             if not self.classes_ordered:
                 raise QgsProcessingException("Please specify classes order (empty list)")
+        self.DEBUG = self.parameterAsBool(parameters,self.DEBUG_FIELDNAME,context)
         self.output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         # Processing
         self.feedback = feedback
@@ -2010,10 +2018,10 @@ class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
         return self.tr("TODO")
     
     def filter_func(self,array):
-        self.pushDebug("array = " + str(array))
-        self.pushDebug("cell_val = " + str(self.currVal))
+        # self.pushDebug("array = " + str(array))
+        # self.pushDebug("cell_val = " + str(self.currVal))
         dist_val = self.dist_array_flatten[array==self.currVal]
-        self.pushDebug("dist_val = " + str(dist_val))
+        # self.pushDebug("dist_val = " + str(dist_val))
         val_median = np.nanmedian(dist_val)
         return val_median
         
@@ -2045,8 +2053,16 @@ class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
                 mode="constant",cval=-1,output=np.float32)
             self.pushDebug("median_arr = " + str(median_arr))
             feedback.pushDebugInfo("median_arr.dtype = " + str(median_arr.dtype))
+            if self.DEBUG:
+                feedback.pushDebugInfo("median_arr = " + str(median_arr))
+                feedback.pushDebugInfo("median_arr.dtype = " + str(median_arr.dtype))
+                median_c_path = QgsProcessingUtils.generateTempFilename("median_" + str(c) + ".tif")
+                feedback.pushDebugInfo("median_c_path = " + str(median_c_path))
+                qgsUtils.exportRaster(median_arr,self.input_path,median_c_path,
+                    nodata=-1,type=gdal.GDT_Float32)
             q3 = np.nanquantile(median_arr,q=0.75)
-            median_arr[np.isnan(median_arr)] = 0
+            feedback.pushDebugInfo("q3 = " + str(q3))
+            median_arr[np.isnan(median_arr)] = self.size
             self.pushDebug("median_arr nonan = " + str(median_arr))
             if cpt > 1:
                 median_arr = np.add(median_arr,acc_q3)
