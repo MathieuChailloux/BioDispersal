@@ -2035,7 +2035,7 @@ class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
     def processAlgorithm(self,parameters,context,feedback):
         self.parseParams(parameters,context,feedback,classes=True)
         self.prepareWindow(feedback)
-        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        classes, array, input_nodata = qgsUtils.getRasterValsArrayND(str(self.input_path))
         classes = self.prepareClasses(classes,feedback)
         feedback.pushDebugInfo("classes = " + str(classes))
         self.nb_vals = len(classes)
@@ -2060,6 +2060,7 @@ class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
                 feedback.pushDebugInfo("median_c_path = " + str(median_c_path))
                 qgsUtils.exportRaster(median_arr,self.input_path,median_c_path,
                     nodata=-1,type=gdal.GDT_Float32)
+            # median_arr[array==input_nodata] = math.nan
             q3 = np.nanquantile(median_arr,q=0.75)
             feedback.pushDebugInfo("q3 = " + str(q3))
             median_arr[np.isnan(median_arr)] = self.size
@@ -2073,6 +2074,8 @@ class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
                 acc_q3 += q3
                 feedback.pushDebugInfo("acc_q3 = " + str(acc_q3))
             self.pushDebug("acc_arr = " + str(acc_arr))
+        acc_arr[array==input_nodata] = self.out_nodata
+        self.pushDebug("acc_arr = " + str(acc_arr))
         qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         return { self.OUTPUT_FILE : self.output }
@@ -2184,8 +2187,8 @@ class NbContactDistrib(SlidingWindowDistrib):
         feedback.pushDebugInfo("nb_vals = " + str(nb_vals))
         neutralElem = 0
         feedback.pushDebugInfo("neutralElem = " + str(neutralElem))
+        for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("class = " + str(c))
-y        for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("cpt = " + str(cpt))
             tmp_arr = nb_neighbours_arr.astype(np.float)
             tmp_arr[array != c] = neutralElem
@@ -2218,10 +2221,11 @@ y        for cpt, c in enumerate(classes,start=1):
                 # Comment 0 possible avec curr_q3 ?
                 acc_arr /= computed_arr
             else:
-                computed_arr[array==input_nodata] = math.nan
+                # computed_arr[array==input_nodata] = math.nan
+                computed_arr[array==input_nodata] = neutralElem
                 curr_q3 = np.nanquantile(computed_arr,q=0.75)
                 feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
-                computed_arr[array==input_nodata] = neutralElem
+                # computed_arr[array==input_nodata] = neutralElem
                 acc_arr += computed_arr
             if self.DEBUG:
                 acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
@@ -2242,8 +2246,8 @@ y        for cpt, c in enumerate(classes,start=1):
     def filter_func(self,array):
         # if self.DEBUG:
             # self.feedback.pushDebugInfo("arrayFilt = " + str(array))
-        return np.nanmean(array)
-        # return np.sum(array)
+        # return np.nanmean(array)
+        return np.nansum(array)
         
             
     # def processAlgorithm(self,parameters,context,feedback):
