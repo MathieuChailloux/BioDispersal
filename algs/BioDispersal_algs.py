@@ -2167,9 +2167,9 @@ class NbContactDistrib(SlidingWindowDistrib):
         self.parseParams(parameters,context,feedback,classes=True)
         self.prepareWindow(feedback)
         # Retrieve classes and array
-        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
-        classes = self.prepareClasses(classes,feedback)
+        classes, array, input_nodata = qgsUtils.getRasterValsArrayND(str(self.input_path))
         ncount_struct = ndimage.generate_binary_structure(2,1)
+        classes = self.prepareClasses(classes,feedback)
         nb_neighbours_arr = ndimage.generic_filter(array,
             self.count_neighbours_4,footprint=ncount_struct,
             mode="constant",cval=self.nodata)
@@ -2184,43 +2184,55 @@ class NbContactDistrib(SlidingWindowDistrib):
         feedback.pushDebugInfo("nb_vals = " + str(nb_vals))
         neutralElem = 0
         feedback.pushDebugInfo("neutralElem = " + str(neutralElem))
-        for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("class = " + str(c))
+y        for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("cpt = " + str(cpt))
-            tmp_arr = np.copy(nb_neighbours_arr)
+            tmp_arr = nb_neighbours_arr.astype(np.float)
             tmp_arr[array != c] = neutralElem
+            tmp_arr[array==input_nodata] = math.nan
             feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
             if self.DEBUG:
                 feedback.pushDebugInfo("tmp_arr = " + str(tmp_arr))
                 tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
                 feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
                 qgsUtils.exportRaster(tmp_arr,self.input_path,tmp_path,
-                    nodata=-1,type=gdal.GDT_Float32)
+                    nodata=self.out_nodata,type=gdal.GDT_Float32)
+            # computed_arr = ndimage.generic_filter(tmp_arr,
+                # self.filter_func,footprint=self.footprint,
+                # mode="constant",cval=neutralElem,output=np.float32)
             computed_arr = ndimage.generic_filter(tmp_arr,
                 self.filter_func,footprint=self.footprint,
-                mode="constant",cval=neutralElem,output=np.float32)
+                mode='nearest',output=np.float32)
             if self.DEBUG:
                 feedback.pushDebugInfo("computed_arr = " + str(computed_arr))
                 feedback.pushDebugInfo("computed_arr.dtype = " + str(computed_arr.dtype))
-                computed_c_path = QgsProcessingUtils.generateTempFilename("computed_" + str(c) + ".tif")
+                computed_c_path = QgsProcessingUtils.generateTempFilename(
+                    "computed_" + str(c) + ".tif")
                 feedback.pushDebugInfo("computed_c_path = " + str(computed_c_path))
                 qgsUtils.exportRaster(computed_arr,self.input_path,computed_c_path,
-                    nodata=-1,type=gdal.GDT_Float32)
+                    nodata=self.out_nodata,type=gdal.GDT_Float32)
             if cpt > 1:
                 computed_arr = np.add(computed_arr,curr_q3)
             if cpt == nb_vals:
+                #et donc si computed = 0 ???
+                # Comment 0 possible avec curr_q3 ?
                 acc_arr /= computed_arr
             else:
-                curr_q3 = np.quantile(computed_arr,q=0.75)
+                computed_arr[array==input_nodata] = math.nan
+                curr_q3 = np.nanquantile(computed_arr,q=0.75)
                 feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
+                computed_arr[array==input_nodata] = neutralElem
                 acc_arr += computed_arr
             if self.DEBUG:
                 acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
                 feedback.pushDebugInfo("acc_path = " + str(acc_path))
                 qgsUtils.exportRaster(acc_arr,self.input_path,acc_path,
-                    nodata=-1,type=gdal.GDT_Float32)
+                    nodata=self.out_nodata,type=gdal.GDT_Float32)
                 feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
         # Output
+        feedback.pushDebugInfo("out_nodata = " + str(self.out_nodata))
+        acc_arr[array==input_nodata] = self.out_nodata
+        feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
         qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         return { self.OUTPUT_FILE : self.output }
@@ -2230,7 +2242,8 @@ class NbContactDistrib(SlidingWindowDistrib):
     def filter_func(self,array):
         # if self.DEBUG:
             # self.feedback.pushDebugInfo("arrayFilt = " + str(array))
-        return np.sum(array)
+        return np.nanmean(array)
+        # return np.sum(array)
         
             
     # def processAlgorithm(self,parameters,context,feedback):
