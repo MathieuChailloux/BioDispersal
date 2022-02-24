@@ -118,6 +118,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         MedianDistanceDistrib(),
                         NbContactDistrib(),
                         MedianDistanceDistrib2(),
+                        NbContactMedianDistrib(),
                         NeighboursCount()]
         for a in self.alglist:
             a.initAlgorithm()
@@ -2387,6 +2388,115 @@ class NbContactDistrib(SlidingWindowDistrib):
                 # res = noval_median / val_median
         # self.feedback.pushDebugInfo("res = " + str(res))
         # return res
+        
+class NbContactMedianDistrib(NbContactDistrib):
+
+    ALG_NAME = 'NbContactMedianDistrib'
+        
+    def displayName(self):
+        return self.tr("Number of contacts x Median distance (distrib)")
+        
+    def shortHelpString(self):
+        return self.tr("Computes connexity index")    
+        
+    def filter_median(self,array):
+        # self.pushDebug("array = " + str(array))
+        # self.pushDebug("cell_val = " + str(self.currVal))
+        dist_val = self.dist_array_flatten[array==self.currVal]
+        # self.pushDebug("dist_val = " + str(dist_val))
+        val_median = np.nanmedian(dist_val)
+        # res = self.size if math.isnan(val_median) else self.size - val_median
+        # return res
+        return val_median
+        
+    def filter_nbContact_distance(self,array):
+        cell_val = array[2]
+        div_arr = array[array == cell_val] / self.dist_array_flatten[array == cell_val]
+        return self.filter_func(div_arr)
+
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback,classes=True)
+        func_mode = self.parameterAsEnum(parameters,self.FILTER_FUNC,context)
+        self.filter_func = self.filter_funcs[func_mode]
+        # neutralElem = math.nan if func_mode == 2 else 0
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, array, input_nodata = qgsUtils.getRasterValsArrayND(str(self.input_path))
+        ncount_struct = ndimage.generate_binary_structure(2,1)
+        classes = self.prepareClasses(classes,feedback)
+        nb_neighbours_arr = ndimage.generic_filter(array,
+            self.count_neighbours_4,footprint=ncount_struct,
+            mode="constant",cval=self.nodata)
+        feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
+        if self.DEBUG:
+            self.feedback.pushDebugInfo("array = " + str(array))
+            feedback.pushDebugInfo("nb_neighbours_arr = " + str(nb_neighbours_arr))
+        # Process distrb
+        acc_arr = np.zeros(array.shape)
+        curr_q3 = 0
+        nb_vals = len(classes)
+        feedback.pushDebugInfo("nb_vals = " + str(nb_vals))
+        neutralElem = 0
+        feedback.pushDebugInfo("neutralElem = " + str(neutralElem))
+        for cpt, c in enumerate(classes,start=1):
+            feedback.pushDebugInfo("class = " + str(c))
+            feedback.pushDebugInfo("cpt = " + str(cpt))
+            self.currVal = c
+            tmp_arr = nb_neighbours_arr.astype(np.float)
+            tmp_arr[array != c] = neutralElem
+            tmp_arr[array==input_nodata] = math.nan
+            feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
+            if self.DEBUG:
+                feedback.pushDebugInfo("tmp_arr = " + str(tmp_arr))
+                tmp_path = QgsProcessingUtils.generateTempFilename("tmp_" + str(c) + ".tif")
+                feedback.pushDebugInfo("tmp_path = " + str(tmp_path))
+                qgsUtils.exportRaster(tmp_arr,self.input_path,tmp_path,
+                    nodata=self.out_nodata,type=gdal.GDT_Float32)
+            computed_arr = ndimage.generic_filter(tmp_arr,
+                self.filter_nbContact_distance,footprint=self.footprint,
+                mode="constant",cval=math.nan,output=np.float32)
+            # median_arr = ndimage.generic_filter(array,
+                # self.filter_median,footprint=self.footprint,
+                # mode="constant",cval=-1,output=np.float32)
+            # median_arr[np.isnan(median_arr)] = 0
+            # computed_arr = computed_arr * median_arr
+            # computed_arr = ndimage.generic_filter(tmp_arr,
+                # self.filter_func,footprint=self.footprint,
+                # mode='nearest',output=np.float32)
+            if self.DEBUG:
+                feedback.pushDebugInfo("computed_arr = " + str(computed_arr))
+                feedback.pushDebugInfo("computed_arr.dtype = " + str(computed_arr.dtype))
+                computed_c_path = QgsProcessingUtils.generateTempFilename(
+                    "computed_" + str(c) + ".tif")
+                feedback.pushDebugInfo("computed_c_path = " + str(computed_c_path))
+                qgsUtils.exportRaster(computed_arr,self.input_path,computed_c_path,
+                    nodata=self.out_nodata,type=gdal.GDT_Float32)
+            if cpt > 1:
+                computed_arr = np.add(computed_arr,curr_q3)
+            if cpt == nb_vals:
+                #et donc si computed = 0 ???
+                # Comment 0 possible avec curr_q3 ?
+                acc_arr /= computed_arr
+            else:
+                computed_arr[array==input_nodata] = math.nan
+                # computed_arr[array==input_nodata] = neutralElem
+                curr_q3 = np.nanquantile(computed_arr,q=0.75)
+                feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
+                computed_arr[array==input_nodata] = neutralElem
+                acc_arr += computed_arr
+            if self.DEBUG:
+                acc_path = QgsProcessingUtils.generateTempFilename("acc_" + str(c) + ".tif")
+                feedback.pushDebugInfo("acc_path = " + str(acc_path))
+                qgsUtils.exportRaster(acc_arr,self.input_path,acc_path,
+                    nodata=self.out_nodata,type=gdal.GDT_Float32)
+                feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
+        # Output
+        feedback.pushDebugInfo("out_nodata = " + str(self.out_nodata))
+        acc_arr[array==input_nodata] = self.out_nodata
+        feedback.pushDebugInfo("acc_arr = " + str(acc_arr))
+        qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
+            nodata=self.out_nodata,type=gdal.GDT_Float32)
+        return { self.OUTPUT_FILE : self.output }
         
 class RelativeSurface(QualifAlgorithm):
 
