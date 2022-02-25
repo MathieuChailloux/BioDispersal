@@ -34,7 +34,8 @@ from qgis.gui import QgsFileWidget
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
 from ..qgis_lib_mc.abstract_model import DictItem, ExtensiveTableModel, AbstractConnector, ComboDelegate
 
-from . import params, subnetworks, classes
+from . import params, subnetworks
+# from .classes import ClassItem
 
 
 class FrictionRowItem(DictItem):
@@ -45,10 +46,14 @@ class FrictionRowItem(DictItem):
 
 class FrictionModel(ExtensiveTableModel):
 
+    ROW_NAME = 'class'
+    ROW_DESCR = 'class_descr'
+    BASE_FIELDS = [ ROW_NAME, ExtensiveTableModel.ROW_CODE, ROW_DESCR ]
+    
     def __init__(self,parentModel):
         self.parser_name = "FrictionModel"
         self.is_runnable = False
-        ExtensiveTableModel.__init__(self,parentModel)
+        ExtensiveTableModel.__init__(self,parentModel,baseFields=self.BASE_FIELDS)
         self.feedback.pushDebugInfo("hey")
         
     def reload(self):
@@ -65,42 +70,48 @@ class FrictionModel(ExtensiveTableModel):
             return h
         return None
         
+    # Creates FrictionItem from ClassItem
+    def createRowFromBaseRow(self,classItem):
+        d = { self.ROW_NAME : classItem.getName(),
+              self.ROW_CODE : classItem.getCode(),
+              self.ROW_DESCR : classItem.getDescr() }
+        return self.createRowFromDict(d)
     # Reload items of model to match current ClassModel.
     def reloadClasses(self):
         utils.debug("reloadClasses")
         classes_to_delete = []
         for item in self.items:
-            cls_name = item.dict["class"]
+            cls_name = item.dict[self.ROW_NAME]
             cls_item = self.parentModel.classModel.getClassByName(cls_name)
             if not cls_item:
                 classes_to_delete.append(cls_name)
                 utils.debug("Removing class " + str(cls_name))
             else:
                 utils.debug("Class " + cls_name + " indeed exists")
-        self.items = [fr for fr in self.items if fr.dict["class"] not in classes_to_delete]
+        self.items = [fr for fr in self.items if fr.dict[self.ROW_NAME] not in classes_to_delete]
         self.layoutChanged.emit()
         for cls_item in self.parentModel.classModel.items:
             utils.debug("cls_item : " + str(cls_item.dict))
-            cls_name = cls_item.dict["name"]
-            cls_code = cls_item.dict["code"]
-            cls_descr = cls_item.dict["descr"]
-            row_item = self.getRowByClass(cls_name)
+            cls_name = cls_item.getName()
+            cls_code = cls_item.getCode()
+            cls_descr = cls_item.getDescr()
+            row_item = self.getRowByName(cls_name)
             if row_item:
                 utils.debug("row_item : " + str(row_item.dict))
                 utils.debug("Class " + str(cls_name) + " already exists")
-                if row_item.dict["code"] != cls_code:
+                if row_item.dict[self.ROW_CODE] != cls_code:
                     utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"
-                                + str(row_item.dict["code"]) + " to class " + cls_name)
-                    row_item.dict["code"] = cls_code
+                                + str(row_item.dict[self.ROW_CODE]) + " to class " + cls_name)
+                    row_item.dict[self.ROW_CODE] = cls_code
                     self.layoutChanged.emit()
-                if cls_descr and row_item.dict["class_descr"] != cls_descr:
+                if cls_descr and row_item.dict[self.ROW_DESCR] != cls_descr:
                     utils.debug("Reassigning descr '" + str(cls_descr) + "' instead of '"
-                                + str(row_item.dict["class_descr"]) + " to class " + cls_name)
-                    row_item.dict["class_descr"] = cls_descr
+                                + str(row_item.dict[self.ROW_DESCR]) + " to class " + cls_name)
+                    row_item.dict[self.ROW_DESCR] = cls_descr
                     self.layoutChanged.emit()
             else:
                 utils.debug("Reloading class " + cls_name)
-                self.addClassItem(cls_item)
+                self.addRowItemFromBase(cls_item)
                 self.layoutChanged.emit()
                 
     # Computes friction layer for each item.

@@ -66,12 +66,12 @@ class SelectionItem(abstract_model.DictItem):
 
     FIELDS = [ "in_layer", "mode", "mode_val", "group" ] 
 
-    def fromValues(self,in_layer,mode,mode_val,group):
-        dict = {"in_layer" : in_layer,
-                "mode" : mode,
-                "mode_val" : mode_val,
-                "group" : group}
-        super().__init__(dict)
+    # def fromValues(self,in_layer,mode,mode_val,group):
+        # dict = {"in_layer" : in_layer,
+                # "mode" : mode,
+                # "mode_val" : mode_val,
+                # "group" : group}
+        # super().__init__(dict)
         
     def getMode(self):
         return self.dict["mode"]
@@ -97,9 +97,10 @@ class SelectionModel(abstract_model.DictModel):
         
     def mkItemFromDict(self,dict):
         utils.checkFields(selection_fields,dict.keys())
-        mode = dict["mode"]
-        mode_val = dict["mode_val"]
-        item = SelectionItem(dict["in_layer"],mode,mode_val,dict["group"])
+        item = SelectionItem(dict)
+        # mode = dict["mode"]
+        # mode_val = dict["mode_val"]
+        # item = SelectionItem(dict["in_layer"],mode,mode_val,dict["group"])
         return item
         
     # Returns absolute path of 'item' input layer
@@ -386,10 +387,10 @@ class SelectionConnector(abstract_model.AbstractConnector):
         utils.debug("class_names = " + str(class_names))
         for (class_name, class_descr) in class_names:
             class_code = self.model.bdModel.classModel.getFreeCode()
-            class_item = classes.ClassItem(class_name,class_descr,class_code,grp_name)
+            class_item = classes.ClassItem.fromValues([class_name,class_code,class_descr,grp_name])
             self.model.bdModel.classModel.addItem(class_item)
             self.model.bdModel.classModel.layoutChanged.emit()
-        item = SelectionItem(in_layer_path,mode,mode_val,grp_name)
+        item = SelectionItem.fromValues([in_layer_path,mode,mode_val,grp_name])
         return item
         
     def setClass(self,text):

@@ -53,24 +53,29 @@ class ClassItem(abstract_model.DictItem):
     
     FIELDS = ["name","code","descr","group"]
     
-    def fromValues(self,cls,descr,code,group):
-        self.feedback.pushDebugInfo("init with code " + str(code))
-        if code == None:
-            code = classModel.getFreeCode()
-            self.feedback.pushDebugInfo("new code = " + str(code))
-        else:
-            try:
-                code = int(code)
-            except TypeError:
-                utils.user_error("Could not build class item from code '" + str(code)+ "'")
-        dict = {"name" : cls,
-                "code": code,
-                "descr" : descr,
-                "group" : group}
-        super().__init__(dict)
+    # @classmethod
+    # def fromValues(cls,name,descr,code,group):
+        # if code == None:
+            # code = classModel.getFreeCode()
+        # else:
+            # try:
+                # code = int(code)
+            # except TypeError:
+                # utils.user_error("Could not build class item from code '" + str(code)+ "'")
+        # dict = {"name" : name,
+                # "code": code,
+                # "descr" : descr,
+                # "group" : group}
+        # utils.debug("dict = " + str(dict))
+        # utils.debug("dict.type = " + str(type(dict)))
+        # return cls(dict=dict)
         
     def getName(self):
         return self.dict["name"]
+    def getCode(self):
+        return self.dict["code"]
+    def getDescr(self):
+        return self.dict["descr"]
         
     def checkItem(self):
         utils.checkName(self,prefix="Class")

@@ -93,7 +93,7 @@ class BioDispersalModel:
         self.fusionModel.removeSTFromName(name)
         
     def addClass(self,item):
-        self.frictionModel.addRowItem(item)        
+        self.frictionModel.addRowItemFromBase(item)        
         
     def removeClass(self,name):
         self.frictionModel.removeRowFromName(name)
