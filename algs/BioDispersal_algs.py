@@ -1987,7 +1987,7 @@ class PatchAreaWindow(SlidingWindowCircle):
             mode="constant",cval=0,output=np.float32)
         # Output
         qgsUtils.exportRaster(res_arr,self.input_path,self.output,
-            nodata=-1,type=gdal.GDT_Int16)
+            nodata=0,type=gdal.GDT_UInt32)
         # qgsUtils.exportRaster(result,self.input_path,output,
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
         return { self.OUTPUT_FILE : self.output }
