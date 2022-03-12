@@ -117,7 +117,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         MedianDistanceDistrib(),
                         NbContactDistrib(),
                         # MedianDistanceDistrib2(),
-                        # NbContactMedianDistrib(),
+                        NbContactMedianDistrib(),
                         NeighboursCount(),
                         RelativeSurface()]
         for a in self.alglist:
@@ -1672,12 +1672,13 @@ class SlidingWindowCircle(IsolationAlgorithm):
     m = ["reflect", "constant", "nearest", "mirror", "wrap"]
     
     CLASSES_ORDER = "CLASSES_ORDER"
+    CLASS = "CLASS"
     OUTPUT_FILE = "OUTPUT"
     
     DEBUG_FIELDNAME = 'DEBUG'
     DEBUG = False
         
-    def initAlgorithm(self, classes=False, config=None, report_opt=True):
+    def initAlgorithm(self, classes=False, classParam=False, config=None, report_opt=True):
         self.addParameter(QgsProcessingParameterRasterLayer(
             self.INPUT,
             "Input layer"))
@@ -1697,7 +1698,13 @@ class SlidingWindowCircle(IsolationAlgorithm):
             self.addParameter(
                 QgsProcessingParameterString(
                     self.CLASSES_ORDER,
-                    description = self.tr('Classes order (from unfavorable to very favorable)')))      
+                    description = self.tr('Classes order (from unfavorable to very favorable)')))
+        if classParam:
+            self.addParameter(
+                QgsProcessingParameterNumber(
+                    self.CLASS,
+                    description = self.tr('Class'),
+                    type=QgsProcessingParameterNumber.Integer))
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.DEBUG_FIELDNAME,
@@ -1714,7 +1721,7 @@ class SlidingWindowCircle(IsolationAlgorithm):
         if self.DEBUG:
             feedback.pushDebugInfo(msg)
             
-    def parseParams(self,parameters,context,feedback,classes=False):
+    def parseParams(self,parameters,context,feedback,classes=False,classParam=False):
         self.input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
         if self.input is None:
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
@@ -1728,6 +1735,8 @@ class SlidingWindowCircle(IsolationAlgorithm):
             feedback.pushDebugInfo("classes_ordered = " + str(self.classes_ordered))
             if not self.classes_ordered:
                 raise QgsProcessingException("Please specify classes order (empty list)")
+        if classParam:
+            self.classParam = self.parameterAsInt(parameters,self.CLASS,context)
         self.DEBUG = self.parameterAsBool(parameters,self.DEBUG_FIELDNAME,context)
         self.output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         # Processing
@@ -1848,6 +1857,9 @@ class MedianDistance(SlidingWindowCircle):
 
     ALG_NAME = 'medianDistance'
     
+    def initAlgorithm(self, config=None, report_opt=True):
+        super().initAlgorithm(classParam=True)
+    
     def displayName(self):
         return self.tr("Median distance")
         
@@ -1858,7 +1870,7 @@ class MedianDistance(SlidingWindowCircle):
         # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
 
     def processAlgorithm(self,parameters,context,feedback):
-        self.parseParams(parameters,context,feedback)
+        self.parseParams(parameters,context,feedback,classParam=True)
         self.prepareWindow(feedback)
         classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
         feedback.pushDebugInfo("classes = " + str(classes))
@@ -1879,14 +1891,14 @@ class MedianDistance(SlidingWindowCircle):
         return { self.OUTPUT_FILE : self.output }
 
     def filter_func(self,array):
-        self.pushDebug("array = " + str(array))
-        cell_val = array[self.val_idx_footprint]
+        # self.pushDebug("array = " + str(array))
+        cell_val = self.classParam if self.classParam else array[self.val_idx_footprint]
         if cell_val == self.nodata:
             res = self.out_nodata
         else:
-            self.pushDebug("cell_val = " + str(cell_val))
+            # self.pushDebug("cell_val = " + str(cell_val))
             dist_val = self.dist_array_flatten[array==cell_val]
-            self.pushDebug("dist_val = " + str(dist_val))
+            # self.pushDebug("dist_val = " + str(dist_val))
             val_median = np.nanmedian(dist_val)
             res = val_median
         return res
@@ -2291,8 +2303,8 @@ class NbContactMedianDistrib(NbContactDistrib):
         return val_median
         
     def filter_nbContact_distance(self,array):
-        cell_val = array[2]
-        div_arr = array[array == cell_val] / self.dist_array_flatten[array == cell_val]
+        div_arr = (array[array != self.neutralElem] * 3) / self.dist_array_flatten[array != self.neutralElem]
+        # self.pushDebug(str(div_arr))
         return self.filter_func(div_arr)
 
     def processAlgorithm(self,parameters,context,feedback):
@@ -2318,6 +2330,7 @@ class NbContactMedianDistrib(NbContactDistrib):
         nb_vals = len(classes)
         feedback.pushDebugInfo("nb_vals = " + str(nb_vals))
         neutralElem = 0
+        self.neutralElem = neutralElem
         feedback.pushDebugInfo("neutralElem = " + str(neutralElem))
         for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("class = " + str(c))
