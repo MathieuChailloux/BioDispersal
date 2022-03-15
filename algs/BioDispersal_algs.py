@@ -113,14 +113,14 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         LabelPatches(),
                         PatchSizeRaster(),
                         PatchAreaWindow(),
-                        PatchSizeDistrib(),
+                        # PatchSizeDistrib(),
                         SurfaceIndex(),
-                        AreaDistrib(),
+                        # AreaDistrib(),
                         MedianDistance(),
-                        MedianDistanceDistrib(),
-                        NbContactDistrib(),
+                        # MedianDistanceDistrib(),
+                        # NbContactDistrib(),
                         # MedianDistanceDistrib2(),
-                        NbContactMedianDistrib(),
+                        # NbContactMedianDistrib(),
                         NeighboursCount(),
                         RelativeSurface()]
         for a in self.alglist:
@@ -175,11 +175,16 @@ class AuxAlgorithm(qgsUtils.BaseProcessingAlgorithm):
         return self.tr("Other algorithms")
     def groupId(self):
         return 'misc'
-class IsolationAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
-        return self.tr("Patch indices")
+        return self.tr("Patch utils")
     def groupId(self):
-        return 'isolation'
+        return 'patch'
+class IndexAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def group(self):
+        return self.tr("Potential distribution index")
+    def groupId(self):
+        return 'index'
 class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
         return self.tr("Habitat qualification")
@@ -1412,7 +1417,7 @@ class AggregateCirctuitscapeResults(CircuitscapeAlgorithm):
     
         
 
-class DistanceToBorderVector(IsolationAlgorithm):
+class DistanceToBorderVector(PatchAlgorithm):
 
     ALG_NAME = 'distanceToBorderVector'
     
@@ -1460,7 +1465,7 @@ class DistanceToBorderVector(IsolationAlgorithm):
 
    
 
-class DistanceToBorderRaster(IsolationAlgorithm):
+class DistanceToBorderRaster(PatchAlgorithm):
 
     ALG_NAME = 'distanceToBorderRaster'
     
@@ -1527,7 +1532,7 @@ class DistanceToBorderRaster(IsolationAlgorithm):
         
    
 
-class LabelPatches(IsolationAlgorithm):
+class LabelPatches(PatchAlgorithm):
 
     ALG_NAME = 'labelPatches'
     
@@ -1576,7 +1581,7 @@ class LabelPatches(IsolationAlgorithm):
         return {self.OUTPUT : output}
     
 
-class PatchSizeRaster(IsolationAlgorithm):
+class PatchSizeRaster(PatchAlgorithm):
 
     ALG_NAME = 'patchSizeRaster'
     LABELLED = 'LABELLED'
@@ -1628,7 +1633,7 @@ class PatchSizeRaster(IsolationAlgorithm):
         return {self.OUTPUT : output}
         
 
-class NeighboursCount(IsolationAlgorithm):
+class NeighboursCount(PatchAlgorithm):
 
     ALG_NAME = 'neigboursCount'
     
@@ -1666,7 +1671,7 @@ class NeighboursCount(IsolationAlgorithm):
         return np.count_nonzero(array == cell_val) - 1
 
 
-class SlidingWindowCircle(IsolationAlgorithm):
+class SlidingWindowCircle(PatchAlgorithm):
     
     WINDOW_SIZE = 'WINDOW_SIZE'
     # METHOD = "METHOD"
@@ -2273,7 +2278,7 @@ class MedianDistanceDistrib2(MedianDistance):
             # nodata=self.out_nodata,type=gdal.GDT_UInt16)
         return { self.OUTPUT_FILE : self.output }
 
-class SurfaceIndex(SlidingWindowDistrib):
+class SurfaceIndex(IndexAlgorithm,SlidingWindowDistrib):
     
     ALG_NAME = 'surfaceIndex'
     INDEX = 'INDEX'
@@ -2736,40 +2741,66 @@ class RelativeSurface(QualifAlgorithm):
     def computeRelSurf(self,f):
         return f[self.sumField] / f.geometry().area()
         
-    # def processAlgorithm(self,parameters,context,feedback):
-        Parameters
-        # layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
-        # if layerA is None:
-            # raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
-        # layerB = self.parameterAsVectorLayer(parameters,self.LAYER_B,context)
-        # if layerB is None:
-            # raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
-        # outFields = QgsFields(layerA.fields())
-        # areaFieldName = "area"
-        # areaField = QgsField(areaFieldName, QVariant.Float)
-        # outFields.append(areaField)
-        # (sink, dest_id) = self.parameterAsSink(
-            # parameters,
-            # self.OUTPUT,
-            # context,
-            # outFields,
-            # layerA.wkbType(),
-            # layerA.sourceCrs()
-        # )
-        # nb_feats = layerA.featureCount()
-        # if nb_feats == 0:
-            # raise QgsProcessingException("No feature in layerA layer")
-        # progress_step = 100.0 / nb_feats
-        # curr_step = 0
-        # for f in layerA.getFeatures():
-            # outF = QgsFeature(f)
-            # outF[areaFieldName] = 0
-            # sink.addFeature(outF)
-        # curr_step += 1
-        # feedback.setProgress(int(curr_step * progress_step))
-        # return { self.OUTPUT : output } 
-        
     def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
+        if layerA is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        layerB = self.parameterAsVectorLayer(parameters,self.LAYER_B,context)
+        if layerB is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
+        outFields = QgsFields(layerA.fields())
+        areaFieldName = "area"
+        relSurfFieldName = "relSurface"
+        areaField = QgsField(areaFieldName, QVariant.Double)
+        relSurfField = QgsField(relSurfFieldName, QVariant.Double)
+        outFields.append(areaField)
+        outFields.append(relSurfField)
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            outFields,
+            layerA.wkbType(),
+            layerA.sourceCrs()
+        )
+        nb_feats = layerA.featureCount()
+        if nb_feats == 0:
+            raise QgsProcessingException("No feature in layerA layer")
+        progress_step = 100.0 / nb_feats
+        curr_step = 0
+        mf = QgsProcessingMultiStepFeedback(nb_feats,feedback)
+        for cpt, f in enumerate(layerA.getFeatures(),start=1):
+            f_geom = f.geometry()
+            f_area = f_geom.area()
+            area = 0
+            for b_feat in layerB.getFeatures():
+                b_geom = b_feat.geometry()
+                intersection = f_geom.intersection(b_geom)
+                area += intersection.area()
+            # f_id = f.id()
+            # layerA.selectByIds([f_id])
+            # suffix = "_" + str(f_id) + ".gpkg"
+            # selection = QgsProcessingUtils.generateTempFilename(
+                # "selection" + suffix)
+            # qgsTreatments.saveSelectedAttributes(joined_layer,
+                # layerA,context=context,feedback=mf)
+            # clipped_path = QgsProcessingUtils.generateTempFilename(
+                # "clipped" + suffix)
+            # qgsTreatments.applyVectorClip(layerB,selection,
+                # clipped_path,context=context,feedback=mf)
+            # clipped_layer = qgsUtils.loadVectorLayer(clipped)
+            outF = QgsFeature(outFields)
+            outF.setGeometry(f.geometry())
+            for field in f.fields().names():
+                outF[field] = f[field]
+            outF[areaFieldName] = area
+            outF[relSurfFieldName] = area / f_area
+            sink.addFeature(outF)
+            mf.setCurrentStep(cpt)
+        return { self.OUTPUT : dest_id } 
+        
+    def processAlgorithmOld(self,parameters,context,feedback):
         # Parameters
         layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
         if layerA is None:
