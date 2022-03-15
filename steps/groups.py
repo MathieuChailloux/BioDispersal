@@ -75,7 +75,7 @@ class GroupItem(abstract_model.DictItem):
                 "descr" : descr,
                 "geom" : geom}
         #assert(groups_fields == dict.keys())
-        cls(dict=dict)
+        return cls(dict=dict)
         
     def getName(self):
         return self.dict["name"]
@@ -244,9 +244,10 @@ class GroupConnector(abstract_model.AbstractConnector):
                 geom = "Raster"
             groupsItem = GroupItem.fromValues(name,descr,geom)
             return groupsItem
-        utils.user_error("No layer selected")
+        else:
+            utils.user_error("No layer selected")
         
-    def addItem(self,item):
+    def addItem(self):
         super().addItem()
         self.dlg.selectionGroupCombo.setCurrentIndex(len(self.model.items)-1)
         

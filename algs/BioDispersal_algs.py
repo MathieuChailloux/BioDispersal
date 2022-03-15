@@ -58,6 +58,7 @@ from qgis.core import (Qgis,
                        QgsProcessingException,
                        QgsProcessingProvider,
                        QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterDefinition,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterExtent,
@@ -112,7 +113,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
                         LabelPatches(),
                         PatchSizeRaster(),
                         PatchAreaWindow(),
-                        # AreaDistrib(),
+                        PatchSizeDistrib(),
+                        AreaDistrib(),
                         MedianDistance(),
                         MedianDistanceDistrib(),
                         NbContactDistrib(),
@@ -1778,9 +1780,35 @@ class SlidingWindowCircle(IsolationAlgorithm):
         
 
 class SlidingWindowDistrib(SlidingWindowCircle):
+
+    QUANTILE = 'QUANTILE'
+    FILTER_FUNC = 'FILTER_FUNC'
+    FUNCS = ['sum','nansum','nanmean']
+    filter_funcs = [np.sum,np.nansum,np.nanmean]
     
-    def initAlgorithm(self, classes=True, config=None, report_opt=True):
+    def initAlgorithm(self, classes=True, quant=False,
+            funcs=True, config=None, report_opt=True):
         SlidingWindowCircle.initAlgorithm(self,classes=True)
+        quantParam = QgsProcessingParameterNumber(
+            self.QUANTILE,
+            description = self.tr('Percentile'),
+            defaultValue=0.75)
+        funcParam = QgsProcessingParameterEnum(
+            self.FILTER_FUNC,
+            description = self.tr('Filter function'),
+            options=self.FUNCS,
+            defaultValue=0)
+        advancedParams = [quantParam,funcParam]
+        for param in advancedParams:
+            param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
+            self.addParameter(param)
+        
+    def parseParams(self,parameters,context,feedback,classes=True):
+        super().parseParams(parameters,context,feedback,classes=True)
+        self.quantile = self.parameterAsDouble(parameters,self.QUANTILE,context)
+        self.func_mode = self.parameterAsEnum(parameters,self.FILTER_FUNC,context)
+        self.filter_func = self.filter_funcs[self.func_mode]
+        self.filter_neutral = 0 if self.func_mode == 0 else math.nan
     
     def prepareClasses(self,classes,feedback,firstToEnd=True):
         feedback.pushDebugInfo("classes = " + str(classes))
@@ -1899,6 +1927,7 @@ class MedianDistance(SlidingWindowCircle):
             # self.pushDebug("cell_val = " + str(cell_val))
             dist_val = self.dist_array_flatten[array==cell_val]
             # self.pushDebug("dist_val = " + str(dist_val))
+            # val_median = np.nanmedian(dist_val)
             val_median = np.nanmedian(dist_val)
             res = val_median
         return res
@@ -1969,10 +1998,10 @@ class AreaDistrib(SlidingWindowDistrib):
     ALG_NAME = 'areaWindowDistrib'
     
     def displayName(self):
-        return self.tr("Area index")
+        return self.tr("Surfcace index")
         
     def shortHelpString(self):
-        return self.tr("Area index (sliding window distribution)")
+        return self.tr("Surface index (sliding window distribution)")
         
     # def icon(self):
         # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
@@ -2110,7 +2139,7 @@ class MedianDistanceDistrib2(MedianDistance):
         super().initAlgorithm(classes=True)
     
     def displayName(self):
-        return self.tr("Median distance (Distrib  2")
+        return self.tr("Distance (Statistics)")
         
     def shortHelpString(self):
         return self.tr("TODO")
@@ -2217,7 +2246,7 @@ class NbContactDistrib(SlidingWindowDistrib):
         for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("class = " + str(c))
             feedback.pushDebugInfo("cpt = " + str(cpt))
-            tmp_arr = nb_neighbours_arr.astype(np.float)
+            tmp_arr = nb_neighbours_arr.astype(np.float32)
             tmp_arr[array != c] = neutralElem
             tmp_arr[array==input_nodata] = math.nan
             feedback.pushDebugInfo("tmp_arr.dtype = " + str(tmp_arr.dtype))
@@ -2281,7 +2310,89 @@ class NbContactDistrib(SlidingWindowDistrib):
         cell_val = array[2]
         return np.count_nonzero(array == cell_val) - 1
 
+ 
+class PatchSizeDistrib(SlidingWindowDistrib):
+
+    ALG_NAME = 'PatchSizeDistrib'
+    
+    def initAlgorithm(self, report_opt=True):
+        SlidingWindowDistrib.initAlgorithm(self,classes=True)
         
+    def displayName(self):
+        return self.tr("Patch size (Distrib)")
+        
+    def shortHelpString(self):
+        return self.tr("Computes connexity index based on favoarbility classes and patch size inside specified sliding window")
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback,classes=True)
+        # neutralElem = math.nan if func_mode == 2 else 0
+        self.prepareWindow(feedback)
+        quantile = 1
+        # Retrieve classes and array
+        classes, array, input_nodata = qgsUtils.getRasterValsArrayND(str(self.input_path))
+        ncount_struct = ndimage.generate_binary_structure(2,1)
+        classes = self.prepareClasses(classes,feedback,firstToEnd=False)
+        # PatchAreaWindow
+        size_path = self.mkTmpPath("size.tif")
+        size_params = { PatchAreaWindow.INPUT : self.input,
+            PatchAreaWindow.WINDOW_SIZE : self.size,
+            PatchAreaWindow.OUTPUT : size_path }
+        processing.run("BioDispersal:" + PatchAreaWindow.ALG_NAME,
+            size_params,context=context,feedback=feedback)
+        size_classes, size_arr = qgsUtils.getRasterValsAndArray(size_path)
+        size_arr = size_arr.astype(np.float32)
+        size_arr[array==input_nodata] = math.nan
+        if self.DEBUG:
+            feedback.pushDebugInfo("size_arr = " + str(size_arr))
+            feedback.pushDebugInfo("size_arr.dtype = " + str(size_arr.dtype))
+            size_path = QgsProcessingUtils.generateTempFilename("size1.tif")
+            feedback.pushDebugInfo("size1_path = " + str(size_path))
+            qgsUtils.exportRaster(size_arr,self.input_path,size_path,
+                nodata=-1,type=gdal.GDT_Float32)
+        quants = {}
+        for c in classes:
+            q = np.nanquantile(size_arr[array==c],q=quantile)
+            quants[c] = q
+        feedback.pushDebugInfo("quants = " + str(quants))
+        size_arr[array==input_nodata] = 0
+        acc_q = 0
+        for c in classes:
+            acc_q += quants[c]
+            feedback.pushDebugInfo("acc_q = " + str(acc_q))
+            size_arr[array==c] += acc_q
+        if self.DEBUG:
+            feedback.pushDebugInfo("size_arr = " + str(size_arr))
+            feedback.pushDebugInfo("size_arr.dtype = " + str(size_arr.dtype))
+            size_path = QgsProcessingUtils.generateTempFilename("size2.tif")
+            feedback.pushDebugInfo("size2_path = " + str(size_path))
+            qgsUtils.exportRaster(size_arr,self.input_path,size_path,
+                nodata=-1,type=gdal.GDT_Float32)
+        # TODO
+        size_arr[array==input_nodata] = self.filter_neutral
+        res_arr = ndimage.generic_filter(size_arr,
+            self.filter_func,footprint=self.footprint,
+            mode="constant",cval=self.filter_neutral)
+        # Output
+        feedback.pushDebugInfo("out_nodata = " + str(self.out_nodata))
+        res_arr[array==input_nodata] = self.out_nodata
+        qgsUtils.exportRaster(res_arr,self.input_path,self.output,
+            nodata=self.out_nodata,type=gdal.GDT_Float32)
+        return { self.OUTPUT_FILE : self.output }
+    
+    def filter_func_sum(self,array):
+        # if self.DEBUG:
+            # self.feedback.pushDebugInfo("arrayFilt = " + str(array))
+        return np.nansum(array)
+    def filter_func_mean(self,array):
+        # if self.DEBUG:
+            # self.feedback.pushDebugInfo("arrayFilt = " + str(array))
+        return np.nanmean(array)
+                
+    def count_neighbours_4(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
+ 
 class NbContactMedianDistrib(NbContactDistrib):
 
     ALG_NAME = 'NbContactMedianDistrib'
@@ -2474,16 +2585,52 @@ class RelativeSurface(QualifAlgorithm):
                 self.LAYER_B,
                 description=self.tr('Layer B (relative surface layer)')))
         self.addParameter(
-            QgsProcessingParameterVectorDestination(
+            QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
                 self.tr("Output layer")))
+        # self.addParameter(
+            # QgsProcessingParameterVectorDestination(
+                # self.OUTPUT,
+                # self.tr("Output layer")))
                 
     def computeArea(self,f):
         return f.geometry().area()
     def computeRelSurf(self,f):
         return f[self.sumField] / f.geometry().area()
         
-                
+    # def processAlgorithm(self,parameters,context,feedback):
+        Parameters
+        # layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
+        # if layerA is None:
+            # raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        # layerB = self.parameterAsVectorLayer(parameters,self.LAYER_B,context)
+        # if layerB is None:
+            # raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
+        # outFields = QgsFields(layerA.fields())
+        # areaFieldName = "area"
+        # areaField = QgsField(areaFieldName, QVariant.Float)
+        # outFields.append(areaField)
+        # (sink, dest_id) = self.parameterAsSink(
+            # parameters,
+            # self.OUTPUT,
+            # context,
+            # outFields,
+            # layerA.wkbType(),
+            # layerA.sourceCrs()
+        # )
+        # nb_feats = layerA.featureCount()
+        # if nb_feats == 0:
+            # raise QgsProcessingException("No feature in layerA layer")
+        # progress_step = 100.0 / nb_feats
+        # curr_step = 0
+        # for f in layerA.getFeatures():
+            # outF = QgsFeature(f)
+            # outF[areaFieldName] = 0
+            # sink.addFeature(outF)
+        # curr_step += 1
+        # feedback.setProgress(int(curr_step * progress_step))
+        # return { self.OUTPUT : output } 
+        
     def processAlgorithm(self,parameters,context,feedback):
         # Parameters
         layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
@@ -2493,15 +2640,15 @@ class RelativeSurface(QualifAlgorithm):
         if layerB is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
         output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
-        # Processing : todo intersection
-        intersectedPath = QgsProcessingUtils.generateTempFilename('intersected.gpkg')
-        qgsTreatments.applyIntersection(layerA,layerB,intersectedPath,
+        # Processing : todo clip
+        clippedPath = QgsProcessingUtils.generateTempFilename('clipped.gpkg')
+        qgsTreatments.applyVectorClip(layerA,layerB,clippedPath,
             context=context,feedback=feedback)
-        qgsUtils.loadVectorLayer(intersectedPath,loadProject=True)
+        qgsUtils.loadVectorLayer(clippedPath,loadProject=True)
         # Computes new area
         areaField = 'area'
         areaPath = QgsProcessingUtils.generateTempFilename('area.gpkg')
-        qgsTreatments.fieldCalculator(intersectedPath,areaField,'$area',areaPath,
+        qgsTreatments.fieldCalculator(clippedPath,areaField,'$area',areaPath,
             context=context,feedback=feedback)
         # Join by loc summary
         joinedPath = QgsProcessingUtils.generateTempFilename('joined.gpkg')

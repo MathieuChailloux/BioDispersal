@@ -120,7 +120,7 @@ class ClassModel(abstract_model.DictModel):
         for i in self.items:
             if i.dict["name"] == name:
                 return i
-        None
+        return None
         
     def getClassesOfGroup(self,grp_name):
         class_items = [i for i in self.items if i.dict["group"] == grp_name]

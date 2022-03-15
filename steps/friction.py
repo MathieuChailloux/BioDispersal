@@ -79,40 +79,41 @@ class FrictionModel(ExtensiveTableModel):
     # Reload items of model to match current ClassModel.
     def reloadClasses(self):
         utils.debug("reloadClasses")
-        classes_to_delete = []
-        for item in self.items:
-            cls_name = item.dict[self.ROW_NAME]
-            cls_item = self.parentModel.classModel.getClassByName(cls_name)
-            if not cls_item:
-                classes_to_delete.append(cls_name)
-                utils.debug("Removing class " + str(cls_name))
-            else:
-                utils.debug("Class " + cls_name + " indeed exists")
-        self.items = [fr for fr in self.items if fr.dict[self.ROW_NAME] not in classes_to_delete]
-        self.layoutChanged.emit()
-        for cls_item in self.parentModel.classModel.items:
-            utils.debug("cls_item : " + str(cls_item.dict))
-            cls_name = cls_item.getName()
-            cls_code = cls_item.getCode()
-            cls_descr = cls_item.getDescr()
-            row_item = self.getRowByName(cls_name)
-            if row_item:
-                utils.debug("row_item : " + str(row_item.dict))
-                utils.debug("Class " + str(cls_name) + " already exists")
-                if row_item.dict[self.ROW_CODE] != cls_code:
-                    utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"
-                                + str(row_item.dict[self.ROW_CODE]) + " to class " + cls_name)
-                    row_item.dict[self.ROW_CODE] = cls_code
-                    self.layoutChanged.emit()
-                if cls_descr and row_item.dict[self.ROW_DESCR] != cls_descr:
-                    utils.debug("Reassigning descr '" + str(cls_descr) + "' instead of '"
-                                + str(row_item.dict[self.ROW_DESCR]) + " to class " + cls_name)
-                    row_item.dict[self.ROW_DESCR] = cls_descr
-                    self.layoutChanged.emit()
-            else:
-                utils.debug("Reloading class " + cls_name)
-                self.addRowItemFromBase(cls_item)
-                self.layoutChanged.emit()
+        super().reloadModel(self.parentModel.classModel.items)
+        # classes_to_delete = []
+        # for item in self.items:
+            # cls_name = item.dict[self.ROW_NAME]
+            # cls_item = self.parentModel.classModel.getClassByName(cls_name)
+            # if not cls_item:
+                # classes_to_delete.append(cls_name)
+                # utils.debug("Removing class " + str(cls_name))
+            # else:
+                # utils.debug("Class " + cls_name + " indeed exists")
+        # self.items = [fr for fr in self.items if fr.dict[self.ROW_NAME] not in classes_to_delete]
+        # self.layoutChanged.emit()
+        # for cls_item in self.parentModel.classModel.items:
+            # utils.debug("cls_item : " + str(cls_item.dict))
+            # cls_name = cls_item.getName()
+            # cls_code = cls_item.getCode()
+            # cls_descr = cls_item.getDescr()
+            # row_item = self.getRowByName(cls_name)
+            # if row_item:
+                # utils.debug("row_item : " + str(row_item.dict))
+                # utils.debug("Class " + str(cls_name) + " already exists")
+                # if row_item.dict[self.ROW_CODE] != cls_code:
+                    # utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"
+                                # + str(row_item.dict[self.ROW_CODE]) + " to class " + cls_name)
+                    # row_item.dict[self.ROW_CODE] = cls_code
+                    # self.layoutChanged.emit()
+                # if cls_descr and row_item.dict[self.ROW_DESCR] != cls_descr:
+                    # utils.debug("Reassigning descr '" + str(cls_descr) + "' instead of '"
+                                # + str(row_item.dict[self.ROW_DESCR]) + " to class " + cls_name)
+                    # row_item.dict[self.ROW_DESCR] = cls_descr
+                    # self.layoutChanged.emit()
+            # else:
+                # utils.debug("Reloading class " + cls_name)
+                # self.addRowItemFromBase(cls_item)
+                # self.layoutChanged.emit()
                 
     # Computes friction layer for each item.
     def applyItemsWithContext(self,context,feedback,indexes):
@@ -187,7 +188,7 @@ class FrictionConnector(AbstractConnector):
     # Updates model with items loaded from file 'fname'
     def loadCSV(self,fname):
         utils.checkFileExists(fname)
-        self.model.fromCSVUpdate(fname)
+        self.model.fromCSV(fname)
         utils.info("Friction loaded from '" + str(fname))
         
     # Opens file dialog and loads model from selected CSV file.
