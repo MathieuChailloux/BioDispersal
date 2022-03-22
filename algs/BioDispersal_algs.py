@@ -93,38 +93,6 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
     NAME = "BioDispersal"
 
     def __init__(self):
-        self.alglist = [SelectVExprAlg(),
-                        SelectVFieldAlg(),
-                        WeightingBasics(),
-                        WeightingByIntervals(),
-                        WeightingByDistance(),
-                        RasterSelectionByValue(),
-                        ExtractPatchesR(),
-                        # BioDispersalAlgorithm(),
-                        RasterizeFixAllTouch(),
-                        ExportToGraphab(),
-                        ExportPatchesToCircuitscape(),
-                        ExportFrictionToCircuitscape(),
-                        RandomStartPointsCircuitscape(),
-                        AggregateCirctuitscapeCurrentMaps(),
-                        AggregateCirctuitscapeResults(),
-                        ChangeNoDataVal(),
-                        DistanceToBorderRaster(),
-                        LabelPatches(),
-                        PatchSizeRaster(),
-                        PatchAreaWindow(),
-                        # PatchSizeDistrib(),
-                        SurfaceIndex(),
-                        # AreaDistrib(),
-                        MedianDistance(),
-                        # MedianDistanceDistrib(),
-                        # NbContactDistrib(),
-                        # MedianDistanceDistrib2(),
-                        # NbContactMedianDistrib(),
-                        NeighboursCount(),
-                        RelativeSurface()]
-        for a in self.alglist:
-            a.initAlgorithm()
         super().__init__()
         
     def unload(self):
@@ -143,8 +111,38 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
         icon_path = os.path.join(os.path.dirname(__file__), "..", "icons", "cerf.png")
         return QIcon(icon_path)
 
-    def loadAlgorithms(self):
-        for a in self.alglist:
+    def loadAlgorithms(self):        
+        alglist = [SelectVExprAlg(),
+            SelectVFieldAlg(),
+            WeightingBasics(),
+            WeightingByIntervals(),
+            WeightingByDistance(),
+            RasterSelectionByValue(),
+            ExtractPatchesR(),
+            # BioDispersalAlgorithm(),
+            RasterizeFixAllTouch(),
+            ExportToGraphab(),
+            ExportPatchesToCircuitscape(),
+            ExportFrictionToCircuitscape(),
+            RandomStartPointsCircuitscape(),
+            AggregateCirctuitscapeCurrentMaps(),
+            AggregateCirctuitscapeResults(),
+            ChangeNoDataVal(),
+            DistanceToBorderRaster(),
+            LabelPatches(),
+            PatchSizeRaster(),
+            PatchAreaWindow(),
+            # PatchSizeDistrib(),
+            SurfaceIndex(),
+            # AreaDistrib(),
+            MedianDistance(),
+            # MedianDistanceDistrib(),
+            # NbContactDistrib(),
+            # MedianDistanceDistrib2(),
+            # NbContactMedianDistrib(),
+            NeighboursCount(),
+            RelativeSurface()]
+        for a in alglist:
             self.addAlgorithm(a)
             
     def supportedOutputRasterLayerExtensions(self):
