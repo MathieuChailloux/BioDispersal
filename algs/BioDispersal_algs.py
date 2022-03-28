@@ -136,7 +136,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             SurfaceIndex(),
             # AreaDistrib(),
             MedianDistance(),
-            # MedianDistanceDistrib(),
+            MedianDistanceDistrib(),
             # NbContactDistrib(),
             # MedianDistanceDistrib2(),
             # NbContactMedianDistrib(),
@@ -178,6 +178,14 @@ class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
         return self.tr("Patch utils")
     def groupId(self):
         return 'patch'
+    def debugRaster(self,feedback,arr,inputPath,outName,
+            nodata=-9999,type=gdal.GDT_Float32):
+        if self.DEBUG:
+            feedback.pushDebugInfo(outName + " = " + str(arr))
+            feedback.pushDebugInfo(outName + ".dtype = " + str(arr.dtype))
+            outPath = QgsProcessingUtils.generateTempFilename(outName + ".tif")
+            feedback.pushDebugInfo(outName + "path = " + str(outPath))
+            qgsUtils.exportRaster(arr,inputPath,outPath,nodata=nodata,type=type)
 class IndexAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
         return self.tr("Potential distribution index")
@@ -880,10 +888,10 @@ class ExtractPatchesR(AuxAlgorithm):
             classes, array = qgsUtils.getRasterValsAndArray(selection_path)
             struct = ndimage.generate_binary_structure(2,1)
             labeled_array, nb_patches = ndimage.label(array,struct)
-            sizes = ndimage.sum(array,labeled_array,range(1,nb_patches+1))
+            medians = ndimage.sum(array,labeled_array,range(1,nb_patches+1))
             # x_res = selection.rasterUnitsPerPixelX()
             # y_res = selection.rasterUnitsPerPixelY()
-            indices = np.where(sizes > surface)[0] + 1
+            indices = np.where(medians > surface)[0] + 1
             new_array = np.zeros(labeled_array.shape)
             for i in indices:
                 new_array[labeled_array == i] = 1
@@ -1585,10 +1593,10 @@ class PatchSizeRaster(PatchAlgorithm):
     LABELLED = 'LABELLED'
     
     def displayName(self):
-        return self.tr("Patch size")
+        return self.tr("Patch median")
         
     def shortHelpString(self):
-        return self.tr("Computes patch size (pixel value = pixel patch size)")
+        return self.tr("Computes patch median (pixel value = pixel patch median)")
         
     def initAlgorithm(self, config=None, report_opt=True):
         self.addParameter(QgsProcessingParameterRasterLayer(
@@ -1691,7 +1699,7 @@ class SlidingWindowCircle(PatchAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.WINDOW_SIZE,
-                description = self.tr('Window size (pixels)'),
+                description = self.tr('Window median (pixels)'),
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=5))
         # self.addParameter(
@@ -1710,7 +1718,8 @@ class SlidingWindowCircle(PatchAlgorithm):
                 QgsProcessingParameterNumber(
                     self.CLASS,
                     description = self.tr('Class'),
-                    type=QgsProcessingParameterNumber.Integer))
+                    type=QgsProcessingParameterNumber.Integer,
+                    optional=True))
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.DEBUG_FIELDNAME,
@@ -1732,7 +1741,7 @@ class SlidingWindowCircle(PatchAlgorithm):
         if self.input is None:
             raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
         self.input_path = qgsUtils.pathOfLayer(self.input)
-        self.size = self.parameterAsInt(parameters,self.WINDOW_SIZE,context)
+        self.median = self.parameterAsInt(parameters,self.WINDOW_SIZE,context)
         # mode = self.m[self.parameterAsEnum(parameters, self.MODE, context)]
         if classes:
             self.classes_order = self.parameterAsString(parameters,self.CLASSES_ORDER,context)
@@ -1752,22 +1761,22 @@ class SlidingWindowCircle(PatchAlgorithm):
         self.out_nodata = -1
         
     def prepareWindow(self,feedback=None):        
-        self.array_size = self.size * 2 + 1
-        self.val_idx = int((self.array_size + 1) / 2)
+        self.array_median = self.median * 2 + 1
+        self.val_idx = int((self.array_median + 1) / 2)
         self.pushDebug("val_idx = " + str(self.val_idx)) 
-        self.dist_shape = (self.array_size, self.array_size)
+        self.dist_shape = (self.array_median, self.array_median)
         self.pushDebug("dist_shape = " + str(self.dist_shape)) 
         self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
         self.pushDebug("dist_array = " + str(self.dist_array))
         self.footprint = np.ones(self.dist_shape,dtype='bool')
         self.pushDebug("foot_shape = " + str(self.footprint.shape))
-        self.footprint[self.dist_array > self.size] = False
+        self.footprint[self.dist_array > self.median] = False
         self.pushDebug("footprint = " + str(self.footprint))
-        self.dist_array2 = self.dist_array[self.dist_array <= self.size]
+        self.dist_array2 = self.dist_array[self.dist_array <= self.median]
         self.pushDebug("dist_array2 = " + str(self.dist_array2))
         nb_elem_footprint = np.count_nonzero(self.footprint != False)
         self.val_idx_footprint = int(nb_elem_footprint/2)
-        self.dist_array[self.dist_array > self.size] = math.nan
+        self.dist_array[self.dist_array > self.median] = math.nan
         self.pushDebug("dist_array = " + str(self.dist_array))
         self.dist_array_flatten = self.dist_array2.flatten()
         self.pushDebug("self.dist_array_flatten = " + str(self.dist_array_flatten))
@@ -1776,7 +1785,7 @@ class SlidingWindowCircle(PatchAlgorithm):
     def distFromCenter(self,X,Y):
         self.pushDebug("X = " + str(X))
         self.pushDebug("Y = " + str(Y))
-        return np.sqrt(((X.astype(int) - self.size) ** 2) + ((Y.astype(int) - self.size) ** 2))
+        return np.sqrt(((X.astype(int) - self.median) ** 2) + ((Y.astype(int) - self.median) ** 2))
 
     @abstractmethod
     def filter_func(self,array):
@@ -1860,13 +1869,15 @@ class SlidingWindowDistrib(SlidingWindowCircle):
             acc_q += quants[c]
             feedback.pushDebugInfo("acc_q = " + str(acc_q))
             self.preparedArr[self.array==c] += acc_q
-        if self.DEBUG:
-            feedback.pushDebugInfo("preparedArr = " + str(self.preparedArr))
-            feedback.pushDebugInfo("preparedArr.dtype = " + str(self.preparedArr.dtype))
-            path = QgsProcessingUtils.generateTempFilename("prepared2.tif")
-            feedback.pushDebugInfo("prepared2 = " + str(size_path))
-            qgsUtils.exportRaster(self.preparedArr,self.input_path,path,
-                nodata=-1,type=gdal.GDT_Float32)
+        self.debugRaster(feedback,self.preparedArr,self.input_path,"prepared",
+            nodata=-1,type=gdal.GDT_Float32)
+        # if self.DEBUG:
+            # feedback.pushDebugInfo("preparedArr = " + str(self.preparedArr))
+            # feedback.pushDebugInfo("preparedArr.dtype = " + str(self.preparedArr.dtype))
+            # path = QgsProcessingUtils.generateTempFilename("prepared2.tif")
+            # feedback.pushDebugInfo("prepared2 = " + str(median_path))
+            # qgsUtils.exportRaster(self.preparedArr,self.input_path,path,
+                # nodata=-1,type=gdal.GDT_Float32)
         # Agregates sliding window
         self.preparedArr[self.array==self.inNodata] = self.filter_neutral
         if self.idx_func_mode in [0, 2]:
@@ -2030,7 +2041,7 @@ class PatchAreaWindow(SlidingWindowCircle):
     ALG_NAME = 'patchAreaWindow'
     
     def displayName(self):
-        return self.tr("Patch size (Sliding Window)")
+        return self.tr("Patch median (Sliding Window)")
         
     def shortHelpString(self):
         return self.tr("Patch area inside sliding window")
@@ -2131,7 +2142,7 @@ class AreaDistrib(SlidingWindowDistrib):
                 
 
 
-class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
+class MedianDistanceDistrib(IndexAlgorithm,SlidingWindowDistrib):
 
     ALG_NAME = 'medianDistanceDistrib'
     
@@ -2139,10 +2150,10 @@ class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
         SlidingWindowDistrib.initAlgorithm(self,classes=True)
     
     def displayName(self):
-        return self.tr("Median distance (Distrib)")
+        return self.tr("Distance index")
         
     def shortHelpString(self):
-        return self.tr("Computes median index. Index is obtained by redistributing median distances of each class value.")
+        return self.tr("Computes median distance index. Index is obtained by redistributing median distances of each class value.")
     
     def filter_func(self,array):
         # self.pushDebug("array = " + str(array))
@@ -2150,18 +2161,28 @@ class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
         dist_val = self.dist_array_flatten[array==self.currVal]
         # self.pushDebug("dist_val = " + str(dist_val))
         val_median = np.nanmedian(dist_val)
-        # res = self.size if math.isnan(val_median) else self.size - val_median
+        # res = self.median if math.isnan(val_median) else self.median - val_median
         # return res
-        return self.size - val_median
+        return self.median - val_median
         
-    def processDistrib(self,array,classes,feedback,classArray=None,neutralElem=math.nan):
-        return SlidingWindowDistrib.processDistrib(self,array,
-            classes,feedback,classArray=classArray,neutralElem=neutralElem)
+    def prepareArray(self,context,feedback):
+        median_path = self.mkTmpPath("median.tif")
+        median_params = { MedianDistance.INPUT : self.input,
+            MedianDistance.WINDOW_SIZE : self.median,
+            MedianDistance.OUTPUT : median_path }
+        processing.run("BioDispersal:" + MedianDistance.ALG_NAME,
+            median_params,context=context,feedback=feedback)
+        median_classes, median_arr = qgsUtils.getRasterValsAndArray(median_path)
+        return median_arr
+        
+    # def processDistrib(self,array,classes,feedback,classArray=None,neutralElem=math.nan):
+        # return SlidingWindowDistrib.processDistrib(self,array,
+            # classes,feedback,classArray=classArray,neutralElem=neutralElem)
         
     # def processAlgorithm(self,parameters,context,feedback):
         # return SlidingWindowDistrib.processAlgorithm(self,parameters,context,feedback)
 
-    def processAlgorithm(self,parameters,context,feedback):
+    def processAlgorithmHidden(self,parameters,context,feedback):
         self.parseParams(parameters,context,feedback,classes=True)
         self.prepareWindow(feedback)
         classes, array, input_nodata = qgsUtils.getRasterValsArrayND(str(self.input_path))
@@ -2193,7 +2214,7 @@ class MedianDistanceDistrib(SlidingWindowDistrib,MedianDistance):
             q3 = np.nanquantile(median_arr,q=0.75)
             feedback.pushDebugInfo("q3 = " + str(q3))
             # median_arr[array==input_nodata] = 0
-            median_arr[np.isnan(median_arr)] = self.size
+            median_arr[np.isnan(median_arr)] = self.median
             self.pushDebug("median_arr nonan = " + str(median_arr))
             if cpt > 1:
                 median_arr = np.add(median_arr,acc_q3)
@@ -2290,7 +2311,7 @@ class SurfaceIndex(IndexAlgorithm,SlidingWindowDistrib):
     def initAlgorithm(self, classes=True, quant=False,
             funcs=True, config=None, report_opt=True):
         super().initAlgorithm()
-        self.index_vals = [self.tr('Patch size'), self.tr('Number of contacts')]
+        self.index_vals = [self.tr('Patch median'), self.tr('Number of contacts')]
         indexParam = QgsProcessingParameterEnum(
             self.INDEX,
             description = self.tr('Index'),
@@ -2311,14 +2332,14 @@ class SurfaceIndex(IndexAlgorithm,SlidingWindowDistrib):
             assert(False)
         
     def preparePatchSize(self,context,feedback):
-        size_path = self.mkTmpPath("size.tif")
-        size_params = { PatchAreaWindow.INPUT : self.input,
-            PatchAreaWindow.WINDOW_SIZE : self.size,
-            PatchAreaWindow.OUTPUT : size_path }
+        median_path = self.mkTmpPath("median.tif")
+        median_params = { PatchAreaWindow.INPUT : self.input,
+            PatchAreaWindow.WINDOW_SIZE : self.median,
+            PatchAreaWindow.OUTPUT : median_path }
         processing.run("BioDispersal:" + PatchAreaWindow.ALG_NAME,
-            size_params,context=context,feedback=feedback)
-        size_classes, size_arr = qgsUtils.getRasterValsAndArray(size_path)
-        return size_arr
+            median_params,context=context,feedback=feedback)
+        median_classes, median_arr = qgsUtils.getRasterValsAndArray(median_path)
+        return median_arr
         
     def prepareNbContacts(self,context,feedback):
         ncount_struct = ndimage.generate_binary_structure(2,1)
@@ -2462,17 +2483,17 @@ class PatchSizeDistrib(SlidingWindowDistrib):
         return self.tr("Patch size (Distrib)")
         
     def shortHelpString(self):
-        return self.tr("Computes connexity index based on favoarbility classes and patch size inside specified sliding window")
+        return self.tr("Computes connexity index based on favoarbility classes and patch median inside specified sliding window")
         
     def prepareArray(self,context,feedback):
-        size_path = self.mkTmpPath("size.tif")
-        size_params = { PatchAreaWindow.INPUT : self.input,
-            PatchAreaWindow.WINDOW_SIZE : self.size,
-            PatchAreaWindow.OUTPUT : size_path }
+        median_path = self.mkTmpPath("median.tif")
+        median_params = { PatchAreaWindow.INPUT : self.input,
+            PatchAreaWindow.WINDOW_SIZE : self.median,
+            PatchAreaWindow.OUTPUT : median_path }
         processing.run("BioDispersal:" + PatchAreaWindow.ALG_NAME,
-            size_params,context=context,feedback=feedback)
-        size_classes, size_arr = qgsUtils.getRasterValsAndArray(size_path)
-        return size_arr
+            median_params,context=context,feedback=feedback)
+        median_classes, median_arr = qgsUtils.getRasterValsAndArray(median_path)
+        return median_arr
         
     def processAlgorithmHidden(self,parameters,context,feedback):
         self.parseParams(parameters,context,feedback,classes=True)
@@ -2484,43 +2505,33 @@ class PatchSizeDistrib(SlidingWindowDistrib):
         ncount_struct = ndimage.generate_binary_structure(2,1)
         classes = self.prepareClasses(classes,feedback,firstToEnd=False)
         # PatchAreaWindow
-        size_path = self.mkTmpPath("size.tif")
-        size_params = { PatchAreaWindow.INPUT : self.input,
-            PatchAreaWindow.WINDOW_SIZE : self.size,
-            PatchAreaWindow.OUTPUT : size_path }
+        median_path = self.mkTmpPath("median.tif")
+        median_params = { PatchAreaWindow.INPUT : self.input,
+            PatchAreaWindow.WINDOW_SIZE : self.median,
+            PatchAreaWindow.OUTPUT : median_path }
         processing.run("BioDispersal:" + PatchAreaWindow.ALG_NAME,
-            size_params,context=context,feedback=feedback)
-        size_classes, size_arr = qgsUtils.getRasterValsAndArray(size_path)
-        size_arr = size_arr.astype(np.float32)
-        size_arr[array==input_nodata] = math.nan
-        if self.DEBUG:
-            feedback.pushDebugInfo("size_arr = " + str(size_arr))
-            feedback.pushDebugInfo("size_arr.dtype = " + str(size_arr.dtype))
-            size_path = QgsProcessingUtils.generateTempFilename("size1.tif")
-            feedback.pushDebugInfo("size1_path = " + str(size_path))
-            qgsUtils.exportRaster(size_arr,self.input_path,size_path,
-                nodata=-1,type=gdal.GDT_Float32)
+            median_params,context=context,feedback=feedback)
+        median_classes, median_arr = qgsUtils.getRasterValsAndArray(median_path)
+        median_arr = median_arr.astype(np.float32)
+        median_arr[array==input_nodata] = math.nan
+        self.debugRaster(feedback,median_arr,self.input_path,"median1",
+            nodata=-1,type=gdal.GDT_Float32)
         quants = {}
         for c in classes:
-            q = np.nanquantile(size_arr[array==c],q=quantile)
+            q = np.nanquantile(median_arr[array==c],q=quantile)
             quants[c] = q
         feedback.pushDebugInfo("quants = " + str(quants))
-        size_arr[array==input_nodata] = 0
+        median_arr[array==input_nodata] = 0
         acc_q = 0
         for c in classes:
             acc_q += quants[c]
             feedback.pushDebugInfo("acc_q = " + str(acc_q))
-            size_arr[array==c] += acc_q
-        if self.DEBUG:
-            feedback.pushDebugInfo("size_arr = " + str(size_arr))
-            feedback.pushDebugInfo("size_arr.dtype = " + str(size_arr.dtype))
-            size_path = QgsProcessingUtils.generateTempFilename("size2.tif")
-            feedback.pushDebugInfo("size2_path = " + str(size_path))
-            qgsUtils.exportRaster(size_arr,self.input_path,size_path,
-                nodata=-1,type=gdal.GDT_Float32)
+            median_arr[array==c] += acc_q
+        self.debugRaster(feedback,median_arr,self.input_path,"median2",
+            nodata=-1,type=gdal.GDT_Float32)
         # TODO
-        size_arr[array==input_nodata] = self.filter_neutral
-        res_arr = ndimage.generic_filter(size_arr,
+        median_arr[array==input_nodata] = self.filter_neutral
+        res_arr = ndimage.generic_filter(median_arr,
             self.filter_func,footprint=self.footprint,
             mode="constant",cval=self.filter_neutral)
         # Output
@@ -2550,7 +2561,7 @@ class NbContactMedianDistrib(NbContactDistrib):
         dist_val = self.dist_array_flatten[array==self.currVal]
         # self.pushDebug("dist_val = " + str(dist_val))
         val_median = np.nanmedian(dist_val)
-        # res = self.size if math.isnan(val_median) else self.size - val_median
+        # res = self.median if math.isnan(val_median) else self.median - val_median
         # return res
         return val_median
         

@@ -1,13 +1,21 @@
-  <head>
+<head>
     <meta name="qrichtext" content="1" />
     <style type="text/css">p, li { white-space: pre-wrap;}</style>
   </head>
-  <body style=" font-family:'MS Shell Dlg 2';font-size:8.25pt;font-weight:400;font-style:normal;">
+  <body style=" font-family:'MS Shell Dlg 2';font-size:8pt;font-weight:400;font-style:normal;">
     <p><span style=" font-size:14pt;font-weight:600;">Friction </span></p>
-    <br />
     <p style= " font-size:8pt;">
- For each class and subnetwork, a friction coefficient must be set (positive integer).
- <br/>
+To each land use class and subnetwork is associated a numeric value (no value means that matching class is ignored).
+<br/>
+This numeric value represents either a friction coefficient or a favorability class.
+<p><span style=" font-size:10pt;font-weight:600;">Coefficient </span></p>
+The classic method is to assign a friction coefficient modelizing the effective resistance of matching habitat to matching subnetwork species dispersal.
+
+<p><span style=" font-size:10pt;font-weight:600;">Classes de favorabilit&eacute; </span></p>
+Favorabilty classes allows user to classify land use according to its quality without giving a quantified numeric value. Specified value then represents land use favorability class (for instance from 1 for unfavourable to 5 for very favourable).
+<br/>
+Once favorability layer is created, user can compute potential distribution index to get a first look to study area without specifying coefficients (index is available in BioDispersal processing toolbox, see LINK for a step by step tutorial).
+<p><span style=" font-size:10pt;font-weight:600;">Fichier CSV </span></p>
  Coefficients can be imported from and exported to a CSV file.
     </p>
   </body>
