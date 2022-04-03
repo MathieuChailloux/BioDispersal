@@ -223,23 +223,24 @@ class FrictionConnector(AbstractConnector):
             utils.user_error(self.tr("Unexpected mode : ") + str(mode))
             
     def switchCustomMode(self):
-        self.dlg.frictionClassFrame.setEnabled(False)
-        self.dlg.frictionMinMaxFrame.setEnabled(False)
+        # self.dlg.frictionClassFrame.setEnabled(False)
+        # self.dlg.frictionMinMaxFrame.setEnabled(False)
         self.setValues(None)
             
     def switchExpMode(self):
-        self.dlg.frictionClassFrame.setEnabled(True)
-        self.dlg.frictionMinMaxFrame.setEnabled(True)
-        nbClass = self.getNbClasses()
-        minVal = self.dlg.frictionMinVal.value()
-        maxVal = self.dlg.frictionMaxVal.value()
+        # self.dlg.frictionClassFrame.setEnabled(True)
+        # self.dlg.frictionMinMaxFrame.setEnabled(True)
+        # nbClass = self.getNbClasses()
+        # minVal = self.dlg.frictionMinVal.value()
+        # maxVal = self.dlg.frictionMaxVal.value()
         self.setValues(None)
             
     def switchConnexMode(self):
-        self.dlg.frictionClassFrame.setEnabled(True)
-        self.dlg.frictionMinMaxFrame.setEnabled(False)
-        nbClass = self.getNbClasses()
-        self.setValues(range(1,nbClass))
+        # self.dlg.frictionClassFrame.setEnabled(True)
+        # self.dlg.frictionMinMaxFrame.setEnabled(False)
+        # nbClass = self.getNbClasses()
+        # self.setValues(range(1,nbClass))
+        pass
         
     def getNbClasses(self):
         return self.dlg.frictionNbClass.value()
