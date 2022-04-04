@@ -2258,7 +2258,7 @@ class MedianDistance(SlidingWindowCircle):
         return res
         
     def computeMedian(self,arr):
-        median_arr = ndimage.generic_filter(array,
+        median_arr = ndimage.generic_filter(arr,
             self.filter_func,footprint=self.footprint,
             mode="constant",cval=0,output=np.float32)
         return median_arr
@@ -2393,7 +2393,8 @@ class MedianDistanceDistrib(IndexAlgorithm,MedianDistance):
     ALG_NAME = 'medianDistanceDistrib'
     
     def initAlgorithm(self, report_opt=True):
-        MedianDistance.initAlgorithm(self,quantParam=True)
+        SlidingWindowCircle.initAlgorithm(self,classesParam=True,
+            quantParam=True,finalFuncParam=True)
     
     def displayName(self):
         return self.tr("Distance index")
@@ -2474,69 +2475,77 @@ class MedianDistanceDistrib(IndexAlgorithm,MedianDistance):
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         return { self.OUTPUT_FILE : self.output }
         
-class MedianDistanceDistrib2(MedianDistance):
+class MedianDistanceDistrib2(IndexAlgorithm,MedianDistanceDistrib):
 
-    ALG_NAME = 'medianDistanceDistrib2'
     
     def initAlgorithm(self, report_opt=True):
-        super().initAlgorithm(classesParam=True)
+        MedianDistanceDistrib.initAlgorithm(self)
     
     def displayName(self):
-        return self.tr("Distance (Statistics)")
+        return self.tr("Distance index (2)")
         
     def shortHelpString(self):
-        return self.tr("TODO")
+        return self.tr("Computes median distance index. Index is obtained by redistributing median distances of each class value.")
+    
+    def filter_func(self,array):
+        dist_val = self.dist_array_flatten[array==self.currVal]
+        val_median = np.nanmedian(dist_val)
+        return self.size - val_median
         
-    def prepareClasses(self,classes,feedback):
-        feedback.pushDebugInfo("classes = " + str(classes))
-        excludeClasses = [c for c in classes if c not in self.classes_ordered]
-        for c in excludeClasses:
-            if c not in self.classes_ordered:
-                feedback.pushWarning("Class " + str(c) + " order not specified")
-        keepClasses = [c for c in self.classes_ordered if c in classes]
-        feedback.pushDebugInfo("classes = " + str(keepClasses))
-        keepClasses = keepClasses[1:] + keepClasses[:1]
-        feedback.pushDebugInfo("classes = " + str(keepClasses))
-        return keepClasses
-        
-    # def icon(self):
-        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
-
+    def prepareArray(self,context,feedback):
+        median_path = self.mkTmpPath("median.tif")
+        median_params = { QuantileDistance.INPUT : self.input,
+            QuantileDistance.WINDOW_SIZE : self.size,
+            QuantileDistance.OUTPUT : median_path }
+        processing.run("BioDispersal:" + QuantileDistance.ALG_NAME,
+            median_params,context=context,feedback=feedback)
+        median_classes, median_arr = qgsUtils.getRasterValsAndArray(median_path)
+        return median_arr
+                
     def processAlgorithm(self,parameters,context,feedback):
         self.parseParams(parameters,context,feedback)
         self.prepareWindow(feedback)
-        # Retrieve classes and array
-        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
-        classes = self.prepareClasses(classes,feedback)
+        classes, array, input_nodata = qgsUtils.getRasterValsArrayND(str(self.input_path))
+        classes = self.prepareClasses(classes,feedback,firstToEnd=True)
         feedback.pushDebugInfo("classes = " + str(classes))
         self.nb_vals = len(classes)
         feedback.pushDebugInfo("array shape = " + str(array.shape))
-        # Main loop
         acc_arr = np.zeros(array.shape)
-        curr_q3 = 0
+        acc_quantile = 0
         for cpt, c in enumerate(classes,start=1):
             feedback.pushDebugInfo("class = " + str(c))
             feedback.pushDebugInfo("cpt = " + str(cpt))
-            tmp_arr = np.copy(array)
-            tmp_arr[array != c] = -1
-            median_arr = ndimage.generic_filter(tmp_arr,
-                self.add_func,footprint=self.footprint,
-                mode="constant",cval=math.nan,output=np.float32)
-            feedback.pushDebugInfo("median_arr = " + str(median_arr))
+            # tmp_arr = np.copy(array)
+            # tmp_arr[array != c] = -1
+            self.currVal = c
+            self.classParam = c
+            median_arr = self.computeMedian(array)
+            self.pushDebug("median_arr = " + str(median_arr))
             feedback.pushDebugInfo("median_arr.dtype = " + str(median_arr.dtype))
+            self.debugRaster(feedback,median_arr,self.input_path,"median" + str(c),
+                nodata=-1,type=gdal.GDT_Float32)
+            median_arr[array==input_nodata] = math.nan
+            quantile = np.nanquantile(median_arr,q=self.quantile)
+            feedback.pushDebugInfo("quantile = " + str(quantile))
+            # median_arr[array==input_nodata] = 0
+            # median_arr[np.isnan(median_arr)] = self.size
+            acc_arr = np.add(median_arr,acc_arr)
+            median_arr[np.isnan(median_arr)] = 0
+            self.pushDebug("median_arr nonan = " + str(median_arr))
             if cpt > 1:
-                median_arr = np.add(median_arr,curr_q3)
+                median_arr = np.add(median_arr,acc_quantile)
             if cpt == self.nb_vals:
-                acc_arr /= median_arr
+                acc_arr = acc_arr / median_arr
+                # acc_arr = median_arr / acc_arr
             else:
-                curr_q3 = np.quantile(median_arr,q=0.75)
-                feedback.pushDebugInfo("curr_q3 = " + str(curr_q3))
-                acc_arr += median_arr
-        # Output
+                # acc_arr = np.add(acc_arr,median_arr)
+                acc_quantile += quantile
+                feedback.pushDebugInfo("acc_quantile = " + str(acc_quantile))
+            self.pushDebug("acc_arr = " + str(acc_arr))
+        acc_arr[array==input_nodata] = self.out_nodata
+        self.pushDebug("acc_arr = " + str(acc_arr))
         qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
-        # qgsUtils.exportRaster(result,self.input_path,output,
-            # nodata=self.out_nodata,type=gdal.GDT_UInt16)
         return { self.OUTPUT_FILE : self.output }
 
 class SurfaceIndex(IndexAlgorithm,SlidingWindowCircle):
