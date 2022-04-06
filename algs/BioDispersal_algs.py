@@ -134,10 +134,12 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             PatchAreaWindow(),
             # PatchSizeDistrib(),
             SurfaceIndex(),
+            SurfaceIndex2(),
             # AreaDistrib(),
             QuantileDistance(),
             MedianDistance(),
             MedianDistanceDistrib(),
+            ConnexityIndex(),
             # NbContactDistrib(),
             # MedianDistanceDistrib2(),
             # NbContactMedianDistrib(),
@@ -1851,6 +1853,9 @@ class SlidingWindowCircle(PatchAlgorithm):
         self.pushDebug("dist_array = " + str(self.dist_array))
         self.dist_array_flatten = self.dist_array2.flatten()
         self.pushDebug("self.dist_array_flatten = " + str(self.dist_array_flatten))
+        # Distance rate
+        self.dist_rate_arr_flatten = (self.size - self.dist_array_flatten) / self.size
+        self.pushDebug("dist_rate_arr_flatten = " + str(self.dist_rate_arr_flatten))
         # Computing immediate neighbours (4-connexity)
                     
     def distFromCenter(self,X,Y):
@@ -2193,8 +2198,8 @@ class QuantileDistance(SlidingWindowCircle):
             # self.pushDebug("cell_val = " + str(cell_val))
             dist_val = self.dist_array_flatten[array==cell_val]
             # self.pushDebug("dist_val = " + str(dist_val))
-            # val_median = np.nanmedian(dist_val)
-            val_quantile = np.nanquantile(dist_val,self.quantile)
+            # val_median = np.nanp.nanquantile(dist_val,self.quantile)nmedian(dist_val)
+            val_quantile = np.nanp.nanquantile(dist_val,self.quantile)
             res = val_quantile
         return res
         
@@ -2474,12 +2479,12 @@ class MedianDistanceDistrib(IndexAlgorithm,MedianDistance):
         qgsUtils.exportRaster(acc_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         return { self.OUTPUT_FILE : self.output }
-        
-class MedianDistanceDistrib2(IndexAlgorithm,MedianDistanceDistrib):
 
+      
+class MedianDistanceDistrib2(MedianDistanceDistrib):
     
     def initAlgorithm(self, report_opt=True):
-        MedianDistanceDistrib.initAlgorithm(self)
+        super().initAlgorithm(self)
     
     def displayName(self):
         return self.tr("Distance index (2)")
@@ -2616,6 +2621,155 @@ class SurfaceIndex(IndexAlgorithm,SlidingWindowCircle):
     def count_neighbours_4(self,array):
         cell_val = array[2]
         return np.count_nonzero(array == cell_val) - 1
+        
+
+class SurfaceIndex2(IndexAlgorithm,SlidingWindowCircle):
+    
+    ALG_NAME = 'surfaceIndex2'
+    INDEX = 'INDEX'
+    
+    def initAlgorithm(self, config=None):
+        super().initAlgorithm(classesParam=True,quantParam=True,
+            addFuncParam=True,finalFuncParam=True)
+        
+    def displayName(self):
+        return self.tr("Surface index 2")
+        
+    def shortHelpString(self):
+        return self.tr("Surface index 2 (sliding window distribution)")
+    
+    # def initAlgorithm(self, classesParam=True, quant=False,
+            # funcs=True, config=None, report_opt=True):
+        # super().initAlgorithm(finalFuncParam=True)
+        
+    def addAdvancedParams(self):
+        self.index_vals = [self.tr('Patch size'), self.tr('Number of contacts')]
+        indexParam = QgsProcessingParameterEnum(
+            self.INDEX,
+            description = self.tr('Index'),
+            options=self.index_vals,
+            defaultValue=0)
+        # self.addAdvancedParam(indexParam)
+        super().addAdvancedParams()
+        
+    def parseParams(self,parameters,context,feedback):
+        super().parseParams(parameters,context,feedback)
+        # self.indexMode = self.parameterAsEnum(parameters,self.INDEX,context)
+        self.indexMode = 0
+        
+    def prepareArray(self,context,feedback):
+        return self.preparePatchSize(context,feedback)
+        
+    def preparePatchSize(self,context,feedback):
+        patchSize_path = self.mkTmpPath("patchSize.tif")
+        patchSize_params = { PatchAreaWindow.INPUT : self.input,
+            PatchAreaWindow.WINDOW_SIZE : self.size,
+            PatchAreaWindow.OUTPUT : patchSize_path }
+        processing.run("BioDispersal:" + PatchAreaWindow.ALG_NAME,
+            patchSize_params,context=context,feedback=feedback)
+        patchSize_classes, patchSize_arr = qgsUtils.getRasterValsAndArray(patchSize_path)
+        return patchSize_arr
+        
+    def prepareNbContacts(self,context,feedback):
+        ncount_struct = ndimage.generate_binary_structure(2,1)
+        nb_neighbours_arr = ndimage.generic_filter(self.array,
+            self.count_neighbours_4,footprint=ncount_struct,
+            mode="constant",cval=0)
+        feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
+        if self.DEBUG:
+            self.feedback.pushDebugInfo("array = " + str(self.array))
+            feedback.pushDebugInfo("nb_neighbours_arr = " + str(nb_neighbours_arr))
+        res_arr = ndimage.generic_filter(nb_neighbours_arr,
+            np.sum,footprint=self.footprint,
+            mode="constant",cval=0)
+        return res_arr
+            
+    def count_neighbours_4(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
+        
+    def filter_func2(self,array):
+        dist_arr = self.dist_rate_arr_flatten
+        # self.feedback.pushDebugInfo("dist_arr.shape " + str(dist_arr.shape))
+        # self.feedback.pushDebugInfo("array.shape " + str(array.shape))
+        res = np.sum(dist_arr * array)
+        return res        
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, self.array, self.inNodata = qgsUtils.getRasterValsArrayND(
+            str(self.input_path))
+        self.classes = self.prepareClasses(classes,feedback)
+        # Compute patch size
+        self.preparedArr = self.prepareArray(context,feedback).astype(np.float32)
+        # Redistrib quantile
+        self.processDistrib(feedback)
+        # Agregation
+        res_arr = ndimage.generic_filter(self.preparedArr,
+            self.filter_func2,footprint=self.footprint,
+            mode="constant",cval=0)
+        # res_arr = self.processFinal(self.preparedArr)
+        return self.processOutput(res_arr,feedback)
+
+
+class ConnexityIndex(IndexAlgorithm,SlidingWindowCircle):
+    
+    ALG_NAME = 'connexityIndex'
+    INDEX = 'INDEX'
+    
+    def initAlgorithm(self, config=None):
+        super().initAlgorithm(classesParam=True,quantParam=True,finalFuncParam=True)
+        
+    def displayName(self):
+        return self.tr("Connexity index")
+        
+    def shortHelpString(self):
+        return self.tr("Surface index (sliding window distribution)")
+    
+    # def initAlgorithm(self, classesParam=True, quant=False,
+            # funcs=True, config=None, report_opt=True):
+        # super().initAlgorithm(finalFuncParam=True)
+                
+    def filter_func(self,array):
+        dist_arr = self.dist_rate_arr_flatten[array==self.currVal]
+        # dist_arr *= self.currQuant
+        if dist_arr.size == 0:
+            res = math.nan
+        else:
+            res = np.nansum(dist_arr) * self.currQuant
+            # res = np.nansum(dist_arr) + self.currQuant
+        # res += self.currQuant
+        return res
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, self.array, self.inNodata = qgsUtils.getRasterValsArrayND(
+            str(self.input_path))
+        self.classes = self.prepareClasses(classes,feedback)
+        self.currQuant = 1
+        tmp_arr = self.array.astype(np.float32)
+        curr_arr = np.zeros(self.array.shape)
+        for c in self.classes:
+            self.currVal = c
+            # tmp_arr[self.array == c] += self.currQuant
+            arr_c = ndimage.generic_filter(tmp_arr,
+                self.filter_func,footprint=self.footprint,
+                mode="constant",cval=math.nan)
+            self.currQuant = np.nanquantile(arr_c,self.quantile)
+            arr_c[np.isnan(arr_c)] = 0
+            self.debugRaster(feedback,arr_c,self.input_path,"connex" + str(c),
+                nodata=-1,type=gdal.GDT_Float32)
+            curr_arr += arr_c
+            # self.currQuant = np.nanquantile(curr_arr,self.quantile)
+            self.pushDebug("currQuant = " + str(self.currQuant))
+        # self.preparedArr = curr_arr
+        # self.processDistrib(feedback)
+        # res_arr = self.processFinal(self.preparedArr)
+        return self.processOutput(curr_arr,feedback)
         
 
 class NbContactDistrib(SlidingWindowDistrib):
