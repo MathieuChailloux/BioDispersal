@@ -135,9 +135,9 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             # PatchSizeDistrib(),
             PatchSizeWindowRedistrib(),
             ConnectivityIndex(),
-            ConnectivityIndexRedistrib(),
+            # ConnectivityIndexRedistrib(),
             ConnectivityIndexSimplified(),
-            ConnectivityIndexSimplified2(),
+            # ConnectivityIndexSimplified2(),
             # SurfaceIndex2(),
             # IsolationIndex(),
             # IsolationIndex2(),
@@ -1446,7 +1446,7 @@ class DistanceToBorderVector(PatchAlgorithm):
         return self.tr("Distance to borders (vector)")
         
     def shortHelpString(self):
-        return self.tr("TODO")
+        return self.tr("Distance to border")
         
     def initAlgorithm(self, config=None, report_opt=True):
         self.addParameter(QgsProcessingParameterMapLayer(
@@ -1707,8 +1707,9 @@ class SlidingWindowCircle(PatchAlgorithm):
     add_funcs = [np.sum,np.nansum,np.nanmean,None]
 
     QUANTILE = 'QUANTILE'
+    REDISTRIB_VAL = 'REDISTRIB_VAL'
     FINAL_FUNC = 'FINAL_FUNC'
-    final_funcs = ['None','Log10','Exp','Sqrt']
+    final_funcs = ['None','Log10','Exp','Sqrt','Index']
     
     CLASSES_ORDER = "CLASSES_ORDER"
     CLASS = "CLASS"
@@ -1719,7 +1720,8 @@ class SlidingWindowCircle(PatchAlgorithm):
         
     def initAlgorithm(self, classesParam=False, classParam=False, agrFuncParam=False,
             addFuncParam=False, quantParam=False, finalFuncParam=False,
-            distModeParam=False,distModeCoeffParam=False,config=None, report_opt=True):
+            distModeParam=False,distModeCoeffParam=False,
+            redistribParams=False, config=None, report_opt=True):
         self.classesParamFlag = classesParam
         self.classParamFlag = classParam
         self.distModeParamFlag = distModeParam
@@ -1727,6 +1729,7 @@ class SlidingWindowCircle(PatchAlgorithm):
         self.agrFuncParamFlag = agrFuncParam
         self.addFuncParamFlag = addFuncParam
         self.quantParamFlag = quantParam
+        self.redistribParamsFlag = redistribParams
         self.finalFuncParamFlag = finalFuncParam
         self.addParameter(QgsProcessingParameterRasterLayer(
             self.INPUT,
@@ -1781,6 +1784,8 @@ class SlidingWindowCircle(PatchAlgorithm):
             self.addDistModeParam()
         if self.distModeCoeffParamFlag:
             self.addDistModeCoeffParam()
+        if self.redistribParamsFlag:
+            self.addRedistribParams()
         if self.agrFuncParamFlag:
             self.addAgrFuncParam()
         if self.addFuncParamFlag:
@@ -1790,9 +1795,16 @@ class SlidingWindowCircle(PatchAlgorithm):
                 self.FINAL_FUNC,
                 description = self.tr('Final function'),
                 options=self.final_funcs,
-                defaultValue=0)
+                defaultValue=4)
             self.addAdvancedParam(finalFuncParam)
             
+    def addRedistribParams(self):
+        redistribValueParam = QgsProcessingParameterNumber(
+            self.REDISTRIB_VAL,
+            description = self.tr('Redistribution value'),
+            type=QgsProcessingParameterNumber.Double,
+            defaultValue=1.0)
+        self.addAdvancedParam(redistribValueParam)
     def addAgrFuncParam(self):
         agrFuncParam = QgsProcessingParameterEnum(
             self.AGR_FUNC,
@@ -1808,7 +1820,7 @@ class SlidingWindowCircle(PatchAlgorithm):
             defaultValue=0)
         self.addAdvancedParam(addFuncParam)
     def addDistModeParam(self):
-        self.dist_modes = [self.tr('Minimum'),self.tr('Minimum + 1'),self.tr('Median')]
+        dist_modes = [self.tr('Minimum'),self.tr('Minimum + 1'),self.tr('Median')]
         distModeParam = QgsProcessingParameterEnum(
             self.DIST_MODE,
             description = self.tr('Distance mode'),
@@ -1816,10 +1828,10 @@ class SlidingWindowCircle(PatchAlgorithm):
             defaultValue=0)
         self.addAdvancedParam(distModeParam)
     def addDistModeCoeffParam(self):
-        self.coeff_modes = [self.tr('Linear'),self.tr('Exponential')]
+        self.coeff_modes = [self.tr('Exponential'),self.tr('Linear')]
         distModeCoeffParam = QgsProcessingParameterEnum(
             self.DIST_COEFF_MODE,
-            description = self.tr('Distance mode'),
+            description = self.tr('Distance weighting mode'),
             options=self.coeff_modes,
             defaultValue=0)
         self.addAdvancedParam(distModeCoeffParam)
@@ -1850,10 +1862,13 @@ class SlidingWindowCircle(PatchAlgorithm):
             self.classParam = self.parameterAsInt(parameters,self.CLASS,context)
         if self.quantParamFlag:
             self.quantile = self.parameterAsDouble(parameters,self.QUANTILE,context)
+        if self.redistribParamsFlag:
+            self.redistribVal = self.parameterAsDouble(parameters,self.REDISTRIB_VAL,context)
         if self.distModeParamFlag:
             self.distMode = self.parameterAsBool(parameters,self.DIST_MODE,context)
         if self.distModeCoeffParamFlag:
-            self.distCoeffMode = self.parameterAsBool(parameters,self.DIST_COEFF_MODE,context)
+            self.distCoeffMode = self.parameterAsBool(parameters,
+                self.DIST_COEFF_MODE,context)
         if self.agrFuncParamFlag:
             self.agr_func_mode = self.parameterAsEnum(parameters,self.AGR_FUNC,context)
             feedback.pushDebugInfo("agr_func_mode = " + str(self.agr_func_mode))
@@ -1887,6 +1902,7 @@ class SlidingWindowCircle(PatchAlgorithm):
         self.footprint = np.ones(self.dist_shape,dtype='bool')
         self.pushDebug("foot_shape = " + str(self.footprint.shape))
         self.footprint[self.dist_array > self.size] = False
+        self.nbPixDist = np.count_nonzero(self.dist_array > self.size)
         self.pushDebug("footprint = " + str(self.footprint))
         self.dist_array2 = self.dist_array[self.dist_array <= self.size]
         self.pushDebug("dist_array2 = " + str(self.dist_array2))
@@ -1901,11 +1917,22 @@ class SlidingWindowCircle(PatchAlgorithm):
         self.pushDebug("dist_rate_arr_flatten = " + str(self.dist_rate_arr_flatten))
         self.dist_arr_exp = np.exp(np.negative(self.dist_array_flatten))
         self.pushDebug("dist_arr_exp = " + str(self.dist_arr_exp))
+        if self.distModeParamFlag:
+            if self.distMode == 0:
+                self.distFunc = self.getDistMin
+            elif self.distMode == 1:
+                self.distFunc = self.getDistMinPlusOne
+            elif self.distMode == 2:
+                self.distFunc = self.getDistMed
+            else:
+                assert(False)
         if self.distModeCoeffParamFlag:
             if self.distCoeffMode == 0:
-                self.dist_arr = self.dist_rate_arr_flatten
-            elif self.distCoeffMode == 1:
                 self.dist_arr = self.dist_arr_exp
+                self.coeffFunc = self.expFunc
+            elif self.distCoeffMode == 1:
+                self.dist_arr = self.dist_rate_arr_flatten
+                self.coeffFunc = self.rateFunc
             else:
                 assert(False)
             self.dist_base_sum = np.sum(self.dist_arr)
@@ -1913,7 +1940,19 @@ class SlidingWindowCircle(PatchAlgorithm):
         
     def getCenterPixel(self,array):
         return array[self.val_idx_footprint]
-                    
+                
+    def getDistMin(self,array,v):
+        return np.amin(self.dist_array_flatten[array==v])
+    def getDistMinPlusOne(self,array,v):
+        return np.amin(self.dist_array_flatten[array==v]) + 1
+    def getDistMed(self,array,v):
+        return np.nanmedian(self.dist_array_flatten[array==v])
+        
+    def expFunc(self,val):
+        return math.exp(-val)
+    def rateFunc(self,val):
+        return (self.size - val) / self.size
+                
     def distFromCenter(self,X,Y):
         self.pushDebug("X = " + str(X))
         self.pushDebug("Y = " + str(Y))
@@ -1996,7 +2035,7 @@ class SlidingWindowCircle(PatchAlgorithm):
             assert(False)
         return res_arr
         
-    def processFinal(self,res_arr):
+    def processFinal(self,res_arr,minVal=None,maxVal=None):
         if not self.finalFuncParamFlag:
             pass
         elif self.final_func_mode == 1:
@@ -2005,6 +2044,13 @@ class SlidingWindowCircle(PatchAlgorithm):
             res_arr = np.exp(res_arr)
         elif self.final_func_mode == 3:
             res_arr = np.sqrt(res_arr)
+        elif self.final_func_mode == 4:
+            minVal = np.amin(res_arr) if minVal is None else minVal
+            maxVal = np.amax(res_arr) if maxVal is None else maxVal
+            self.pushDebug("minVal = " + str(minVal))
+            self.pushDebug("maxVal = " + str(maxVal))
+            res_arr -= minVal
+            res_arr /= (maxVal - minVal)
         return res_arr
         
     def processOutput(self,res_arr,feedback):
@@ -2013,6 +2059,9 @@ class SlidingWindowCircle(PatchAlgorithm):
         res_arr[self.array==self.inNodata] = self.out_nodata
         qgsUtils.exportRaster(res_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
+        # out_layer = qgsUtils.loadRasterLayer(self.output)
+        # styles.setRendererSBPCGnYlRdCont(out_layer)
+        # out_layer.triggerRepaint()
         return { self.OUTPUT_FILE : self.output }
 
     def processAlgorithm(self,parameters,context,feedback):
@@ -2158,7 +2207,7 @@ class PatchAreaWindow(SlidingWindowCircle):
     ALG_NAME = 'patchAreaWindow'
     
     def displayName(self):
-        return self.tr("Patch size (Sliding Window)")
+        return self.tr("Patch size (sliding window)")
         
     def shortHelpString(self):
         return self.tr("Patch area inside sliding window")
@@ -2425,14 +2474,14 @@ class MedianDistanceDistrib2(MedianDistanceDistrib):
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         return { self.OUTPUT_FILE : self.output }
 
-class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
+class PatchSizeWindowRedistrib(SlidingWindowCircle):
     
     ALG_NAME = 'patchSizeWindowRedistrib'
     INDEX = 'INDEX'
     
     def initAlgorithm(self, config=None):
         super().initAlgorithm(classesParam=True,quantParam=True,
-            ,finalFuncParam=True)
+            finalFuncParam=True)
         
     def displayName(self):
         return self.tr("Patch size (sliding window + redistribution)")
@@ -2650,7 +2699,7 @@ class ConnectivityIndexSimplified(IndexAlgorithm,SlidingWindowCircle):
     INDEX = 'INDEX'
     
     def initAlgorithm(self, config=None):
-        super().initAlgorithm(classesParam=True,quantParam=True,
+        super().initAlgorithm(classesParam=True,redistribParams=True,
             distModeCoeffParam=True,finalFuncParam=True)
         
     def displayName(self):
@@ -2684,6 +2733,7 @@ class ConnectivityIndexSimplified(IndexAlgorithm,SlidingWindowCircle):
         classes, self.array, self.inNodata = qgsUtils.getRasterValsArrayND(
             str(self.input_path))
         self.classes = self.prepareClasses(classes,feedback)
+        nb_classes = len(self.classes)
         self.currQuant = 0
         tmp_arr = self.array.astype(np.float32)
         curr_arr = np.zeros(self.array.shape)
@@ -2693,25 +2743,23 @@ class ConnectivityIndexSimplified(IndexAlgorithm,SlidingWindowCircle):
             arr_c = ndimage.generic_filter(tmp_arr,
                 self.filter_func,footprint=self.footprint,
                 mode="constant",cval=math.nan)
-            self.currQuant += self.quantile
+            self.currQuant += self.redistribVal
             arr_c[np.isnan(arr_c)] = 0
             self.debugRaster(feedback,arr_c,self.input_path,"connex" + str(c),
                 nodata=0,type=gdal.GDT_Float32)
             curr_arr += arr_c
             self.pushDebug("currQuant = " + str(self.currQuant))
+        minVal = np.nansum(self.dist_arr)
+        maxVal = np.nansum(self.dist_arr + ((nb_classes-1) * self.redistribVal))
         curr_arr = self.processFinal(curr_arr)
         return self.processOutput(curr_arr,feedback)
         
         
         
-class ConnectivityIndexSimplified2(IndexAlgorithm,SlidingWindowCircle):
+class ConnectivityIndexSimplified2(ConnectivityIndexSimplified):
     
     ALG_NAME = 'connexityIndexSimplified2'
     INDEX = 'INDEX'
-    
-    def initAlgorithm(self, config=None):
-        super().initAlgorithm(classesParam=True,quantParam=True,
-            distModeCoeffParam=True,finalFuncParam=True)
         
     def displayName(self):
         return self.tr("Connectivity index (simplified) 2")
@@ -2726,7 +2774,7 @@ class ConnectivityIndexSimplified2(IndexAlgorithm,SlidingWindowCircle):
             res = math.nan
         else:
             res = np.nansum(dist_arr)
-        return res       
+        return res
         
     def filter_func2(self,array):
         dist_arr = self.dist_arr[array==self.currVal]
@@ -2753,7 +2801,7 @@ class ConnectivityIndexSimplified2(IndexAlgorithm,SlidingWindowCircle):
             arr_c = ndimage.generic_filter(tmp_arr,
                 self.filter_func2,footprint=self.footprint,
                 mode="constant",cval=math.nan)
-            self.currQuant += self.quantile
+            self.currQuant += self.redistribVal
             arr_c[np.isnan(arr_c)] = 0
             self.debugRaster(feedback,arr_c,self.input_path,"connex" + str(c),
                 nodata=0,type=gdal.GDT_Float32)
@@ -2770,7 +2818,8 @@ class IsolationIndex(IndexAlgorithm,SlidingWindowCircle):
     DIST_MODE = 'DIST_MODE'
     
     def initAlgorithm(self, config=None):
-        super().initAlgorithm(classesParam=True,quantParam=True,finalFuncParam=True)
+        super().initAlgorithm(classesParam=True,quantParam=True,
+            distModeCoeffParam=True,finalFuncParam=True)
         
     def parseParams(self,parameters,context,feedback):
         super().parseParams(parameters,context,feedback)
@@ -2781,16 +2830,6 @@ class IsolationIndex(IndexAlgorithm,SlidingWindowCircle):
         
     def shortHelpString(self):
         return self.tr("Isolation index (habitat class)")
-    
-    def addAdvancedParams(self):
-        dist_modes = [self.tr('Linear'),self.tr('Exponential')]
-        distModeParam = QgsProcessingParameterEnum(
-            self.DIST_MODE,
-            description = self.tr('Distance mode'),
-            options=dist_modes,
-            defaultValue=0)
-        self.addAdvancedParam(distModeParam)
-        super().addAdvancedParams()
                 
     def filter_func(self,array):
         dist_arr = self.dist_arr_exp[array==self.currVal]
@@ -3092,74 +3131,30 @@ class ConnectivityIndex(IndexAlgorithm,SlidingWindowCircle):
         
     def shortHelpString(self):
         msg = "Connectivity index inspired from Hanski incidence function model."
-        msg += "\nTODO"
+        msg += ""
         return self.tr(msg)
     
     def initAlgorithm(self, config=None):
-        super().initAlgorithm(classParam=True,finalFuncParam=True)
+        super().initAlgorithm(classParam=True,distModeParam=True,
+            distModeCoeffParam=True,finalFuncParam=True)
         
     def addAdvancedParams(self):
-        dist_modes = [self.tr('Minimum'),self.tr('Minimum + 1'),self.tr('Median')]
-        coeff_modes = [self.tr('Exponential'),self.tr('Linear')]
-        distModeParam = QgsProcessingParameterEnum(
-            self.DIST_MODE,
-            description = self.tr('Distance mode'),
-            options=dist_modes,
-            defaultValue=0)
-        coeffModeParam = QgsProcessingParameterEnum(
-            self.COEFF_MODE,
-            description = self.tr('Distance weighting mode'),
-            options=coeff_modes,
-            defaultValue=0)
         exponentParam = QgsProcessingParameterNumber(
             self.EXPONENT,
             description = self.tr('Patch size exponent'),
             type=QgsProcessingParameterNumber.Integer,
             defaultValue=2)
-        self.addAdvancedParam(distModeParam)
-        self.addAdvancedParam(coeffModeParam)
         self.addAdvancedParam(exponentParam)
         super().addAdvancedParams()
         
     def parseParams(self,parameters,context,feedback):
         super().parseParams(parameters,context,feedback)
-        self.distMode = self.parameterAsEnum(parameters,self.DIST_MODE,context)
-        self.coeffMode = self.parameterAsEnum(parameters,self.COEFF_MODE,context)
         self.exponent = self.parameterAsInt(parameters,self.EXPONENT,context)
-        # Assign func
-        self.distFunc = self.getDistMinPlusOne
-        self.coeffFunc = self.expFunc
-        if self.distMode == 0:
-            self.distFunc = self.getDistMin
-        elif self.distMode == 1:
-            self.distFunc = self.getDistMinPlusOne
-        elif self.distMode == 2:
-            self.distFunc = self.getDistMed
-        else:
-            assert(False)
-        if self.coeffMode == 0:
-            self.coeffFunc = self.expFunc
-        elif self.coeffMode == 1:
-            self.coeffFunc = self.rateFunc
-        else:
-            assert(False)
     
     def prepare_patchWinSq(self,array):
         vals, counts = np.unique(array[array!=self.ignore], return_counts=True)
         sq_arr = np.power(counts,self.exponent)
         return (vals, sq_arr)
-        
-    def getDistMin(self,array,v):
-        return np.amin(self.dist_array_flatten[array==v])
-    def getDistMinPlusOne(self,array,v):
-        return np.amin(self.dist_array_flatten[array==v]) + 1
-    def getDistMed(self,array,v):
-        return np.nanmedian(self.dist_array_flatten[array==v])
-        
-    def expFunc(self,val):
-        return math.exp(-val)
-    def rateFunc(self,val):
-        return (self.size - val) / self.size
       
     def filter_func(self,array):
         vals, counts = np.unique(array[array!=self.ignore], return_counts=True)
@@ -3202,10 +3197,19 @@ class ConnectivityIndex(IndexAlgorithm,SlidingWindowCircle):
             self.filter_func,footprint=self.footprint,
             mode="constant",cval=0,output=np.float32)
         res_arr[self.array==self.inNodata] = self.out_nodata
+        minVal = np.sum(self.dist_arr)
+        maxVal = self.coeffFunc(0) * pow(self.nbPixDist,self.exponent)
+        res_arr = self.processFinal(res_arr)
         res_arr[res_arr==0] = self.out_nodata
-        # res_arr = self.processFinal(res_arr)
         return self.processOutput(res_arr,feedback)
 
+    # def postProcessAlgorithm(self, context, feedback):
+        # out_layer = self.out_layer#qgsUtils.loadRasterLayer(output)
+        # color_ramp = styles.mkColorRamp('Plasma')
+        # shader = styles.mkRasterShader(out_layer,color_ramp)
+        # styles.setSBPCRasterRenderer(out_layer,shader)
+        # out_layer.triggerRepaint()
+        # return { self.OUTPUT : self.out_layer }
 
 class ConnectivityIndexRedistrib(ConnectivityIndex):
     
