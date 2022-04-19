@@ -65,7 +65,7 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.provider = BioDispersalAlgorithmsProvider()
+        #self.provider = BioDispersalAlgorithmsProvider()
         self.setupUi(self)
         
     # Initialize plugin tabs and connectors.
@@ -106,7 +106,7 @@ class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):
     # Initialize Graphic elements for each tab
     def initGui(self):
         utils.debug("initGuiDlg")
-        QgsApplication.processingRegistry().addProvider(self.provider)
+        #QgsApplication.processingRegistry().addProvider(self.provider)
         self.geometry = self.geometry()
         self.x = self.x()
         self.y = self.y()
