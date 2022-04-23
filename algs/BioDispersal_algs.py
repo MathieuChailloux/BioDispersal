@@ -2474,7 +2474,7 @@ class MedianDistanceDistrib2(MedianDistanceDistrib):
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         return { self.OUTPUT_FILE : self.output }
 
-class PatchSizeWindowRedistrib(SlidingWindowCircle):
+class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
     
     ALG_NAME = 'patchSizeWindowRedistrib'
     INDEX = 'INDEX'
@@ -2484,10 +2484,10 @@ class PatchSizeWindowRedistrib(SlidingWindowCircle):
             finalFuncParam=True)
         
     def displayName(self):
-        return self.tr("Patch size (sliding window + redistribution)")
+        return self.tr("Surface index")
         
     def shortHelpString(self):
-        return self.tr("Patch side inside window redistributed and potentially agregated")
+        return self.tr("Redistributed patch size inside slinding window")
     
     # def initAlgorithm(self, classesParam=True, quant=False,
             # funcs=True, config=None, report_opt=True):
@@ -2699,7 +2699,7 @@ class ConnectivityIndexSimplified(IndexAlgorithm,SlidingWindowCircle):
     INDEX = 'INDEX'
     
     def initAlgorithm(self, config=None):
-        super().initAlgorithm(classesParam=True,redistribParams=True,
+        super().initAlgorithm(classesParam=True,#redistribParams=True,
             distModeCoeffParam=True,finalFuncParam=True)
         
     def displayName(self):
@@ -2737,6 +2737,7 @@ class ConnectivityIndexSimplified(IndexAlgorithm,SlidingWindowCircle):
         self.currQuant = 0
         tmp_arr = self.array.astype(np.float32)
         curr_arr = np.zeros(self.array.shape)
+        self.redistribVal = self.size
         for c in self.classes:
             self.currVal = c
             # tmp_arr[self.array == c] += self.currQuant
