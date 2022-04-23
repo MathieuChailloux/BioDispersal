@@ -89,12 +89,12 @@
 <context>
     <name>BioDispersal</name>
     <message>
-        <location filename="../BioDispersal.py" line="201"/>
+        <location filename="../BioDispersal.py" line="211"/>
         <source>&amp;BioDispersal</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../BioDispersal.py" line="178"/>
+        <location filename="../BioDispersal.py" line="188"/>
         <source>BioDispersal</source>
         <translation></translation>
     </message>
@@ -844,12 +844,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectivityIndex</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3131"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3132"/>
         <source>Connectivity index</source>
-        <translation type="unfinished"></translation>
+        <translation>Connectivity index</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3144"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3145"/>
         <source>Patch size exponent</source>
         <translation>Patch size exponent</translation>
     </message>
@@ -857,7 +857,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectivityIndexRedistrib</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3220"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3221"/>
         <source>Connectivity index (redistrib)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -867,23 +867,23 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="2707"/>
         <source>Connectivity index (simplified)</source>
-        <translation type="unfinished"></translation>
+        <translation>Connectivity index (simplified)</translation>
     </message>
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="2710"/>
         <source>Connectivity index simplified based on favorability.</source>
-        <translation type="unfinished"></translation>
+        <translation>Connectivity index simplified based on favorability.</translation>
     </message>
 </context>
 <context>
     <name>ConnectivityIndexSimplified2</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="2766"/>
+        <location filename="../algs/BioDispersal_algs.py" line="2767"/>
         <source>Connectivity index (simplified) 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="2769"/>
+        <location filename="../algs/BioDispersal_algs.py" line="2770"/>
         <source>Connectivity index simplified based on favorability.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -898,7 +898,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="2652"/>
         <source>Surface index (sliding window distribution)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Surface index (sliding window distribution)</translation>
     </message>
 </context>
 <context>
@@ -1084,12 +1084,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IsolationIndex</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="2830"/>
+        <location filename="../algs/BioDispersal_algs.py" line="2831"/>
         <source>Isolation index</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="2833"/>
+        <location filename="../algs/BioDispersal_algs.py" line="2834"/>
         <source>Isolation index (habitat class)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1097,12 +1097,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IsolationIndex2</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="2936"/>
+        <location filename="../algs/BioDispersal_algs.py" line="2937"/>
         <source>Isolation index 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="2939"/>
+        <location filename="../algs/BioDispersal_algs.py" line="2940"/>
         <source>Isolation index (habitat class)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1110,12 +1110,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IsolationIndex3</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3014"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3015"/>
         <source>Isolation index 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3017"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3018"/>
         <source>Isolation index (habitat class)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1203,17 +1203,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NbContactDistrib</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3315"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3316"/>
         <source>Filter function</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3323"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3324"/>
         <source>Number of contacts (Distrib)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3326"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3327"/>
         <source>Computes connexity index based on favoarbility classes and the number of contacts (adjacent pixels of same value) inside specified sliding window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1221,12 +1221,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NbContactMedianDistrib</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3506"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3507"/>
         <source>Number of contacts x Median distance (distrib)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3509"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3510"/>
         <source>Computes connexity index</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1314,12 +1314,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PatchSizeDistrib</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3436"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3437"/>
         <source>Patch size (Distrib)</source>
         <translation>Patch size (Distrib)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3439"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3440"/>
         <source>Computes connexity index based on favoarbility classes and patch median inside specified sliding window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1347,12 +1347,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="2488"/>
         <source>Patch size (sliding window + redistribution)</source>
-        <translation>Patch size (sliding window + redistribution)</translation>
-    </message>
-    <message>
-        <location filename="../algs/BioDispersal_algs.py" line="2491"/>
-        <source>Patch side inside window redistributed and potentially agregated</source>
-        <translation></translation>
+        <translation type="obsolete">Patch size (sliding window + redistribution)</translation>
     </message>
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="2498"/>
@@ -1368,6 +1363,16 @@ p, li { white-space: pre-wrap; }
         <location filename="../algs/BioDispersal_algs.py" line="2499"/>
         <source>Index</source>
         <translation>Index</translation>
+    </message>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="2488"/>
+        <source>Surface index</source>
+        <translation>Surface index</translation>
+    </message>
+    <message>
+        <location filename="../algs/BioDispersal_algs.py" line="2491"/>
+        <source>Redistributed patch size inside slinding window</source>
+        <translation>Redistributed patch size inside slinding window</translation>
     </message>
 </context>
 <context>
@@ -1506,27 +1511,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RelativeSurface</name>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3620"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3621"/>
         <source>Relative surface</source>
         <translation>Relative surface</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3623"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3624"/>
         <source>Relative surface (percentage of B surface in each patch of layer A)</source>
         <translation>Relative surface (percentage of B surface in each patch of layer A)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3626"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3627"/>
         <source>Layer A (main layer)</source>
         <translation>Layer A (main layer)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3630"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3631"/>
         <source>Layer B (relative surface layer)</source>
         <translation>Layer B (relative surface layer)</translation>
     </message>
     <message>
-        <location filename="../algs/BioDispersal_algs.py" line="3634"/>
+        <location filename="../algs/BioDispersal_algs.py" line="3635"/>
         <source>Output layer</source>
         <translation>Output layer</translation>
     </message>
@@ -1741,17 +1746,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="2569"/>
         <source>Patch size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Patch size</translation>
     </message>
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="2569"/>
         <source>Number of contacts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Number of contacts</translation>
     </message>
     <message>
         <location filename="../algs/BioDispersal_algs.py" line="2570"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Index</translation>
     </message>
 </context>
 <context>
