@@ -200,7 +200,7 @@ class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
             qgsUtils.exportRaster(arr,inputPath,outPath,nodata=nodata,type=type)
 class IndexAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
-        return self.tr("Connectivity index")
+        return self.tr("Connectivity indices")
     def groupId(self):
         return 'index'
 class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
