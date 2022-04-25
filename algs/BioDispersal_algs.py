@@ -325,13 +325,21 @@ class SelectVExprAlg(SelectionAlgorithm):
         if sink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
             
+        feedback.pushDebugInfo("Expression = " + str(expr))
         if expr is None or expr == "":
             nb_feats = input.featureCount()
             feats = input.getFeatures()
         else:
-            qgsTreatments.selectByExpression(input,expr,feedback=feedback)
-            nb_feats = input.selectedFeatureCount()
-            feats = input.getSelectedFeatures()
+            input_path = qgsUtils.pathOfLayer(input)
+            selected_path = qgsUtils.mkTmpPath(str(code) + "_selected.gpkg")
+            qgsTreatments.extractByExpression(input_path,expr,selected_path,feedback=feedback)
+            selected = qgsUtils.loadVectorLayer(selected_path)
+            # qgsTreatments.selectByExpression(input_path,expr,feedback=feedback)
+            # nb_feats = input.selectedFeatureCount()
+            nb_feats = selected.featureCount()
+            feats = selected.getFeatures()
+            
+            
             
         if nb_feats == 0:
             raise QgsProcessingException("No feature selected")
@@ -1710,6 +1718,7 @@ class SlidingWindowCircle(PatchAlgorithm):
     REDISTRIB_VAL = 'REDISTRIB_VAL'
     FINAL_FUNC = 'FINAL_FUNC'
     final_funcs = ['None','Log10','Exp','Sqrt','Index']
+    defaultFinal
     
     CLASSES_ORDER = "CLASSES_ORDER"
     CLASS = "CLASS"
@@ -2073,7 +2082,9 @@ class SlidingWindowCircle(PatchAlgorithm):
         self.classes = self.prepareClasses(classes,feedback)
         self.preparedArr = self.prepareArray(context,feedback).astype(np.float32)
         self.processDistrib(feedback)
-        res_arr = self.applyAddFunc(self.preparedArr)
+        res_arr = self.preparedArr
+        if self.addFuncParamFlag:
+            res_arr = self.applyAddFunc(res_arr)
         res_arr = self.processFinal(res_arr)
         return self.processOutput(res_arr,feedback)
         

@@ -29,7 +29,8 @@ from qgis.core import (Qgis,
                        QgsGeometry,
                        QgsField,
                        QgsFeature,
-                       QgsFeatureRequest)
+                       QgsFeatureRequest,
+                       QgsExpression)
 from PyQt5.QtCore import QVariant
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
@@ -147,8 +148,26 @@ class SelectionModel(abstract_model.DictModel):
     def applySelectionVExpr(self,item,grp_item,out_path,context,feedback):
         grp_name = grp_item.dict["name"]
         class_item = self.bdModel.classModel.getClassByName(grp_name)
-        parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : self.getItemInPath(item),
-                       BioDispersal_algs.SelectVExprAlg.EXPR : item.dict["mode_val"],
+        mode_val = item.dict["mode_val"]
+        feedback.pushDebugInfo("mode_val 1 " + str(mode_val))
+        # mode_val = mode_val.replace('"','\\"')
+        # mode_val = QgsExpression(mode_val)
+        # mode_val = mode_val.replace("'","\\'")
+        # mode_val = ""
+        feedback.pushDebugInfo("mode_val 2 " + str(mode_val))
+        # mode_val = '\"FICTIF\" = \'Non\' AND \"POS_SOL\" = 0 AND \"NATURE\" IN ( \'Route à 1 chaussée\' )'
+        # feedback.pushDebugInfo("mode_val 3 " + str(mode_val))
+        # mode_val = '\"FICTIF\" = \'Non\' AND \"POS_SOL\" = 0 AND \"NATURE\" IN ( \'Route à 1 chaussée\' )'
+        # feedback.pushDebugInfo("mode_val 4 " + str(mode_val))
+        # input = 'F:/IRSTEA/Formations/IndiceConnectivite_2022/TP_BioDispersal/Source/BDTOPO_2018/BDT_2-2_SHP_LAMB93_D034-ED181/A_RESEAU_ROUTIER/ROUTE.SHP'
+        input = self.getItemInPath(item)
+        # selected_path = qgsUtils.mkTmpPath(grp_name + "_selected.gpkg")
+        # qgsTreatments.extractByExpression(input,mode_val,selected_path,feedback=feedback)
+        clipped_path = qgsUtils.mkTmpPath(grp_name + "_clipped.gpkg")
+        self.bdModel.paramsModel.clipByExtent(input,out_path=clipped_path)
+        parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : clipped_path,
+        # parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : input,
+                       BioDispersal_algs.SelectVExprAlg.EXPR : mode_val,
                        BioDispersal_algs.SelectVExprAlg.CLASS : grp_name,
                        BioDispersal_algs.SelectVExprAlg.CODE : class_item.dict["code"],
                        BioDispersal_algs.SelectVExprAlg.OUTPUT : out_path }
@@ -253,7 +272,7 @@ class SelectionModel(abstract_model.DictModel):
                 crs, extent, resolution = self.bdModel.getRasterParams()
                 BioDispersal_algs.applyRasterizationFixAllTouch(
                     grp_vector_path,grp_raster_path,extent,resolution,
-                    field="Code",out_type=Qgis.Int16,all_touch=False,
+                    field="Code",out_type=Qgis.Int16,all_touch=True,
                     context=context,feedback=step_feedback)
             self.bdModel.paramsModel.normalizeRaster(grp_raster_path,
                 out_path=out_path,context=context,feedback=step_feedback)
@@ -335,7 +354,8 @@ class SelectionConnector(abstract_model.AbstractConnector):
         res = []
         for v in vals:
             class_name = group + "_" + str(v)
-            class_descr = "Class " + str(v) + " of group " + group
+            # class_descr = "Class " + str(v) + " of group " + group
+            class_descr = ""
             res.append((class_name,class_descr))
         return res
         
@@ -345,7 +365,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         if not in_layer:
             utils.user_error("No layer selected")
         in_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(in_layer))
-        expr = self.dlg.selectionExpr.expression()
+        # expr = self.dlg.selectionExpr.expression()
         grp_item = self.getOrCreateGroup()
         grp_name = grp_item.dict["name"]
         grp_descr = grp_item.dict["descr"]
@@ -365,6 +385,9 @@ class SelectionConnector(abstract_model.AbstractConnector):
             elif self.dlg.exprSelectionMode.isChecked():
                 mode = vexpr
                 mode_val = self.dlg.selectionExpr.expression()
+                # utils.debug("mode_val 1 = " + str(mode_val))
+                # mode_val = mode_val.replace('"','\\"')
+                # utils.debug("mode_val 2 = " + str(mode_val))
                 class_names = [(grp_name, grp_descr)]
             else:
                 assert False
@@ -373,9 +396,11 @@ class SelectionConnector(abstract_model.AbstractConnector):
             in_geom = "Raster"
             if self.dlg.selectionCreateClasses.isChecked():
                 mode = rclasses
-                self.model.bdModel.feedback.beginSection("Fetching unique values")
+                self.dlg.feedback.beginSection("Fetching unique values")
+                # self.model.bdModel.feedback.beginSection("Fetching unique values")
                 vals = qgsTreatments.getRasterUniqueVals(in_layer,feedback=self.dlg.feedback)
-                self.model.bdModel.feedback.endSection()
+                # self.model.bdModel.feedback.endSection()
+                self.dlg.feedback.endSection()
                 class_names = self.getClassesFromVals(grp_name,vals)
             else:
                 mode = rresample

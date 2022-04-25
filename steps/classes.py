@@ -52,6 +52,7 @@ from . import params
 class ClassItem(abstract_model.DictItem):
     
     FIELDS = ["name","code","descr","group"]
+    idField = "name"
     
     # @classmethod
     # def fromValues(cls,name,descr,code,group):
@@ -160,15 +161,19 @@ class ClassModel(abstract_model.DictModel):
     def removeFromGroupName(self,name):
         indexes = []
         names = []
+        codes = []
         cpt = 0
         for cpt, item in enumerate(self.items):
             if item.dict["group"] == name:
                 indexes.append(cpt)
                 names.append(item.dict["name"])
+                # codes.append(item.dict[ClassItem.idField])
             cpt += 1
         self.removeItemsFromRows(indexes) 
         for n in names:
             self.bdModel.removeClass(n)
+        # for c in codes:
+            # self.bdModel.removeClass(c)
          
     def removeItems(self,indexes):
         names = [self.items[idx.row()].dict["name"] for idx in indexes]

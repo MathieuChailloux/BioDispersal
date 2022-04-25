@@ -34,7 +34,7 @@ from qgis.gui import QgsFileWidget
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
 from ..qgis_lib_mc.abstract_model import DictItem, ExtensiveTableModel, AbstractConnector, ComboDelegate
 
-from . import params, subnetworks
+from . import params, subnetworks, classes
 # from .classes import ClassItem
 
 
@@ -53,7 +53,8 @@ class FrictionModel(ExtensiveTableModel):
     def __init__(self,parentModel):
         self.parser_name = "FrictionModel"
         self.is_runnable = False
-        ExtensiveTableModel.__init__(self,parentModel,baseFields=self.BASE_FIELDS)
+        ExtensiveTableModel.__init__(self,parentModel,idField=self.ROW_NAME,
+            rowIdField=classes.ClassItem.idField,baseFields=self.BASE_FIELDS)
         self.feedback.pushDebugInfo("hey")
         
     def reload(self):
@@ -127,6 +128,7 @@ class FrictionModel(ExtensiveTableModel):
         nb_items = len(reclass_matrixes)
         step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
         curr_step = 0
+        feedback.pushDebugInfo("reclass_matrixes = " + str(reclass_matrixes))
         for st_name, matrix in reclass_matrixes.items():
             feedback.setProgressText("computing subnetwork '" + st_name + "'")
             feedback.pushInfo("Friction computation for subnetwork " + str(st_name))
@@ -136,8 +138,8 @@ class FrictionModel(ExtensiveTableModel):
             qgsUtils.removeRaster(out_path)
             self.checkInVals(in_path)
             qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,
-                                                 out_type=Qgis.Float32,boundaries_mode=2,
-                                                 context=context,feedback=step_feedback)
+                out_type=Qgis.Float32,boundaries_mode=2,
+                context=context,feedback=step_feedback)
             loaded_layer = qgsUtils.loadRasterLayer(out_path,loadProject=True)
             styles.setRendererPalettedGnYlRd(loaded_layer)
             curr_step += 1

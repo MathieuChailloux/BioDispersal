@@ -40,11 +40,12 @@ class STItem(abstract_model.DictItem):
     FIELDS = [NAME,DESCR]
 
     @classmethod
-    def fromValues(self,st,descr):
-        dict = {self.NAME : st,
-                self.DESCR : descr}
+    def fromValues(cls,st,descr):
+        dict = {cls.NAME : st,
+                cls.DESCR : descr}
         #assert(st_fields == dict.keys())
-        super().__init__(dict)
+        st_item = cls(dict)
+        return st_item
         
     def checkItem(self):
         if self.dict["name"] == "":
