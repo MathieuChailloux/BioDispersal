@@ -43,12 +43,13 @@ class CostItem(abstract_model.DictItem):
     FIELDS = [ "start_layer", "perm_layer", "cost", "out_layer" ]
 
     @classmethod
-    def fromValues(self,start_layer,perm_layer,cost,out_layer):
+    def fromValues(cls,start_layer,perm_layer,cost,out_layer):
         dict = {"start_layer" : start_layer,
                 "perm_layer" : perm_layer,
                 "cost" : cost,
                 "out_layer" : out_layer}
-        super().__init__(dict)
+        item = cls(dict)
+        return item
         
     def equals(self,other):
         same_start = self.dict["start_layer"] == other.dict["start_layer"]
