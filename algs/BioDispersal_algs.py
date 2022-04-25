@@ -137,6 +137,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             ConnectivityIndex(),
             # ConnectivityIndexRedistrib(),
             ConnectivityIndexSimplified(),
+            DistanceIndex(),
             # ConnectivityIndexSimplified2(),
             # SurfaceIndex2(),
             # IsolationIndex(),
@@ -1713,12 +1714,14 @@ class SlidingWindowCircle(PatchAlgorithm):
     ADD_FUNC = 'ADD_FUNC'
     ADD_FUNC_NAMES = ['sum','nansum','nanmean','None']
     add_funcs = [np.sum,np.nansum,np.nanmean,None]
+    add_func = np.sum
 
     QUANTILE = 'QUANTILE'
+    defaultQuant = 1
     REDISTRIB_VAL = 'REDISTRIB_VAL'
     FINAL_FUNC = 'FINAL_FUNC'
-    final_funcs = ['None','Log10','Exp','Sqrt','Index']
-    defaultFinal
+    final_funcs = ['None','Log10','Exp','Sqrt','Index','LogIndex']
+    defaultFinal = 0
     
     CLASSES_ORDER = "CLASSES_ORDER"
     CLASS = "CLASS"
@@ -1773,7 +1776,7 @@ class SlidingWindowCircle(PatchAlgorithm):
                     self.QUANTILE,
                     description = self.tr('Percentile'),
                     type=QgsProcessingParameterNumber.Double,
-                    defaultValue=0.75))
+                    defaultValue=self.defaultQuant))
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.DEBUG_FIELDNAME,
@@ -1804,7 +1807,7 @@ class SlidingWindowCircle(PatchAlgorithm):
                 self.FINAL_FUNC,
                 description = self.tr('Final function'),
                 options=self.final_funcs,
-                defaultValue=4)
+                defaultValue=self.defaultFinal)
             self.addAdvancedParam(finalFuncParam)
             
     def addRedistribParams(self):
@@ -2044,8 +2047,18 @@ class SlidingWindowCircle(PatchAlgorithm):
             assert(False)
         return res_arr
         
+    def processFinalIndex(self,res_arr,minVal=None,maxVal=None):
+        minVal = np.amin(res_arr) if minVal is None else minVal
+        maxVal = np.amax(res_arr) if maxVal is None else maxVal
+        self.pushDebug("minVal = " + str(minVal))
+        self.pushDebug("maxVal = " + str(maxVal))
+        res_arr -= minVal
+        res_arr /= (maxVal - minVal)
+        return res_arr
     def processFinal(self,res_arr,minVal=None,maxVal=None):
         if not self.finalFuncParamFlag:
+            pass
+        elif self.final_func_mode == 0:
             pass
         elif self.final_func_mode == 1:
             res_arr = np.log10(res_arr)
@@ -2054,18 +2067,18 @@ class SlidingWindowCircle(PatchAlgorithm):
         elif self.final_func_mode == 3:
             res_arr = np.sqrt(res_arr)
         elif self.final_func_mode == 4:
-            minVal = np.amin(res_arr) if minVal is None else minVal
-            maxVal = np.amax(res_arr) if maxVal is None else maxVal
-            self.pushDebug("minVal = " + str(minVal))
-            self.pushDebug("maxVal = " + str(maxVal))
-            res_arr -= minVal
-            res_arr /= (maxVal - minVal)
+            res_arr = self.processFinalIndex(res_arr,minVal=minVal,maxVal=maxVal)
+        elif self.final_func_mode == 5:
+            res_arr = np.log(res_arr)
+            res_arr = self.processFinalIndex(res_arr)
+        else:
+            assert(False)
         return res_arr
         
     def processOutput(self,res_arr,feedback):
         # Writes output
         feedback.pushDebugInfo("out_nodata = " + str(self.out_nodata))
-        res_arr[self.array==self.inNodata] = self.out_nodata
+        res_arr[self.array==self.input_nodata] = self.out_nodata
         qgsUtils.exportRaster(res_arr,self.input_path,self.output,
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         # out_layer = qgsUtils.loadRasterLayer(self.output)
@@ -2082,10 +2095,12 @@ class SlidingWindowCircle(PatchAlgorithm):
         self.classes = self.prepareClasses(classes,feedback)
         self.preparedArr = self.prepareArray(context,feedback).astype(np.float32)
         self.processDistrib(feedback)
-        res_arr = self.preparedArr
         if self.addFuncParamFlag:
-            res_arr = self.applyAddFunc(res_arr)
-        res_arr = self.processFinal(res_arr)
+            res_arr = self.applyAddFunc(self.preparedArr)
+        else:
+            res_arr = self.preparedArr
+        if self.finalFuncParamFlag:
+            res_arr = self.processFinal(res_arr)
         return self.processOutput(res_arr,feedback)
         
 
@@ -2330,6 +2345,7 @@ class MedianDistanceDistrib(IndexAlgorithm,MedianDistance):
     ALG_NAME = 'medianDistanceDistrib'
     
     def initAlgorithm(self, report_opt=True):
+        self.defaultFinal = 1
         SlidingWindowCircle.initAlgorithm(self,classesParam=True,
             quantParam=True,finalFuncParam=True)
     
@@ -2485,12 +2501,70 @@ class MedianDistanceDistrib2(MedianDistanceDistrib):
             nodata=self.out_nodata,type=gdal.GDT_Float32)
         return { self.OUTPUT_FILE : self.output }
 
+class DistanceIndex(IndexAlgorithm,SlidingWindowCircle):
+
+    ALG_NAME = 'distanceIndex'
+    
+    def initAlgorithm(self, report_opt=True):
+        self.defaultFinal = 5
+        SlidingWindowCircle.initAlgorithm(self,classesParam=True,
+            quantParam=True,finalFuncParam=True)
+            
+    def displayName(self):
+        return self.tr("Distance index")
+        
+    def shortHelpString(self):
+        return self.tr("Computes distance sum redistributed.")
+    
+    def filter_func(self,array):
+        dist_arr = self.dist_rate_arr_flatten[array==self.currVal]
+        dist_arr += self.currQuant
+        dist_sum = np.sum(dist_arr)
+        # if dist_arr.size > 0:
+            # dist_sum += self.currQuant
+        return dist_sum
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        classes, self.array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        classes = self.prepareClasses(classes,feedback,firstToEnd=True)
+        feedback.pushDebugInfo("classes = " + str(classes))
+        self.nb_vals = len(classes)
+        feedback.pushDebugInfo("array shape = " + str(self.array.shape))
+        acc_arr = np.zeros(self.array.shape)
+        self.currQuant = 0
+        for cpt, c in enumerate(classes,start=1):
+            feedback.pushDebugInfo("class = " + str(c))
+            feedback.pushDebugInfo("cpt = " + str(cpt))
+            self.currVal = c
+            distSumArr = ndimage.generic_filter(self.array,
+                self.filter_func,footprint=self.footprint,
+                mode="constant",cval=0,output=np.float32)
+            self.pushDebug("distSumArr = " + str(distSumArr))
+            feedback.pushDebugInfo("distSumArr.dtype = " + str(distSumArr.dtype))
+            self.debugRaster(feedback,distSumArr,self.input_path,"distSumArr" + str(c),
+                nodata=-1,type=gdal.GDT_Float32)
+            distSumArr[self.array==self.input_nodata] = math.nan
+            quantile = np.nanquantile(distSumArr,q=self.quantile)
+            feedback.pushDebugInfo("quantile = " + str(quantile))
+            distSumArr[np.isnan(distSumArr)] = 0
+            acc_arr = np.add(distSumArr,acc_arr)
+            self.currQuant += quantile
+            feedback.pushDebugInfo("self.currQuant = " + str(self.currQuant))
+            self.pushDebug("acc_arr = " + str(acc_arr))
+        acc_arr[self.array==self.input_nodata] = self.out_nodata
+        self.pushDebug("acc_arr = " + str(acc_arr))
+        res_arr = self.processFinal(acc_arr)
+        return self.processOutput(res_arr,feedback)
+
 class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
     
     ALG_NAME = 'patchSizeWindowRedistrib'
     INDEX = 'INDEX'
     
     def initAlgorithm(self, config=None):
+        self.defaultFinal = 0
         super().initAlgorithm(classesParam=True,quantParam=True,
             finalFuncParam=True)
         
@@ -2499,6 +2573,11 @@ class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
         
     def shortHelpString(self):
         return self.tr("Redistributed patch size inside slinding window")
+    
+    def filter_func(self,array):
+        dist_arr = self.dist_array_flatten[array==self.currVal]
+        dist_sum = np.sum(dist_val)
+        return dist_sum
     
     # def initAlgorithm(self, classesParam=True, quant=False,
             # funcs=True, config=None, report_opt=True):
