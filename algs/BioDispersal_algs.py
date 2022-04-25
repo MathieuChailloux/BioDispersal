@@ -201,7 +201,7 @@ class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
             qgsUtils.exportRaster(arr,inputPath,outPath,nodata=nodata,type=type)
 class IndexAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def group(self):
-        return self.tr("Connectivity index")
+        return self.tr("Connectivity indices")
     def groupId(self):
         return 'index'
 class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
@@ -2548,7 +2548,6 @@ class DistanceIndex(IndexAlgorithm,SlidingWindowCircle):
         res_arr = self.processFinal(acc_arr)
         return self.processOutput(res_arr,feedback)
 
-
 class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
     
     ALG_NAME = 'patchSizeWindowRedistrib'
@@ -2563,7 +2562,7 @@ class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
         return self.tr("Surface index")
         
     def shortHelpString(self):
-        return self.tr("Patch side inside window redistributed and potentially agregated")
+        return self.tr("Redistributed patch size inside slinding window")
     
     def filter_func(self,array):
         dist_arr = self.dist_array_flatten[array==self.currVal]
@@ -2780,7 +2779,7 @@ class ConnectivityIndexSimplified(IndexAlgorithm,SlidingWindowCircle):
     INDEX = 'INDEX'
     
     def initAlgorithm(self, config=None):
-        super().initAlgorithm(classesParam=True,redistribParams=True,
+        super().initAlgorithm(classesParam=True,#redistribParams=True,
             distModeCoeffParam=True,finalFuncParam=True)
         
     def displayName(self):
@@ -2818,6 +2817,7 @@ class ConnectivityIndexSimplified(IndexAlgorithm,SlidingWindowCircle):
         self.currQuant = 0
         tmp_arr = self.array.astype(np.float32)
         curr_arr = np.zeros(self.array.shape)
+        self.redistribVal = self.size
         for c in self.classes:
             self.currVal = c
             # tmp_arr[self.array == c] += self.currQuant
