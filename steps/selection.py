@@ -149,17 +149,8 @@ class SelectionModel(abstract_model.DictModel):
         grp_name = grp_item.dict["name"]
         class_item = self.bdModel.classModel.getClassByName(grp_name)
         mode_val = item.dict["mode_val"]
-        feedback.pushDebugInfo("mode_val 1 " + str(mode_val))
-        # mode_val = mode_val.replace('"','\\"')
-        # mode_val = QgsExpression(mode_val)
-        # mode_val = mode_val.replace("'","\\'")
-        # mode_val = ""
-        feedback.pushDebugInfo("mode_val 2 " + str(mode_val))
-        # mode_val = '\"FICTIF\" = \'Non\' AND \"POS_SOL\" = 0 AND \"NATURE\" IN ( \'Route à 1 chaussée\' )'
-        # feedback.pushDebugInfo("mode_val 3 " + str(mode_val))
-        # mode_val = '\"FICTIF\" = \'Non\' AND \"POS_SOL\" = 0 AND \"NATURE\" IN ( \'Route à 1 chaussée\' )'
-        # feedback.pushDebugInfo("mode_val 4 " + str(mode_val))
-        # input = 'F:/IRSTEA/Formations/IndiceConnectivite_2022/TP_BioDispersal/Source/BDTOPO_2018/BDT_2-2_SHP_LAMB93_D034-ED181/A_RESEAU_ROUTIER/ROUTE.SHP'
+        feedback.pushDebugInfo("mode_val " + str(mode_val))
+
         input = self.getItemInPath(item)
         # selected_path = qgsUtils.mkTmpPath(grp_name + "_selected.gpkg")
         # qgsTreatments.extractByExpression(input,mode_val,selected_path,feedback=feedback)
@@ -190,6 +181,8 @@ class SelectionModel(abstract_model.DictModel):
         mode = item.dict["mode"]
         grp_name = grp_item.dict["name"]
         out_path = self.getItemOutPath(item)
+        if os.path.isfile(out_path):
+            qgsUtils.removeRaster(out_path)
         input = self.getItemInPath(item)
         step_feedback = feedbacks.ProgressMultiStepFeedback(2,feedback)
         step_feedback.setCurrentStep(0)

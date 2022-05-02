@@ -300,6 +300,7 @@ class SelectVExprAlg(SelectionAlgorithm):
                 self.tr("Output layer")))
                 
     def processAlgorithm(self,parameters,context,feedback):
+        # Parse params
         input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
         feedback.pushDebugInfo("input = " + str(input))
         if input is None:
@@ -308,6 +309,21 @@ class SelectVExprAlg(SelectionAlgorithm):
         expr = self.parameterAsExpression(parameters,self.EXPR,context)
         class_name = self.parameterAsString(parameters,self.CLASS,context)
         code = self.parameterAsInt(parameters,self.CODE,context)
+        # Apply selection
+        feedback.pushDebugInfo("Expression = " + str(expr))
+        if expr is None or expr == "":
+            nb_feats = input.featureCount()
+            feats = input.getFeatures()
+        else:
+            input_path = qgsUtils.pathOfLayer(input)
+            selected_path = qgsUtils.mkTmpPath(str(code) + "_selected.gpkg")
+            qgsTreatments.extractByExpression(input_path,expr,selected_path,feedback=feedback)
+            selected = qgsUtils.loadVectorLayer(selected_path)
+            nb_feats = selected.featureCount()
+            feats = selected.getFeatures()
+        if nb_feats == 0:
+            raise QgsProcessingException("Empty result for selection")
+        # Prepare output
         out_fields = QgsFields()
         orig_field = QgsField("Origin", QVariant.String)
         class_field = QgsField("Class", QVariant.String)
@@ -325,25 +341,7 @@ class SelectVExprAlg(SelectionAlgorithm):
         )
         if sink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
-            
-        feedback.pushDebugInfo("Expression = " + str(expr))
-        if expr is None or expr == "":
-            nb_feats = input.featureCount()
-            feats = input.getFeatures()
-        else:
-            input_path = qgsUtils.pathOfLayer(input)
-            selected_path = qgsUtils.mkTmpPath(str(code) + "_selected.gpkg")
-            qgsTreatments.extractByExpression(input_path,expr,selected_path,feedback=feedback)
-            selected = qgsUtils.loadVectorLayer(selected_path)
-            # qgsTreatments.selectByExpression(input_path,expr,feedback=feedback)
-            # nb_feats = input.selectedFeatureCount()
-            nb_feats = selected.featureCount()
-            feats = selected.getFeatures()
-            
-            
-            
-        if nb_feats == 0:
-            raise QgsProcessingException("No feature selected")
+        # Populate output
         progress_step = 100.0 / nb_feats
         curr_step = 0
         for f in feats:
@@ -355,7 +353,7 @@ class SelectVExprAlg(SelectionAlgorithm):
             sink.addFeature(new_f,QgsFeatureSink.FastInsert)
             curr_step += 1
             feedback.setProgress(int(curr_step * progress_step))
-            
+        # Return result
         res = { self.OUTPUT : dest_id }
         return res
 
