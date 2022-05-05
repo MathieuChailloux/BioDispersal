@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>930</width>
+    <width>988</width>
     <height>745</height>
    </rect>
   </property>
@@ -173,8 +173,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>688</width>
-            <height>644</height>
+            <width>754</width>
+            <height>651</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -358,6 +358,11 @@
                <width>16777215</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
              </property>
              <property name="currentIndex">
               <number>0</number>
@@ -854,7 +859,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
@@ -928,6 +933,7 @@
                        </property>
                        <property name="font">
                         <font>
+                         <pointsize>10</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -1086,6 +1092,7 @@
                        </property>
                        <property name="font">
                         <font>
+                         <pointsize>10</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -1119,7 +1126,7 @@
                         <number>1</number>
                        </property>
                        <property name="currentIndex">
-                        <number>1</number>
+                        <number>0</number>
                        </property>
                        <widget class="QWidget" name="stackSelectionModeVect">
                         <widget class="QLabel" name="selectionModeLabel">
@@ -1257,7 +1264,7 @@
                         <number>1</number>
                        </property>
                        <property name="currentIndex">
-                        <number>2</number>
+                        <number>0</number>
                        </property>
                        <widget class="QWidget" name="stackSelectionExpr">
                         <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1304,7 +1311,7 @@
                            <property name="minimumSize">
                             <size>
                              <width>100</width>
-                             <height>13</height>
+                             <height>20</height>
                             </size>
                            </property>
                           </widget>
@@ -1464,6 +1471,7 @@
                        </property>
                        <property name="font">
                         <font>
+                         <pointsize>10</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -2594,7 +2602,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
@@ -2621,7 +2629,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
@@ -3892,6 +3900,12 @@
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>20</height>
+                     </size>
+                    </property>
                    </widget>
                   </item>
                   <item row="4" column="2">
@@ -3905,7 +3919,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
-                      <height>0</height>
+                      <height>20</height>
                      </size>
                     </property>
                    </widget>
@@ -3997,7 +4011,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
-                      <height>16</height>
+                      <height>20</height>
                      </size>
                     </property>
                     <property name="maximum">
@@ -4051,7 +4065,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
-                      <height>0</height>
+                      <height>20</height>
                      </size>
                     </property>
                    </widget>
@@ -4102,7 +4116,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
-                      <height>0</height>
+                      <height>20</height>
                      </size>
                     </property>
                    </widget>
@@ -4114,6 +4128,12 @@
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>20</height>
+                     </size>
                     </property>
                    </widget>
                   </item>
@@ -4177,7 +4197,7 @@
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>8</pointsize>
+                      <pointsize>10</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
@@ -4384,7 +4404,7 @@
                        </property>
                        <property name="minimumSize">
                         <size>
-                         <width>0</width>
+                         <width>186</width>
                          <height>16</height>
                         </size>
                        </property>
@@ -4443,6 +4463,12 @@
                          <horstretch>0</horstretch>
                          <verstretch>0</verstretch>
                         </sizepolicy>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>20</height>
+                        </size>
                        </property>
                        <property name="text">
                         <string>Launch dispersal</string>
@@ -4598,19 +4624,19 @@
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Friction&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Pour chaque classe et chaque sous-trame, une valeur numérique doit être renseignée (en l'absence de valeur, la classe est retirée du calcul pour la sous-trame correspondante).&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Plusieurs méthodes sont disponibles à cette étape&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Coefficients&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;La méthode classique telle que décrite dans les tutoriels consiste à affecter des coefficient de friction dont la valeur numérique correspond à la résistance du milieu aux déplacements des espèces cibles (plus la valeur est élevée, plus le milieu est défavorable).&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Classes de favorabilité&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Cette méthode permet de classifier les milieux en fonction de leur favorabilité / résitance aux déplacements des espèces cible sans avoir à quantifier cette grandeur. Les classes sont représentées par des valeurs numériques ordonnées (par exemple de 1 pour un milieu très défavorable à 5 pour un milieu très favorable si l'on considère 5 classes de favorabilité).&lt;br /&gt;Une fois la couche de favorabilité générée, il est possible de l'utiliser pour calculer un&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt; indice de distribution potentielle&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; qui permet de s'affranchir des coefficients de friction (algorithme disponible depuis la boîte à outils de traitements de BioDispersal, cf LIEN pour un tutoriel pas à pas).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;Friction&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Pour chaque classe et chaque sous-trame, une valeur numérique doit être renseignée (en l'absence de valeur, la classe est retirée du calcul pour la sous-trame correspondante).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Plusieurs méthodes sont disponibles à cette étape&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Coefficients&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:7.8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;La méthode classique telle que décrite dans les tutoriels consiste à affecter des coefficient de friction dont la valeur numérique correspond à la résistance du milieu aux déplacements des espèces cibles (plus la valeur est élevée, plus le milieu est défavorable).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Classes de favorabilité&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Cette méthode permet de classifier les milieux en fonction de leur favorabilité / résitance aux déplacements des espèces cible sans avoir à quantifier cette grandeur. Les classes sont représentées par des valeurs numériques ordonnées (par exemple de 1 pour un milieu très défavorable à 5 pour un milieu très favorable si l'on considère 5 classes de favorabilité).&lt;br /&gt;Une fois la couche de favorabilité générée, il est possible de l'utiliser pour calculer un&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt; indice de distribution potentielle&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; qui permet de s'affranchir des coefficients de friction (algorithme disponible depuis la boîte à outils de traitements de BioDispersal, cf LIEN pour un tutoriel pas à pas).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="openLinks">
           <bool>false</bool>

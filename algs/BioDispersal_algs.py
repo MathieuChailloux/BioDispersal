@@ -149,6 +149,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
 #    def tr(self, string):
 #        return QCoreApplication.translate(self.__class__.__name__, string)
 class StepAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+       return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Steps")
     def groupId(self):
@@ -156,21 +158,29 @@ class StepAlgorithm(qgsUtils.BaseProcessingAlgorithm):
 SelectionAlgorithm = StepAlgorithm
 WeightingBaseAlgorithm = StepAlgorithm
 class GraphabAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+       return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Graphab")
     def groupId(self):
         return 'graphab'
 class CircuitscapeAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+       return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Circuitscape")
     def groupId(self):
         return 'circuitscape'
 class AuxAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+       return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Other algorithms")
     def groupId(self):
         return 'misc'
 class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+       return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Patch utils")
     def groupId(self):
@@ -184,11 +194,15 @@ class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
             feedback.pushDebugInfo(outName + "path = " + str(outPath))
             qgsUtils.exportRaster(arr,inputPath,outPath,nodata=nodata,type=type)
 class IndexAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+       return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Connectivity indices")
     def groupId(self):
         return 'index'
 class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+        return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Habitat qualification")
     def groupId(self):
@@ -2464,7 +2478,7 @@ class PatchSizeDistrib(SlidingWindowCircle):
         return self.tr("Patch size (Distrib)")
         
     def shortHelpString(self):
-        return self.tr("Computes connexity index based on favoarbility classes and patch median inside specified sliding window")
+        return self.tr("Computes surface index based on patch size redistributed according to favorability class.")
         
     def prepareArray(self,context,feedback):
         median_path = self.mkTmpPath("median.tif")
