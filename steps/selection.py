@@ -154,10 +154,10 @@ class SelectionModel(abstract_model.DictModel):
         input = self.getItemInPath(item)
         # selected_path = qgsUtils.mkTmpPath(grp_name + "_selected.gpkg")
         # qgsTreatments.extractByExpression(input,mode_val,selected_path,feedback=feedback)
-        clipped_path = qgsUtils.mkTmpPath(grp_name + "_clipped.gpkg")
-        self.bdModel.paramsModel.clipByExtent(input,out_path=clipped_path)
-        parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : clipped_path,
-        # parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : input,
+        # clipped_path = qgsUtils.mkTmpPath(grp_name + "_clipped.gpkg")
+        #self.bdModel.paramsModel.clipByExtent(input,out_path=clipped_path)
+        #parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : clipped_path,
+        parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : input,
                        BioDispersal_algs.SelectVExprAlg.EXPR : mode_val,
                        BioDispersal_algs.SelectVExprAlg.CLASS : grp_name,
                        BioDispersal_algs.SelectVExprAlg.CODE : class_item.dict["code"],

@@ -220,8 +220,8 @@ class BioDispersal:
         sys.excepthook = qgis_excepthook
         if self.dlg:
             utils.info("unload")
-            self.dlg.connectors["Group"].disconnectComponents()
-            self.dlg.connectors["ST"].disconnectComponents()
+            self.dlg.groupsConnector.disconnectComponents()
+            self.dlg.stConnector.disconnectComponents()
         del self.toolbar
 
     def connectComponents(self):

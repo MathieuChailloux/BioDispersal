@@ -303,7 +303,9 @@ class SelectVExprAlg(SelectionAlgorithm):
         feedback.pushDebugInfo("input = " + str(input))
         if input is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        feedback.pushDebugInfo("encoding 1 = " + str(input.dataProvider().encoding()))
         qgsUtils.normalizeEncoding(input)
+        feedback.pushDebugInfo("encoding 2 = " + str(input.dataProvider().encoding()))
         expr = self.parameterAsExpression(parameters,self.EXPR,context)
         class_name = self.parameterAsString(parameters,self.CLASS,context)
         code = self.parameterAsInt(parameters,self.CODE,context)
