@@ -136,7 +136,6 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             ConnectivityIndex(),
             ConnectivityIndexHabPatch(),
             QuantileDistance(),
-            MedianDistance(),
             NeighboursCount(),
             RelativeSurface()]
         for a in alglist:
@@ -148,15 +147,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
 #class BaseAlgorithm(QgsProcessingAlgorithm):
 #    def tr(self, string):
 #        return QCoreApplication.translate(self.__class__.__name__, string)
-class StepAlgorithm(qgsUtils.BaseProcessingAlgorithm):
-    def tr(self, string):
-       return QCoreApplication.translate(self.__class__.__name__, string)
-    def group(self):
-        return self.tr("Steps")
-    def groupId(self):
-        return 'steps'
-SelectionAlgorithm = StepAlgorithm
-WeightingBaseAlgorithm = StepAlgorithm
+SelectionAlgorithm = qgsUtils.BaseProcessingAlgorithm
+WeightingBaseAlgorithm = qgsUtils.BaseProcessingAlgorithm
 class GraphabAlgorithm(qgsUtils.BaseProcessingAlgorithm):
     def tr(self, string):
        return QCoreApplication.translate(self.__class__.__name__, string)
@@ -171,20 +163,8 @@ class CircuitscapeAlgorithm(qgsUtils.BaseProcessingAlgorithm):
         return self.tr("Circuitscape")
     def groupId(self):
         return 'circuitscape'
-class AuxAlgorithm(qgsUtils.BaseProcessingAlgorithm):
-    def tr(self, string):
-       return QCoreApplication.translate(self.__class__.__name__, string)
-    def group(self):
-        return self.tr("Other algorithms")
-    def groupId(self):
-        return 'misc'
+AuxAlgorithm = qgsUtils.BaseProcessingAlgorithm
 class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
-    def tr(self, string):
-       return QCoreApplication.translate(self.__class__.__name__, string)
-    def group(self):
-        return self.tr("Patch utils")
-    def groupId(self):
-        return 'patch'
     def debugRaster(self,feedback,arr,inputPath,outName,
             nodata=-9999,type=gdal.GDT_Float32):
         if self.DEBUG:
@@ -193,20 +173,7 @@ class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
             outPath = QgsProcessingUtils.generateTempFilename(outName + ".tif")
             feedback.pushDebugInfo(outName + "path = " + str(outPath))
             qgsUtils.exportRaster(arr,inputPath,outPath,nodata=nodata,type=type)
-class IndexAlgorithm(qgsUtils.BaseProcessingAlgorithm):
-    def tr(self, string):
-       return QCoreApplication.translate(self.__class__.__name__, string)
-    def group(self):
-        return self.tr("Connectivity indices")
-    def groupId(self):
-        return 'index'
-class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
-    def tr(self, string):
-        return QCoreApplication.translate(self.__class__.__name__, string)
-    def group(self):
-        return self.tr("Habitat qualification")
-    def groupId(self):
-        return 'qualif'
+QualifAlgorithm = qgsUtils.BaseProcessingAlgorithm
                
 class BioDispersalAlgorithm(AuxAlgorithm):
 
@@ -218,6 +185,10 @@ class BioDispersalAlgorithm(AuxAlgorithm):
         
     def displayName(self):
         return self.tr("Run BioDispersal from configuration file")
+    def group(self):
+        return self.tr("Misc")
+    def groupId(self):
+        return 'misc'
         
     def shortHelpString(self):
         return self.tr("Executes complete process from XML configuration file")
@@ -267,6 +238,10 @@ class SelectVExprAlg(SelectionAlgorithm):
         
     def displayName(self):
         return self.tr('Selection (by expression)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         return self.tr('Code layer creation from input layer and expression')
@@ -371,6 +346,10 @@ class SelectVFieldAlg(SelectionAlgorithm):
         
     def displayName(self):
         return self.tr('Selection (by field value)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         return self.tr('Code layer creation from input layer and field values')
@@ -549,6 +528,10 @@ class WeightingBasics(WeightingAlgorithm):
         
     def displayName(self):
         return self.tr('Weighting (Basics)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         helpStr = "Weighting of friction layer A by another layer B. Layers must be aligned.\n"
@@ -637,6 +620,10 @@ class WeightingByIntervals(WeightingIntervalsAlgorithm):
         
     def displayName(self):
         return self.tr('Weighting (By intervals)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         helpStr = "Weighting of friction layer A by another layer B. Layers must be aligned.\n"
@@ -677,6 +664,10 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
         
     def displayName(self):
         return self.tr('Weighting (By distance)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         helpStr = "Weighting of friction layer A by distance to another layer B. Layers must be aligned.\n"
@@ -761,6 +752,10 @@ class RasterSelectionByValue(AuxAlgorithm):
         
     def displayName(self):
         return self.tr('Raster selection by value')
+    def group(self):
+        return self.tr("Misc")
+    def groupId(self):
+        return 'misc'
         
     def shortHelpString(self):
         return self.tr('Creates new raster with input raster values veryfing specified operation.')
@@ -830,6 +825,10 @@ class ExtractPatchesR(AuxAlgorithm):
         
     def displayName(self):
         return self.tr('Extract patches (Raster)')
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         s = "Extract patches from land use raster layer according to"
@@ -925,6 +924,10 @@ class RasterizeFixAllTouch(AuxAlgorithm,rasterize):
         
     def displayName(self):
         return self.tr('Rasterize (with ALL_TOUCH fix)')
+    def group(self):
+        return self.tr("Misc")
+    def groupId(self):
+        return 'misc'
         
     #def group(self):
     #    return "Auxiliary algorithms"
@@ -987,6 +990,10 @@ class ChangeNoDataVal(AuxAlgorithm):
         
     def displayName(self):
         return self.tr('Change NoData value')
+    def group(self):
+        return self.tr("Misc")
+    def groupId(self):
+        return 'misc'
         
     def shortHelpString(self):
         return self.tr('Change NoData value and reclassifies old NoData pixels to new NoData value.')
@@ -1451,6 +1458,11 @@ class DistanceToBorderVector(PatchAlgorithm):
     
     def displayName(self):
         return self.tr("Distance to borders (vector)")
+
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         return self.tr("Distance to border")
@@ -1496,6 +1508,11 @@ class DistanceToBorderRaster(PatchAlgorithm):
     
     def displayName(self):
         return self.tr("Distance to borders (Raster)")
+
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         return self.tr("Distance for each pixel to patch border.")
@@ -1563,6 +1580,10 @@ class LabelPatches(PatchAlgorithm):
     
     def displayName(self):
         return self.tr("Label patches")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         return self.tr("Patch labelling")
@@ -1613,6 +1634,10 @@ class PatchSizeRaster(PatchAlgorithm):
     
     def displayName(self):
         return self.tr("Patch size")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         return self.tr("Computes patch size (pixel value = pixel patch size)")
@@ -1665,6 +1690,10 @@ class NeighboursCount(PatchAlgorithm):
     
     def displayName(self):
         return self.tr("Neigbours count")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         return self.tr("Computes for each pixel the number of immediate neighbours of same value")
@@ -2113,6 +2142,10 @@ class QuantileDistance(SlidingWindowCircle):
     
     def displayName(self):
         return self.tr("Quantile distance")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         return self.tr("Distance to pixel of same values inside sliding window.")
@@ -2154,60 +2187,6 @@ class QuantileDistance(SlidingWindowCircle):
             mode="constant",cval=0,output=np.float32)
         return quantile_arr
 
-    
-
-class MedianDistance(SlidingWindowCircle):
-
-    ALG_NAME = 'medianDistance'
-    
-    def initAlgorithm(self, config=None, quantParam=False,report_opt=True):
-        super().initAlgorithm(classParam=True,quantParam=quantParam)
-    
-    def displayName(self):
-        return self.tr("Median distance")
-        
-    def shortHelpString(self):
-        return self.tr("Median distance to pixel of same values inside sliding window.")
-        
-    # def icon(self):
-        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
-
-    def processAlgorithm(self,parameters,context,feedback):
-        self.parseParams(parameters,context,feedback)
-        self.prepareWindow(feedback)
-        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
-        feedback.pushDebugInfo("classes = " + str(classes))
-        self.nb_vals = len(classes)
-        # Computing immediate neighbours (4-connexity)
-        feedback.pushDebugInfo("array shape = " + str(array.shape))
-        res_arr = ndimage.generic_filter(array,
-            self.filter_func,footprint=self.footprint,
-            mode="constant",cval=0,output=np.float32)
-        # Output
-        qgsUtils.exportRaster(res_arr,self.input_path,self.output,
-            nodata=self.out_nodata,type=gdal.GDT_Float32)
-        return { self.OUTPUT_FILE : self.output }
-
-    def filter_func(self,array):
-        # self.pushDebug("array = " + str(array))
-        cell_val = self.classParam if self.classParam else array[self.val_idx_footprint]
-        if cell_val == self.nodata:
-            res = self.out_nodata
-        else:
-            # self.pushDebug("cell_val = " + str(cell_val))
-            dist_val = self.dist_array_flatten[array==cell_val]
-            # self.pushDebug("dist_val = " + str(dist_val))
-            # val_median = np.nanmedian(dist_val)
-            val_median = np.nanmedian(dist_val)
-            res = val_median
-        return res
-        
-    def computeMedian(self,arr):
-        median_arr = ndimage.generic_filter(arr,
-            self.filter_func,footprint=self.footprint,
-            mode="constant",cval=0,output=np.float32)
-        return median_arr
-                
                        
        
 class PatchAreaWindow(SlidingWindowCircle):
@@ -2216,6 +2195,10 @@ class PatchAreaWindow(SlidingWindowCircle):
     
     def displayName(self):
         return self.tr("Patch size (sliding window)")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         return self.tr("Patch area inside sliding window")
@@ -2255,7 +2238,7 @@ class PatchAreaWindow(SlidingWindowCircle):
         return res
                 
 
-class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
+class PatchSizeWindowRedistrib(SlidingWindowCircle):
     
     ALG_NAME = 'patchSizeWindowRedistrib'
     INDEX = 'INDEX'
@@ -2267,6 +2250,10 @@ class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
         
     def displayName(self):
         return self.tr("Surface index")
+    def group(self):
+        return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'
         
     def shortHelpString(self):
         return self.tr("Redistributed patch size inside slinding window")
@@ -2332,7 +2319,7 @@ class PatchSizeWindowRedistrib(IndexAlgorithm,SlidingWindowCircle):
         return np.count_nonzero(array == cell_val) - 1
         
         
-class ConnectivityIndex(IndexAlgorithm,SlidingWindowCircle):
+class ConnectivityIndex(SlidingWindowCircle):
     
     ALG_NAME = 'connexityIndex'
     INDEX = 'INDEX'
@@ -2341,6 +2328,11 @@ class ConnectivityIndex(IndexAlgorithm,SlidingWindowCircle):
         super().initAlgorithm(classesParam=True,#redistribParams=True,
             distModeCoeffParam=True,finalFuncParam=True)
         
+    # def group(self):
+    #     return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'
+    
     def displayName(self):
         return self.tr("Connectivity index")
         
@@ -2386,7 +2378,64 @@ class ConnectivityIndex(IndexAlgorithm,SlidingWindowCircle):
         return self.processOutput(curr_arr,feedback)
         
         
-class ConnectivityIndexHabPatch(IndexAlgorithm,SlidingWindowCircle):
+class ConnectivityIndexHabPatch(SlidingWindowCircle):
+    
+    ALG_NAME = 'connectivityIndexHabPatch'
+    
+    COEFF_MODE = 'COEFF_MODE'
+    EXPONENT = 'EXPONENT'
+    
+    def group(self):
+        return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'
+    
+    def displayName(self):
+        return self.tr("Isolation index")
+        
+    def shortHelpString(self):
+        return self.tr("Connectivity index based on favorability.")
+                
+    def filter_func(self,array):
+        dist_arr = self.dist_arr[array==self.currVal]
+        dist_arr += self.currQuant
+        if dist_arr.size == 0:
+            res = math.nan
+        else:
+            res = np.nansum(dist_arr)
+        return res       
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, self.array, self.inNodata = qgsUtils.getRasterValsArrayND(
+            str(self.input_path))
+        self.classes = self.prepareClasses(classes,feedback)
+        nb_classes = len(self.classes)
+        self.currQuant = 0
+        tmp_arr = self.array.astype(np.float32)
+        curr_arr = np.zeros(self.array.shape)
+        self.redistribVal = self.size
+        for c in self.classes:
+            self.currVal = c
+            # tmp_arr[self.array == c] += self.currQuant
+            arr_c = ndimage.generic_filter(tmp_arr,
+                self.filter_func,footprint=self.footprint,
+                mode="constant",cval=math.nan)
+            self.currQuant += self.redistribVal
+            arr_c[np.isnan(arr_c)] = 0
+            self.debugRaster(feedback,arr_c,self.input_path,"connex" + str(c),
+                nodata=0,type=gdal.GDT_Float32)
+            curr_arr += arr_c
+            self.pushDebug("currQuant = " + str(self.currQuant))
+        minVal = np.nansum(self.dist_arr)
+        maxVal = np.nansum(self.dist_arr + ((nb_classes-1) * self.redistribVal))
+        curr_arr = self.processFinal(curr_arr)
+        return self.processOutput(curr_arr,feedback)
+        
+        
+class ConnectivityIndexHabPatch(SlidingWindowCircle):
     
     ALG_NAME = 'connectivityIndexHabPatch'
     
@@ -2395,6 +2444,10 @@ class ConnectivityIndexHabPatch(IndexAlgorithm,SlidingWindowCircle):
           
     def displayName(self):
         return self.tr("Isolation index")
+    def group(self):
+        return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'
         
     def shortHelpString(self):
         msg = "Isolation index inspired from Hanski incidence function model."
@@ -2469,79 +2522,6 @@ class ConnectivityIndexHabPatch(IndexAlgorithm,SlidingWindowCircle):
         # return { self.OUTPUT : self.out_layer }
 
          
-class PatchSizeDistrib(SlidingWindowCircle):
-
-    ALG_NAME = 'PatchSizeDitransiliestrib'
-    
-    def initAlgorithm(self, report_opt=True):
-        SlidingWindowCircle.initAlgorithm(self,classesParam=True)
-        
-    def displayName(self):
-        return self.tr("Patch size (Distrib)")
-        
-    def shortHelpString(self):
-        return self.tr("Computes surface index based on patch size redistributed according to favorability class.")
-        
-    def prepareArray(self,context,feedback):
-        median_path = self.mkTmpPath("median.tif")
-        median_params = { PatchAreaWindow.INPUT : self.input,
-            PatchAreaWindow.WINDOW_SIZE : self.size,
-            PatchAreaWindow.OUTPUT : median_path }
-        processing.run("BioDispersal:" + PatchAreaWindow.ALG_NAME,
-            median_params,context=context,feedback=feedback)
-        median_classes, median_arr = qgsUtils.getRasterValsAndArray(median_path)
-        return median_arr
-        
-    def processAlgorithmHidden(self,parameters,context,feedback):
-        self.parseParams(parameters,context,feedback)
-        # neutralElem = math.nan if func_mode == 2 else 0
-        self.prepareWindow(feedback)
-        self.quantile = 1
-        # Retrieve classes and array
-        classes, array, input_nodata = qgsUtils.getRasterValsArrayND(str(self.input_path))
-        ncount_struct = ndimage.generate_binary_structure(2,1)
-        classes = self.prepareClasses(classes,feedback,firstToEnd=False)
-        # PatchAreaWindow
-        median_path = self.mkTmpPath("median.tif")
-        median_params = { PatchAreaWindow.INPUT : self.input,
-            PatchAreaWindow.WINDOW_SIZE : self.size,
-            PatchAreaWindow.OUTPUT : median_path }
-        processing.run("BioDispersal:" + PatchAreaWindow.ALG_NAME,
-            median_params,context=context,feedback=feedback)
-        median_classes, median_arr = qgsUtils.getRasterValsAndArray(median_path)
-        median_arr = median_arr.astype(np.float32)
-        median_arr[array==input_nodata] = math.nan
-        self.debugRaster(feedback,median_arr,self.input_path,"median1",
-            nodata=-1,type=gdal.GDT_Float32)
-        quants = {}
-        for c in classes:
-            q = np.nanquantile(median_arr[array==c],q=quantile)
-            quants[c] = q
-        feedback.pushDebugInfo("quants = " + str(quants))
-        median_arr[array==input_nodata] = 0
-        acc_q = 0
-        for c in classes:
-            acc_q += quants[c]
-            feedback.pushDebugInfo("acc_q = " + str(acc_q))
-            median_arr[array==c] += acc_q
-        self.debugRaster(feedback,median_arr,self.input_path,"median2",
-            nodata=-1,type=gdal.GDT_Float32)
-        # TODO
-        median_arr[array==input_nodata] = self.filter_neutral
-        res_arr = ndimage.generic_filter(median_arr,
-            self.add_func,footprint=self.footprint,
-            mode="constant",cval=self.filter_neutral)
-        # Output
-        feedback.pushDebugInfo("out_nodata = " + str(self.out_nodata))
-        res_arr[array==input_nodata] = self.out_nodata
-        qgsUtils.exportRaster(res_arr,self.input_path,self.output,
-            nodata=self.out_nodata,type=gdal.GDT_Float32)
-        return { self.OUTPUT_FILE : self.output }
-    
-    def count_neighbours_4(self,array):
-        cell_val = array[2]
-        return np.count_nonzero(array == cell_val) - 1
- 
   
   
 class RelativeSurface(QualifAlgorithm):
@@ -2553,6 +2533,10 @@ class RelativeSurface(QualifAlgorithm):
     
     def displayName(self):
         return self.tr("Relative surface")
+    def group(self):
+        return self.tr("Habitat qualification")
+    def groupId(self):
+        return 'qualif'
         
     def shortHelpString(self):
         return self.tr("Relative surface (percentage of B surface in each patch of layer A)")
