@@ -2394,10 +2394,10 @@ class ConnectivityIndexHabPatch(IndexAlgorithm,SlidingWindowCircle):
     EXPONENT = 'EXPONENT'
           
     def displayName(self):
-        return self.tr("Connectivity index (habitat-patch based)")
+        return self.tr("Isolation index")
         
     def shortHelpString(self):
-        msg = "Connectivity index inspired from Hanski incidence function model."
+        msg = "Isolation index inspired from Hanski incidence function model."
         msg += ""
         return self.tr(msg)
     
