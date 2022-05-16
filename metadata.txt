@@ -41,7 +41,8 @@ changelog=BioDispersal changelog:
     1.1.2 : - Fix issue #12 + new video link
     1.1.3 : - Fix issues #13 and # 14 + circuitscape export algorithms
     1.1.4 : - Fix issues #15 and #16, qgis_lib_mc #1 (import gdal) and #2
-    1.2.0 : - Connexity indices
+    1.2.0 : - Connectivity indices
+            - Fix #issue 19
 
 # Tags are comma separated with spaces allowed
 tags=python, ecology, dispersal, ecological continuities, permeability, animal, landscape
