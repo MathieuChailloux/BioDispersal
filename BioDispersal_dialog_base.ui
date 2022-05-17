@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>988</width>
-    <height>745</height>
+    <width>1043</width>
+    <height>731</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -144,6 +144,9 @@
       <property name="topMargin">
        <number>0</number>
       </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item row="0" column="0">
        <widget class="QSplitter" name="splitter">
         <property name="sizePolicy">
@@ -173,8 +176,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>754</width>
-            <height>651</height>
+            <width>801</width>
+            <height>641</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -361,7 +364,7 @@
              </property>
              <property name="font">
               <font>
-               <pointsize>10</pointsize>
+               <pointsize>8</pointsize>
               </font>
              </property>
              <property name="currentIndex">
@@ -380,10 +383,16 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>137</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777213</width>
-                   <height>16777213</height>
+                   <height>137</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -396,10 +405,21 @@
                   <item row="0" column="0">
                    <widget class="QLabel" name="label_11">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>115</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>8</pointsize>
+                     </font>
                     </property>
                     <property name="text">
                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Welcome in BioDispersal !&lt;/p&gt;&lt;p&gt;Homepage: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/drafts/README.md&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Video tutorials (new link with Graphab interoperability): &lt;a href=&quot;https://www.youtube.com/playlist?list=PLh9oFe6PuPCXgsR9DAxP9uyhp9BEu8X3c&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.youtube.com/playlist?list=PL0Wd1JAi6QuHdwALwwJqj5TcfNYvjRbcs&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Configuration should be frequently saved (buttons &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSaveAs.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;img src=&quot;:/plugins/BioDispersal/icons/mActionFileSave.svg&quot;/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; in top left corner).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -422,7 +442,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>9</pointsize>
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
@@ -600,22 +620,6 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
               </layout>
              </widget>
              <widget class="QWidget" name="stTab">
@@ -633,7 +637,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>9</pointsize>
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
@@ -859,7 +863,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>11</pointsize>
+                   <pointsize>9</pointsize>
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
@@ -933,7 +937,7 @@
                        </property>
                        <property name="font">
                         <font>
-                         <pointsize>10</pointsize>
+                         <pointsize>8</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -1092,7 +1096,7 @@
                        </property>
                        <property name="font">
                         <font>
-                         <pointsize>10</pointsize>
+                         <pointsize>8</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -1471,7 +1475,7 @@
                        </property>
                        <property name="font">
                         <font>
-                         <pointsize>10</pointsize>
+                         <pointsize>8</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -1695,7 +1699,7 @@
                            </property>
                            <property name="font">
                             <font>
-                             <pointsize>10</pointsize>
+                             <pointsize>9</pointsize>
                              <weight>75</weight>
                              <bold>true</bold>
                             </font>
@@ -1911,6 +1915,12 @@
                   <size>
                    <width>350</width>
                    <height>200</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -2241,7 +2251,7 @@
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>9</pointsize>
+                      <pointsize>8</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
@@ -2602,7 +2612,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>11</pointsize>
+                   <pointsize>9</pointsize>
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
@@ -2629,7 +2639,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>11</pointsize>
+                   <pointsize>9</pointsize>
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
@@ -2968,6 +2978,12 @@
                   </property>
                   <item>
                    <widget class="QFrame" name="frame_22">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>177</height>
+                     </size>
+                    </property>
                     <property name="frameShape">
                      <enum>QFrame::NoFrame</enum>
                     </property>
@@ -2997,6 +3013,7 @@
                        </property>
                        <property name="font">
                         <font>
+                         <pointsize>8</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -3057,6 +3074,7 @@
                        </property>
                        <property name="font">
                         <font>
+                         <pointsize>8</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -3140,6 +3158,7 @@
                        </property>
                        <property name="font">
                         <font>
+                         <pointsize>8</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -3169,6 +3188,7 @@
                       <widget class="QLabel" name="pondPondLabel">
                        <property name="font">
                         <font>
+                         <pointsize>8</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -3226,7 +3246,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
-                      <height>100</height>
+                      <height>120</height>
                      </size>
                     </property>
                     <property name="currentIndex">
@@ -3234,8 +3254,17 @@
                     </property>
                     <widget class="QWidget" name="stackPondIval">
                      <layout class="QGridLayout" name="gridLayout_20">
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
                       <item row="0" column="0">
                        <widget class="QFrame" name="pondIvalFrame">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>120</height>
+                         </size>
+                        </property>
                         <property name="frameShape">
                          <enum>QFrame::NoFrame</enum>
                         </property>
@@ -3243,44 +3272,35 @@
                          <enum>QFrame::Raised</enum>
                         </property>
                         <layout class="QGridLayout" name="gridLayout_19">
-                         <property name="leftMargin">
-                          <number>0</number>
-                         </property>
                          <property name="topMargin">
                           <number>0</number>
                          </property>
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="bottomMargin">
-                          <number>0</number>
-                         </property>
-                         <item row="0" column="4">
-                          <spacer name="horizontalSpacer_12">
+                         <item row="0" column="0">
+                          <spacer name="horizontalSpacer_13">
                            <property name="orientation">
                             <enum>Qt::Horizontal</enum>
                            </property>
+                           <property name="sizeType">
+                            <enum>QSizePolicy::Fixed</enum>
+                           </property>
                            <property name="sizeHint" stdset="0">
                             <size>
-                             <width>673</width>
-                             <height>20</height>
+                             <width>15</width>
+                             <height>13</height>
                             </size>
                            </property>
                           </spacer>
                          </item>
-                         <item row="1" column="2" colspan="3">
-                          <widget class="QTableView" name="pondIvalView">
-                           <property name="minimumSize">
-                            <size>
-                             <width>200</width>
-                             <height>50</height>
-                            </size>
+                         <item row="0" column="1">
+                          <widget class="QLabel" name="pondDirectLayerLabel_2">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
                            </property>
-                           <property name="dragEnabled">
-                            <bool>true</bool>
-                           </property>
-                           <property name="sortingEnabled">
-                            <bool>true</bool>
+                           <property name="text">
+                            <string>Intervals</string>
                            </property>
                           </widget>
                          </item>
@@ -3330,34 +3350,93 @@
                            </property>
                           </widget>
                          </item>
-                         <item row="0" column="1">
-                          <widget class="QLabel" name="pondDirectLayerLabel_2">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="text">
-                            <string>Intervals</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="0">
-                          <spacer name="horizontalSpacer_13">
+                         <item row="0" column="4">
+                          <spacer name="horizontalSpacer_12">
                            <property name="orientation">
                             <enum>Qt::Horizontal</enum>
                            </property>
-                           <property name="sizeType">
-                            <enum>QSizePolicy::Fixed</enum>
-                           </property>
                            <property name="sizeHint" stdset="0">
                             <size>
-                             <width>15</width>
-                             <height>13</height>
+                             <width>673</width>
+                             <height>20</height>
                             </size>
                            </property>
                           </spacer>
+                         </item>
+                         <item row="1" column="2" colspan="3">
+                          <widget class="QTableView" name="pondIvalView">
+                           <property name="minimumSize">
+                            <size>
+                             <width>200</width>
+                             <height>50</height>
+                            </size>
+                           </property>
+                           <property name="dragEnabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="sortingEnabled">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="2" column="2" colspan="3">
+                          <widget class="QFrame" name="frame_15">
+                           <property name="minimumSize">
+                            <size>
+                             <width>0</width>
+                             <height>23</height>
+                            </size>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>16777215</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                           <property name="frameShape">
+                            <enum>QFrame::StyledPanel</enum>
+                           </property>
+                           <property name="frameShadow">
+                            <enum>QFrame::Raised</enum>
+                           </property>
+                           <layout class="QHBoxLayout" name="horizontalLayout_11">
+                            <property name="topMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="bottomMargin">
+                             <number>0</number>
+                            </property>
+                            <item>
+                             <widget class="QPushButton" name="pondAdd">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>0</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="text">
+                               <string>Save weighting</string>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="resources.qrc">
+                                <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </widget>
                          </item>
                         </layout>
                        </widget>
@@ -3504,15 +3583,30 @@
                      <enum>QFrame::Raised</enum>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_14">
-                     <item row="0" column="0" colspan="2">
-                      <widget class="QFrame" name="frame_32">
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <item row="3" column="0" colspan="2">
+                      <widget class="QFrame" name="frame_35">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>20</height>
+                        </size>
+                       </property>
                        <property name="frameShape">
                         <enum>QFrame::NoFrame</enum>
                        </property>
                        <property name="frameShadow">
                         <enum>QFrame::Raised</enum>
                        </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_18">
+                       <layout class="QHBoxLayout" name="horizontalLayout_21">
                         <property name="spacing">
                          <number>0</number>
                         </property>
@@ -3529,7 +3623,7 @@
                          <number>0</number>
                         </property>
                         <item>
-                         <widget class="QPushButton" name="pondAdd">
+                         <widget class="QPushButton" name="pondRun">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                             <horstretch>0</horstretch>
@@ -3537,11 +3631,11 @@
                            </sizepolicy>
                           </property>
                           <property name="text">
-                           <string>Save weighting</string>
+                           <string>Weight friction layers</string>
                           </property>
                           <property name="icon">
                            <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
+                            <normaloff>:/plugins/BioDispersal/icons/play.svg</normaloff>:/plugins/BioDispersal/icons/play.svg</iconset>
                           </property>
                          </widget>
                         </item>
@@ -3673,6 +3767,33 @@
                        </layout>
                       </widget>
                      </item>
+                     <item row="0" column="0" colspan="2">
+                      <widget class="QFrame" name="frame_32">
+                       <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_18">
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
+                       </layout>
+                      </widget>
+                     </item>
                      <item row="1" column="1">
                       <widget class="QTableView" name="ponderationView">
                        <property name="minimumSize">
@@ -3796,62 +3917,6 @@
                            </size>
                           </property>
                          </spacer>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                     <item row="3" column="0" colspan="2">
-                      <widget class="QFrame" name="frame_35">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>25</height>
-                        </size>
-                       </property>
-                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_21">
-                        <property name="spacing">
-                         <number>0</number>
-                        </property>
-                        <property name="leftMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="topMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="rightMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="bottomMargin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <widget class="QPushButton" name="pondRun">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="text">
-                           <string>Weight friction layers</string>
-                          </property>
-                          <property name="icon">
-                           <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/BioDispersal/icons/play.svg</normaloff>:/plugins/BioDispersal/icons/play.svg</iconset>
-                          </property>
-                         </widget>
                         </item>
                        </layout>
                       </widget>
@@ -3991,6 +4056,7 @@
                     </property>
                     <property name="font">
                      <font>
+                      <pointsize>8</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
@@ -4147,6 +4213,7 @@
                     </property>
                     <property name="font">
                      <font>
+                      <pointsize>8</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
@@ -4172,6 +4239,7 @@
                     </property>
                     <property name="font">
                      <font>
+                      <pointsize>8</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
@@ -4197,7 +4265,7 @@
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>10</pointsize>
+                      <pointsize>8</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
@@ -4624,19 +4692,19 @@
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;Friction&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Pour chaque classe et chaque sous-trame, une valeur numérique doit être renseignée (en l'absence de valeur, la classe est retirée du calcul pour la sous-trame correspondante).&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Plusieurs méthodes sont disponibles à cette étape&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Coefficients&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:7.8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;La méthode classique telle que décrite dans les tutoriels consiste à affecter des coefficient de friction dont la valeur numérique correspond à la résistance du milieu aux déplacements des espèces cibles (plus la valeur est élevée, plus le milieu est défavorable).&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Classes de favorabilité&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Cette méthode permet de classifier les milieux en fonction de leur favorabilité / résitance aux déplacements des espèces cible sans avoir à quantifier cette grandeur. Les classes sont représentées par des valeurs numériques ordonnées (par exemple de 1 pour un milieu très défavorable à 5 pour un milieu très favorable si l'on considère 5 classes de favorabilité).&lt;br /&gt;Une fois la couche de favorabilité générée, il est possible de l'utiliser pour calculer un&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt; indice de distribution potentielle&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; qui permet de s'affranchir des coefficients de friction (algorithme disponible depuis la boîte à outils de traitements de BioDispersal, cf LIEN pour un tutoriel pas à pas).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Friction&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Pour chaque classe et chaque sous-trame, une valeur numérique doit être renseignée (en l'absence de valeur, la classe est retirée du calcul pour la sous-trame correspondante).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Plusieurs méthodes sont disponibles à cette étape&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Coefficients&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;La méthode classique telle que décrite dans les tutoriels consiste à affecter des coefficient de friction dont la valeur numérique correspond à la résistance du milieu aux déplacements des espèces cibles (plus la valeur est élevée, plus le milieu est défavorable).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Classes de favorabilité&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Cette méthode permet de classifier les milieux en fonction de leur favorabilité / résitance aux déplacements des espèces cible sans avoir à quantifier cette grandeur. Les classes sont représentées par des valeurs numériques ordonnées (par exemple de 1 pour un milieu très défavorable à 5 pour un milieu très favorable si l'on considère 5 classes de favorabilité).&lt;br /&gt;Une fois la couche de favorabilité générée, il est possible de l'utiliser pour calculer un&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt; indice de distribution potentielle&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; qui permet de s'affranchir des coefficients de friction (algorithme disponible depuis la boîte à outils de traitements de BioDispersal, cf LIEN pour un tutoriel pas à pas).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="openLinks">
           <bool>false</bool>
