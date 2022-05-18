@@ -185,8 +185,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
         
     def removeItems(self,index):
         utils.debug("[removeItems] nb of items = " + str(len(self.current_model.items))) 
-        self.current_model.removeItems(index)
+        self.current_model.removeItems(index,updatePluginModel=False)
         self.current_model.layoutChanged.emit()
+        self.layoutChanged.emit()
         
     def addItem(self,item):
         utils.debug("[addItemFusion]")
@@ -219,8 +220,9 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.models = {}
         self.onlySelection = False
         super().__init__(fusionModel,self.dlg.fusionView,
-                         None,self.dlg.fusionRemove,
-                         self.dlg.fusionRun,self.dlg.fusionRunOnlySelection)
+                         addButton=None,removeButton=self.dlg.fusionRemove,
+                         runButton=self.dlg.fusionRun,
+                         selectionCheckbox=self.dlg.fusionRunOnlySelection)
                          
     def initGui(self):
         pass

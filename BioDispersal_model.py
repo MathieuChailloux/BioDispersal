@@ -102,6 +102,7 @@ class BioDispersalModel:
         pass
         
     def removeGroup(self,name):
+        self.feedback.pushDebugInfo("Removing group from bdModel " + str(name))
         self.classModel.removeFromGroupName(name)
         self.selectionModel.removeFromGroupName(name)
         for st, grp_model in self.fusionModel.st_groups.items():

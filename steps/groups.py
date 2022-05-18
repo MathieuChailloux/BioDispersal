@@ -172,8 +172,9 @@ class GroupModel(abstract_model.DictModel):
             self.bdModel.addGroup(item)
         #self.groupAdded.emit(item)
         
-    def removeItems(self,indexes):
-        if self.bdModel:
+    def removeItems(self,indexes,updatePluginModel=True):
+        utils.debug("items = " + str([i.dict["name"] for i in self.items]))
+        if self.bdModel and updatePluginModel:
             names = [self.items[idx.row()].dict["name"] for idx in indexes]
             for n in names:
                 self.bdModel.removeGroup(n)
