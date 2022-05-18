@@ -48,8 +48,10 @@ class STItem(abstract_model.DictItem):
         return st_item
         
     def checkItem(self):
-        if self.dict["name"] == "":
-            raise utils.CustomException("Empty sous-trame name")
+        name = self.dict[self.NAME]
+        if not name.isalnum():
+            utils.user_error("Subnetwork name '" + name
+                + "' must be composed of alpha characters (only letters)")
             
     def getName(self):
         return self.dict[self.NAME]
@@ -149,8 +151,9 @@ class STModel(abstract_model.DictModel):
         self.bdModel.addST(item)
         #self.stAdded.emit(item)
         utils.debug("ST addItem3, items = " + str(self))
-        
-    def removeItems(self,indexes):
+
+    def removeItems(self, indexes):
+        utils.debug("indexes " + str(indexes))
         names = [self.items[idx.row()].dict["name"] for idx in indexes]
         utils.debug("names " + str(names))
         super().removeItems(indexes)
