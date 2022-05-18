@@ -38,23 +38,30 @@ file_dir = os.path.dirname(__file__)
 if file_dir not in sys.path:
     sys.path.append(file_dir)
     
-from .BioDispersalAbout_dialog import BioDispersalAboutDialog
+#from .BioDispersalAbout_dialog import BioDispersalAboutDialog
 from .qgis_lib_mc import (utils, qgsUtils, config_parsing, log, feedbacks, abstract_model)
 from .algs.BioDispersal_algs import BioDispersalAlgorithmsProvider
 from .steps import (params, subnetworks, classes, groups, selection, fusion, friction, ponderation, cost)
 from . import tabs
 from .BioDispersal_model import BioDispersalModel
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
+DLG_CLASS, _ = uic.loadUiType(os.path.join(
  os.path.dirname(__file__), 'BioDispersal_dialog_base.ui'))
+ABOUT_DLG_CLASS, _ = uic.loadUiType(os.path.join(
+ os.path.dirname(__file__), 'BioDispersalAbout_dialog_base.ui'))
 
-#FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
-#    os.path.dirname(__file__), 'test_dialog.ui'))
-    
-from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
+#from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
+
+class BioDispersalAboutDialog(QtWidgets.QDialog,ABOUT_DLG_CLASS):
+    def __init__(self,parent=None):
+        #super(ABOUT_DLG_CLASS).__init__(parent)
+        super(BioDispersalAboutDialog, self).__init__(parent)
+        self.setupUi(self)
+
+
     
 # class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
-class BioDispersalDialog(abstract_model.MainDialog,FORM_CLASS):
+class BioDispersalDialog(abstract_model.MainDialog,DLG_CLASS):
 
     pluginName = 'BioDispersal'
 
@@ -125,6 +132,7 @@ class BioDispersalDialog(abstract_model.MainDialog,FORM_CLASS):
     def openHelpDialog(self):
         utils.debug("openHelpDialog")
         about_dlg = BioDispersalAboutDialog(self)
+        #about_dlg = ABOUT_DLG_CLASS(self)
         about_dlg.show()
         
     # Recompute self.parsers in case they have been reloaded
