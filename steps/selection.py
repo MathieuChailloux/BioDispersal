@@ -57,7 +57,7 @@ vexpr = "VExpr"
 rclasses = "RClasses"
 rresample = "RResample"
 
-# SelectionItem implements DictItem and contains below fields :
+# Selection Item implements DictItem and contains below fields :
 #   - 'in_layer' : input layer from which features are selected
 #   - 'expr' : expression on which selection is performerd
 #                (all features are selected if empty expression)

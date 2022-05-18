@@ -290,12 +290,15 @@ class SelectVExprAlg(SelectionAlgorithm):
             nb_feats = input.featureCount()
             feats = input.getFeatures()
         else:
-            input_path = qgsUtils.pathOfLayer(input)
-            selected_path = qgsUtils.mkTmpPath(str(code) + "_selected.gpkg")
-            qgsTreatments.extractByExpression(input_path,expr,selected_path,feedback=feedback)
-            selected = qgsUtils.loadVectorLayer(selected_path)
-            nb_feats = selected.featureCount()
-            feats = selected.getFeatures()
+            # input_path = qgsUtils.pathOfLayer(input)
+            # selected_path = qgsUtils.mkTmpPath(str(code) + "_selected.gpkg")
+            # qgsTreatments.extractByExpression(input_path,expr,selected_path,feedback=feedback)
+            # selected = qgsUtils.loadVectorLayer(selected_path)
+            # nb_feats = selected.featureCount()
+            # feats = selected.getFeatures()
+            qgsTreatments.selectByExpression(input,expr,feedback=feedback)
+            nb_feats = input.selectedFeatureCount()
+            feats = input.getSelectedFeatures()
         if nb_feats == 0:
             raise QgsProcessingException("Empty result for selection")
         # Prepare output
