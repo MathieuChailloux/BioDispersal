@@ -33,13 +33,17 @@ from PyQt5.QtWidgets import QAction
 from .resources import *
 # Import the code for the dialog
 from .BioDispersal_dialog import BioDispersalDialog
+from .algs.BioDispersal_algs import BioDispersalAlgorithmsProvider
 from .qgis_lib_mc import utils
 
 from qgis.utils import qgis_excepthook
+from qgis.core import QgsApplication
 
 class BioDispersal:
     """QGIS Plugin Implementation."""
 
+    provider = None
+    
     def __init__(self, iface):
         """Constructor.
 
@@ -67,6 +71,8 @@ class BioDispersal:
 
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
+
+        self.initProcessing()
 
         # Create the dialog (after translation) and keep reference
         self.dlg = BioDispersalDialog()
@@ -170,6 +176,10 @@ class BioDispersal:
 
         return action
 
+    def initProcessing(self):
+        self.provider = BioDispersalAlgorithmsProvider()
+        QgsApplication.processingRegistry().addProvider(self.provider)
+    
     def initGui(self):
         utils.debug("initGui")
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
@@ -202,13 +212,16 @@ class BioDispersal:
                 self.tr(u'&BioDispersal'),
                 action)
             self.iface.removeToolBarIcon(action)
+        # remove provider
+        if self.provider:
+            QgsApplication.processingRegistry().removeProvider(self.provider)
         # remove the toolbar
         utils.print_func = print
         sys.excepthook = qgis_excepthook
         if self.dlg:
             utils.info("unload")
-            self.dlg.connectors["Group"].disconnectComponents()
-            self.dlg.connectors["ST"].disconnectComponents()
+            self.dlg.groupsConnector.disconnectComponents()
+            self.dlg.stConnector.disconnectComponents()
         del self.toolbar
 
     def connectComponents(self):

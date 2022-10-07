@@ -55,7 +55,7 @@ class ParamsModel(abstract_model.NormalizingParamsModel):
         # self.projectFile = ""
         # self.crs = defaultCrs
         # fields = ["workspace","extentLayer","resolution","projectFile","crs"]
-        abstract_model.NormalizingParamsModel.__init__(self)
+        abstract_model.NormalizingParamsModel.__init__(self,feedback=bdModel.feedback)
             
     def getGroupsPath(self):
         self.checkWorkspaceInit()

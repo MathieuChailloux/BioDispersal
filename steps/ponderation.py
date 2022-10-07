@@ -45,6 +45,7 @@ class PondIvalItem(abstract_model.DictItem):
     LB = 'low_bound'
     UB = 'up_bound'
     PV = 'pond_value'
+    FIELDS = [ LB, UB, PV ]
 
     def __init__(self,lb=0.0,ub=0.0,pv=1.0):
         dict = {"low_bound": lb,
@@ -108,8 +109,8 @@ class PondBufferIvalItem(PondIvalItem):
         
 class PondIvalModel(abstract_model.DictModel):
     
-    def __init__(self):
-        super().__init__(self,pond_ival_fields)
+    def __init__(self,feedback=None):
+        super().__init__(self,fields=pond_ival_fields,feedback=feedback)
         
     def __str__(self):
         s = ""
@@ -155,12 +156,12 @@ class PondIvalModel(abstract_model.DictModel):
         
 class PondValueIvalModel(PondIvalModel):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self,feedback=None):
+        super().__init__(feedback=feedback)
         
     @classmethod
-    def fromStr(cls,s):
-        res = cls()
+    def fromStr(cls,s,feedback=None):
+        res = cls(feedback=feedback)
         utils.debug("PondValueIvalModel.fromStr(" + str(s) +")")
         ivals = s.split('-')
         utils.debug("ivals = " + str(ivals))
@@ -171,8 +172,8 @@ class PondValueIvalModel(PondIvalModel):
         
 class PondBufferIvalModel(PondIvalModel):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self,feedback=None):
+        super().__init__(feedback=feedback)
         self.max_val = None
         
     # def checkNotEmpty(self):
@@ -180,8 +181,8 @@ class PondBufferIvalModel(PondIvalModel):
             # utils.internal_error("Empty buffer model")
         
     @classmethod
-    def fromStr(cls,s):
-        res = cls()
+    def fromStr(cls,s,feedback=None):
+        res = cls(feedback=feedback)
         utils.debug("PondBufferIvalModel.fromStr(" + str(s) +")")
         ivals = s.split('-')
         for ival_str in ivals:
@@ -232,7 +233,7 @@ class PondValueIvalConnector(abstract_model.AbstractConnector):
     
     def __init__(self,dlg):
         self.dlg = dlg
-        pondIvalModel = PondValueIvalModel()
+        pondIvalModel = PondValueIvalModel(feedback=self.dlg.feedback)
         super().__init__(pondIvalModel,self.dlg.pondIvalView,
                          self.dlg.pondIvalPlus,self.dlg.pondIvalMinus)
                          
@@ -250,7 +251,7 @@ class PondBufferIvalConnector(abstract_model.AbstractConnector):
     
     def __init__(self,dlg):
         self.dlg = dlg
-        pondBufferModel = PondBufferIvalModel()
+        pondBufferModel = PondBufferIvalModel(feedback=self.dlg.feedback)
         self.onlySelection = False
         super().__init__(pondBufferModel,self.dlg.pondBufferView,
                          self.dlg.pondBufferPlus,self.dlg.pondBufferMinus)
@@ -271,15 +272,16 @@ class PonderationItem(abstract_model.DictItem):
     def __init__(self,dict):
         super().__init__(dict)
         
-    def applyMax(self,layer1,layer2,out_layer):
-        qgsTreatments.applyMaxGdal(layer1,layer2,out_layer,load_flag=True)
+    # def applyMax(self,layer1,layer2,out_layer):
+        # qgsTreatments.applyMaxGdal(layer1,layer2,out_layer,load_flag=True)
         
-    def applyMin(self,layer1,layer2,out_layer):
-        weighting_params = { 'INPUT_LAYER' : layer1,
-                             'WEIGHT_LAYER' : layer2,
-                             'OPERATOR' : 0,
-                             'OUTPUT' : out_layer }
-        qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params)
+    # def applyMin(self,layer1,layer2,out_layer):
+        # weighting_params = { 'INPUT_LAYER' : layer1,
+                             # 'WEIGHT_LAYER' : layer2,
+                             # 'OPERATOR' : 0,
+                             # 'OUTPUT' : out_layer }
+        # qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',
+            # weighting_params)
         
         
 class PonderationModel(abstract_model.DictModel):
@@ -294,7 +296,7 @@ class PonderationModel(abstract_model.DictModel):
         self.parser_name = "PonderationModel"
         self.bdModel = bdModel
         self.is_runnable = True
-        super().__init__(self,ponderation_fields)
+        super().__init__(self,fields=ponderation_fields,feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
         utils.checkFields(ponderation_fields,dict.keys())
@@ -313,31 +315,33 @@ class PonderationModel(abstract_model.DictModel):
                              'OUTPUT' : out_layer_path }
         if mode == self.MULT_MODE:
             weighting_params['OPERATOR'] = 2
-            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,
-                                             context=context,feedback=feedback)
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',
+                weighting_params,context=context,feedback=feedback)
         elif mode == self.INTERVALS_MODE:
-            ival_model = PondValueIvalModel.fromStr(item.dict["intervals"])
+            ival_model = PondValueIvalModel.fromStr(item.dict["intervals"],
+                feedback=self.feedback)
             matrix = ival_model.toProcessingMatrix()
             weighting_params['INTERVALS'] = matrix
-            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbyintervals',weighting_params,
-                                             context=context,feedback=feedback)
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbyintervals',
+                weighting_params,context=context,feedback=feedback)
         elif mode == self.BUFFER_MODE:
-            ival_model = PondBufferIvalModel.fromStr(item.dict["intervals"])
+            ival_model = PondBufferIvalModel.fromStr(item.dict["intervals"],
+                feedback=self.feedback)
             matrix = ival_model.toProcessingMatrix()
             weighting_params['INTERVALS'] = matrix
             tmp_path = QgsProcessingUtils.generateTempFilename('buffer_tmp.tif')
             weighting_params['OUTPUT'] = tmp_path
-            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbydistance',weighting_params,
-                                             context=context,feedback=feedback)
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbydistance',
+                weighting_params,context=context,feedback=feedback)
             qgsTreatments.applyTranslate(tmp_path,out_layer_path,context=context,feedback=feedback)
         elif mode == self.MAX_MODE:
             weighting_params['OPERATOR'] = 1
-            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,
-                                             context=context,feedback=feedback)
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',
+                weighting_params,context=context,feedback=feedback)
         elif mode == self.MIN_MODE:
             weighting_params['OPERATOR'] = 0
-            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',weighting_params,
-                                             context=context,feedback=feedback)
+            qgsTreatments.applyProcessingAlg('BioDispersal','weightingbasics',
+                weighting_params,context=context,feedback=feedback)
         else:
             utils.internal_error("Unexpected ponderation mode '" + str(mode) + "'")
         loaded_layer = qgsUtils.loadRasterLayer(out_layer_path,loadProject=True)

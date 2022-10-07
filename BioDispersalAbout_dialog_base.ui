@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>714</width>
-    <height>424</height>
+    <width>888</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,117 +19,172 @@
   <property name="windowTitle">
    <string>BioDispersal - About</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QFrame" name="frame">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
+       <verstretch>80</verstretch>
       </sizepolicy>
      </property>
-     <property name="maximumSize">
+     <property name="minimumSize">
       <size>
-       <width>102</width>
-       <height>25</height>
+       <width>0</width>
+       <height>90</height>
       </size>
      </property>
-     <property name="text">
-      <string/>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="pixmap">
-      <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoINRAE.png</pixmap>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
-     <property name="scaledContents">
-      <bool>true</bool>
-     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>102</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoINRAE.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>136</width>
+          <height>68</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoTetis.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>105</width>
+          <height>68</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoCRTVB.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>53</width>
+          <height>68</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoMTES.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>281</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>icons/logoUI.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="label_3">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>136</width>
-       <height>68</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoTetis.png</pixmap>
-     </property>
-     <property name="scaledContents">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QLabel" name="label_4">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>105</width>
-       <height>68</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoCRTVB.png</pixmap>
-     </property>
-     <property name="scaledContents">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QLabel" name="label_5">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>53</width>
-       <height>68</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="resources.qrc">:/plugins/BioDispersal/icons/logoMTES.png</pixmap>
-     </property>
-     <property name="scaledContents">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="4">
+   <item>
     <widget class="QLabel" name="label">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BioDispersal is a QGIS 3 plugin (GNU GPLv3 licence) computing potential dispersal areas based on landscape permeability. It defines a 7 step procedure easing data preparation and performing effective dispersal computation.&lt;/p&gt;&lt;p&gt;BioDispersal has been developped by research unit UMR TETIS at INRAE in 2018. This project has been funded by French ministry of ecology for the ecological network resource center.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Designer / Developper &lt;/span&gt;: Mathieu Chailloux&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Project initiator&lt;/span&gt; : Jennifer Amsallem&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Links:&lt;/span&gt; :&lt;/p&gt;&lt;p&gt;- BioDispersal GitHub: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- BioDispersal bugtracker: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal/issues&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- French ecological network resource center: &lt;a href=&quot;http://www.trameverteetbleue.fr/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.trameverteetbleue.fr/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- UMR TETIS: &lt;a href=&quot;https://tetis.teledetection.fr&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://tetis.teledetection.fr&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- INRAE: &lt;a href=&quot;https://www.inrae.fr/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.inrae.fr/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BioDispersal is a QGIS 3 plugin (GNU GPLv3 licence) computing potential dispersal areas based on landscape permeability. It defines a 7 step procedure easing data preparation and performing effective dispersal computation.&lt;/p&gt;&lt;p&gt;BioDispersal has been developped by research unit UMR TETIS at INRAE in 2018. This project has been funded by French ministry of ecology for the ecological network resource center.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Designer / Developper &lt;/span&gt;: Mathieu Chailloux (mathieu@chailloux.org)&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Project initiator&lt;/span&gt; : Jennifer Amsallem (jennifer.amsallem@inrae.fr)&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Links:&lt;/span&gt; :&lt;/p&gt;&lt;p&gt;- BioDispersal GitHub: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- BioDispersal bugtracker: &lt;a href=&quot;https://github.com/MathieuChailloux/BioDispersal/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/MathieuChailloux/BioDispersal/issues&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- French ecological network resource center: &lt;a href=&quot;http://www.trameverteetbleue.fr/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.trameverteetbleue.fr/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- UMR TETIS: &lt;a href=&quot;https://tetis.teledetection.fr&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://tetis.teledetection.fr&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;- INRAE: &lt;a href=&quot;https://www.inrae.fr/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.inrae.fr/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Connectivity index has been developed through a partnership with several natural parks (&lt;a name=&quot;page77R_mcid0&quot;/&gt;&lt;span style=&quot; font-family:'sans-serif';&quot;&gt;B&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif';&quot;&gt;auges, Baronnies provençales, Chartreuse, Vercors and Verdon) and funded &lt;/span&gt;by Europeean Union (POIA FEDER), France (FNADT), regions &lt;a name=&quot;page77R_mcid0&quot;/&gt;&lt;span style=&quot; font-family:'sans-serif';&quot;&gt;A&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif';&quot;&gt;uvergne Rhône&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif';&quot;&gt;-Alpes &amp;amp; SUD Provence-Alpes-Côte d’Azur.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

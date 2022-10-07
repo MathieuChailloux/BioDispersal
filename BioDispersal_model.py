@@ -32,7 +32,7 @@ class BioDispersalModel:
         self.parser_name = "ModelConfig"
         self.context = None
         self.feedback = feedback
-        utils.debug("feedback bd = " + str(feedback))
+        self.feedback.pushDebugInfo("feedback bd = " + str(feedback))
         self.paramsModel = params.ParamsModel(self)
         self.stModel = subnetworks.STModel(self)
         self.selectionModel = selection.SelectionModel(self)
@@ -84,23 +84,25 @@ class BioDispersalModel:
     """ Model update """
     
     def addST(self,item):
-        self.frictionModel.addSTItem(item)
-        self.fusionModel.setCurrentST(item.dict["name"])
+        stName = item.getName()
+        self.frictionModel.addCol(stName)
+        self.fusionModel.setCurrentST(stName)
         
     def removeST(self,name):
-        self.frictionModel.removeSTFromName(name)
+        self.frictionModel.removeColFromName(name)
         self.fusionModel.removeSTFromName(name)
         
     def addClass(self,item):
-        self.frictionModel.addClassItem(item)        
+        self.frictionModel.addRowItemFromBase(item)        
         
     def removeClass(self,name):
-        self.frictionModel.removeClassFromName(name)
+        self.frictionModel.removeRowFromName(name)
         
     def addGroup(self,item):
         pass
         
     def removeGroup(self,name):
+        self.feedback.pushDebugInfo("Removing group from bdModel " + str(name))
         self.classModel.removeFromGroupName(name)
         self.selectionModel.removeFromGroupName(name)
         for st, grp_model in self.fusionModel.st_groups.items():

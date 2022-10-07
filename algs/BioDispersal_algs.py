@@ -27,6 +27,7 @@ import stat
 import math
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from abc import ABC, abstractmethod
 
 try:
     import scipy
@@ -39,7 +40,11 @@ try:
     import_numpy_ok = True
 except ImportError:
     import_numpy_ok = False
-
+try:
+    from osgeo import gdal
+except ImportError:
+    import gdal
+    
 from PyQt5.QtCore import QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
 from qgis.core import (Qgis,
@@ -52,6 +57,8 @@ from qgis.core import (Qgis,
                        QgsProcessingAlgorithm,
                        QgsProcessingException,
                        QgsProcessingProvider,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterDefinition,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterExtent,
@@ -67,6 +74,7 @@ from qgis.core import (Qgis,
                        QgsProcessingParameterFileDestination,
                        QgsProcessingParameterFolderDestination,
                        QgsProcessingParameterRasterLayer,
+                       QgsProcessingParameterMapLayer,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterFile,
@@ -85,24 +93,6 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
     NAME = "BioDispersal"
 
     def __init__(self):
-        self.alglist = [SelectVExprAlg(),
-                        SelectVFieldAlg(),
-                        WeightingBasics(),
-                        WeightingByIntervals(),
-                        WeightingByDistance(),
-                        RasterSelectionByValue(),
-                        ExtractPatchesR(),
-                        BioDispersalAlgorithm(),
-                        RasterizeFixAllTouch(),
-                        ExportToGraphab(),
-                        ExportPatchesToCircuitscape(),
-                        ExportFrictionToCircuitscape(),
-                        RandomStartPointsCircuitscape(),
-                        AggregateCirctuitscapeCurrentMaps(),
-                        AggregateCirctuitscapeResults(),
-                        ChangeNoDataVal()]
-        for a in self.alglist:
-            a.initAlgorithm()
         super().__init__()
         
     def unload(self):
@@ -122,7 +112,33 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
         return QIcon(icon_path)
 
     def loadAlgorithms(self):
-        for a in self.alglist:
+        alglist = [SelectVExprAlg(),
+            SelectVFieldAlg(),
+            WeightingBasics(),
+            WeightingByIntervals(),
+            WeightingByDistance(),
+            RasterSelectionByValue(),
+            ExtractPatchesR(),
+            # BioDispersalAlgorithm(),
+            RasterizeFixAllTouch(),
+            ExportToGraphab(),
+            ExportPatchesToCircuitscape(),
+            ExportFrictionToCircuitscape(),
+            RandomStartPointsCircuitscape(),
+            AggregateCirctuitscapeCurrentMaps(),
+            AggregateCirctuitscapeResults(),
+            ChangeNoDataVal(),
+            DistanceToBorderRaster(),
+            LabelPatches(),
+            PatchSizeRaster(),
+            PatchAreaWindow(),
+            PatchSizeWindowRedistrib(),
+            ConnectivityIndex(),
+            ConnectivityIndexHabPatch(),
+            QuantileDistance(),
+            NeighboursCount(),
+            RelativeSurface()]
+        for a in alglist:
             self.addAlgorithm(a)
             
     def supportedOutputRasterLayerExtensions(self):
@@ -131,45 +147,48 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
 #class BaseAlgorithm(QgsProcessingAlgorithm):
 #    def tr(self, string):
 #        return QCoreApplication.translate(self.__class__.__name__, string)
-class SelectionAlgorithm(qgsUtils.BaseProcessingAlgorithm):
-    def group(self):
-        return self.tr("Selection step")
-    def groupId(self):
-        return 'selection'
-    def tr(self, string):
-        return QCoreApplication.translate(self.__class__.__name__, string)
-class WeightingBaseAlgorithm(qgsUtils.BaseProcessingAlgorithm):
-    def group(self):
-        return self.tr("Weighting step")
-    def groupId(self):
-        return 'weighting'
+SelectionAlgorithm = qgsUtils.BaseProcessingAlgorithm
+WeightingBaseAlgorithm = qgsUtils.BaseProcessingAlgorithm
 class GraphabAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+       return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Graphab")
     def groupId(self):
         return 'graphab'
 class CircuitscapeAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def tr(self, string):
+       return QCoreApplication.translate(self.__class__.__name__, string)
     def group(self):
         return self.tr("Circuitscape")
     def groupId(self):
         return 'circuitscape'
-class AuxAlgorithm(qgsUtils.BaseProcessingAlgorithm):
-    def group(self):
-        return self.tr("Auxiliary algorithms")
-    def groupId(self):
-        return 'aux'
+AuxAlgorithm = qgsUtils.BaseProcessingAlgorithm
+class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+    def debugRaster(self,feedback,arr,inputPath,outName,
+            nodata=-9999,type=gdal.GDT_Float32):
+        if self.DEBUG:
+            feedback.pushDebugInfo(outName + " = " + str(arr))
+            feedback.pushDebugInfo(outName + ".dtype = " + str(arr.dtype))
+            outPath = QgsProcessingUtils.generateTempFilename(outName + ".tif")
+            feedback.pushDebugInfo(outName + "path = " + str(outPath))
+            qgsUtils.exportRaster(arr,inputPath,outPath,nodata=nodata,type=type)
+QualifAlgorithm = qgsUtils.BaseProcessingAlgorithm
                
-class BioDispersalAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+class BioDispersalAlgorithm(AuxAlgorithm):
 
     ALG_NAME = 'BioDispersalAlgorithm'
     
     # Algorithm parameters
     INPUT_CONFIG = "INPUT"
     LOG_FILE = "LOG"
-    OUTPUT = "OUTPUT"
         
     def displayName(self):
         return self.tr("Run BioDispersal from configuration file")
+    def group(self):
+        return self.tr("Misc")
+    def groupId(self):
+        return 'misc'
         
     def shortHelpString(self):
         return self.tr("Executes complete process from XML configuration file")
@@ -213,14 +232,16 @@ class SelectVExprAlg(SelectionAlgorithm):
 
     ALG_NAME = 'selectvexpr'
     
-    INPUT = 'INPUT'
     EXPR = 'EXPR'
     CLASS = 'CLASS'
     CODE = 'CODE'
-    OUTPUT = 'OUTPUT'
         
     def displayName(self):
         return self.tr('Selection (by expression)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         return self.tr('Code layer creation from input layer and expression')
@@ -252,14 +273,35 @@ class SelectVExprAlg(SelectionAlgorithm):
                 self.tr("Output layer")))
                 
     def processAlgorithm(self,parameters,context,feedback):
+        # Parse params
         input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
         feedback.pushDebugInfo("input = " + str(input))
         if input is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        feedback.pushDebugInfo("encoding 1 = " + str(input.dataProvider().encoding()))
         qgsUtils.normalizeEncoding(input)
+        feedback.pushDebugInfo("encoding 2 = " + str(input.dataProvider().encoding()))
         expr = self.parameterAsExpression(parameters,self.EXPR,context)
         class_name = self.parameterAsString(parameters,self.CLASS,context)
         code = self.parameterAsInt(parameters,self.CODE,context)
+        # Apply selection
+        feedback.pushDebugInfo("Expression = " + str(expr))
+        if expr is None or expr == "":
+            nb_feats = input.featureCount()
+            feats = input.getFeatures()
+        else:
+            # input_path = qgsUtils.pathOfLayer(input)
+            # selected_path = qgsUtils.mkTmpPath(str(code) + "_selected.gpkg")
+            # qgsTreatments.extractByExpression(input_path,expr,selected_path,feedback=feedback)
+            # selected = qgsUtils.loadVectorLayer(selected_path)
+            # nb_feats = selected.featureCount()
+            # feats = selected.getFeatures()
+            qgsTreatments.selectByExpression(input,expr,feedback=feedback)
+            nb_feats = input.selectedFeatureCount()
+            feats = input.getSelectedFeatures()
+        if nb_feats == 0:
+            raise QgsProcessingException("Empty result for selection")
+        # Prepare output
         out_fields = QgsFields()
         orig_field = QgsField("Origin", QVariant.String)
         class_field = QgsField("Class", QVariant.String)
@@ -277,17 +319,7 @@ class SelectVExprAlg(SelectionAlgorithm):
         )
         if sink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
-            
-        if expr is None or expr == "":
-            nb_feats = input.featureCount()
-            feats = input.getFeatures()
-        else:
-            qgsTreatments.selectByExpression(input,expr)
-            nb_feats = input.selectedFeatureCount()
-            feats = input.getSelectedFeatures()
-            
-        if nb_feats == 0:
-            raise QgsProcessingException("No feature selected")
+        # Populate output
         progress_step = 100.0 / nb_feats
         curr_step = 0
         for f in feats:
@@ -299,7 +331,7 @@ class SelectVExprAlg(SelectionAlgorithm):
             sink.addFeature(new_f,QgsFeatureSink.FastInsert)
             curr_step += 1
             feedback.setProgress(int(curr_step * progress_step))
-            
+        # Return result
         res = { self.OUTPUT : dest_id }
         return res
 
@@ -308,17 +340,19 @@ class SelectVFieldAlg(SelectionAlgorithm):
 
     ALG_NAME = 'selectvfield'
     
-    INPUT = 'INPUT'
     FIELD = 'FIELD'
     GROUP = 'GROUP'
     ASSOC = 'ASSOC'
-    OUTPUT = 'OUTPUT'
     
     HEADER_FIELD_VAL = 'Field value'
     HEADER_INT_VAL = 'New integer value'
         
     def displayName(self):
         return self.tr('Selection (by field value)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         return self.tr('Code layer creation from input layer and field values')
@@ -410,7 +444,6 @@ class WeightingAlgorithm(WeightingBaseAlgorithm):
     INPUT_LAYER = 'INPUT_LAYER'
     WEIGHT_LAYER = 'WEIGHT_LAYER'
     RESAMPLING = 'RESAMPLING'
-    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config=None):
         self.methods = ((self.tr('Nearest neighbour'), 'near'),
@@ -498,6 +531,10 @@ class WeightingBasics(WeightingAlgorithm):
         
     def displayName(self):
         return self.tr('Weighting (Basics)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         helpStr = "Weighting of friction layer A by another layer B. Layers must be aligned.\n"
@@ -586,6 +623,10 @@ class WeightingByIntervals(WeightingIntervalsAlgorithm):
         
     def displayName(self):
         return self.tr('Weighting (By intervals)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         helpStr = "Weighting of friction layer A by another layer B. Layers must be aligned.\n"
@@ -626,6 +667,10 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
         
     def displayName(self):
         return self.tr('Weighting (By distance)')
+    def group(self):
+        return self.tr("Steps")
+    def groupId(self):
+        return 'steps'
         
     def shortHelpString(self):
         helpStr = "Weighting of friction layer A by distance to another layer B. Layers must be aligned.\n"
@@ -698,20 +743,22 @@ class WeightingByDistance(WeightingIntervalsAlgorithm):
                                                      context=context,feedback=feedback)
         return { 'OUTPUT' : weighted }
    
-class RasterSelectionByValue(qgsUtils.BaseProcessingAlgorithm):
+class RasterSelectionByValue(AuxAlgorithm):
 
     ALG_NAME = 'rasterselectionbyvalue'
 
-    INPUT = 'INPUT'
     OPERATOR = 'OPERATOR'
     VALUE = 'VALUE'
-    OUTPUT = 'OUTPUT'
     
     OPERATORS = ['<','<=','>','>=','==','!=']
     OPERATORS_CMPL = ['>=','>','<=','<','!=','==']
         
     def displayName(self):
         return self.tr('Raster selection by value')
+    def group(self):
+        return self.tr("Misc")
+    def groupId(self):
+        return 'misc'
         
     def shortHelpString(self):
         return self.tr('Creates new raster with input raster values veryfing specified operation.')
@@ -772,17 +819,19 @@ class RasterSelectionByValue(qgsUtils.BaseProcessingAlgorithm):
         return { 'OUTPUT' : out }
         
 
-class ExtractPatchesR(qgsUtils.BaseProcessingAlgorithm):
+class ExtractPatchesR(AuxAlgorithm):
 
     ALG_NAME = 'extractPatchesR'
 
-    INPUT = 'INPUT'
     VALUES = 'VALUES'
     SURFACE = 'SURFACE'
-    OUTPUT = 'OUTPUT'
         
     def displayName(self):
         return self.tr('Extract patches (Raster)')
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
         
     def shortHelpString(self):
         s = "Extract patches from land use raster layer according to"
@@ -860,10 +909,10 @@ class ExtractPatchesR(qgsUtils.BaseProcessingAlgorithm):
             classes, array = qgsUtils.getRasterValsAndArray(selection_path)
             struct = ndimage.generate_binary_structure(2,1)
             labeled_array, nb_patches = ndimage.label(array,struct)
-            sizes = ndimage.sum(array,labeled_array,range(1,nb_patches+1))
+            medians = ndimage.sum(array,labeled_array,range(1,nb_patches+1))
             # x_res = selection.rasterUnitsPerPixelX()
             # y_res = selection.rasterUnitsPerPixelY()
-            indices = np.where(sizes > surface)[0] + 1
+            indices = np.where(medians > surface)[0] + 1
             new_array = np.zeros(labeled_array.shape)
             for i in indices:
                 new_array[labeled_array == i] = 1
@@ -878,6 +927,10 @@ class RasterizeFixAllTouch(AuxAlgorithm,rasterize):
         
     def displayName(self):
         return self.tr('Rasterize (with ALL_TOUCH fix)')
+    def group(self):
+        return self.tr("Misc")
+    def groupId(self):
+        return 'misc'
         
     #def group(self):
     #    return "Auxiliary algorithms"
@@ -927,7 +980,8 @@ def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
                    'OUTPUT' : out_path,
                    'UNITS' : 1, 
                    'WIDTH' : resolution }
-        res = qgsTreatments.applyProcessingAlg("BioDispersal","rasterizefixalltouch",parameters,context,feedback)
+        res = qgsTreatments.applyProcessingAlg("BioDispersal",
+            "rasterizefixalltouch",parameters,context,feedback)
     return res
     
     
@@ -935,12 +989,14 @@ class ChangeNoDataVal(AuxAlgorithm):
 
     ALG_NAME = 'changenodata'
     
-    INPUT = 'INPUT'
     NODATA_VAL = 'NODATA_VAL'
-    OUTPUT = 'OUTPUT'
         
     def displayName(self):
         return self.tr('Change NoData value')
+    def group(self):
+        return self.tr("Misc")
+    def groupId(self):
+        return 'misc'
         
     def shortHelpString(self):
         return self.tr('Change NoData value and reclassifies old NoData pixels to new NoData value.')
@@ -985,12 +1041,6 @@ class ChangeNoDataVal(AuxAlgorithm):
 class ExportToGraphab(GraphabAlgorithm):
 
     ALG_NAME = 'exporttographab'
-    
-    INPUT = 'INPUT'
-    OUTPUT = 'OUTPUT'
-        
-    def createInstance(self):
-        return ExportToGraphab()
         
     def name(self):
         return self.ALG_NAME
@@ -1049,12 +1099,7 @@ class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
 
     ALG_NAME = 'exportpatchestocircuitscape'
     
-    INPUT = 'INPUT'
     CLASS = 'CLASS'
-    OUTPUT = 'OUTPUT'
-        
-    # def createInstance(self):
-        # return ExportPatchesToCircuitscape()
         
     def displayName(self):
         return self.tr('Export to Circuitscape (start points)')
@@ -1130,12 +1175,6 @@ class ExportPatchesToCircuitscape(CircuitscapeAlgorithm):
 class ExportFrictionToCircuitscape(CircuitscapeAlgorithm):
 
     ALG_NAME = 'exportfrictiontocircuitscape'
-    
-    INPUT = 'INPUT'
-    OUTPUT = 'OUTPUT'
-        
-    # def createInstance(self):
-        # return ExportFrictionToCircuitscape()
         
     def displayName(self):
         return self.tr('Export to Circuitscape (friction layer)')
@@ -1314,7 +1353,6 @@ class AggregateCirctuitscapeCurrentMaps(CircuitscapeAlgorithm):
         return self.tr('Aggregates current maps (Circuitscape output) into one cumulative current map')
         
     INPUT_LAYERS = 'INPUT_LAYERS'
-    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self,config=None):
         self.addParameter(
@@ -1411,4 +1449,1212 @@ class AggregateCirctuitscapeResults(CircuitscapeAlgorithm):
             context=context,feedback=feedback)
         # Return
         return { self.AGGR_CURR : aggr_curr, self.AGGR_START : aggr_start }
+    
+        
+
+class DistanceToBorderVector(PatchAlgorithm):
+
+    ALG_NAME = 'distanceToBorderVector'
+    
+    EXTENT = 'EXTENT'
+    RESOLUTION = 'RESOLUTION'
+    
+    def displayName(self):
+        return self.tr("Distance to borders (vector)")
+
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
+        
+    def shortHelpString(self):
+        return self.tr("Distance to border")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterMapLayer(
+            self.INPUT,
+            "Input landuse layer",
+            types=[Qgis.Polygon]))
+        self.addParameter(QgsProcessingParameterExtent(
+            self.EXTENT,
+            "Output extent"))
+        self.addParameter(QgsProcessingParameterNumber(
+            self.RESOLUTION,
+            "Output resolution",
+            defaultValue=10.0,
+            type=QgsProcessingParameterNumber.Double))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsMapLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        extent = self.parameterAsExtent(parameters,self.EXTENT,context)
+        resolution = self.parameterAsDouble(parameters,self.RESOLUTION,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        border_path = self.mkTmpPath('borders.gpkg')
+        # type = 2 <=> LineString
+        qgsTreatments.convertGeomType(input,2,border_path,context,feedback)
+        border_raster_path = self.mkTmpPath('borders.tif')
+        qgsTreatments.applyRasterization(border_path,border_raster_path,
+            extent,resolution,burn_val=1,out_type=Qgis.Byte,
+            context=context,feedback=feedback)
+
+   
+
+class DistanceToBorderRaster(PatchAlgorithm):
+
+    ALG_NAME = 'distanceToBorderRaster'
+    
+    def displayName(self):
+        return self.tr("Distance to borders (Raster)")
+
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
+        
+    def shortHelpString(self):
+        return self.tr("Distance for each pixel to patch border.")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input landuse layer"))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        extent = input.extent()
+        input_nodata = input.dataProvider().sourceNoDataValue(1)
+        unique_vals = qgsTreatments.getRasterUniqueVals(input,feedback)
+        nb_vals = len(unique_vals)
+        mf = QgsProcessingMultiStepFeedback(nb_vals * 2 + 2, feedback)
+        prox_layers = []
+        mf.pushDebugInfo("classes = " + str(unique_vals))
+        for count, v in enumerate(unique_vals,start=0):
+            classes = list(unique_vals)
+            classes.remove(v)
+            mf.pushDebugInfo("classes = " + str(classes))
+            classes_str = ",".join([str(c) for c in classes])
+            mf.pushDebugInfo("classes_str = " + str(classes_str))
+            prox_v_path = self.mkTmpPath("proximity_" + str(v) + ".tif")
+            qgsTreatments.applyProximity(input,prox_v_path,classes=classes_str,context=context,feedback=mf)
+            mf.setCurrentStep(count * 2 + 1)
+            prox_vnull_path = self.mkTmpPath("proximity_" + str(v) + "_null.tif")
+            # expr_v = "logical_and(A != " + str(v) + ", A != " + str(input_nodata) + ") * B"
+            # qgsTreatments.applyRasterCalcAB(input,prox_v_path,prox_vnull_path,expr_v,
+                # nodata_val=0,context=context,feedback=mf)
+            extract_params = { RasterSelectionByValue.INPUT : prox_v_path,
+                RasterSelectionByValue.OPERATOR : 2,
+                RasterSelectionByValue.VALUE : 0,
+                RasterSelectionByValue.OUTPUT : prox_vnull_path
+            }
+            processing.run("BioDispersal:" + RasterSelectionByValue.ALG_NAME,
+                extract_params,context=context,feedback=mf)
+            prox_layers.append(prox_vnull_path)
+            # qgsUtils.removeRaster(prox_v_path)
+            mf.setCurrentStep(count * 2 + 2)
+        min_prox_path = self.mkTmpPath("min_prox.tif")
+        qgsTreatments.applyRSeries(prox_layers,4,min_prox_path,
+            context=context,feedback=mf)
+        mf.setCurrentStep(nb_vals+1)
+        expr = "((A != " + str(input_nodata) + ") * B)"
+        qgsTreatments.applyRasterCalcAB(input,min_prox_path,output,expr,
+            nodata_val=0,context=context,feedback=mf)
+        mf.setCurrentStep(nb_vals+2)
+        return { self.OUTPUT : output }
+        
+        
+   
+
+class LabelPatches(PatchAlgorithm):
+
+    ALG_NAME = 'labelPatches'
+    
+    def displayName(self):
+        return self.tr("Label patches")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
+        
+    def shortHelpString(self):
+        return self.tr("Patch labelling")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input layer"))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        input_path = qgsUtils.pathOfLayer(input)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        classes, array = qgsUtils.getRasterValsAndArray(input_path)
+        mf = QgsProcessingMultiStepFeedback(len(classes), feedback)
+        struct = scipy.ndimage.generate_binary_structure(2,1)
+        res_array = np.zeros(array.shape)
+        class_array = np.copy(array)
+        prev_nb_patches = 0
+        for count, c in enumerate(classes,start=1):
+            # mf.pushDebugInfo("Labelling class " + str(c))
+            class_array[array==c] = 1
+            class_array[array!=c] = 0
+            labeled_array, nb_patches = ndimage.label(class_array,struct)
+            mf.pushDebugInfo("labeled_array = " + str(labeled_array))
+            labeled_array[array==c] += prev_nb_patches
+            mf.pushDebugInfo("labeled_array = " + str(labeled_array))
+            tmp_path = self.mkTmpPath("labeled_" + str(c) + ".tif")
+            # qgsUtils.exportRaster(res_array,input_path,tmp_path)
+            res_array = np.add(res_array,labeled_array)
+            mf.pushDebugInfo("res_array = " + str(res_array))
+            prev_nb_patches += nb_patches
+            mf.setCurrentStep(count)
+        qgsUtils.exportRaster(res_array,input_path,output,nodata=0,type=gdal.GDT_UInt16)
+        return {self.OUTPUT : output}
+    
+
+class PatchSizeRaster(PatchAlgorithm):
+
+    ALG_NAME = 'patchSizeRaster'
+    LABELLED = 'LABELLED'
+    
+    def displayName(self):
+        return self.tr("Patch size")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
+        
+    def shortHelpString(self):
+        return self.tr("Computes patch size (pixel value = pixel patch size)")
+        
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input layer"))
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.LABELLED,
+                description = 'Input is already labelled',
+                defaultValue=False,
+                optional=True))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        input_path = qgsUtils.pathOfLayer(input)
+        is_labelled = self.parameterAsBool(parameters,self.LABELLED,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        if is_labelled:
+            labelled_path = input_path
+        else:
+            labelled_path = self.mkTmpPath("labelled.tif")
+            label_params = { LabelPatches.INPUT : input,
+                LabelPatches.OUTPUT : labelled_path }
+            processing.run("BioDispersal:" + LabelPatches.ALG_NAME,
+                label_params,context=context,feedback=feedback)
+        classes, array = qgsUtils.getRasterValsAndArray(labelled_path)
+        mf = QgsProcessingMultiStepFeedback(len(classes), feedback)
+        res_array = np.zeros(array.shape)
+        for count, c in enumerate(classes,start=1):
+            mf.pushDebugInfo("Labelling class " + str(c))
+            nb_pix = np.count_nonzero(array == c)
+            res_array[array==c] = nb_pix
+            mf.setCurrentStep(count)
+        qgsUtils.exportRaster(res_array,input_path,output,nodata=0,type=gdal.GDT_UInt32)
+        return {self.OUTPUT : output}
+        
+
+class NeighboursCount(PatchAlgorithm):
+
+    ALG_NAME = 'neigboursCount'
+    
+    def displayName(self):
+        return self.tr("Neigbours count")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
+        
+    def shortHelpString(self):
+        return self.tr("Computes for each pixel the number of immediate neighbours of same value")
+    
+    def initAlgorithm(self, config=None, report_opt=True):
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input layer"))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            self.tr("Output layer")))
+            
+    def processAlgorithm(self,parameters,context,feedback):
+        input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        in_path = qgsUtils.pathOfLayer(input)
+        in_nodata = input.dataProvider().sourceNoDataValue(1)
+        classes, array = qgsUtils.getRasterValsAndArray(in_path)
+        struct = ndimage.generate_binary_structure(2,1)
+        nb_neighbours_arr = ndimage.generic_filter(array,
+            self.countNeighbours,footprint=struct, mode="constant",cval=in_nodata)
+        qgsUtils.exportRaster(nb_neighbours_arr,input.source(),output)
+        return {self.OUTPUT : output}
+            
+    def countNeighbours(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
+
+
+class SlidingWindowCircle(PatchAlgorithm):
+    
+    WINDOW_SIZE = 'WINDOW_SIZE'
+    # METHOD = "METHOD"
+    # METHODsel = ["mean", "sum","minimum","maximum","standard deviation","variance","median","variety"]
+    MODE = "MODE"
+    m = ["reflect", "constant", "nearest", "mirror", "wrap"]
+    
+    DIST_MODE = 'DIST_MODE'
+    DIST_COEFF_MODE = 'DIST_COEFF_MODE'
+    AGR_FUNC = 'AGR_FUNC'
+    agr_funcs = ['KeepValue','AddWindow','DivWindow']
+    ADD_FUNC = 'ADD_FUNC'
+    ADD_FUNC_NAMES = ['sum','nansum','nanmean','None']
+    add_funcs = [np.sum,np.nansum,np.nanmean,None]
+    add_func = np.sum
+
+    QUANTILE = 'QUANTILE'
+    defaultQuant = 1
+    REDISTRIB_VAL = 'REDISTRIB_VAL'
+    FINAL_FUNC = 'FINAL_FUNC'
+    final_funcs = ['None','Log10','Exp','Sqrt','Index','LogIndex']
+    defaultFinal = 0
+    
+    CLASSES_ORDER = "CLASSES_ORDER"
+    CLASS = "CLASS"
+    OUTPUT_FILE = "OUTPUT"
+    
+    DEBUG_FIELDNAME = 'DEBUG'
+    DEBUG = False
+        
+    def initAlgorithm(self, classesParam=False, classParam=False, agrFuncParam=False,
+            addFuncParam=False, quantParam=False, finalFuncParam=False,
+            distModeParam=False,distModeCoeffParam=False,
+            redistribParams=False, config=None, report_opt=True):
+        self.classesParamFlag = classesParam
+        self.classParamFlag = classParam
+        self.distModeParamFlag = distModeParam
+        self.distModeCoeffParamFlag = distModeCoeffParam
+        self.agrFuncParamFlag = agrFuncParam
+        self.addFuncParamFlag = addFuncParam
+        self.quantParamFlag = quantParam
+        self.redistribParamsFlag = redistribParams
+        self.finalFuncParamFlag = finalFuncParam
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            self.INPUT,
+            "Input layer"))
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.WINDOW_SIZE,
+                description = self.tr('Window size (pixels)'),
+                type=QgsProcessingParameterNumber.Integer,
+                defaultValue=5))
+        # self.addParameter(
+            # QgsProcessingParameterEnum(
+                # self.MODE,
+                # description = self.tr('Behaviour at Edges'),
+                # options=self.m,
+                # defaultValue=0))
+        if classesParam:
+            self.addParameter(
+                QgsProcessingParameterString(
+                    self.CLASSES_ORDER,
+                    description = self.tr('Classes order (from unfavorable to very favorable)')))
+        if classParam:
+            self.addParameter(
+                QgsProcessingParameterNumber(
+                    self.CLASS,
+                    description = self.tr('Class'),
+                    type=QgsProcessingParameterNumber.Integer,
+                    optional=True))
+        if quantParam:
+            self.addParameter(
+                QgsProcessingParameterNumber(
+                    self.QUANTILE,
+                    description = self.tr('Percentile'),
+                    type=QgsProcessingParameterNumber.Double,
+                    defaultValue=self.defaultQuant))
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.DEBUG_FIELDNAME,
+                description = self.tr('Print debug messages'),
+                defaultValue=False,
+                optional=True))
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+            self.OUTPUT,
+            description = self.tr('Output layer')))
+        self.addAdvancedParams()
+        
+    def addAdvancedParams(self):
+        # if self.agrFuncParamFlag:
+            # self.addAgrFuncParam()
+        if self.distModeParamFlag:
+            self.addDistModeParam()
+        if self.distModeCoeffParamFlag:
+            self.addDistModeCoeffParam()
+        if self.redistribParamsFlag:
+            self.addRedistribParams()
+        if self.agrFuncParamFlag:
+            self.addAgrFuncParam()
+        if self.addFuncParamFlag:
+            self.addAddFuncParam()
+        if self.finalFuncParamFlag:
+            finalFuncParam = QgsProcessingParameterEnum(
+                self.FINAL_FUNC,
+                description = self.tr('Final function'),
+                options=self.final_funcs,
+                defaultValue=self.defaultFinal)
+            self.addAdvancedParam(finalFuncParam)
+            
+    def addRedistribParams(self):
+        redistribValueParam = QgsProcessingParameterNumber(
+            self.REDISTRIB_VAL,
+            description = self.tr('Redistribution value'),
+            type=QgsProcessingParameterNumber.Double,
+            defaultValue=1.0)
+        self.addAdvancedParam(redistribValueParam)
+    def addAgrFuncParam(self):
+        agrFuncParam = QgsProcessingParameterEnum(
+            self.AGR_FUNC,
+            description = self.tr('Agregate function'),
+            options=self.agr_funcs,
+            defaultValue=0)
+        self.addAdvancedParam(agrFuncParam)
+    def addAddFuncParam(self):
+        addFuncParam = QgsProcessingParameterEnum(
+            self.ADD_FUNC,
+            description = self.tr('Additive function'),
+            options=self.ADD_FUNC_NAMES,
+            defaultValue=0)
+        self.addAdvancedParam(addFuncParam)
+    def addDistModeParam(self):
+        dist_modes = [self.tr('Minimum'),self.tr('Minimum + 1'),self.tr('Median')]
+        distModeParam = QgsProcessingParameterEnum(
+            self.DIST_MODE,
+            description = self.tr('Distance mode'),
+            options=dist_modes,
+            defaultValue=0)
+        self.addAdvancedParam(distModeParam)
+    def addDistModeCoeffParam(self):
+        self.coeff_modes = [self.tr('Exponential'),self.tr('Linear')]
+        distModeCoeffParam = QgsProcessingParameterEnum(
+            self.DIST_COEFF_MODE,
+            description = self.tr('Distance weighting mode'),
+            options=self.coeff_modes,
+            defaultValue=0)
+        self.addAdvancedParam(distModeCoeffParam)
+            
+    def pushDebug(self,msg,feedback=None):
+        feedback = feedback if feedback else self.feedback
+        if self.DEBUG:
+            feedback.pushDebugInfo(msg)
+            
+    def parseParams(self,parameters,context,feedback):
+        self.input = self.parameterAsRasterLayer(parameters,self.INPUT,context)
+        if self.input is None:
+            raise QgsProcessingException(self.invalidRasterError(parameters, self.INPUT))
+        self.input_path = qgsUtils.pathOfLayer(self.input)
+        self.input_nodata = self.input.dataProvider().sourceNoDataValue(1)
+        self.size = self.parameterAsInt(parameters,self.WINDOW_SIZE,context)
+        self.pixel_area = self.input.rasterUnitsPerPixelX() * self.input.rasterUnitsPerPixelY()
+        
+        # mode = self.m[self.parameterAsEnum(parameters, self.MODE, context)]
+        if self.classesParamFlag:
+            self.classes_order = self.parameterAsString(parameters,self.CLASSES_ORDER,context)
+            feedback.pushDebugInfo("classes_order = " + str(self.classes_order)) 
+            self.classes_ordered = [int(c) for c in self.classes_order.split(",")]
+            feedback.pushDebugInfo("classes_ordered = " + str(self.classes_ordered))
+            if not self.classes_ordered:
+                raise QgsProcessingException("Please specify classes order (empty list)")
+        if self.classParamFlag:
+            self.classParam = self.parameterAsInt(parameters,self.CLASS,context)
+        if self.quantParamFlag:
+            self.quantile = self.parameterAsDouble(parameters,self.QUANTILE,context)
+        if self.redistribParamsFlag:
+            self.redistribVal = self.parameterAsDouble(parameters,self.REDISTRIB_VAL,context)
+        if self.distModeParamFlag:
+            self.distMode = self.parameterAsBool(parameters,self.DIST_MODE,context)
+        if self.distModeCoeffParamFlag:
+            self.distCoeffMode = self.parameterAsBool(parameters,
+                self.DIST_COEFF_MODE,context)
+        if self.agrFuncParamFlag:
+            self.agr_func_mode = self.parameterAsEnum(parameters,self.AGR_FUNC,context)
+            feedback.pushDebugInfo("agr_func_mode = " + str(self.agr_func_mode))
+        if self.addFuncParamFlag:
+            self.add_func_mode = self.parameterAsInt(parameters,self.CLASS,context)
+            self.add_func_mode = self.parameterAsEnum(parameters,self.ADD_FUNC,context)
+            feedback.pushDebugInfo("add_func_mode = " + str(self.add_func_mode))
+            self.add_func = self.add_funcs[self.add_func_mode]
+            if self.add_func is None:
+                self.add_func = self.getCenterPixel
+            self.filter_neutral = 0 if self.add_func_mode == 0 else math.nan#math.nan
+        if self.finalFuncParamFlag:
+            self.final_func_mode = self.parameterAsEnum(parameters,self.FINAL_FUNC,context)
+            feedback.pushDebugInfo("final_func_mode = " + str(self.final_func_mode))
+        self.DEBUG = self.parameterAsBool(parameters,self.DEBUG_FIELDNAME,context)
+        self.output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        # Processing
+        self.feedback = feedback
+        self.nodata = self.input.dataProvider().sourceNoDataValue(1)
+        feedback.pushDebugInfo("nodata = " + str(self.nodata))
+        self.out_nodata = -1
+        
+    def prepareWindow(self,feedback=None):        
+        self.array_median = self.size * 2 + 1
+        self.val_idx = int((self.array_median + 1) / 2)
+        self.pushDebug("val_idx = " + str(self.val_idx)) 
+        self.dist_shape = (self.array_median, self.array_median)
+        self.pushDebug("dist_shape = " + str(self.dist_shape)) 
+        self.dist_array = np.fromfunction(self.distFromCenter,self.dist_shape)
+        self.pushDebug("dist_array = " + str(self.dist_array))
+        self.footprint = np.ones(self.dist_shape,dtype='bool')
+        self.pushDebug("foot_shape = " + str(self.footprint.shape))
+        self.footprint[self.dist_array > self.size] = False
+        self.nbPixDist = np.count_nonzero(self.dist_array > self.size)
+        self.pushDebug("footprint = " + str(self.footprint))
+        self.dist_array2 = self.dist_array[self.dist_array <= self.size]
+        self.pushDebug("dist_array2 = " + str(self.dist_array2))
+        nb_elem_footprint = np.count_nonzero(self.footprint != False)
+        self.val_idx_footprint = int(nb_elem_footprint/2)
+        self.dist_array[self.dist_array > self.size] = math.nan
+        self.pushDebug("dist_array = " + str(self.dist_array))
+        self.dist_array_flatten = self.dist_array2.flatten()
+        self.pushDebug("self.dist_array_flatten = " + str(self.dist_array_flatten))
+        # Distance rate
+        self.dist_rate_arr_flatten = (self.size - self.dist_array_flatten) / self.size
+        self.pushDebug("dist_rate_arr_flatten = " + str(self.dist_rate_arr_flatten))
+        self.dist_arr_exp = np.exp(np.negative(self.dist_array_flatten))
+        self.pushDebug("dist_arr_exp = " + str(self.dist_arr_exp))
+        if self.distModeParamFlag:
+            if self.distMode == 0:
+                self.distFunc = self.getDistMin
+            elif self.distMode == 1:
+                self.distFunc = self.getDistMinPlusOne
+            elif self.distMode == 2:
+                self.distFunc = self.getDistMed
+            else:
+                assert(False)
+        if self.distModeCoeffParamFlag:
+            if self.distCoeffMode == 0:
+                self.dist_arr = self.dist_arr_exp
+                self.coeffFunc = self.expFunc
+            elif self.distCoeffMode == 1:
+                self.dist_arr = self.dist_rate_arr_flatten
+                self.coeffFunc = self.rateFunc
+            else:
+                assert(False)
+            self.dist_base_sum = np.sum(self.dist_arr)
+        # Computing immediate neighbours (4-connexity)
+        
+    def getCenterPixel(self,array):
+        return array[self.val_idx_footprint]
+                
+    def getDistMin(self,array,v):
+        return np.amin(self.dist_array_flatten[array==v])
+    def getDistMinPlusOne(self,array,v):
+        return np.amin(self.dist_array_flatten[array==v]) + 1
+    def getDistMed(self,array,v):
+        return np.nanmedian(self.dist_array_flatten[array==v])
+        
+    def expFunc(self,val):
+        return math.exp(-val)
+    def rateFunc(self,val):
+        return (self.size - val) / self.size
+                
+    def distFromCenter(self,X,Y):
+        self.pushDebug("X = " + str(X))
+        self.pushDebug("Y = " + str(Y))
+        return np.sqrt(((X.astype(int) - self.size) ** 2) + ((Y.astype(int) - self.size) ** 2))
+
+    @abstractmethod
+    def filter_func(self,array):
+        pass
+        
+    def getFirstToEnd(self):
+        return False
+        # return self.agr_func_mode == 2
+        
+    def prepareClasses(self,classes,feedback,firstToEnd=None):
+        feedback.pushDebugInfo("classes = " + str(classes))
+        excludeClasses = [c for c in classes if c not in self.classes_ordered]
+        for c in excludeClasses:
+            if c not in self.classes_ordered:
+                feedback.pushWarning("Class " + str(c) + " order not specified")
+        keepClasses = [c for c in self.classes_ordered if c in classes]
+        feedback.pushDebugInfo("classes = " + str(keepClasses))
+        firstToEnd = self.getFirstToEnd()
+        feedback.pushDebugInfo("firstToEnd = " + str(firstToEnd))
+        if firstToEnd:
+            keepClasses = keepClasses[1:] + keepClasses[:1]
+        feedback.pushDebugInfo("classes = " + str(keepClasses))
+        return keepClasses
+        
+    @abstractmethod
+    def prepareArray(self,feedback):
+        assert False
+
+    def applyAddFunc(self,arr):
+        res_arr = ndimage.generic_filter(arr,
+            self.add_func,footprint=self.footprint,
+            mode="constant",cval=self.filter_neutral)
+        return res_arr
+
+    def processDistrib(self,feedback,arr=None):
+        if arr is None:
+            arr = self.preparedArr
+        # Computes quantiles
+        arr[self.array==self.inNodata] = math.nan
+        quants = {}
+        for c in self.classes:
+            q = np.nanquantile(arr[self.array==c],q=self.quantile)
+            quants[c] = q
+        feedback.pushDebugInfo("quants = " + str(quants))
+        arr[self.array==self.inNodata] = 0
+        # Add cumulative quantile to each class pixel
+        acc_q = 0
+        for c in self.classes:
+            acc_q += quants[c]
+            feedback.pushDebugInfo("acc_q = " + str(acc_q))
+            arr[self.array==c] += acc_q
+        self.debugRaster(feedback,arr,self.input_path,"prepared",
+            nodata=-1,type=gdal.GDT_Float32)
+        return arr
+        
+    def processAgr(self,feedback):
+        # Agregation
+        self.preparedArr[self.array==self.inNodata] = self.filter_neutral
+        if self.agr_func_mode == 0:
+            res_arr = np.copy(self.preparedArr)
+        elif self.agr_func_mode == 1:
+            res_arr = self.applyAddFunc(self.preparedArr)
+        elif self.agr_func_mode == 2:
+            # TODO : split processDistrib in different functions
+            tmp_arr = np.copy(self.preparedArr)
+            res_u_arr = ndimage.generic_filter(tmp_arr,
+                self.add_func,footprint=self.footprint,
+                mode="constant",cval=self.filter_neutral)
+            tmp_arr[self.array==self.classes[-1]] = self.filter_neutral
+            res_arr = ndimage.generic_filter(tmp_arr,
+                self.add_func,footprint=self.footprint,
+                mode="constant",cval=self.filter_neutral)
+            res_u_arr += 1
+            res_arr /= res_u_arr
+        else:
+            assert(False)
+        return res_arr
+        
+    def processFinalIndex(self,res_arr,minVal=None,maxVal=None):
+        minVal = np.amin(res_arr) if minVal is None else minVal
+        maxVal = np.amax(res_arr) if maxVal is None else maxVal
+        self.pushDebug("minVal = " + str(minVal))
+        self.pushDebug("maxVal = " + str(maxVal))
+        res_arr -= minVal
+        res_arr /= (maxVal - minVal)
+        return res_arr
+    def processFinal(self,res_arr,minVal=None,maxVal=None):
+        if not self.finalFuncParamFlag:
+            pass
+        elif self.final_func_mode == 0:
+            pass
+        elif self.final_func_mode == 1:
+            res_arr = np.log10(res_arr)
+        elif self.final_func_mode == 2:
+            res_arr = np.exp(res_arr)
+        elif self.final_func_mode == 3:
+            res_arr = np.sqrt(res_arr)
+        elif self.final_func_mode == 4:
+            res_arr = self.processFinalIndex(res_arr,minVal=minVal,maxVal=maxVal)
+        elif self.final_func_mode == 5:
+            res_arr = np.log(res_arr)
+            res_arr = self.processFinalIndex(res_arr)
+        else:
+            assert(False)
+        return res_arr
+        
+    def processOutput(self,res_arr,feedback):
+        # Writes output
+        feedback.pushDebugInfo("out_nodata = " + str(self.out_nodata))
+        res_arr[self.array==self.input_nodata] = self.out_nodata
+        qgsUtils.exportRaster(res_arr,self.input_path,self.output,
+            nodata=self.out_nodata,type=gdal.GDT_Float32)
+        # out_layer = qgsUtils.loadRasterLayer(self.output)
+        # styles.setRendererSBPCGnYlRdCont(out_layer)
+        # out_layer.triggerRepaint()
+        return { self.OUTPUT_FILE : self.output }
+
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, self.array, self.inNodata = qgsUtils.getRasterValsArrayND(
+            str(self.input_path))
+        self.classes = self.prepareClasses(classes,feedback)
+        self.preparedArr = self.prepareArray(context,feedback).astype(np.float32)
+        self.processDistrib(feedback)
+        if self.addFuncParamFlag:
+            res_arr = self.applyAddFunc(self.preparedArr)
+        else:
+            res_arr = self.preparedArr
+        if self.finalFuncParamFlag:
+            res_arr = self.processFinal(res_arr)
+        return self.processOutput(res_arr,feedback)
+        
+
+
+
+class QuantileDistance(SlidingWindowCircle):
+
+    ALG_NAME = 'quantileDistance'
+    
+    def initAlgorithm(self, config=None, report_opt=True):
+        super().initAlgorithm(classParam=True,quantParam=True)
+    
+    def displayName(self):
+        return self.tr("Quantile distance")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
+        
+    def shortHelpString(self):
+        return self.tr("Distance to pixel of same values inside sliding window.")
+        
+    # def icon(self):
+        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
+
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        classes, array = qgsUtils.getRasterValsAndArray(str(self.input_path))
+        feedback.pushDebugInfo("classes = " + str(classes))
+        self.nb_vals = len(classes)
+        feedback.pushDebugInfo("array shape = " + str(array.shape))
+        res_arr = ndimage.generic_filter(array,
+            self.filter_func,footprint=self.footprint,
+            mode="constant",cval=0,output=np.float32)
+        # Output
+        qgsUtils.exportRaster(res_arr,self.input_path,self.output,
+            nodata=self.out_nodata,type=gdal.GDT_Float32)
+        return { self.OUTPUT_FILE : self.output }
+
+    def filter_func(self,array):
+        cell_val = self.classParam if self.classParam else array[self.val_idx_footprint]
+        if cell_val == self.nodata:
+            res = self.out_nodata
+        else:
+            # self.pushDebug("cell_val = " + str(cell_val))
+            dist_val = self.dist_array_flatten[array==cell_val]
+            # self.pushDebug("dist_val = " + str(dist_val))
+            # val_median = np.nanp.nanquantile(dist_val,self.quantile)nmedian(dist_val)
+            val_quantile = np.nanquantile(dist_val,self.quantile)
+            res = val_quantile
+        return res
+        
+    def computeQuantile(self,arr):
+        quantile_arr = ndimage.generic_filter(array,
+            self.filter_func,footprint=self.footprint,
+            mode="constant",cval=0,output=np.float32)
+        return quantile_arr
+
+                       
+       
+class PatchAreaWindow(SlidingWindowCircle):
+
+    ALG_NAME = 'patchAreaWindow'
+    
+    def displayName(self):
+        return self.tr("Patch size (sliding window)")
+    def group(self):
+        return self.tr("Patch utils")
+    def groupId(self):
+        return 'patch'
+        
+    def shortHelpString(self):
+        return self.tr("Patch area inside sliding window")
+        
+    # def icon(self):
+        # return QIcon(os.path.dirname(__file__) + os.sep+"icons"+os.sep+"img_neighboranalysis.png")
+
+    def initAlgorithm(self, config=None):
+        super().initAlgorithm(addFuncParam=False)
+    
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # Label input
+        labelled_path = self.mkTmpPath("labelled.tif")
+        label_params = { LabelPatches.INPUT : self.input,
+            LabelPatches.OUTPUT : labelled_path }
+        processing.run("BioDispersal:" + LabelPatches.ALG_NAME,
+            label_params,context=context,feedback=feedback)
+        # Processing on labelled array
+        classes, array = qgsUtils.getRasterValsAndArray(str(labelled_path))
+        feedback.pushDebugInfo("labelled array shape = " + str(array.shape))
+        res_arr = ndimage.generic_filter(array,
+            self.filter_func,footprint=self.footprint,
+            mode="constant",cval=0,output=np.float32)
+        # Output
+        qgsUtils.exportRaster(res_arr,self.input_path,self.output,
+            nodata=0,type=gdal.GDT_UInt32)
+        return { self.OUTPUT_FILE : self.output }
+
+    def filter_func(self,array):
+        # self.feedback.pushDebugInfo("array = " + str(array))
+        cell_val = array[self.val_idx_footprint]    
+        # self.feedback.pushDebugInfo("cell_val = " + str(cell_val))
+        res = np.count_nonzero(array[array == cell_val])
+        # self.feedback.pushDebugInfo("res = " + str(res))
+        return res
+                
+
+class PatchSizeWindowRedistrib(SlidingWindowCircle):
+    
+    ALG_NAME = 'patchSizeWindowRedistrib'
+    INDEX = 'INDEX'
+    
+    def initAlgorithm(self, config=None):
+        self.defaultFinal = 0
+        super().initAlgorithm(classesParam=True,quantParam=True,
+            finalFuncParam=True)
+        
+    def displayName(self):
+        return self.tr("Surface index")
+    def group(self):
+        return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'
+        
+    def shortHelpString(self):
+        return self.tr("Redistributed patch size inside slinding window")
+    
+    def filter_func(self,array):
+        dist_arr = self.dist_array_flatten[array==self.currVal]
+        dist_sum = np.sum(dist_val)
+        return dist_sum
+    
+    # def initAlgorithm(self, classesParam=True, quant=False,
+            # funcs=True, config=None, report_opt=True):
+        # super().initAlgorithm(finalFuncParam=True)
+        
+    def addAdvancedParams(self):
+        self.index_vals = [self.tr('Patch size'), self.tr('Number of contacts')]
+        indexParam = QgsProcessingParameterEnum(
+            self.INDEX,
+            description = self.tr('Index'),
+            options=self.index_vals,
+            defaultValue=0)
+        # self.addAdvancedParam(indexParam)
+        super().addAdvancedParams()
+        
+    def parseParams(self,parameters,context,feedback):
+        super().parseParams(parameters,context,feedback)
+        # self.indexMode = self.parameterAsEnum(parameters,self.INDEX,context)
+        self.indexMode = 0
+        
+    def prepareArray(self,context,feedback):
+        if self.indexMode == 0:
+            return self.preparePatchSize(context,feedback)
+        elif self.indexMode == 1:
+            return self.prepareNbContacts(context,feedback)
+        else:
+            assert(False)
+        
+    def preparePatchSize(self,context,feedback):
+        size_path = self.mkTmpPath("patchSize.tif")
+        size_params = { PatchAreaWindow.INPUT : self.input,
+            PatchAreaWindow.WINDOW_SIZE : self.size,
+            PatchAreaWindow.OUTPUT : size_path }
+        processing.run("BioDispersal:" + PatchAreaWindow.ALG_NAME,
+            size_params,context=context,feedback=feedback)
+        size_classes, size_arr = qgsUtils.getRasterValsAndArray(size_path)
+        return size_arr
+        
+    def prepareNbContacts(self,context,feedback):
+        ncount_struct = ndimage.generate_binary_structure(2,1)
+        nb_neighbours_arr = ndimage.generic_filter(self.array,
+            self.count_neighbours_4,footprint=ncount_struct,
+            mode="constant",cval=0)
+        feedback.pushDebugInfo("nb_neighbours_arr shape = " + str(nb_neighbours_arr.shape))
+        if self.DEBUG:
+            self.feedback.pushDebugInfo("array = " + str(self.array))
+            feedback.pushDebugInfo("nb_neighbours_arr = " + str(nb_neighbours_arr))
+        res_arr = ndimage.generic_filter(nb_neighbours_arr,
+            np.sum,footprint=self.footprint,
+            mode="constant",cval=0)
+        return res_arr
+            
+    def count_neighbours_4(self,array):
+        cell_val = array[2]
+        return np.count_nonzero(array == cell_val) - 1
+        
+        
+class ConnectivityIndex(SlidingWindowCircle):
+    
+    ALG_NAME = 'connexityIndex'
+    INDEX = 'INDEX'
+    
+    def initAlgorithm(self, config=None):
+        super().initAlgorithm(classesParam=True,#redistribParams=True,
+            distModeCoeffParam=True,finalFuncParam=True)
+        
+    # def group(self):
+    #     return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'
+    
+    def displayName(self):
+        return self.tr("Connectivity index")
+        
+    def shortHelpString(self):
+        return self.tr("Connectivity index based on favorability.")
+                
+    def filter_func(self,array):
+        dist_arr = self.dist_arr[array==self.currVal]
+        dist_arr += self.currQuant
+        if dist_arr.size == 0:
+            res = math.nan
+        else:
+            res = np.nansum(dist_arr)
+        return res       
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, self.array, self.inNodata = qgsUtils.getRasterValsArrayND(
+            str(self.input_path))
+        self.classes = self.prepareClasses(classes,feedback)
+        nb_classes = len(self.classes)
+        self.currQuant = 0
+        tmp_arr = self.array.astype(np.float32)
+        curr_arr = np.zeros(self.array.shape)
+        self.redistribVal = self.size
+        for c in self.classes:
+            self.currVal = c
+            # tmp_arr[self.array == c] += self.currQuant
+            arr_c = ndimage.generic_filter(tmp_arr,
+                self.filter_func,footprint=self.footprint,
+                mode="constant",cval=math.nan)
+            self.currQuant += self.redistribVal
+            arr_c[np.isnan(arr_c)] = 0
+            self.debugRaster(feedback,arr_c,self.input_path,"connex" + str(c),
+                nodata=0,type=gdal.GDT_Float32)
+            curr_arr += arr_c
+            self.pushDebug("currQuant = " + str(self.currQuant))
+        minVal = np.nansum(self.dist_arr)
+        maxVal = np.nansum(self.dist_arr + ((nb_classes-1) * self.redistribVal))
+        curr_arr = self.processFinal(curr_arr)
+        return self.processOutput(curr_arr,feedback)
+        
+        
+class ConnectivityIndexHabPatch(SlidingWindowCircle):
+    
+    ALG_NAME = 'connectivityIndexHabPatch'
+    
+    COEFF_MODE = 'COEFF_MODE'
+    EXPONENT = 'EXPONENT'
+    
+    def group(self):
+        return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'
+    
+    def displayName(self):
+        return self.tr("Isolation index")
+        
+    def shortHelpString(self):
+        return self.tr("Connectivity index based on favorability.")
+                
+    def filter_func(self,array):
+        dist_arr = self.dist_arr[array==self.currVal]
+        dist_arr += self.currQuant
+        if dist_arr.size == 0:
+            res = math.nan
+        else:
+            res = np.nansum(dist_arr)
+        return res       
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # Retrieve classes and array
+        classes, self.array, self.inNodata = qgsUtils.getRasterValsArrayND(
+            str(self.input_path))
+        self.classes = self.prepareClasses(classes,feedback)
+        nb_classes = len(self.classes)
+        self.currQuant = 0
+        tmp_arr = self.array.astype(np.float32)
+        curr_arr = np.zeros(self.array.shape)
+        self.redistribVal = self.size
+        for c in self.classes:
+            self.currVal = c
+            # tmp_arr[self.array == c] += self.currQuant
+            arr_c = ndimage.generic_filter(tmp_arr,
+                self.filter_func,footprint=self.footprint,
+                mode="constant",cval=math.nan)
+            self.currQuant += self.redistribVal
+            arr_c[np.isnan(arr_c)] = 0
+            self.debugRaster(feedback,arr_c,self.input_path,"connex" + str(c),
+                nodata=0,type=gdal.GDT_Float32)
+            curr_arr += arr_c
+            self.pushDebug("currQuant = " + str(self.currQuant))
+        minVal = np.nansum(self.dist_arr)
+        maxVal = np.nansum(self.dist_arr + ((nb_classes-1) * self.redistribVal))
+        curr_arr = self.processFinal(curr_arr)
+        return self.processOutput(curr_arr,feedback)
+        
+        
+class ConnectivityIndexHabPatch(SlidingWindowCircle):
+    
+    ALG_NAME = 'connectivityIndexHabPatch'
+    
+    COEFF_MODE = 'COEFF_MODE'
+    EXPONENT = 'EXPONENT'
+          
+    def displayName(self):
+        return self.tr("Isolation index")
+    def group(self):
+        return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'
+        
+    def shortHelpString(self):
+        msg = "Isolation index inspired from Hanski incidence function model."
+        msg += ""
+        return self.tr(msg)
+    
+    def initAlgorithm(self, config=None):
+        super().initAlgorithm(classParam=True,distModeParam=True,
+            distModeCoeffParam=True,finalFuncParam=True)
+        
+    def addAdvancedParams(self):
+        exponentParam = QgsProcessingParameterNumber(
+            self.EXPONENT,
+            description = self.tr('Patch size exponent'),
+            type=QgsProcessingParameterNumber.Integer,
+            defaultValue=2)
+        self.addAdvancedParam(exponentParam)
+        super().addAdvancedParams()
+        
+    def parseParams(self,parameters,context,feedback):
+        super().parseParams(parameters,context,feedback)
+        self.exponent = self.parameterAsInt(parameters,self.EXPONENT,context)
+    
+    def prepare_patchWinSq(self,array):
+        vals, counts = np.unique(array[array!=self.ignore], return_counts=True)
+        sq_arr = np.power(counts,self.exponent)
+        return (vals, sq_arr)
+      
+    def filter_func(self,array):
+        vals, counts = np.unique(array[array!=self.ignore], return_counts=True)
+        counts = counts.astype(float)
+        sq_arr = np.power(counts,self.exponent)
+        res = 0
+        for v, count in zip(vals, counts):
+            dist = self.distFunc(array,v)
+            res += self.coeffFunc(dist)*count
+        return res
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        self.parseParams(parameters,context,feedback)
+        self.prepareWindow(feedback)
+        # self.currVal = self.classParam
+        # Retrieve classes and array
+        classes, self.array, self.inNodata = qgsUtils.getRasterValsArrayND(
+            str(self.input_path))
+        # Label
+        tmp_arr = np.zeros(self.array.shape)
+        tmp_arr[self.array==self.classParam] = 1
+        tmp_arr[self.array!=self.classParam] = 0
+        struct = ndimage.generate_binary_structure(2,1)
+        labeled_array, nb_patches = ndimage.label(tmp_arr,struct)
+        feedback.pushDebugInfo("label ok")
+        self.ignore = 0
+        self.debugRaster(feedback,labeled_array,self.input_path,"labeled",
+            nodata=0,type=gdal.GDT_Float32)
+        res_arr = ndimage.generic_filter(labeled_array,
+            self.filter_func,footprint=self.footprint,
+            mode="constant",cval=0,output=np.float32)
+        res_arr[self.array==self.inNodata] = self.out_nodata
+        minVal = np.sum(self.dist_arr)
+        maxVal = self.coeffFunc(0) * pow(self.nbPixDist,self.exponent)
+        res_arr = self.processFinal(res_arr)
+        res_arr[res_arr==0] = self.out_nodata
+        return self.processOutput(res_arr,feedback)
+
+    # def postProcessAlgorithm(self, context, feedback):
+        # out_layer = self.out_layer#qgsUtils.loadRasterLayer(output)
+        # color_ramp = styles.mkColorRamp('Plasma')
+        # shader = styles.mkRasterShader(out_layer,color_ramp)
+        # styles.setSBPCRasterRenderer(out_layer,shader)
+        # out_layer.triggerRepaint()
+        # return { self.OUTPUT : self.out_layer }
+
+         
+  
+  
+class RelativeSurface(QualifAlgorithm):
+
+    ALG_NAME = 'RelativeSurface'
+    
+    LAYER_A = 'LAYER_A'
+    LAYER_B = 'LAYER_B'
+    
+    def displayName(self):
+        return self.tr("Relative surface")
+    def group(self):
+        return self.tr("Habitat qualification")
+    def groupId(self):
+        return 'qualif'
+        
+    def shortHelpString(self):
+        return self.tr("Relative surface (percentage of B surface in each patch of layer A)")
+    
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.LAYER_A,
+                description=self.tr('Layer A (main layer)')))
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.LAYER_B,
+                description=self.tr('Layer B (relative surface layer)')))
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT,
+                self.tr("Output layer")))
+        # self.addParameter(
+            # QgsProcessingParameterVectorDestination(
+                # self.OUTPUT,
+                # self.tr("Output layer")))
+                
+    def computeArea(self,f):
+        return f.geometry().area()
+    def computeRelSurf(self,f):
+        return f[self.sumField] / f.geometry().area()
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
+        if layerA is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        layerB = self.parameterAsVectorLayer(parameters,self.LAYER_B,context)
+        if layerB is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
+        outFields = QgsFields(layerA.fields())
+        areaFieldName = "area"
+        relSurfFieldName = "relSurface"
+        areaField = QgsField(areaFieldName, QVariant.Double)
+        relSurfField = QgsField(relSurfFieldName, QVariant.Double)
+        outFields.append(areaField)
+        outFields.append(relSurfField)
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            outFields,
+            layerA.wkbType(),
+            layerA.sourceCrs()
+        )
+        nb_feats = layerA.featureCount()
+        if nb_feats == 0:
+            raise QgsProcessingException("No feature in layerA layer")
+        progress_step = 100.0 / nb_feats
+        curr_step = 0
+        mf = QgsProcessingMultiStepFeedback(nb_feats,feedback)
+        for cpt, f in enumerate(layerA.getFeatures(),start=1):
+            f_geom = f.geometry()
+            f_area = f_geom.area()
+            area = 0
+            for b_feat in layerB.getFeatures():
+                b_geom = b_feat.geometry()
+                intersection = f_geom.intersection(b_geom)
+                area += intersection.area()
+            # f_id = f.id()
+            # layerA.selectByIds([f_id])
+            # suffix = "_" + str(f_id) + ".gpkg"
+            # selection = QgsProcessingUtils.generateTempFilename(
+                # "selection" + suffix)
+            # qgsTreatments.saveSelectedAttributes(joined_layer,
+                # layerA,context=context,feedback=mf)
+            # clipped_path = QgsProcessingUtils.generateTempFilename(
+                # "clipped" + suffix)
+            # qgsTreatments.applyVectorClip(layerB,selection,
+                # clipped_path,context=context,feedback=mf)
+            # clipped_layer = qgsUtils.loadVectorLayer(clipped)
+            outF = QgsFeature(outFields)
+            outF.setGeometry(f.geometry())
+            for field in f.fields().names():
+                outF[field] = f[field]
+            outF[areaFieldName] = area
+            outF[relSurfFieldName] = area / f_area
+            sink.addFeature(outF)
+            mf.setCurrentStep(cpt)
+        return { self.OUTPUT : dest_id } 
+        
+    def processAlgorithmOld(self,parameters,context,feedback):
+        # Parameters
+        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
+        if layerA is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        layerB = self.parameterAsVectorLayer(parameters,self.LAYER_B,context)
+        if layerB is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
+        output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        # Processing : todo clip
+        clippedPath = QgsProcessingUtils.generateTempFilename('clipped.gpkg')
+        qgsTreatments.applyVectorClip(layerA,layerB,clippedPath,
+            context=context,feedback=feedback)
+        qgsUtils.loadVectorLayer(clippedPath,loadProject=True)
+        # Computes new area
+        areaField = 'area'
+        areaPath = QgsProcessingUtils.generateTempFilename('area.gpkg')
+        qgsTreatments.fieldCalculator(clippedPath,areaField,'$area',areaPath,
+            context=context,feedback=feedback)
+        # Join by loc summary
+        joinedPath = QgsProcessingUtils.generateTempFilename('joined.gpkg')
+        qgsTreatments.joinByLocSummary(layerA,areaPath,joinedPath,
+            fieldnames=[areaField],summaries=[5],predicates=[1],discard=False,
+            context=context,feedback=feedback)
+        # Computes relative surface
+        sumField = areaField + '_sum'
+        formula = 'if ( "' + sumField + '" > 0, "' + sumField + '" / $area, 0)'
+        qgsTreatments.fieldCalculator(joinedPath,'relSurface',formula,output,
+            context=context,feedback=feedback)
+        return { self.OUTPUT : output }
+        
     

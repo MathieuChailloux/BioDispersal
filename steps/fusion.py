@@ -46,7 +46,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         self.st_groups = {}
         self.current_st = None
         self.current_model = None
-        super().__init__(self,fusion_fields)
+        super().__init__(self,fields=fusion_fields,feedback=bdModel.feedback)
         
     def __str__(self):
         res = ""
@@ -102,7 +102,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         xmlStr += indent + "</" + self.__class__.__name__ + ">"
         return xmlStr
     
-    def fromXMLRoot(self,root):
+    def fromXML(self,root):
         utils.info("[fromXMLRoot] FusionModel")
         for st_root in root:
             st_name = st_root.attrib["name"]
@@ -112,7 +112,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             if nb_groups == 0:
                 utils.warn("No groups for st " + str(st_name))
             for grp in st_root:
-                grp_model = groups.GroupModel(None)
+                grp_model = groups.GroupModel(self.bdModel)
                 for grp_item in grp:
                     item = grp_model.mkItemFromDict(grp_item.attrib)
                     grp_model.addItem(item)
@@ -154,11 +154,11 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 step_feedback.pushInfo("groups = " + str(groups.items))
             step_feedback.pushDebugInfo("apply fusion to " + st)
             step_feedback.pushDebugInfo(str([g.dict["name"] for g in groups.items]))
-            grp_args = [self.bdModel.groupsModel.getOutPath(g.name) for g in reversed(groups.items)]
+            grp_args = [self.bdModel.groupsModel.getOutPath(g.getName()) for g in reversed(groups.items)]
             for grp_layer_file in grp_args:
                 utils.checkFileExists(grp_layer_file,prefix="Group ")
             step_feedback.pushDebugInfo(str(grp_args))
-            out_path = self.bdModel.stModel.getMergedPath(st_item.name)
+            out_path = self.bdModel.stModel.getMergedPath(st_item.getName())
             if os.path.isfile(out_path):
                 qgsUtils.removeRaster(out_path)
             qgsTreatments.applyMergeRaster(grp_args,out_path,out_type=Qgis.Int16,
@@ -185,8 +185,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
         
     def removeItems(self,index):
         utils.debug("[removeItems] nb of items = " + str(len(self.current_model.items))) 
-        self.current_model.removeItems(index)
+        self.current_model.removeItems(index,updatePluginModel=False)
         self.current_model.layoutChanged.emit()
+        self.layoutChanged.emit()
         
     def addItem(self,item):
         utils.debug("[addItemFusion]")
@@ -219,8 +220,9 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.models = {}
         self.onlySelection = False
         super().__init__(fusionModel,self.dlg.fusionView,
-                         None,self.dlg.fusionRemove,
-                         self.dlg.fusionRun,self.dlg.fusionRunOnlySelection)
+                         addButton=None,removeButton=self.dlg.fusionRemove,
+                         runButton=self.dlg.fusionRun,
+                         selectionCheckbox=self.dlg.fusionRunOnlySelection)
                          
     def initGui(self):
         pass

@@ -31,332 +31,127 @@ from PyQt5.QtWidgets import QFileDialog
 from qgis.core import Qgis
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks, styles
+from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
+from ..qgis_lib_mc.abstract_model import DictItem, ExtensiveTableModel, AbstractConnector, ComboDelegate
+
 from . import params, subnetworks, classes
+# from .classes import ClassItem
 
 
-class FrictionRowItem(abstract_model.DictItem):
+class FrictionRowItem(DictItem):
 
     def __init__(self,dict):
         super().__init__(dict)
             
 
-class FrictionModel(abstract_model.DictModel):
+class FrictionModel(ExtensiveTableModel):
 
-    def __init__(self,bdModel):
+    ROW_NAME = 'class'
+    ROW_DESCR = 'class_descr'
+    BASE_FIELDS = [ ROW_NAME, ExtensiveTableModel.ROW_CODE, ROW_DESCR ]
+    
+    def __init__(self,parentModel):
         self.parser_name = "FrictionModel"
-        self.is_runnable = True
-        self.bdModel = bdModel
-        self.defaultVal = None
-        self.classes = []
-        self.fields = ["class_descr","class","code"]
-        super().__init__(self,self.fields)
+        self.is_runnable = False
+        ExtensiveTableModel.__init__(self,parentModel,idField=self.ROW_NAME,
+            rowIdField=classes.ClassItem.idField,baseFields=self.BASE_FIELDS)
+        self.feedback.pushDebugInfo("hey")
         
-    # True if item matching class 'cls_name' exists, False otherwise.
-    def classExists(self,cls_name):
-        for fr in self.items:
-            if fr.dict["class"] == cls_name:
-                return True
-        return False
+    def reload(self):
+        colNames = self.parentModel.speciesModel.getNames()
         
-    # Returns item matching class 'cls_name', None if there is no match.
-    def getRowByClass(self,cls_name):
-        for i in self.items:
-            if i.dict["class"] == cls_name:
-                return i
+    def getFreeVals(self,nbVals):
+        codes = [ i.dict[self.ROW_CODE] for i in self.items ]
+        freeVals = getIntValues(nbVals)
+        return freeVals
+        
+    def getHeaderStr(self,col):
+        if col < 2:
+            h = [self.tr('Value'),self.tr('Description')]
+            return h
         return None
         
-    # Adds new FrictionRowItem in model from given ClassItem.
-    def addClassItem(self,cls_item):
-        new_row = {"class_descr" : cls_item.dict["descr"],
-                   "class" : cls_item.dict["name"],
-                   "code" : cls_item.dict["code"]}
-        self.addSTCols(new_row)
-        row_item = FrictionRowItem(new_row)
-        if not self.classExists(cls_item.dict["name"]):
-            if cls_item not in self.classes:
-                self.classes.append(cls_item)
-            self.addItem(row_item)
-            self.layoutChanged.emit()
-        
-    # Removes item matching class 'name' from model.
-    def removeClassFromName(self,name):
-        utils.debug("removing class " + str(name) + " from friction")
-        self.classes = [cls_item for cls_item in self.classes if cls_item.dict["name"] != name]
-        for i in range(0,len(self.items)):
-            if self.items[i].dict["class"] == name:
-                del self.items[i]
-                self.layoutChanged.emit()
-                return
-        
-    # Adds subnetwork columns to given FrictionRowItem.
-    # Friction values are set to defaultVal (None).
-    def addSTCols(self,row):
-        utils.debug("addSTCols")
-        for st in self.bdModel.stModel.getSTList():
-            row[st] = self.defaultVal
-            
-    # Adds new subnetwork entry to all items of model from given STItem.
-    def addSTItem(self,st_item):
-        utils.debug("addSTItem")
-        st_name = st_item.dict["name"]
-        utils.debug("ST addItem, items = " + str(self.bdModel.stModel))
-        if st_name not in self.fields:
-            for i in self.items:
-                if st_name not in i.dict:
-                    i.dict[st_name] = self.defaultVal
-                    i.recompute()
-            self.fields.append(st_name)
-            self.layoutChanged.emit()
-        
-    # Removes subnetwork 'st_name' entry for all items of model.
-    def removeSTFromName(self,st_name):
-        utils.debug("removeSTFromName " + str(st_name))
-        self.removeField(st_name)
-        self.layoutChanged.emit()
-        
+    # Creates FrictionItem from ClassItem
+    def createRowFromBaseRow(self,classItem):
+        d = { self.ROW_NAME : classItem.getName(),
+              self.ROW_CODE : classItem.getCode(),
+              self.ROW_DESCR : classItem.getDescr() }
+        return self.createRowFromDict(d)
     # Reload items of model to match current ClassModel.
     def reloadClasses(self):
         utils.debug("reloadClasses")
-        classes_to_delete = []
-        for item in self.items:
-            cls_name = item.dict["class"]
-            cls_item = self.bdModel.classModel.getClassByName(cls_name)
-            if not cls_item:
-                classes_to_delete.append(cls_name)
-                utils.debug("Removing class " + str(cls_name))
-            else:
-                utils.debug("Class " + cls_name + " indeed exists")
-        self.items = [fr for fr in self.items if fr.dict["class"] not in classes_to_delete]
-        self.layoutChanged.emit()
-        for cls_item in self.bdModel.classModel.items:
-            utils.debug("cls_item : " + str(cls_item.dict))
-            cls_name = cls_item.dict["name"]
-            cls_code = cls_item.dict["code"]
-            cls_descr = cls_item.dict["descr"]
-            row_item = self.getRowByClass(cls_name)
-            if row_item:
-                utils.debug("row_item : " + str(row_item.dict))
-                utils.debug("Class " + str(cls_name) + " already exists")
-                if row_item.dict["code"] != cls_code:
-                    utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"
-                                + str(row_item.dict["code"]) + " to class " + cls_name)
-                    row_item.dict["code"] = cls_code
-                    self.layoutChanged.emit()
-                if cls_descr and row_item.dict["class_descr"] != cls_descr:
-                    utils.debug("Reassigning descr '" + str(cls_descr) + "' instead of '"
-                                + str(row_item.dict["class_descr"]) + " to class " + cls_name)
-                    row_item.dict["class_descr"] = cls_descr
-                    self.layoutChanged.emit()
-            else:
-                utils.debug("Reloading class " + cls_name)
-                self.addClassItem(cls_item)
-                self.layoutChanged.emit()
-        
-    # DEPRECATED : creates rules file for r.reclass call.
-    # Algorithm native:reclassifybytable is now used instead.
-    def createRulesFiles(self):
-        utils.debug("createRulesFiles")
-        for st_item in self.bdModel.stModel.items:
-            st_name = st_item.dict["name"]
-            utils.debug("createRulesFiles " + str(st_name))
-            st_rules_fname = st_item.getRulesPath()
-            with open(st_rules_fname,"w") as f:
-                for i in self.items:
-                    in_class = i.dict["code"]
-                    out_class = i.dict[st_name]
-                    f.write(str(in_class) + " = " + str(out_class) + "\n")
-                    
-    # Returns reclassify matrix (list) for native:reclassifybytable call.
-    def getReclassifyMatrixes(self,st_list):
-        matrixes = { st_name : [] for st_name in st_list }
-        for item in self.items:
-            for st in st_list:
-                if st not in self.fields:
-                    utils.internal_error("Subnetwork '" + str(st) + "' not found in friction model")
-                new_val = item.dict[st]
-                if new_val is None:
-                    utils.warn("No friction assigned to subnetwork " + str(st)
-                                     + " for class " + str(item.dict["class"]))
-                    # float(new_val) causes exception is new_val = None
-                    new_val = ''
-                if new_val == qgsTreatments.nodata_val:
-                    utils.internal_error("Reclassify to nodata " + str(new_val) + "in " + str(item))
-                try:
-                    float(new_val)
-                except ValueError:
-                    utils.warn("Ignoring non-numeric value " + str(new_val))
-                    new_val = qgsTreatments.nodata_val
-                matrixes[st] += [ item.dict["code"], item.dict["code"], new_val ]
-        return matrixes
-        
-    # Returns set of item' code (value in input raster)
-    def getCodes(self):
-        codes = set([int(item.dict["code"]) for item in self.items])
-        return codes
-        
-    # Raise an error in values of input raster do no match codes of friction items.
-    def checkInVals(self,in_path):
-        in_vals = qgsUtils.getRasterValsFromPath(in_path)
-        codes = self.getCodes()
-        diff = in_vals.difference(codes)
-        if len(diff) > 0:
-            utils.user_error("Some values of " + str(in_path) + " are not associated to a friction value " + str(diff))
-          
-    # DEPRECATED : old call to r.reclass
-    def applyReclassProcessing(self):
-        utils.debug("applyReclass")
-        self.createRulesFiles()
-        for st_item in self.bdModel.stModel.items:
-            st_name = st_item.dict["name"]
-            utils.debug("applyReclass " + str(st_name))
-            st_rules_fname = st_item.getRulesPath()
-            utils.checkFileExists(st_rules_fname)
-            st_merged_fname = st_item.getMergedPath()
-            utils.checkFileExists(st_merged_fname)
-            st_friction_fname = st_item.getFrictionPath()
-            qgsTreatments.applyReclassProcessing(st_merged_fname,st_friction_fname,st_rules_fname,st_name)
-        
-    # DEPRECATED : old call to gdal:calc performing reclassification
-    def applyReclassGdal(self,indexes):
-        utils.debug("friction.applyReclassGdal")
-        utils.debug("indexes = " + str(indexes))
-        st_list = self.bdModel.stModel.items
-        nb_steps = len(st_list)
-        progress_section = feedbacks.ProgressFeedback("Friction",nb_steps)
-        progress_section.start_section()
-        for st_item in st_list:
-            st_merged_fname = st_item.getMergedPath()
-            utils.checkFileExists(st_merged_fname)
-            st_friction_fname = st_item.getFrictionPath()
-            utils.debug("st_friction_fname = " + str(st_friction_fname))
-            qgsUtils.removeRaster(st_friction_fname)
-            reclass_dict = {}
-            for r in self.items:
-                st_name = st_item.dict["name"]
-                class_code = r.dict['code']
-                if st_name not in r.dict:
-                    utils.internal_error("Could not find sous-trame '" + str(st_name)
-                                         + "' in friction model " + str(r.dict.keys()))
-                coeff = r.dict[st_name]
-                if not utils.is_integer(coeff):
-                    class_name = r.dict['class']
-                    utils.warn("Friction coefficient for class " + class_name
-                                     + " and st " + str(st_name)
-                                     + " is not an integer : '" + str(coeff) + "'")
-                else:
-                    reclass_dict[r.dict['code']] = r.dict[st_item.dict["name"]]
-            utils.debug("Reclass dict : " + str(reclass_dict))
-            qgsTreatments.applyReclassGdalFromDict(st_merged_fname,st_friction_fname,
-                                                   reclass_dict,load_flag=True)
-            progress_section.next_step()
-        progress_section.end_section()
-        
+        super().reloadModel(self.parentModel.classModel.items)
+        # classes_to_delete = []
+        # for item in self.items:
+            # cls_name = item.dict[self.ROW_NAME]
+            # cls_item = self.parentModel.classModel.getClassByName(cls_name)
+            # if not cls_item:
+                # classes_to_delete.append(cls_name)
+                # utils.debug("Removing class " + str(cls_name))
+            # else:
+                # utils.debug("Class " + cls_name + " indeed exists")
+        # self.items = [fr for fr in self.items if fr.dict[self.ROW_NAME] not in classes_to_delete]
+        # self.layoutChanged.emit()
+        # for cls_item in self.parentModel.classModel.items:
+            # utils.debug("cls_item : " + str(cls_item.dict))
+            # cls_name = cls_item.getName()
+            # cls_code = cls_item.getCode()
+            # cls_descr = cls_item.getDescr()
+            # row_item = self.getRowByName(cls_name)
+            # if row_item:
+                # utils.debug("row_item : " + str(row_item.dict))
+                # utils.debug("Class " + str(cls_name) + " already exists")
+                # if row_item.dict[self.ROW_CODE] != cls_code:
+                    # utils.debug("Reassigning code '" + str(cls_code) + "' instead of '"
+                                # + str(row_item.dict[self.ROW_CODE]) + " to class " + cls_name)
+                    # row_item.dict[self.ROW_CODE] = cls_code
+                    # self.layoutChanged.emit()
+                # if cls_descr and row_item.dict[self.ROW_DESCR] != cls_descr:
+                    # utils.debug("Reassigning descr '" + str(cls_descr) + "' instead of '"
+                                # + str(row_item.dict[self.ROW_DESCR]) + " to class " + cls_name)
+                    # row_item.dict[self.ROW_DESCR] = cls_descr
+                    # self.layoutChanged.emit()
+            # else:
+                # utils.debug("Reloading class " + cls_name)
+                # self.addRowItemFromBase(cls_item)
+                # self.layoutChanged.emit()
+                
     # Computes friction layer for each item.
     def applyItemsWithContext(self,context,feedback,indexes):
         feedback.beginSection("Friction")
-        self.bdModel.paramsModel.checkInit()
-        all_st = self.bdModel.stModel.getSTList()
-        st_list = [all_st[idx - 3] for idx in indexes]
+        self.parentModel.paramsModel.checkInit()
+        all_st = self.parentModel.stModel.getSTList()
+        nbBaseFields = len(self.baseFields)
+        st_list = [all_st[idx - nbBaseFields] for idx in indexes]
         feedback.pushDebugInfo("st_list = " + str(st_list))
         reclass_matrixes = self.getReclassifyMatrixes(st_list)
         nb_items = len(reclass_matrixes)
         step_feedback = feedbacks.ProgressMultiStepFeedback(nb_items,feedback)
         curr_step = 0
+        feedback.pushDebugInfo("reclass_matrixes = " + str(reclass_matrixes))
         for st_name, matrix in reclass_matrixes.items():
             feedback.setProgressText("computing subnetwork '" + st_name + "'")
             feedback.pushInfo("Friction computation for subnetwork " + str(st_name))
-            in_path = self.bdModel.stModel.getMergedPath(st_name)
+            in_path = self.parentModel.stModel.getMergedPath(st_name)
             utils.checkFileExists(in_path)
-            out_path = self.bdModel.stModel.getFrictionPath(st_name)
+            out_path = self.parentModel.stModel.getFrictionPath(st_name)
             qgsUtils.removeRaster(out_path)
             self.checkInVals(in_path)
             qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,
-                                                 out_type=Qgis.Float32,boundaries_mode=2,
-                                                 context=context,feedback=step_feedback)
+                out_type=Qgis.Float32,boundaries_mode=2,
+                context=context,feedback=step_feedback)
             loaded_layer = qgsUtils.loadRasterLayer(out_path,loadProject=True)
             styles.setRendererPalettedGnYlRd(loaded_layer)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
         feedback.endSection()
-        
-    # Saves friction coefficients to CSV file 'fname'
-    def saveCSV(self,fname):
-        with open(fname,"w", newline='') as f:
-            writer = csv.DictWriter(f,fieldnames=self.fields,delimiter=';')
-            writer.writeheader()
-            for i in self.items:
-                utils.debug("writing row " + str(i.dict))
-                writer.writerow(i.dict)
-        utils.info("Friction saved to file '" + str(fname) + "'")
-                
-    # Add or update FrictionRowItem 'item' into model.
-    def fromCSVItem(self,item):
-        cls_name = item.dict["class"]
-        friction_item = self.getRowByClass(cls_name)
-        cls_item = self.bdModel.classModel.getClassByName(cls_name)
-        item_descr = item.dict["class_descr"]
-        if cls_item:
-            if item_descr:
-                cls_item.dict["descr"] = item_descr
-            if friction_item:
-                friction_item.dict["class_descr"] = item_descr
-                for st in self.bdModel.stModel.getSTList():
-                    if st in item.dict:
-                        friction_item.dict[st] = item.dict[st]
-                    else:
-                        utils.warn("No entry for class '" + cls_name + "' and subnetwork '" + st + "'")
-            else:
-                self.addItem(item)
-        else:
-            utils.warn("Ignoring imported csv row : class '" + str(cls_name)
-                       + "' does not exist.")
-            
-    # Loads friction coefficients from CSV file 'fname' into model (insertion or update).
-    def fromCSVUpdate(self,fname):
-        with open(fname,"r") as f:
-            reader = csv.DictReader(f,fieldnames=self.fields,delimiter=';')
-            first_line = next(reader)
-            for row in reader:
-                item = FrictionRowItem(row)
-                self.fromCSVItem(item)
-        self.layoutChanged.emit()
-        
-    # Loads friction coefficients from CSV file 'fname' into model.
-    # Existing items are erased.
-    def fromCSV(self,fname):
-        self.items = []
-        with open(fname,"r") as f:
-            reader = csv.DictReader(f,fieldnames=self.fields,delimiter=';')
-            header = reader.fieldnames
-            self.fields = header
-            for st in header[3:]:
-                st_item = self.bdModel.stModel.getSTByName(st)
-                if not st_item:
-                    utils.user_error("Sous-trame '" + st + "' does not exist")
-            first_line = next(reader)
-            for row in reader:
-                item = FrictionRowItem(row)
-                self.addItem(item)
-        self.layoutChanged.emit()
-        
-    # Loads model from XML root (tag 'FrictionModel')    
-    def fromXMLRoot(self,root):
-        self.items = []
-        for fr in root:
-            item = FrictionRowItem(fr.attrib)
-            self.addItem(item)
-        self.layoutChanged.emit()
-        
-    def flags(self, index):
-        if index.column() in [1,2]:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
-        else:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
-        return flags
            
            
-class FrictionConnector(abstract_model.AbstractConnector):
+class FrictionConnector(AbstractConnector):
+    
+    CUSTOM_MODE = 0
+    EXP_MODE = 1
+    CONNEX_MODE = 2
     
     def __init__(self,dlg,frictionModel):
         self.dlg = dlg
@@ -372,20 +167,22 @@ class FrictionConnector(abstract_model.AbstractConnector):
         self.dlg.frictionRun.clicked.connect(self.applyItems)
         self.dlg.frictionSave.clicked.connect(self.saveCSVAction)
         self.dlg.frictionLoad.clicked.connect(self.loadCSVAction)
+        self.dlg.frictionMethod.currentIndexChanged.connect(self.switchClassifMode)
         
     # Return indexes currently selected in friction view
     def getSelectedIndexes(self):
+        nbBaseFields = len(self.model.baseFields)
         if self.onlySelection:
             indexes = list(set([i.column() for i in self.view.selectedIndexes()]))
         else:
-            indexes = range(3,len(self.model.fields))
+            indexes = range(nbBaseFields,len(self.model.fields))
         nb_indexes = len(indexes)
         if nb_indexes == 0:
             utils.user_error("No subnetwork selected for friction step")
-        nb_st = len(self.model.bdModel.stModel.getSTList())
+        nb_st = len(self.model.parentModel.stModel.getSTList())
         utils.debug("nb_st = " + str(nb_st))
         for idx in indexes:
-            st_idx = idx - 3
+            st_idx = idx - nbBaseFields
             if st_idx < 0 or st_idx >= nb_st:
                 utils.user_error("Column " + str(idx) + " selected is not a subnetwork")
         return indexes
@@ -393,7 +190,7 @@ class FrictionConnector(abstract_model.AbstractConnector):
     # Updates model with items loaded from file 'fname'
     def loadCSV(self,fname):
         utils.checkFileExists(fname)
-        self.model.fromCSVUpdate(fname)
+        self.model.fromCSV(fname)
         utils.info("Friction loaded from '" + str(fname))
         
     # Opens file dialog and loads model from selected CSV file.
@@ -415,4 +212,42 @@ class FrictionConnector(abstract_model.AbstractConnector):
                                       filter="*.csv")
         if fname:
             self.saveCSV(fname)
+            
+    def switchClassifMode(self,mode):
+        # CUSTOM_MODE = 0 EXP_MODE = 1 CONNEX_MODE = 2
+        if mode == self.CUSTOM_MODE:
+            self.switchCustomMode()
+        elif mode == self.EXP_MODE:
+            self.switchExpMode()
+        elif mode == self.CONNEX_MODE:
+            self.switchConnexMode()
+        else:
+            utils.user_error(self.tr("Unexpected mode : ") + str(mode))
+            
+    def switchCustomMode(self):
+        # self.dlg.frictionClassFrame.setEnabled(False)
+        # self.dlg.frictionMinMaxFrame.setEnabled(False)
+        self.setValues(None)
+            
+    def switchExpMode(self):
+        # self.dlg.frictionClassFrame.setEnabled(True)
+        # self.dlg.frictionMinMaxFrame.setEnabled(True)
+        # nbClass = self.getNbClasses()
+        # minVal = self.dlg.frictionMinVal.value()
+        # maxVal = self.dlg.frictionMaxVal.value()
+        self.setValues(None)
+            
+    def switchConnexMode(self):
+        # self.dlg.frictionClassFrame.setEnabled(True)
+        # self.dlg.frictionMinMaxFrame.setEnabled(False)
+        # nbClass = self.getNbClasses()
+        # self.setValues(range(1,nbClass))
+        pass
         
+    def getNbClasses(self):
+        return self.dlg.frictionNbClass.value()
+        
+    def setValues(self,values):
+        self.model.setValues(values)
+        self.view.setItemDelegate(ComboDelegate(values))
+        self.model.layoutChanged.emit()
