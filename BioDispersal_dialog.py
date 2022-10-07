@@ -51,7 +51,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 #FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'test_dialog.ui'))
     
-from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
+# from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
     
 # class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
 class BioDispersalDialog(QtWidgets.QDialog,FORM_CLASS):

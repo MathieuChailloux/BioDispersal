@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>933</width>
-    <height>722</height>
+    <width>1051</width>
+    <height>757</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -76,8 +76,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>699</width>
-            <height>628</height>
+            <width>809</width>
+            <height>656</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -253,7 +253,7 @@
              <property name="minimumSize">
               <size>
                <width>658</width>
-               <height>565</height>
+               <height>600</height>
               </size>
              </property>
              <property name="maximumSize">
@@ -544,7 +544,7 @@
                <item row="1" column="0">
                 <widget class="QFrame" name="frame_28">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -552,7 +552,7 @@
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>565</height>
+                   <height>16777215</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -2790,6 +2790,12 @@
                   </property>
                   <item>
                    <widget class="QFrame" name="frame_22">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>177</height>
+                     </size>
+                    </property>
                     <property name="frameShape">
                      <enum>QFrame::NoFrame</enum>
                     </property>
@@ -3048,7 +3054,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
-                      <height>100</height>
+                      <height>85</height>
                      </size>
                     </property>
                     <property name="currentIndex">
@@ -3058,6 +3064,12 @@
                      <layout class="QGridLayout" name="gridLayout_20">
                       <item row="0" column="0">
                        <widget class="QFrame" name="pondIvalFrame">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>85</height>
+                         </size>
+                        </property>
                         <property name="frameShape">
                          <enum>QFrame::NoFrame</enum>
                         </property>
@@ -3065,44 +3077,38 @@
                          <enum>QFrame::Raised</enum>
                         </property>
                         <layout class="QGridLayout" name="gridLayout_19">
-                         <property name="leftMargin">
-                          <number>0</number>
-                         </property>
                          <property name="topMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="rightMargin">
                           <number>0</number>
                          </property>
                          <property name="bottomMargin">
                           <number>0</number>
                          </property>
-                         <item row="0" column="4">
-                          <spacer name="horizontalSpacer_12">
+                         <item row="0" column="0">
+                          <spacer name="horizontalSpacer_13">
                            <property name="orientation">
                             <enum>Qt::Horizontal</enum>
                            </property>
+                           <property name="sizeType">
+                            <enum>QSizePolicy::Fixed</enum>
+                           </property>
                            <property name="sizeHint" stdset="0">
                             <size>
-                             <width>673</width>
-                             <height>20</height>
+                             <width>15</width>
+                             <height>13</height>
                             </size>
                            </property>
                           </spacer>
                          </item>
-                         <item row="1" column="2" colspan="3">
-                          <widget class="QTableView" name="pondIvalView">
-                           <property name="minimumSize">
-                            <size>
-                             <width>200</width>
-                             <height>50</height>
-                            </size>
+                         <item row="0" column="1">
+                          <widget class="QLabel" name="pondDirectLayerLabel_2">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
                            </property>
-                           <property name="dragEnabled">
-                            <bool>true</bool>
-                           </property>
-                           <property name="sortingEnabled">
-                            <bool>true</bool>
+                           <property name="text">
+                            <string>Intervals</string>
                            </property>
                           </widget>
                          </item>
@@ -3152,34 +3158,34 @@
                            </property>
                           </widget>
                          </item>
-                         <item row="0" column="1">
-                          <widget class="QLabel" name="pondDirectLayerLabel_2">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="text">
-                            <string>Intervals</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="0">
-                          <spacer name="horizontalSpacer_13">
+                         <item row="0" column="4">
+                          <spacer name="horizontalSpacer_12">
                            <property name="orientation">
                             <enum>Qt::Horizontal</enum>
                            </property>
-                           <property name="sizeType">
-                            <enum>QSizePolicy::Fixed</enum>
-                           </property>
                            <property name="sizeHint" stdset="0">
                             <size>
-                             <width>15</width>
-                             <height>13</height>
+                             <width>673</width>
+                             <height>20</height>
                             </size>
                            </property>
                           </spacer>
+                         </item>
+                         <item row="1" column="2" colspan="3">
+                          <widget class="QTableView" name="pondIvalView">
+                           <property name="minimumSize">
+                            <size>
+                             <width>200</width>
+                             <height>50</height>
+                            </size>
+                           </property>
+                           <property name="dragEnabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="sortingEnabled">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
                          </item>
                         </layout>
                        </widget>
@@ -3312,6 +3318,50 @@
                    </widget>
                   </item>
                   <item>
+                   <widget class="QFrame" name="frame_32">
+                    <property name="frameShape">
+                     <enum>QFrame::NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_18">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <widget class="QPushButton" name="pondAdd">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>Save weighting</string>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="resources.qrc">
+                         <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
                    <widget class="QFrame" name="frame_17">
                     <property name="minimumSize">
                      <size>
@@ -3326,50 +3376,6 @@
                      <enum>QFrame::Raised</enum>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_14">
-                     <item row="0" column="0" colspan="2">
-                      <widget class="QFrame" name="frame_32">
-                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_18">
-                        <property name="spacing">
-                         <number>0</number>
-                        </property>
-                        <property name="leftMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="topMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="rightMargin">
-                         <number>0</number>
-                        </property>
-                        <property name="bottomMargin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <widget class="QPushButton" name="pondAdd">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="text">
-                           <string>Save weighting</string>
-                          </property>
-                          <property name="icon">
-                           <iconset resource="resources.qrc">
-                            <normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</normaloff>:/plugins/BioDispersal/icons/mActionFileSave.svg</iconset>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
                      <item row="1" column="0" rowspan="2">
                       <widget class="QFrame" name="frame_23">
                        <property name="sizePolicy">
@@ -4428,18 +4434,18 @@
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;Nom étape&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Description générale&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Ceci est une description générale&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Description détaillée&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt;param1&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; : description du param 1&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-style:italic;&quot;&gt;param2&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; : description du param 2&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Nom étape&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Description générale&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est une description générale&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Description détaillée&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;param1&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; : description du param 1&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;param2&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; : description du param 2&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ceci est un test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="openLinks">
           <bool>false</bool>
