@@ -36,7 +36,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHeaderView
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
-from ..algs import BioDispersal_algs
+from ..algs import BioDispersal_steps_algs as BSA
+from ..algs import aux_algs
 from . import params, classes, groups
 
 from osgeo import gdal
@@ -156,23 +157,23 @@ class SelectionModel(abstract_model.DictModel):
         # qgsTreatments.extractByExpression(input,mode_val,selected_path,feedback=feedback)
         # clipped_path = qgsUtils.mkTmpPath(grp_name + "_clipped.gpkg")
         #self.bdModel.paramsModel.clipByExtent(input,out_path=clipped_path)
-        #parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : clipped_path,
-        parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : input,
-                       BioDispersal_algs.SelectVExprAlg.EXPR : mode_val,
-                       BioDispersal_algs.SelectVExprAlg.CLASS : grp_name,
-                       BioDispersal_algs.SelectVExprAlg.CODE : class_item.dict["code"],
-                       BioDispersal_algs.SelectVExprAlg.OUTPUT : out_path }
+        #parameters = { BSA.SelectVExprAlg.INPUT : clipped_path,
+        parameters = { BSA.SelectVExprAlg.INPUT : input,
+                       BSA.SelectVExprAlg.EXPR : mode_val,
+                       BSA.SelectVExprAlg.CLASS : grp_name,
+                       BSA.SelectVExprAlg.CODE : class_item.dict["code"],
+                       BSA.SelectVExprAlg.OUTPUT : out_path }
         qgsTreatments.applyProcessingAlg("BioDispersal","selectvexpr",parameters,
                                          context=context,feedback=feedback)
         
     # Performs selection by field according to 'item'.
     def applySelectionVField(self,item,grp_name,out_path,context,feedback):
         matrix = self.bdModel.classModel.getMatrixOfGroup(grp_name)
-        parameters = { BioDispersal_algs.SelectVFieldAlg.INPUT : self.getItemInPath(item),
-                       BioDispersal_algs.SelectVFieldAlg.FIELD : item.dict["mode_val"],
-                       BioDispersal_algs.SelectVFieldAlg.GROUP : grp_name,
-                       BioDispersal_algs.SelectVFieldAlg.ASSOC : matrix,
-                       BioDispersal_algs.SelectVFieldAlg.OUTPUT : out_path }
+        parameters = { BSA.SelectVFieldAlg.INPUT : self.getItemInPath(item),
+                       BSA.SelectVFieldAlg.FIELD : item.dict["mode_val"],
+                       BSA.SelectVFieldAlg.GROUP : grp_name,
+                       BSA.SelectVFieldAlg.ASSOC : matrix,
+                       BSA.SelectVFieldAlg.OUTPUT : out_path }
         qgsTreatments.applyProcessingAlg("BioDispersal","selectvfield",parameters,
                                          context=context,feedback=feedback)
         
@@ -263,7 +264,7 @@ class SelectionModel(abstract_model.DictModel):
                 qgsUtils.removeRaster(out_path)
             if not from_raster:
                 crs, extent, resolution = self.bdModel.getRasterParams()
-                BioDispersal_algs.applyRasterizationFixAllTouch(
+                aux_algs.applyRasterizationFixAllTouch(
                     grp_vector_path,grp_raster_path,extent,resolution,
                     field="Code",out_type=Qgis.Int16,all_touch=True,
                     context=context,feedback=step_feedback)

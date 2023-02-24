@@ -32,7 +32,6 @@ from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt, QCoreAp
 from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
-from ..algs import BioDispersal_algs
 
 # BioDispersal global parameters
 

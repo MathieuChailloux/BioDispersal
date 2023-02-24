@@ -33,7 +33,7 @@ from PyQt5.QtWidgets import QAction
 from .resources import *
 # Import the code for the dialog
 from .BioDispersal_dialog import BioDispersalDialog
-from .algs.BioDispersal_algs import BioDispersalAlgorithmsProvider
+from .algs.BioDispersal_algs_provider import BioDispersalAlgorithmsProvider
 from .qgis_lib_mc import utils
 
 from qgis.utils import qgis_excepthook

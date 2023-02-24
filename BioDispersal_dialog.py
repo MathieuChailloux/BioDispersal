@@ -40,7 +40,6 @@ if file_dir not in sys.path:
     
 #from .BioDispersalAbout_dialog import BioDispersalAboutDialog
 from .qgis_lib_mc import (utils, qgsUtils, config_parsing, log, feedbacks, abstract_model)
-from .algs.BioDispersal_algs import BioDispersalAlgorithmsProvider
 from .steps import (params, subnetworks, classes, groups, selection, fusion, friction, ponderation, cost)
 from . import tabs
 from .BioDispersal_model import BioDispersalModel
@@ -72,7 +71,6 @@ class BioDispersalDialog(abstract_model.MainDialog,DLG_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        #self.provider = BioDispersalAlgorithmsProvider()
         self.setupUi(self)
         
     # Initialize plugin tabs and connectors.
