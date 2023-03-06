@@ -95,7 +95,7 @@ class STModel(abstract_model.DictModel):
         self.is_runnable = False
         self.bdModel = bdModel
         itemClass = getattr(sys.modules[__name__], STItem.__name__)
-        super().__init__(self,itemClass,feedback=bdModel.feedback)
+        super().__init__(itemClass=itemClass,feedback=bdModel.feedback)
         
     def getSTByName(self,st_name):
         for st in self.items:

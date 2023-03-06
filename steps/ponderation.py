@@ -110,7 +110,7 @@ class PondBufferIvalItem(PondIvalItem):
 class PondIvalModel(abstract_model.DictModel):
     
     def __init__(self,feedback=None):
-        super().__init__(self,fields=pond_ival_fields,feedback=feedback)
+        super().__init__(fields=pond_ival_fields,feedback=feedback)
         
     def __str__(self):
         s = ""

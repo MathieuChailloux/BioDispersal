@@ -46,7 +46,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         self.st_groups = {}
         self.current_st = None
         self.current_model = None
-        super().__init__(self,fields=fusion_fields,feedback=bdModel.feedback)
+        super().__init__(fields=fusion_fields,feedback=bdModel.feedback)
         
     def __str__(self):
         res = ""
