@@ -62,6 +62,59 @@ from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
 
 QualifAlgorithm = qgsUtils.BaseProcessingAlgorithm      
   
+class QualifAlg2Layers(QualifAlgorithm):
+    LAYER_A = 'LAYER_A'
+    LAYER_B = 'LAYER_B'
+    
+    def initLayerAV(self):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.LAYER_A,
+                description=self.tr('Patch layer')))
+    def initLayerBV(self):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.LAYER_B,
+                description=self.tr('Layer B (relative surface layer)')))
+    def initLayerBR(self):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.LAYER_B,
+                description=self.tr('Layer B (relative surface layer)')))
+    def initOutLayerV(self):
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT,
+                self.tr("Output layer")))
+    def initOutLayerR(self):
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT,
+                self.tr("Output layer")))
+        
+
+class QualifAlgVV(QualifAlg2Layers):
+    def initAlgorithm(self, config=None):
+        self.initLayerAV()
+        self.initLayerBV()
+        self.initOutLayerV()
+class QualifAlgVR(QualifAlg2Layers):
+    def initAlgorithm(self, config=None):
+        self.initLayerAV()
+        self.initLayerBR()
+        self.initOutLayerV()
+                  
+# Relative surface with patch vector and landuse raster
+class RelativeSurfaceVR(QualifAlgVR):
+
+    def displayName(self):
+        return self.tr("Relative surface (VR)")
+    def group(self):
+        return self.tr("Habitat qualification")
+    def groupId(self):
+        return 'qualifVR'
+    def shortHelpString(self):
+        return self.tr("Relative surface (percentage of B surface in each patch of layer A)")
   
 class RelativeSurface(QualifAlgorithm):
 
