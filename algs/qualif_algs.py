@@ -73,7 +73,7 @@ class QualifAlgClassif(QualifAlgorithm):
     def postProcessAlgorithm(self,context,feedback):
         out_layer = QgsProcessingUtils.mapLayerFromString(self.output,context)
         if not out_layer:
-            raise QgsProcessingException("No layer found for " + str(self.dest_id))
+            raise QgsProcessingException("No layer found for " + str(self.output))
         styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname)
         return {self.OUTPUT: self.output }
         
@@ -151,7 +151,8 @@ class QualifAlgVR(QualifAlg2Layers):
                   
 # Relative surface with patch vector and landuse raster
 class RelativeSurfaceVR(QualifAlgVR):
-    ALG_NAME = 'RelativeSurfaceVR'
+
+    ALG_NAME = 'relativeSurfaceVR'
 
     def displayName(self):
         return self.tr("Relative surface (VR)")
@@ -201,7 +202,7 @@ class RelativeSurfaceVR(QualifAlgVR):
     def postProcessAlgorithm(self,context,feedback):
         out_layer = QgsProcessingUtils.mapLayerFromString(self.output,context)
         if not out_layer:
-            raise QgsProcessingException("No layer found for " + str(self.dest_id))
+            raise QgsProcessingException("No layer found for " + str(self.output))
         styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname)
         return {self.OUTPUT: self.output }
   
@@ -332,13 +333,13 @@ class RelativeSurface(QualifAlgorithm):
         return { self.OUTPUT : output }
         
     
-class CompacityAlg(QualifAlg1Layer):
+class CompactnessAlg(QualifAlg1Layer):
 
-    ALG_NAME = 'compacity'   
+    ALG_NAME = 'compactness'   
     def displayName(self):
-        return self.tr("Compacity")
+        return self.tr("Compactness")
     def shortHelpString(self):
-        return self.tr("Computes compacity index (area / perimeter) for each feature of input layer")
+        return self.tr("Computes compactness index (area / perimeter) for each feature of input layer")
                 
     def processAlgorithm(self,parameters,context,feedback):
         # Parameters
@@ -351,9 +352,59 @@ class CompacityAlg(QualifAlg1Layer):
         expr = "$area / $perimeter"
         expr = "$area / ($perimeter * $perimeter)"
         expr = "$area / ($perimeter * $perimeter / (4*pi()))"
-        self.fieldname = "compacity"
+        self.fieldname = "compactness"
         qgsTreatments.fieldCalculator(input,self.fieldname,expr,self.output,
             context=context,feedback=feedback)
         return { self.OUTPUT : self.output }
     
+
+class DistanceAlg(QualifAlgVR):
+
+    ALG_NAME = 'distanceAlgVR'
+
+    def displayName(self):
+        return self.tr("Distance to layer")
+    def shortHelpString(self):
+        return self.tr("Computes minimal distance to layer B pixel for each feature of layer A")
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
+        if layerA is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        layerB = self.parameterAsRasterLayer(parameters,self.LAYER_B,context)
+        if layerB is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
+        values = self.parameterAsInts(parameters,self.VALUES,context)
+        self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        # Values extraction
+        if values:
+            extract_path = self.mkTmpPath("extract.tif")
+            extract_params = { ExtractPatchesR.INPUT : parameters[self.LAYER_B],
+                ExtractPatchesR.VALUES : parameters[self.VALUES],
+                ExtractPatchesR.OUTPUT : extract_path }
+            processing.run("BioDispersal:" + ExtractPatchesR.ALG_NAME,
+                extract_params,context=context,feedback=feedback)
+            # layerB = qgsUtils.loadRasterLayer(extract_path) 
+        else:
+            extract_path = layerB
+        # Distance
+        distance_path = qgsUtils.mkTmpPath("distance.tif")
+        qgsTreatments.applyProximity(extract_path,distance_path,feedback=feedback)
+        # Zonal stats
+        values_str = "".join(str(v) for v in values)
+        prefix = values_str + "_dist_"
+        self.fieldname = prefix + "min"
+        # Stats = 5 <=> minimum
+        qgsTreatments.rasterZonalStats(layerA,distance_path,self.output,
+            prefix=prefix,stats=[5],feedback=feedback) 
+        return { self.OUTPUT : self.output }
+        
+    def postProcessAlgorithm(self,context,feedback):
+        out_layer = QgsProcessingUtils.mapLayerFromString(self.output,context)
+        if not out_layer:
+            raise QgsProcessingException("No layer found for " + str(self.output))
+        styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname,invert_ramp=True)
+        return {self.OUTPUT: self.output }
+
     

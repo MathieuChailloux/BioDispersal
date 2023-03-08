@@ -58,7 +58,8 @@ from .patch_algs import (
     ExtractPatchesR,
     ExtractPatchesRV)
 from .qualif_algs import (
-    CompacityAlg,
+    CompactnessAlg,
+    DistanceAlg,
     RelativeSurfaceVR,
     RelativeSurface)
     
@@ -117,7 +118,8 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             ExtractPatchesR(),
             ExtractPatchesRV(),
             # Qualif algs
-            CompacityAlg(),
+            CompactnessAlg(),
+            DistanceAlg(),
             RelativeSurfaceVR(),
             RelativeSurface()]
         for a in alglist:
