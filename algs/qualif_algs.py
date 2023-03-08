@@ -67,8 +67,40 @@ class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
         return self.tr("Patch qualification")
     def groupId(self):
         return "qualif"
-  
-class QualifAlg2Layers(QualifAlgorithm):
+     
+class QualifAlgClassif(QualifAlgorithm):
+    # Apply Jenks classif on self.output self.fieldname
+    def postProcessAlgorithm(self,context,feedback):
+        out_layer = QgsProcessingUtils.mapLayerFromString(self.output,context)
+        if not out_layer:
+            raise QgsProcessingException("No layer found for " + str(self.dest_id))
+        styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname)
+        return {self.OUTPUT: self.output }
+        
+class QualifAlg1Layer(QualifAlgClassif):
+    INPUT = 'INPUT'
+    OUTPUT = 'OUTPUT'
+    
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.INPUT,
+                description=self.tr('Patch layer')))
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        # Processing
+        
+
+class QualifAlg2Layers(QualifAlgClassif):
     LAYER_A = 'LAYER_A'
     LAYER_B = 'LAYER_B'
     VALUES = 'VALUES'
@@ -299,4 +331,29 @@ class RelativeSurface(QualifAlgorithm):
             context=context,feedback=feedback)
         return { self.OUTPUT : output }
         
+    
+class CompacityAlg(QualifAlg1Layer):
+
+    ALG_NAME = 'compacity'   
+    def displayName(self):
+        return self.tr("Compacity")
+    def shortHelpString(self):
+        return self.tr("Computes compacity index (area / perimeter) for each feature of input layer")
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        # Processing
+        # Compactness could be based on minimum enclosing circles 
+        expr = "$area / $perimeter"
+        expr = "$area / ($perimeter * $perimeter)"
+        expr = "$area / ($perimeter * $perimeter / (4*pi()))"
+        self.fieldname = "compacity"
+        qgsTreatments.fieldCalculator(input,self.fieldname,expr,self.output,
+            context=context,feedback=feedback)
+        return { self.OUTPUT : self.output }
+    
     
