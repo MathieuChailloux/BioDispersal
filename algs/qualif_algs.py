@@ -59,12 +59,19 @@ import processing
 from processing.algs.gdal.rasterize import rasterize
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
+from .patch_algs import ExtractPatchesR
 
-QualifAlgorithm = qgsUtils.BaseProcessingAlgorithm      
+class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
+
+    def group(self):
+        return self.tr("Patch qualification")
+    def groupId(self):
+        return "qualif"
   
 class QualifAlg2Layers(QualifAlgorithm):
     LAYER_A = 'LAYER_A'
     LAYER_B = 'LAYER_B'
+    VALUES = 'VALUES'
     
     def initLayerAV(self):
         self.addParameter(
@@ -83,14 +90,19 @@ class QualifAlg2Layers(QualifAlgorithm):
                 description=self.tr('Layer B (relative surface layer)')))
     def initOutLayerV(self):
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
+            QgsProcessingParameterVectorDestination(
                 self.OUTPUT,
                 self.tr("Output layer")))
     def initOutLayerR(self):
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
+            QgsProcessingParameterRasterDestination(
                 self.OUTPUT,
                 self.tr("Output layer")))
+    def initValues(self):
+        self.addParameter(
+            QgsProcessingParameterString (
+                self.VALUES,
+                description=self.tr('Values (separated by \';\', all values by default)')))
         
 
 class QualifAlgVV(QualifAlg2Layers):
@@ -102,19 +114,64 @@ class QualifAlgVR(QualifAlg2Layers):
     def initAlgorithm(self, config=None):
         self.initLayerAV()
         self.initLayerBR()
+        self.initValues()
         self.initOutLayerV()
                   
 # Relative surface with patch vector and landuse raster
 class RelativeSurfaceVR(QualifAlgVR):
+    ALG_NAME = 'RelativeSurfaceVR'
 
     def displayName(self):
         return self.tr("Relative surface (VR)")
-    def group(self):
-        return self.tr("Habitat qualification")
-    def groupId(self):
-        return 'qualifVR'
     def shortHelpString(self):
         return self.tr("Relative surface (percentage of B surface in each patch of layer A)")
+        
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
+        if layerA is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        layerB = self.parameterAsRasterLayer(parameters,self.LAYER_B,context)
+        if layerB is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
+        values = self.parameterAsInts(parameters,self.VALUES,context)
+        self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        # Values extraction
+        if values:
+            extract_path = self.mkTmpPath("extract.tif")
+            extract_params = { ExtractPatchesR.INPUT : parameters[self.LAYER_B],
+                ExtractPatchesR.VALUES : parameters[self.VALUES],
+                ExtractPatchesR.OUTPUT : extract_path }
+            processing.run("BioDispersal:" + ExtractPatchesR.ALG_NAME,
+                extract_params,context=context,feedback=feedback)
+            # layerB = qgsUtils.loadRasterLayer(extract_path) 
+        else:
+            extract_path = layerB
+        # Zonal stats
+        values_str = "".join(str(v) for v in values)
+        prefix = values_str + "_"
+        stats_path = qgsUtils.mkTmpPath("stats.gpkg")
+        # Stats = 0 <=> count
+        qgsTreatments.rasterZonalStats(layerA,extract_path,stats_path,
+            prefix=prefix,stats=[0],feedback=feedback) 
+        # Compute relative surface
+        x_res = layerB.rasterUnitsPerPixelX()
+        y_res = layerB.rasterUnitsPerPixelY()
+        pixel_surf = x_res * y_res
+        feedback.pushDebugInfo("pixel_surf = " + str(pixel_surf))
+        expr = '("%scount" * %d) / $area' % (prefix,pixel_surf)
+        feedback.pushDebugInfo("expr = " + expr)
+        self.fieldname = "SurfRel_" + values_str
+        qgsTreatments.fieldCalculator(stats_path,self.fieldname,expr,self.output,
+            precision=4,feedback=feedback)
+        return { self.OUTPUT : self.output }
+        
+    def postProcessAlgorithm(self,context,feedback):
+        out_layer = QgsProcessingUtils.mapLayerFromString(self.output,context)
+        if not out_layer:
+            raise QgsProcessingException("No layer found for " + str(self.dest_id))
+        styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname)
+        return {self.OUTPUT: self.output }
   
 class RelativeSurface(QualifAlgorithm):
 
@@ -125,10 +182,6 @@ class RelativeSurface(QualifAlgorithm):
     
     def displayName(self):
         return self.tr("Relative surface")
-    def group(self):
-        return self.tr("Habitat qualification")
-    def groupId(self):
-        return 'qualif'
         
     def shortHelpString(self):
         return self.tr("Relative surface (percentage of B surface in each patch of layer A)")

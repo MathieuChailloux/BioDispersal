@@ -635,9 +635,15 @@ class PatchAreaWindow(SlidingWindowCircle):
         res = np.count_nonzero(array[array == cell_val])
         # self.feedback.pushDebugInfo("res = " + str(res))
         return res
-                
+     
 
-class PatchSizeWindowRedistrib(SlidingWindowCircle):
+class ConnectivityIndexGroup(SlidingWindowCircle):
+    def group(self):
+        return self.tr("Connectivity indices")
+    def groupId(self):
+        return 'index'    
+
+class PatchSizeWindowRedistrib(ConnectivityIndexGroup):
     
     ALG_NAME = 'patchSizeWindowRedistrib'
     INDEX = 'INDEX'
@@ -649,10 +655,6 @@ class PatchSizeWindowRedistrib(SlidingWindowCircle):
         
     def displayName(self):
         return self.tr("Surface index")
-    def group(self):
-        return self.tr("Connectivity indices")
-    def groupId(self):
-        return 'index'
         
     def shortHelpString(self):
         return self.tr("Redistributed patch size inside slinding window")
@@ -718,7 +720,7 @@ class PatchSizeWindowRedistrib(SlidingWindowCircle):
         return np.count_nonzero(array == cell_val) - 1
         
         
-class ConnectivityIndex(SlidingWindowCircle):
+class ConnectivityIndex(ConnectivityIndexGroup):
     
     ALG_NAME = 'connexityIndex'
     INDEX = 'INDEX'
@@ -726,12 +728,7 @@ class ConnectivityIndex(SlidingWindowCircle):
     def initAlgorithm(self, config=None):
         super().initAlgorithm(classesParam=True,#redistribParams=True,
             distModeCoeffParam=True,finalFuncParam=True)
-        
-    # def group(self):
-    #     return self.tr("Connectivity indices")
-    def groupId(self):
-        return 'index'
-    
+            
     def displayName(self):
         return self.tr("Connectivity index")
         
@@ -777,17 +774,12 @@ class ConnectivityIndex(SlidingWindowCircle):
         return self.processOutput(curr_arr,feedback)
         
         
-class ConnectivityIndexHabPatch(SlidingWindowCircle):
+class ConnectivityIndexHabPatch(ConnectivityIndexGroup):
     
     ALG_NAME = 'connectivityIndexHabPatch'
     
     COEFF_MODE = 'COEFF_MODE'
     EXPONENT = 'EXPONENT'
-    
-    def group(self):
-        return self.tr("Connectivity indices")
-    def groupId(self):
-        return 'index'
     
     def displayName(self):
         return self.tr("Isolation index")
@@ -834,7 +826,7 @@ class ConnectivityIndexHabPatch(SlidingWindowCircle):
         return self.processOutput(curr_arr,feedback)
         
         
-class ConnectivityIndexHabPatch(SlidingWindowCircle):
+class ConnectivityIndexHabPatch(ConnectivityIndexGroup):
     
     ALG_NAME = 'connectivityIndexHabPatch'
     
@@ -843,10 +835,6 @@ class ConnectivityIndexHabPatch(SlidingWindowCircle):
           
     def displayName(self):
         return self.tr("Isolation index")
-    def group(self):
-        return self.tr("Connectivity indices")
-    def groupId(self):
-        return 'index'
         
     def shortHelpString(self):
         msg = "Isolation index inspired from Hanski incidence function model."

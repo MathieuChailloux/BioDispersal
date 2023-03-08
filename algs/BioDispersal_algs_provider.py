@@ -58,6 +58,7 @@ from .patch_algs import (
     ExtractPatchesR,
     ExtractPatchesRV)
 from .qualif_algs import (
+    RelativeSurfaceVR,
     RelativeSurface)
     
 class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
@@ -115,6 +116,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             ExtractPatchesR(),
             ExtractPatchesRV(),
             # Qualif algs
+            RelativeSurfaceVR(),
             RelativeSurface()]
         for a in alglist:
             self.addAlgorithm(a)
