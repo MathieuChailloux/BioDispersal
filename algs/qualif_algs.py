@@ -28,6 +28,7 @@ from qgis.core import (Qgis,
                        QgsFields,
                        QgsField,
                        QgsFeature,
+                       QgsGraduatedSymbolRenderer,
                        QgsProcessing,
                        QgsProcessingUtils,
                        QgsProcessingAlgorithm,
@@ -408,3 +409,51 @@ class DistanceAlg(QualifAlgVR):
         return {self.OUTPUT: self.output }
 
     
+class ClassifySymbology(QualifAlgorithm):
+
+    ALG_NAME = 'classifySymbology'
+    
+    FIELDNAME = 'FIELDNAME'
+    FIELD_PREFIX = 'classif_'
+
+    def displayName(self):
+        return self.tr("Classify from symbology")
+    def shortHelpString(self):
+        return self.tr("Creates field with classification value from active symbology")
+        
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.INPUT,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.FIELDNAME,
+                description=self.tr('Output fieldname'),
+                defaultValue=self.FIELD_PREFIX))
+    
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
+        if input is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        out_fieldname = self.parameterAsString(parameters,self.FIELDNAME,context)
+        # Retrieve symbology classes
+        renderer = input.renderer()
+        feedback.pushDebugInfo("Rendered class = " + str(renderer.__class__.__name__))
+        if isinstance(renderer,QgsGraduatedSymbolRenderer):
+            ranges = renderer.ranges()
+            fieldname = renderer.classAttribute()
+            out_fname = out_fieldname + fieldname
+            feedback.pushDebugInfo("out_fname = " + str(out_fname))
+            def localFunc(feat):
+                val = feat[fieldname]
+                range = renderer.rangeForValue(val)
+                for idx, val in enumerate(ranges):
+                    if val.lowerValue() == range.lowerValue():
+                        return float(idx)
+                raise QgsProcessingException("No range for " + str(range) + " in " + str(ranges))
+            qgsUtils.createOrUpdateField(input,localFunc,out_fname)
+        else:
+            pass
+        return { self.OUTPUT: input }
