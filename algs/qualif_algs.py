@@ -408,7 +408,57 @@ class DistanceAlg(QualifAlgVR):
         styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname,invert_ramp=True)
         return {self.OUTPUT: self.output }
 
+# Computes Shannon Diversity Index
+class ShannonDiversityIndex(QualifAlgClassif):
+
+    ALG_NAME = 'shannonIndex'
+
+    PATCHES = 'PATCHES'
+    LANDUSE = 'LANDUSE'
     
+    def displayName(self):
+        return self.tr("Shannon index")
+    def shortHelpString(self):
+        return self.tr("Creates field with classification value from active symbology")
+        
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.PATCHES,
+                description=self.tr('Patch vector layer')))
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.LANDUSE,
+                description=self.tr('Landuse raster layer')))
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        patches = self.parameterAsVectorLayer(parameters,self.PATCHES,context)
+        if patches is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.PATCHES))
+        landuse = self.parameterAsRasterLayer(parameters,self.LANDUSE,context)
+        if landuse is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LANDUSE))
+        self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        self.fieldname = "shannon"
+        # Computes zonal histo
+        hist_path = qgsUtils.mkTmpPath("zonal_histo.gpkg")
+        qgsTreatments.zonalHisto(patches,landuse,hist_path,feedback=feedback)
+        hist_layer = qgsUtils.loadVectorLayer(hist_path)
+        # Computes index
+        prefix = "HISTO_"
+        fields_histo = [f.name() for f in hist_layer.fields() if f.name().startswith(prefix)]
+        tot_expr = " + ".join(fields_histo)
+        fields_expr = ['("{0}" / ({1}) * ln("{0}" / ({1}))) * -1'.format(fh,tot_expr) for fh in fields_histo]
+        expr = " + ".join(fields_expr)
+        qgsTreatments.fieldCalculator(hist_path,self.fieldname,expr,self.output,feedback=feedback)
+        return { self.OUTPUT: self.output }
+
+  
 class ClassifySymbology(QualifAlgorithm):
 
     ALG_NAME = 'classifySymbology'
@@ -429,8 +479,12 @@ class ClassifySymbology(QualifAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.FIELDNAME,
-                description=self.tr('Output fieldname'),
+                description=self.tr('Prefix for output fieldname'),
                 defaultValue=self.FIELD_PREFIX))
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT,
+                self.tr("Output layer")))
     
     def processAlgorithm(self,parameters,context,feedback):
         # Parameters
