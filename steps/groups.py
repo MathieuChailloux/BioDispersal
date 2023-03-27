@@ -61,11 +61,11 @@ class GroupItem(abstract_model.DictItem):
 
     FIELDS = [ "name", "descr", "geom" ]
     
-    def __init__(self,dict=dict):
+    def __init__(self,dict=dict,feedback=None):
         #self.in_layer = None
         self.vectorLayer = None
         self.rasterLayer = None
-        super().__init__(dict)
+        super().__init__(dict,feedback=feedback)
         
     @classmethod
     def fromValues(cls,group,descr,geom):

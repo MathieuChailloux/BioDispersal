@@ -124,6 +124,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 self.current_model.layoutChanged.emit()
                 grp_model.layoutChanged.emit()
         self.layoutChanged.emit()
+    def updateFromXML(self,root,feedback=None):
+        self.feedback = feedback
+        self.fromXML(root)
         
     def applyItemsWithContext(self,context,feedback,onlyCurrent=False):
         feedback.beginSection("Groups merge")

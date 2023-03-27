@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-import re
+import re, sys
 
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsMapLayerProxyModel, QgsProcessingUtils
@@ -269,8 +269,8 @@ class PondBufferIvalConnector(abstract_model.AbstractConnector):
 
 class PonderationItem(abstract_model.DictItem):
     
-    def __init__(self,dict):
-        super().__init__(dict)
+    def __init__(self,dict,feedback=None):
+        super().__init__(dict,feedback=feedback)
         
     # def applyMax(self,layer1,layer2,out_layer):
         # qgsTreatments.applyMaxGdal(layer1,layer2,out_layer,load_flag=True)
@@ -296,7 +296,9 @@ class PonderationModel(abstract_model.DictModel):
         self.parser_name = "PonderationModel"
         self.bdModel = bdModel
         self.is_runnable = True
-        super().__init__(self,fields=ponderation_fields,feedback=bdModel.feedback)
+        itemClass = getattr(sys.modules[__name__], PonderationItem.__name__)
+        super().__init__(itemClass=itemClass,fields=ponderation_fields,
+            feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
         utils.checkFields(ponderation_fields,dict.keys())
