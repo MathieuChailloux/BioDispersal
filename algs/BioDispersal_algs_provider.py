@@ -62,7 +62,6 @@ from .qualif_algs import (
     CompactnessAlg,
     DistanceAlg,
     RelativeSurfaceVR,
-    RelativeSurface,
     ShannonDiversityIndex)
     
 class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
@@ -124,7 +123,6 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             ClassifySymbology(),
             DistanceAlg(),
             RelativeSurfaceVR(),
-            RelativeSurface(),
             ShannonDiversityIndex()]
         for a in alglist:
             self.addAlgorithm(a)

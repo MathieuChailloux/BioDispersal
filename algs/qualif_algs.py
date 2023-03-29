@@ -135,6 +135,7 @@ class QualifAlg2Layers(QualifAlgClassif):
         self.addParameter(
             QgsProcessingParameterString (
                 self.VALUES,
+                optional=True,
                 description=self.tr('Values (separated by \';\', all values by default)')))
         
 
@@ -156,7 +157,7 @@ class RelativeSurfaceVR(QualifAlgVR):
     ALG_NAME = 'relativeSurfaceVR'
 
     def displayName(self):
-        return self.tr("Relative surface (VR)")
+        return self.tr("Relative surface")
     def shortHelpString(self):
         return self.tr("Relative surface (percentage of B surface in each patch of layer A)")
         
@@ -168,10 +169,11 @@ class RelativeSurfaceVR(QualifAlgVR):
         layerB = self.parameterAsRasterLayer(parameters,self.LAYER_B,context)
         if layerB is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
-        values = self.parameterAsInts(parameters,self.VALUES,context)
+        values = self.parameterAsString(parameters,self.VALUES,context)
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         # Values extraction
         if values:
+            values = self.parameterAsInts(parameters,self.VALUES,context)
             extract_path = self.mkTmpPath("extract.tif")
             extract_params = { ExtractPatchesR.INPUT : parameters[self.LAYER_B],
                 ExtractPatchesR.VALUES : parameters[self.VALUES],
@@ -206,133 +208,7 @@ class RelativeSurfaceVR(QualifAlgVR):
             raise QgsProcessingException("No layer found for " + str(self.output))
         styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname)
         return {self.OUTPUT: self.output }
-  
-class RelativeSurface(QualifAlgorithm):
-
-    ALG_NAME = 'RelativeSurface'
-    
-    LAYER_A = 'LAYER_A'
-    LAYER_B = 'LAYER_B'
-    
-    def displayName(self):
-        return self.tr("Relative surface")
-        
-    def shortHelpString(self):
-        return self.tr("Relative surface (percentage of B surface in each patch of layer A)")
-    
-    def initAlgorithm(self, config=None):
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.LAYER_A,
-                description=self.tr('Layer A (main layer)')))
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.LAYER_B,
-                description=self.tr('Layer B (relative surface layer)')))
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr("Output layer")))
-        # self.addParameter(
-            # QgsProcessingParameterVectorDestination(
-                # self.OUTPUT,
-                # self.tr("Output layer")))
-                
-    def computeArea(self,f):
-        return f.geometry().area()
-    def computeRelSurf(self,f):
-        return f[self.sumField] / f.geometry().area()
-        
-    def processAlgorithm(self,parameters,context,feedback):
-        # Parameters
-        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
-        if layerA is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
-        layerB = self.parameterAsVectorLayer(parameters,self.LAYER_B,context)
-        if layerB is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
-        outFields = QgsFields(layerA.fields())
-        areaFieldName = "area"
-        relSurfFieldName = "relSurface"
-        areaField = QgsField(areaFieldName, QVariant.Double)
-        relSurfField = QgsField(relSurfFieldName, QVariant.Double)
-        outFields.append(areaField)
-        outFields.append(relSurfField)
-        (sink, dest_id) = self.parameterAsSink(
-            parameters,
-            self.OUTPUT,
-            context,
-            outFields,
-            layerA.wkbType(),
-            layerA.sourceCrs()
-        )
-        nb_feats = layerA.featureCount()
-        if nb_feats == 0:
-            raise QgsProcessingException("No feature in layerA layer")
-        progress_step = 100.0 / nb_feats
-        curr_step = 0
-        mf = QgsProcessingMultiStepFeedback(nb_feats,feedback)
-        for cpt, f in enumerate(layerA.getFeatures(),start=1):
-            f_geom = f.geometry()
-            f_area = f_geom.area()
-            area = 0
-            for b_feat in layerB.getFeatures():
-                b_geom = b_feat.geometry()
-                intersection = f_geom.intersection(b_geom)
-                area += intersection.area()
-            # f_id = f.id()
-            # layerA.selectByIds([f_id])
-            # suffix = "_" + str(f_id) + ".gpkg"
-            # selection = QgsProcessingUtils.generateTempFilename(
-                # "selection" + suffix)
-            # qgsTreatments.saveSelectedAttributes(joined_layer,
-                # layerA,context=context,feedback=mf)
-            # clipped_path = QgsProcessingUtils.generateTempFilename(
-                # "clipped" + suffix)
-            # qgsTreatments.applyVectorClip(layerB,selection,
-                # clipped_path,context=context,feedback=mf)
-            # clipped_layer = qgsUtils.loadVectorLayer(clipped)
-            outF = QgsFeature(outFields)
-            outF.setGeometry(f.geometry())
-            for field in f.fields().names():
-                outF[field] = f[field]
-            outF[areaFieldName] = area
-            outF[relSurfFieldName] = area / f_area
-            sink.addFeature(outF)
-            mf.setCurrentStep(cpt)
-        return { self.OUTPUT : dest_id } 
-        
-    def processAlgorithmOld(self,parameters,context,feedback):
-        # Parameters
-        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
-        if layerA is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
-        layerB = self.parameterAsVectorLayer(parameters,self.LAYER_B,context)
-        if layerB is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
-        output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
-        # Processing : todo clip
-        clippedPath = QgsProcessingUtils.generateTempFilename('clipped.gpkg')
-        qgsTreatments.applyVectorClip(layerA,layerB,clippedPath,
-            context=context,feedback=feedback)
-        qgsUtils.loadVectorLayer(clippedPath,loadProject=True)
-        # Computes new area
-        areaField = 'area'
-        areaPath = QgsProcessingUtils.generateTempFilename('area.gpkg')
-        qgsTreatments.fieldCalculator(clippedPath,areaField,'$area',areaPath,
-            context=context,feedback=feedback)
-        # Join by loc summary
-        joinedPath = QgsProcessingUtils.generateTempFilename('joined.gpkg')
-        qgsTreatments.joinByLocSummary(layerA,areaPath,joinedPath,
-            fieldnames=[areaField],summaries=[5],predicates=[1],discard=False,
-            context=context,feedback=feedback)
-        # Computes relative surface
-        sumField = areaField + '_sum'
-        formula = 'if ( "' + sumField + '" > 0, "' + sumField + '" / $area, 0)'
-        qgsTreatments.fieldCalculator(joinedPath,'relSurface',formula,output,
-            context=context,feedback=feedback)
-        return { self.OUTPUT : output }
-        
+          
     
 class CompactnessAlg(QualifAlg1Layer):
 
@@ -482,32 +358,38 @@ class ClassifySymbology(QualifAlgorithm):
                 description=self.tr('Prefix for output fieldname'),
                 defaultValue=self.FIELD_PREFIX))
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
+            QgsProcessingParameterVectorDestination(
                 self.OUTPUT,
                 self.tr("Output layer")))
     
     def processAlgorithm(self,parameters,context,feedback):
         # Parameters
-        input = self.parameterAsVectorLayer(parameters,self.INPUT,context)
-        if input is None:
+        layer = self.parameterAsLayer(parameters,self.INPUT,context)
+        # source = self.parameterAsSource(parameters,self.INPUT,context)
+        if layer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        out_fieldname = self.parameterAsString(parameters,self.FIELDNAME,context)
+        out_prefix = self.parameterAsString(parameters,self.FIELDNAME,context)
+        self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         # Retrieve symbology classes
-        renderer = input.renderer()
+        renderer = layer.renderer()
         feedback.pushDebugInfo("Rendered class = " + str(renderer.__class__.__name__))
         if isinstance(renderer,QgsGraduatedSymbolRenderer):
             ranges = renderer.ranges()
-            fieldname = renderer.classAttribute()
-            out_fname = out_fieldname + fieldname
-            feedback.pushDebugInfo("out_fname = " + str(out_fname))
-            def localFunc(feat):
-                val = feat[fieldname]
-                range = renderer.rangeForValue(val)
-                for idx, val in enumerate(ranges):
-                    if val.lowerValue() == range.lowerValue():
-                        return float(idx)
-                raise QgsProcessingException("No range for " + str(range) + " in " + str(ranges))
-            qgsUtils.createOrUpdateField(input,localFunc,out_fname)
+            field_r = renderer.classAttribute()
+            self.fieldname = out_prefix + field_r
+            feedback.pushDebugInfo("out_fname = " + str(self.fieldname))
+            
+            formula = ''
+            for idx, r in enumerate(ranges):
+                feedback.pushDebugInfo("formula = " + str(formula))
+                lowerVal = r.lowerValue()
+                upperVal = r.upperValue()
+                formula += 'if (({1} <= {0}) and ({2} > {0}), {3}, '.format(self.fieldname,lowerVal,upperVal,idx)
+            formula += ' None' + (')' * len(ranges))
+            feedback.pushDebugInfo("formula2 = " + str(formula))
+            
+            qgsTreatments.fieldCalculator(layer,self.fieldname,formula,self.output,feedback=feedback)
+            
         else:
-            pass
-        return { self.OUTPUT: input }
+            raise QgsProcessingException(self.tr("Input layer renderer is not graduated"))
+        return { self.OUTPUT: self.output }
