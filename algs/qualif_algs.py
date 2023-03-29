@@ -198,8 +198,10 @@ class RelativeSurfaceVR(QualifAlgVR):
         expr = '("%scount" * %d) / $area' % (prefix,pixel_surf)
         feedback.pushDebugInfo("expr = " + expr)
         self.fieldname = "SurfRel_" + values_str
+        # surf_path = qgsUtils.mkTmpPath("surface_relative.gpkg")
         qgsTreatments.fieldCalculator(stats_path,self.fieldname,expr,self.output,
             precision=4,feedback=feedback)
+        # Apply classif
         return { self.OUTPUT : self.output }
         
     def postProcessAlgorithm(self,context,feedback):
@@ -335,11 +337,11 @@ class ShannonDiversityIndex(QualifAlgClassif):
         return { self.OUTPUT: self.output }
 
   
-class ClassifySymbology(QualifAlgorithm):
+class ClassifySymbology(QualifAlgClassif):
 
     ALG_NAME = 'classifySymbology'
     
-    FIELDNAME = 'FIELDNAME'
+    PREFIX = 'PREFIX'
     FIELD_PREFIX = 'classif_'
 
     def displayName(self):
@@ -354,7 +356,7 @@ class ClassifySymbology(QualifAlgorithm):
                 description=self.tr('Input layer')))
         self.addParameter(
             QgsProcessingParameterString(
-                self.FIELDNAME,
+                self.PREFIX,
                 description=self.tr('Prefix for output fieldname'),
                 defaultValue=self.FIELD_PREFIX))
         self.addParameter(
@@ -368,7 +370,7 @@ class ClassifySymbology(QualifAlgorithm):
         # source = self.parameterAsSource(parameters,self.INPUT,context)
         if layer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        out_prefix = self.parameterAsString(parameters,self.FIELDNAME,context)
+        out_prefix = self.parameterAsString(parameters,self.PREFIX,context)
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         # Retrieve symbology classes
         renderer = layer.renderer()
@@ -384,8 +386,8 @@ class ClassifySymbology(QualifAlgorithm):
                 feedback.pushDebugInfo("formula = " + str(formula))
                 lowerVal = r.lowerValue()
                 upperVal = r.upperValue()
-                formula += 'if (({1} <= {0}) and ({2} > {0}), {3}, '.format(self.fieldname,lowerVal,upperVal,idx)
-            formula += ' None' + (')' * len(ranges))
+                formula += 'if (({1} <= {0}) and ({2} > {0}), {3}, '.format(field_r,lowerVal,upperVal,idx)
+            formula += ' ' + str(len(ranges) - 1) + (')' * len(ranges))
             feedback.pushDebugInfo("formula2 = " + str(formula))
             
             qgsTreatments.fieldCalculator(layer,self.fieldname,formula,self.output,feedback=feedback)
