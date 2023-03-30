@@ -73,7 +73,7 @@ from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
 class PatchAlgorithm(qgsUtils.BaseProcessingAlgorithm):
 
     def group(self):
-        return self.tr("Patch utils")
+        return self.tr("Patch utils (raster)")
     def groupId(self):
         return 'patch'
         
@@ -369,24 +369,22 @@ class NeighboursCount(PatchAlgorithm):
         cell_val = array[2]
         return np.count_nonzero(array == cell_val) - 1
         
-        
-class ExtractPatchAlgorithm(PatchAlgorithm):
+    
+class ExtractPatchesR(PatchAlgorithm):
+
+    ALG_NAME = 'extractPatchesR'
         
     VALUES = 'VALUES'
     SURFACE = 'SURFACE'
+            
+    def displayName(self):
+        return self.tr('Extract patches (Raster to Raster)')
     
     def shortHelpString(self):
         s = "Extract patches from land use raster layer according to"
         s += " specified land use types and minimum surface."
         s += "\nLand use values are integer separated by semicolons (';')."
         return self.tr(s)
-    
-class ExtractPatchesR(ExtractPatchAlgorithm):
-
-    ALG_NAME = 'extractPatchesR'
-            
-    def displayName(self):
-        return self.tr('Extract patches (Raster to Raster)')
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -467,57 +465,3 @@ class ExtractPatchesR(ExtractPatchAlgorithm):
         # return
         return { 'OUTPUT' : output }
         
-        
-class ExtractPatchesRV(PatchAlgorithm):
-
-    ALG_NAME = 'extractPatchesRV'
-
-    VALUES = 'VALUES'
-    SURFACE = 'SURFACE'
-        
-    def displayName(self):
-        return self.tr('Extract patches (Raster to Vector)')
-        
-    def initAlgorithm(self, config=None):
-        self.addParameter(
-            QgsProcessingParameterRasterLayer(
-                self.INPUT,
-                description=self.tr('Input layer')))
-        self.addParameter(
-            QgsProcessingParameterString (
-                self.VALUES,
-                description=self.tr('Land use values (separated by \';\')')))
-        self.addParameter(
-            QgsProcessingParameterNumber (
-                self.SURFACE,
-                description=self.tr('Patch minimum surface (square meters)'),
-                type=QgsProcessingParameterNumber.Double,
-                optional=True))
-        self.addParameter(
-            QgsProcessingParameterVectorDestination(
-                self.OUTPUT,
-                self.tr("Output layer")))
-                
-    def processAlgorithm(self,parameters,context,feedback):
-        # Parse params
-        surface = self.parameterAsDouble(parameters,self.SURFACE,context)
-        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        mf = QgsProcessingMultiStepFeedback(3,feedback)
-        # Extract patches R
-        extract_params = dict(parameters)
-        patchR_path = self.mkTmpPath("patchesR.tif")
-        extract_params[self.SURFACE] = None
-        extract_params[self.OUTPUT] = patchR_path
-        processing.run("BioDispersal:" + ExtractPatchesR.ALG_NAME,
-            extract_params,context=context,feedback=mf)
-        mf.setCurrentStep(1)
-        # Polygonize
-        patchV_path = self.mkTmpPath("patchesV.gpkg")
-        qgsTreatments.applyPolygonize(patchR_path,patchV_path,feedback=mf)
-        mf.setCurrentStep(2)
-        # Filter by surface
-        expr = "$area >= " + str(surface)
-        qgsTreatments.extractByExpression(patchV_path,expr,output,feedback=mf)
-        mf.setCurrentStep(3)
-        # return
-        return { 'OUTPUT' : output }

@@ -65,10 +65,71 @@ from .patch_algs import ExtractPatchesR
 class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
 
     def group(self):
-        return self.tr("Patch qualification")
+        return self.tr("Patch qualification (vector)")
     def groupId(self):
         return "qualif"
-     
+        
+class ExtractPatchesRV(QualifAlgorithm):
+
+    ALG_NAME = 'extractPatchesRV'
+
+    VALUES = 'VALUES'
+    SURFACE = 'SURFACE'
+        
+    def displayName(self):
+        return self.tr('Extract patches (Raster to Vector)')
+        
+    def shortHelpString(self):
+        s = "Extract patches from land use raster layer according to"
+        s += " specified land use types and minimum surface."
+        s += "\nLand use values are integer separated by semicolons (';')."
+        return self.tr(s)
+        
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterRasterLayer(
+                self.INPUT,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterString (
+                self.VALUES,
+                description=self.tr('Land use values (separated by \';\')')))
+        self.addParameter(
+            QgsProcessingParameterNumber (
+                self.SURFACE,
+                description=self.tr('Patch minimum surface (square meters)'),
+                type=QgsProcessingParameterNumber.Double,
+                optional=True))
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parse params
+        surface = self.parameterAsDouble(parameters,self.SURFACE,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        mf = QgsProcessingMultiStepFeedback(3,feedback)
+        # Extract patches R
+        extract_params = dict(parameters)
+        patchR_path = self.mkTmpPath("patchesR.tif")
+        extract_params[self.SURFACE] = None
+        extract_params[self.OUTPUT] = patchR_path
+        processing.run("BioDispersal:" + ExtractPatchesR.ALG_NAME,
+            extract_params,context=context,feedback=mf)
+        mf.setCurrentStep(1)
+        # Polygonize
+        patchV_path = self.mkTmpPath("patchesV.gpkg")
+        qgsTreatments.applyPolygonize(patchR_path,patchV_path,feedback=mf)
+        mf.setCurrentStep(2)
+        # Filter by surface
+        expr = "$area >= " + str(surface)
+        qgsTreatments.extractByExpression(patchV_path,expr,output,feedback=mf)
+        mf.setCurrentStep(3)
+        # return
+        return { 'OUTPUT' : output }
+
+
 class QualifAlgClassif(QualifAlgorithm):
     # Apply Jenks classif on self.output self.fieldname
     def postProcessAlgorithm(self,context,feedback):
@@ -254,10 +315,11 @@ class DistanceAlg(QualifAlgVR):
         layerB = self.parameterAsRasterLayer(parameters,self.LAYER_B,context)
         if layerB is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
-        values = self.parameterAsInts(parameters,self.VALUES,context)
+        values = self.parameterAsString(parameters,self.VALUES,context)
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         # Values extraction
         if values:
+            values = self.parameterAsInts(parameters,self.VALUES,context)
             extract_path = self.mkTmpPath("extract.tif")
             extract_params = { ExtractPatchesR.INPUT : parameters[self.LAYER_B],
                 ExtractPatchesR.VALUES : parameters[self.VALUES],

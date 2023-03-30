@@ -55,9 +55,9 @@ from .patch_algs import (
     DistanceToBorderRaster,
     LabelPatches,
     PatchSizeRaster,
-    ExtractPatchesR,
-    ExtractPatchesRV)
+    ExtractPatchesR)
 from .qualif_algs import (
+    ExtractPatchesRV,
     ClassifySymbology,
     CompactnessAlg,
     DistanceAlg,
