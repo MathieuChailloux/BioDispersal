@@ -426,6 +426,29 @@ class ClassifySymbology(QualifAlgClassif):
                 self.OUTPUT,
                 self.tr("Output layer")))
     
+    def classifyFromSymbology(self,layer,prefix,output,feedback):
+        renderer = layer.renderer()
+        feedback.pushDebugInfo("Rendered class = " + str(renderer.__class__.__name__))
+        if isinstance(renderer,QgsGraduatedSymbolRenderer):
+            ranges = renderer.ranges()
+            field_r = renderer.classAttribute()
+            self.fieldname = prefix + field_r
+            feedback.pushDebugInfo("out_fname = " + str(self.fieldname))
+            
+            formula = ''
+            for idx, r in enumerate(ranges):
+                feedback.pushDebugInfo("formula = " + str(formula))
+                lowerVal = r.lowerValue()
+                upperVal = r.upperValue()
+                formula += 'if (({1} <= "{0}") and ({2} > "{0}"), {3}, '.format(field_r,lowerVal,upperVal,idx)
+            formula += ' ' + str(len(ranges) - 1) + (')' * len(ranges))
+            feedback.pushDebugInfo("formula2 = " + str(formula))
+            
+            qgsTreatments.fieldCalculator(layer,self.fieldname,formula,output,feedback=feedback)
+        else:
+            raise QgsProcessingException(self.tr("Input layer renderer is not graduated"))
+        
+    
     def processAlgorithm(self,parameters,context,feedback):
         # Parameters
         layer = self.parameterAsLayer(parameters,self.INPUT,context)
@@ -435,25 +458,89 @@ class ClassifySymbology(QualifAlgClassif):
         out_prefix = self.parameterAsString(parameters,self.PREFIX,context)
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         # Retrieve symbology classes
-        renderer = layer.renderer()
-        feedback.pushDebugInfo("Rendered class = " + str(renderer.__class__.__name__))
-        if isinstance(renderer,QgsGraduatedSymbolRenderer):
-            ranges = renderer.ranges()
-            field_r = renderer.classAttribute()
-            self.fieldname = out_prefix + field_r
-            feedback.pushDebugInfo("out_fname = " + str(self.fieldname))
-            
-            formula = ''
-            for idx, r in enumerate(ranges):
-                feedback.pushDebugInfo("formula = " + str(formula))
-                lowerVal = r.lowerValue()
-                upperVal = r.upperValue()
-                formula += 'if (({1} <= {0}) and ({2} > {0}), {3}, '.format(field_r,lowerVal,upperVal,idx)
-            formula += ' ' + str(len(ranges) - 1) + (')' * len(ranges))
-            feedback.pushDebugInfo("formula2 = " + str(formula))
-            
-            qgsTreatments.fieldCalculator(layer,self.fieldname,formula,self.output,feedback=feedback)
-            
-        else:
-            raise QgsProcessingException(self.tr("Input layer renderer is not graduated"))
+        self.classifyFromSymbology(layer,out_prefix,self.output,feedback)
+        return { self.OUTPUT: self.output }
+        
+        
+class AgregateCriterias(ClassifySymbology):
+
+    ALG_NAME = 'agregateQualif'
+    
+    INPUTS = 'INPUTS'
+    JOIN_FIELDNAME = 'JOIN_FIELDNAME'
+    AGR_FIELDNAME = 'AGR_FIELDNAME'
+
+    def displayName(self):
+        return self.tr("Agregate criterias")
+    def shortHelpString(self):
+        str = self.tr("Agregate qualification layers according to current renderers.")
+        str += self.tr("Each rendering class is replaced by ")
+        return str
+        
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.INPUTS,
+                description=self.tr('Input layers'),
+                layerType=QgsProcessing.TypeVector))
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.PREFIX,
+                description=self.tr('Prefix for output classification fieldnames'),
+                defaultValue=self.FIELD_PREFIX))
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.JOIN_FIELDNAME,
+                description=self.tr('Fieldname used to join layers (join by location otherwise)'),
+                optional=True))
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.AGR_FIELDNAME,
+                description=self.tr('Output agregation fieldname'),
+                defaultValue='AGR'))
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+    
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        input_layers = self.parameterAsLayerList(parameters,self.INPUTS,context)
+        if not input_layers:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTS))
+        join_fieldname = self.parameterAsString(parameters,self.JOIN_FIELDNAME,context)
+        agr_fieldname = self.parameterAsString(parameters,self.AGR_FIELDNAME,context)
+        out_prefix = self.parameterAsString(parameters,self.PREFIX,context)
+        self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        # Feedback
+        nb_layers = len(input_layers)
+        mf = QgsProcessingMultiStepFeedback(nb_layers * 2 + 1,feedback)
+        # Classification loop on each layer
+        formula = ""
+        for cpt, layer in enumerate(input_layers):
+            mf.pushDebugInfo("cpt = {}".format(cpt))
+            classified = qgsUtils.mkTmpPath("classified{}.gpkg".format(cpt))
+            self.classifyFromSymbology(layer,out_prefix,classified,mf)
+            mf.setCurrentStep(cpt * 2)
+            if cpt > 0:
+                # Join classif with previous loop output
+                joined = qgsUtils.mkTmpPath("joined{}.gpkg".format(cpt))
+                if join_fieldname:
+                    qgsTreatments.joinByAttribute(previous,join_fieldname,
+                        classified,join_fieldname,joined,feedback=mf)
+                else:
+                    qgsTreatments.joinByLoc(previous,classified,out_path=joined,feedback=mf)
+                previous = joined
+            else:
+                previous = classified
+            mf.setCurrentStep(cpt * 2 + 1)
+            # Build formula
+            formula += self.fieldname
+            if cpt < nb_layers - 1:
+                formula += " + "
+        # Build output layer
+        mf.pushDebugInfo("formula = {}".format(formula))
+        qgsTreatments.fieldCalculator(joined,agr_fieldname,formula,self.output,feedback=mf)
+        self.fieldname = agr_fieldname
+        mf.setCurrentStep(nb_layers * 2)
         return { self.OUTPUT: self.output }

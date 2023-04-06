@@ -57,6 +57,7 @@ from .patch_algs import (
     PatchSizeRaster,
     ExtractPatchesR)
 from .qualif_algs import (
+    AgregateCriterias,
     ExtractPatchesRV,
     ClassifySymbology,
     CompactnessAlg,
@@ -119,6 +120,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             ExtractPatchesR(),
             ExtractPatchesRV(),
             # Qualif algs
+            AgregateCriterias(),
             CompactnessAlg(),
             ClassifySymbology(),
             DistanceAlg(),
