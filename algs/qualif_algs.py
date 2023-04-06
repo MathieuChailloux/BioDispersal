@@ -544,3 +544,12 @@ class AgregateCriterias(ClassifySymbology):
         self.fieldname = agr_fieldname
         mf.setCurrentStep(nb_layers * 2)
         return { self.OUTPUT: self.output }
+        
+        
+    # Apply unique values renderer
+    def postProcessAlgorithm(self,context,feedback):
+        out_layer = QgsProcessingUtils.mapLayerFromString(self.output,context)
+        if not out_layer:
+            raise QgsProcessingException("No layer found for " + str(self.output))
+        styles.setRendererUniqueValues(out_layer,self.fieldname)
+        return {self.OUTPUT: self.output }
