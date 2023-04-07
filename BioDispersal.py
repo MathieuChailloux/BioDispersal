@@ -24,6 +24,7 @@
 
 import os.path
 import sys
+import inspect
 
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon
@@ -38,6 +39,12 @@ from .qgis_lib_mc import utils
 
 from qgis.utils import qgis_excepthook
 from qgis.core import QgsApplication
+
+
+cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
+
+if cmd_folder not in sys.path:
+    sys.path.insert(0, cmd_folder)
 
 class BioDispersal:
     """QGIS Plugin Implementation."""
@@ -75,14 +82,15 @@ class BioDispersal:
         self.initProcessing()
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = BioDispersalDialog()
+        # self.dlg = BioDispersalDialog()
         utils.debug("init")
         #self.dlg = BioDispersalDialog()
         #self.dlg = TestDialog()
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&BioDispersal')
+        self.pluginName = self.tr(u'&BioDispersal')
+        self.menu = self.pluginName
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'BioDispersal')
         self.toolbar.setObjectName(u'BioDispersal')
@@ -185,22 +193,27 @@ class BioDispersal:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/BioDispersal/icons/cerf.png'
+        # icon_path = os.path.join(os.path.join(cmd_folder, 'cerf.png'))
         self.add_action(
             icon_path,
-            text=self.tr(u'BioDispersal'),
+            text=self.pluginName,
             callback=self.run,
             parent=self.iface.mainWindow())
             
         self.iface.mainWindow()
             
-        self.dlg.initTabs()
-        self.dlg.initGui()
+        self.connectComponents()
+        
+    def initDlgGui(self,dlg):
+        dlg.initTabs()
+        dlg.initLog()
+        dlg.initGui()
         locale = QSettings().value('locale/userLocale')[0:2]
         if locale.startswith('fr'):
-            self.dlg.switchLangFr()
+            dlg.switchLangFr()
         else:
-            self.dlg.switchLangEn()
-        self.connectComponents()
+            dlg.switchLangEn()
+        dlg.connectComponents()
 
 
     def unload(self):
@@ -225,21 +238,19 @@ class BioDispersal:
         del self.toolbar
 
     def connectComponents(self):
-        self.dlg.connectComponents()
+        pass
+        # self.dlg.connectComponents()
                 
     def run(self):
         utils.debug("run")
         """Run method that performs all the real work"""
         # show the dialog
-        self.dlg = BioDispersalDialog()
-        self.dlg.initTabs()
-        self.dlg.initLog()
-        self.dlg.initGui()
-        self.connectComponents()
-        self.dlg.show()
-        print(str(self.dlg))
+        dlg = BioDispersalDialog()
+        self.initDlgGui(dlg)
+        dlg.show()
+        print(str(dlg))
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = dlg.exec_()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
