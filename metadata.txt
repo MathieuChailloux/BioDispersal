@@ -10,7 +10,7 @@
 name=BioDispersal
 qgisMinimumVersion=3.4
 description=Computes dispersal areas based on landscape permeability
-version=1.2.1
+version=1.2.2
 author=Mathieu Chailloux
 email=mathieu@chailloux.org
 
@@ -44,6 +44,7 @@ changelog=BioDispersal changelog:
     1.2.0 : - Connectivity indices
             - Fix #issue 19
     1.2.1 : - Fix #issue 20 (weighting button)
+	1.2.2 : - Add patch qualification algorithms
 
 # Tags are comma separated with spaces allowed
 tags=python, ecology, dispersal, ecological continuities, permeability, animal, landscape
