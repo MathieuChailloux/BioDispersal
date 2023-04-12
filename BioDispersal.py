@@ -231,10 +231,10 @@ class BioDispersal:
         # remove the toolbar
         utils.print_func = print
         sys.excepthook = qgis_excepthook
-        if self.dlg:
-            utils.info("unload")
-            self.dlg.groupsConnector.disconnectComponents()
-            self.dlg.stConnector.disconnectComponents()
+        #if self.dlg:
+        #    utils.info("unload")
+        #    self.dlg.groupsConnector.disconnectComponents()
+        #    self.dlg.stConnector.disconnectComponents()
         del self.toolbar
 
     def connectComponents(self):
