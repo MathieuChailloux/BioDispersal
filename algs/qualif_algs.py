@@ -385,17 +385,20 @@ class ShannonDiversityIndex(QualifAlgClassif):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.LANDUSE))
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         self.fieldname = "shannon"
+        mf = QgsProcessingMultiStepFeedback(2,feedback)
         # Computes zonal histo
         hist_path = qgsUtils.mkTmpPath("zonal_histo.gpkg")
-        qgsTreatments.zonalHisto(patches,landuse,hist_path,feedback=feedback)
+        qgsTreatments.zonalHisto(patches,landuse,hist_path,feedback=mf)
+        mf.setCurrentStep(1)
         hist_layer = qgsUtils.loadVectorLayer(hist_path)
         # Computes index
         prefix = "HISTO_"
         fields_histo = [f.name() for f in hist_layer.fields() if f.name().startswith(prefix)]
         tot_expr = " + ".join(fields_histo)
-        fields_expr = ['("{0}" / ({1}) * ln("{0}" / ({1}))) * -1'.format(fh,tot_expr) for fh in fields_histo]
+        fields_expr = ['if ({0} > 0, {0} / ({1}) * ln({0} / ({1})) * -1, 0)'.format(fh,tot_expr) for fh in fields_histo]
         expr = " + ".join(fields_expr)
-        qgsTreatments.fieldCalculator(hist_path,self.fieldname,expr,self.output,feedback=feedback)
+        qgsTreatments.fieldCalculator(hist_path,self.fieldname,expr,self.output,feedback=mf)
+        mf.setCurrentStep(2)
         return { self.OUTPUT: self.output }
 
   
