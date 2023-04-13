@@ -109,7 +109,7 @@ class ExtractPatchesRV(QualifAlgorithm):
         # Parse params
         surface = self.parameterAsDouble(parameters,self.SURFACE,context)
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        mf = QgsProcessingMultiStepFeedback(3,feedback)
+        mf = QgsProcessingMultiStepFeedback(4,feedback)
         # Extract patches R
         extract_params = dict(parameters)
         patchR_path = self.mkTmpPath("patchesR.tif")
@@ -124,8 +124,13 @@ class ExtractPatchesRV(QualifAlgorithm):
         mf.setCurrentStep(2)
         # Filter by surface
         expr = "$area >= " + str(surface)
-        qgsTreatments.extractByExpression(patchV_path,expr,output,feedback=mf)
+        area_path = self.mkTmpPath("area.gpkg")
+        qgsTreatments.extractByExpression(patchV_path,expr,area_path,feedback=mf)
         mf.setCurrentStep(3)
+        # Filter by surface
+        fieldname = "join_index"
+        qgsTreatments.addIdxField(area_path,fieldname,output,feedback=mf)
+        mf.setCurrentStep(4)
         # return
         return { 'OUTPUT' : output }
 
