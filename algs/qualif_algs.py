@@ -322,6 +322,7 @@ class DistanceAlg(QualifAlgVR):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
         values = self.parameterAsString(parameters,self.VALUES,context)
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        mf = QgsProcessingMultiStepFeedback(3,feedback)
         # Values extraction
         if values:
             values = self.parameterAsInts(parameters,self.VALUES,context)
@@ -330,27 +331,31 @@ class DistanceAlg(QualifAlgVR):
                 ExtractPatchesR.VALUES : parameters[self.VALUES],
                 ExtractPatchesR.OUTPUT : extract_path }
             processing.run("BioDispersal:" + ExtractPatchesR.ALG_NAME,
-                extract_params,context=context,feedback=feedback)
+                extract_params,context=context,feedback=mf)
             # layerB = qgsUtils.loadRasterLayer(extract_path) 
         else:
             extract_path = layerB
+        mf.setCurrentStep(1)
         # Distance
         distance_path = qgsUtils.mkTmpPath("distance.tif")
-        qgsTreatments.applyProximity(extract_path,distance_path,feedback=feedback)
+        qgsTreatments.applyProximity(extract_path,distance_path,feedback=mf)
+        mf.setCurrentStep(2)
         # Zonal stats
         values_str = "".join(str(v) for v in values)
         prefix = values_str + "_dist_"
         self.fieldname = prefix + "min"
         # Stats = 5 <=> minimum
         qgsTreatments.rasterZonalStats(layerA,distance_path,self.output,
-            prefix=prefix,stats=[5],feedback=feedback) 
+            prefix=prefix,stats=[5],feedback=mf) 
+        mf.setCurrentStep(3)
         return { self.OUTPUT : self.output }
         
     def postProcessAlgorithm(self,context,feedback):
         out_layer = QgsProcessingUtils.mapLayerFromString(self.output,context)
         if not out_layer:
             raise QgsProcessingException("No layer found for " + str(self.output))
-        styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname,invert_ramp=True)
+        styles.setRdYlGnGraduatedStyle(out_layer,self.fieldname,
+            invert_ramp=True,invert_ranges=True)
         return {self.OUTPUT: self.output }
 
 # Computes Shannon Diversity Index
@@ -441,8 +446,9 @@ class ClassifySymbology(QualifAlgClassif):
             ranges = renderer.ranges()
             field_r = renderer.classAttribute()
             self.fieldname = prefix + field_r
+            copy_fields = [field_r,self.fieldname]
             feedback.pushDebugInfo("out_fname = " + str(self.fieldname))
-            
+            # Computes formula
             formula = ''
             for idx, r in enumerate(ranges):
                 feedback.pushDebugInfo("formula = " + str(formula))
@@ -451,8 +457,9 @@ class ClassifySymbology(QualifAlgClassif):
                 formula += 'if (({1} <= "{0}") and ({2} > "{0}"), {3}, '.format(field_r,lowerVal,upperVal,idx)
             formula += ' ' + str(len(ranges) - 1) + (')' * len(ranges))
             feedback.pushDebugInfo("formula2 = " + str(formula))
-            
+            # Apply classification
             qgsTreatments.fieldCalculator(layer,self.fieldname,formula,output,feedback=feedback)
+            return copy_fields
         else:
             raise QgsProcessingException(self.tr("Input layer renderer is not graduated"))
         
@@ -477,6 +484,7 @@ class AgregateCriterias(ClassifySymbology):
     INPUTS = 'INPUTS'
     JOIN_FIELDNAME = 'JOIN_FIELDNAME'
     AGR_FIELDNAME = 'AGR_FIELDNAME'
+    AREA_FIELDNAME = 'AREA_FIELDNAME'
 
     def displayName(self):
         return self.tr("Agregate criterias")
@@ -504,8 +512,13 @@ class AgregateCriterias(ClassifySymbology):
         self.addParameter(
             QgsProcessingParameterString(
                 self.AGR_FIELDNAME,
-                description=self.tr('Output agregation fieldname'),
-                defaultValue='AGR'))
+                description=self.tr('Output qualification fieldname'),
+                defaultValue='QUALIF'))
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.AREA_FIELDNAME,
+                description=self.tr('Area fieldname'),
+                optional=True))
         self.addParameter(
             QgsProcessingParameterVectorDestination(
                 self.OUTPUT,
@@ -518,39 +531,49 @@ class AgregateCriterias(ClassifySymbology):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTS))
         join_fieldname = self.parameterAsString(parameters,self.JOIN_FIELDNAME,context)
         agr_fieldname = self.parameterAsString(parameters,self.AGR_FIELDNAME,context)
+        area_fieldname = self.parameterAsString(parameters,self.AREA_FIELDNAME,context)
         out_prefix = self.parameterAsString(parameters,self.PREFIX,context)
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         # Feedback
         nb_layers = len(input_layers)
-        mf = QgsProcessingMultiStepFeedback(nb_layers * 2 + 1,feedback)
+        nb_steps = nb_layers * 2 + (2 if area_fieldname else 1) 
+        mf = QgsProcessingMultiStepFeedback(nb_steps,feedback)
         # Classification loop on each layer
         formula = ""
         for cpt, layer in enumerate(input_layers):
             mf.pushDebugInfo("cpt = {}".format(cpt))
             classified = qgsUtils.mkTmpPath("classified{}.gpkg".format(cpt))
-            self.classifyFromSymbology(layer,out_prefix,classified,mf)
-            mf.setCurrentStep(cpt * 2)
+            copy_fields = self.classifyFromSymbology(layer,out_prefix,classified,mf)
+            mf.setCurrentStep(cpt * 2 + 1)
             if cpt > 0:
                 # Join classif with previous loop output
                 joined = qgsUtils.mkTmpPath("joined{}.gpkg".format(cpt))
                 if join_fieldname:
-                    qgsTreatments.joinByAttribute(previous,join_fieldname,
-                        classified,join_fieldname,joined,feedback=mf)
+                    qgsTreatments.joinByAttribute(previous,join_fieldname,classified,
+                        join_fieldname,joined,copy_fields=copy_fields,feedback=mf)
                 else:
-                    qgsTreatments.joinByLoc(previous,classified,out_path=joined,feedback=mf)
+                    qgsTreatments.joinByLoc(previous,classified,out_path=joined,
+                        fields=copy_fields,feedback=mf)
                 previous = joined
             else:
                 previous = classified
-            mf.setCurrentStep(cpt * 2 + 1)
+            mf.setCurrentStep(cpt * 2 + 2)
             # Build formula
             formula += self.fieldname
             if cpt < nb_layers - 1:
                 formula += " + "
+        # Computes area
+        if area_fieldname:
+            area_path = qgsUtils.mkTmpPath("area.gpkg")
+            qgsTreatments.fieldCalculator(joined,area_fieldname,"$area",area_path,feedback=mf)
+        else:
+            area_path = joined
+        mf.setCurrentStep(nb_layers * 2 + 1)
         # Build output layer
         mf.pushDebugInfo("formula = {}".format(formula))
-        qgsTreatments.fieldCalculator(joined,agr_fieldname,formula,self.output,feedback=mf)
+        qgsTreatments.fieldCalculator(area_path,agr_fieldname,formula,self.output,feedback=mf)
         self.fieldname = agr_fieldname
-        mf.setCurrentStep(nb_layers * 2)
+        mf.setCurrentStep(nb_layers * 2 + 2)
         return { self.OUTPUT: self.output }
         
         
