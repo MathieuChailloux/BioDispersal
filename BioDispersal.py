@@ -189,7 +189,7 @@ class BioDispersal:
         QgsApplication.processingRegistry().addProvider(self.provider)
     
     def initGui(self):
-        utils.debug("initGui")
+        # utils.debug("initGui")
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/BioDispersal/icons/cerf.png'
