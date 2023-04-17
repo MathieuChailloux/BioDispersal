@@ -151,6 +151,11 @@ class STModel(abstract_model.DictModel):
         self.bdModel.addST(item)
         #self.stAdded.emit(item)
         utils.debug("ST addItem3, items = " + str(self))
+        
+    def updateFromXML(self,root,feedback=None):
+        for st in self.getSTList():
+            self.bdModel.removeST(st)
+        super().updateFromXML(root,feedback=feedback)
 
     def removeItems(self, indexes):
         utils.debug("indexes " + str(indexes))
