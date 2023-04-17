@@ -44,20 +44,20 @@ from .steps import (params, subnetworks, classes, groups, selection, fusion, fri
 from . import tabs
 from .BioDispersal_model import BioDispersalModel
 
+#from BioDispersal_dialog_base import Ui_BioDispersalDialogBase as DLG_CLASS
 DLG_CLASS, _ = uic.loadUiType(os.path.join(
  os.path.dirname(__file__), 'BioDispersal_dialog_base.ui'))
+
+#from BioDispersalAbout_dialog_base import Ui_BioDispersalAbout as ABOUT_DLG_CLASS
 ABOUT_DLG_CLASS, _ = uic.loadUiType(os.path.join(
  os.path.dirname(__file__), 'BioDispersalAbout_dialog_base.ui'))
-
-#from BioDispersal_dialog_base import Ui_BioDispersalDialogBase
 
 class BioDispersalAboutDialog(QtWidgets.QDialog,ABOUT_DLG_CLASS):
     def __init__(self,parent=None):
         #super(ABOUT_DLG_CLASS).__init__(parent)
         super(BioDispersalAboutDialog, self).__init__(parent)
         self.setupUi(self)
-    
-# class BioDispersalDialog(QtWidgets.QDialog,Ui_BioDispersalDialogBase):
+
 class BioDispersalDialog(abstract_model.MainDialog,DLG_CLASS):
 
     pluginName = 'BioDispersal'
@@ -124,12 +124,26 @@ class BioDispersalDialog(abstract_model.MainDialog,DLG_CLASS):
         
     def tr(self, message):
         return QCoreApplication.translate('BioDispersal_dialog', message)
-        
+
+    def loadHelp(self,widget,prefix,lang):
+        #utils.info("loadHelp " + prefix)
+        plugin_dir = os.path.dirname(__file__)
+        msg_path = os.path.join(plugin_dir,'help', prefix + '-' + str(lang) + '.html')
+        with open(msg_path) as f:
+            msg = f.read()
+        widget.setText(msg)
+    
     def openHelpDialog(self):
-        utils.debug("openHelpDialog")
+        #utils.debug("openHelpDialog")
         about_dlg = BioDispersalAboutDialog(self)
         #about_dlg = ABOUT_DLG_CLASS(self)
         about_dlg.show()
+        self.loadHelp(about_dlg.aboutLabel,'about',self.curr_language)
+        
+    def switchLang(self,lang):
+        self.curr_language = lang
+        super().switchLang(lang)
+        self.loadHelp(self.homeLabel,'home',lang)
         
     # Recompute self.parsers in case they have been reloaded
     # TODO
