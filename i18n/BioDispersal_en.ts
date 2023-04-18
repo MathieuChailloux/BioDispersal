@@ -118,14 +118,14 @@
         <translation>Output layer</translation>
     </message>
     <message>
-        <location filename="../algs/qualif_algs.py" line="512"/>
+        <location filename="../algs/qualif_algs.py" line="544"/>
         <source>Output qualification fieldname</source>
         <translation>Output qualification fieldname</translation>
     </message>
     <message>
         <location filename="../algs/qualif_algs.py" line="517"/>
         <source>Area fieldname</source>
-        <translation>Area fieldname</translation>
+        <translation type="obsolete">Area fieldname</translation>
     </message>
 </context>
 <context>
@@ -1352,22 +1352,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="1538"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="1544"/>
         <source>Ignoring custom exception : </source>
         <translation>Ignoring custom exception : </translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="1626"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="1632"/>
         <source>Model saved into file &apos;</source>
         <translation>Model saved into file &apos;</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="1629"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="1635"/>
         <source>Save project as</source>
         <translation>Save project as</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="1652"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="1658"/>
         <source>Open project</source>
         <translation>Open project</translation>
     </message>
@@ -1416,27 +1416,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NormalizingParamsModel</name>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="824"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="825"/>
         <source>Workspace parameter not initialized</source>
         <translation>Workspace parameter not initialized</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="830"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="831"/>
         <source>Extent parameter not initialized</source>
         <translation>Extent parameter not initialized</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="834"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="835"/>
         <source>Resolution parameter not initialized</source>
         <translation>Resolution parameter not initialized</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="838"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="839"/>
         <source>CRS parameter not initialized</source>
         <translation>CRS parameter not initialized</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="840"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="841"/>
         <source>Invalid CRS</source>
         <translation>Invalid CRS</translation>
     </message>
@@ -1465,6 +1465,29 @@ p, li { white-space: pre-wrap; }
         <location filename="../BioDispersal_backup/algs/patch_algs.py" line="75"/>
         <source>Patch utils (raster)</source>
         <translation>Patch utils (raster)</translation>
+    </message>
+</context>
+<context>
+    <name>PatchAreaV</name>
+    <message>
+        <location filename="../algs/qualif_algs.py" line="420"/>
+        <source>Patch area</source>
+        <translation>Patch area</translation>
+    </message>
+    <message>
+        <location filename="../algs/qualif_algs.py" line="422"/>
+        <source>Computes patch area</source>
+        <translation>Computes patch area</translation>
+    </message>
+    <message>
+        <location filename="../algs/qualif_algs.py" line="425"/>
+        <source>Patch vector layer</source>
+        <translation>Patch vector layer</translation>
+    </message>
+    <message>
+        <location filename="../algs/qualif_algs.py" line="429"/>
+        <source>Output layer</source>
+        <translation>Output layer</translation>
     </message>
 </context>
 <context>

@@ -118,14 +118,14 @@
         <translation>Couche de sortie</translation>
     </message>
     <message>
-        <location filename="../algs/qualif_algs.py" line="512"/>
+        <location filename="../algs/qualif_algs.py" line="544"/>
         <source>Output qualification fieldname</source>
         <translation>Champ d&apos;agrégation</translation>
     </message>
     <message>
         <location filename="../algs/qualif_algs.py" line="517"/>
         <source>Area fieldname</source>
-        <translation>Champ de surface</translation>
+        <translation type="obsolete">Champ de surface</translation>
     </message>
 </context>
 <context>
@@ -458,7 +458,7 @@
     <message>
         <location filename="../BioDispersal_backup/BioDispersal_dialog_base.py" line="2119"/>
         <source>Apply only to selected lines</source>
-        <translation>Appliquer seuelement aux lignes sélectionnées</translation>
+        <translation>Appliquer seulement aux lignes sélectionnées</translation>
     </message>
     <message>
         <location filename="../BioDispersal_backup/BioDispersal_dialog_base.py" line="2055"/>
@@ -1352,22 +1352,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="1538"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="1544"/>
         <source>Ignoring custom exception : </source>
         <translation>Exception ignorée : </translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="1626"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="1632"/>
         <source>Model saved into file &apos;</source>
         <translation>Modèle sauvegardé dans le fichier &apos;</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="1629"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="1635"/>
         <source>Save project as</source>
         <translation>Sauvegarder le projet sous</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="1652"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="1658"/>
         <source>Open project</source>
         <translation>Ouvrir un projet</translation>
     </message>
@@ -1416,27 +1416,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NormalizingParamsModel</name>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="824"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="825"/>
         <source>Workspace parameter not initialized</source>
         <translation>Le paramètre &apos;Dossier de travail&apos; n&apos;a pas été initialisé</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="830"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="831"/>
         <source>Extent parameter not initialized</source>
         <translation>Le paramètre &apos;Emprise&apos; n&apos;a pas été initialisé</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="834"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="835"/>
         <source>Resolution parameter not initialized</source>
         <translation>Le paramètre &apos;Résolution&apos; n&apos;a pas été initialisé</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="838"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="839"/>
         <source>CRS parameter not initialized</source>
         <translation>Le paramètre &apos;Projection&apos; n&apos;a pas été initialisé</translation>
     </message>
     <message>
-        <location filename="../qgis_lib_mc/abstract_model.py" line="840"/>
+        <location filename="../qgis_lib_mc/abstract_model.py" line="841"/>
         <source>Invalid CRS</source>
         <translation>Système de coordonnées invalide</translation>
     </message>
@@ -1465,6 +1465,29 @@ p, li { white-space: pre-wrap; }
         <location filename="../BioDispersal_backup/algs/patch_algs.py" line="75"/>
         <source>Patch utils (raster)</source>
         <translation>Patchs (raster)</translation>
+    </message>
+</context>
+<context>
+    <name>PatchAreaV</name>
+    <message>
+        <location filename="../algs/qualif_algs.py" line="420"/>
+        <source>Patch area</source>
+        <translation>Surface de patch</translation>
+    </message>
+    <message>
+        <location filename="../algs/qualif_algs.py" line="422"/>
+        <source>Computes patch area</source>
+        <translation>Calcule la surface de chaque entité de la couche de patch</translation>
+    </message>
+    <message>
+        <location filename="../algs/qualif_algs.py" line="425"/>
+        <source>Patch vector layer</source>
+        <translation>Couche de patch (vecteur)</translation>
+    </message>
+    <message>
+        <location filename="../algs/qualif_algs.py" line="429"/>
+        <source>Output layer</source>
+        <translation>Couche de sortie</translation>
     </message>
 </context>
 <context>

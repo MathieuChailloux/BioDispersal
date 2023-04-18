@@ -638,9 +638,11 @@ class PatchAreaWindow(SlidingWindowCircle):
 
 class ConnectivityIndexGroup(SlidingWindowCircle):
     def group(self):
-        return self.tr("Connectivity indices")
+        #return self.tr("Connectivity indices")
+        return super().group()
     def groupId(self):
-        return 'index'    
+        #return 'index'   
+        return super().groupId() 
 
 class PatchSizeWindowRedistrib(ConnectivityIndexGroup):
     

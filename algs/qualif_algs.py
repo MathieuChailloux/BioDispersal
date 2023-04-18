@@ -411,6 +411,38 @@ class ShannonDiversityIndex(QualifAlgClassif):
         mf.setCurrentStep(2)
         return { self.OUTPUT: self.output }
 
+class PatchAreaV(QualifAlgClassif):
+
+    ALG_NAME = 'patchAreaV'
+    PATCHES = 'PATCHES'
+    
+    def displayName(self):
+        return self.tr("Patch area")
+    def shortHelpString(self):
+        return self.tr("Computes patch area")
+        
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.PATCHES,
+                description=self.tr('Patch vector layer')))
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        patches = self.parameterAsVectorLayer(parameters,self.PATCHES,context)
+        if patches is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.PATCHES))
+        self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        self.fieldname = "area"
+        # Computes area
+        expr = "$area"
+        qgsTreatments.fieldCalculator(patches,self.fieldname,expr,self.output,feedback=feedback)
+        return { self.OUTPUT: self.output }
+        
   
 class ClassifySymbology(QualifAlgClassif):
 
@@ -484,7 +516,7 @@ class AgregateCriterias(ClassifySymbology):
     INPUTS = 'INPUTS'
     JOIN_FIELDNAME = 'JOIN_FIELDNAME'
     AGR_FIELDNAME = 'AGR_FIELDNAME'
-    AREA_FIELDNAME = 'AREA_FIELDNAME'
+    #AREA_FIELDNAME = 'AREA_FIELDNAME'
 
     def displayName(self):
         return self.tr("Agregate criterias")
@@ -514,11 +546,11 @@ class AgregateCriterias(ClassifySymbology):
                 self.AGR_FIELDNAME,
                 description=self.tr('Output qualification fieldname'),
                 defaultValue='QUALIF'))
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.AREA_FIELDNAME,
-                description=self.tr('Area fieldname'),
-                optional=True))
+        # self.addParameter(
+        #     QgsProcessingParameterString(
+        #         self.AREA_FIELDNAME,
+        #         description=self.tr('Area fieldname'),
+        #         optional=True))
         self.addParameter(
             QgsProcessingParameterVectorDestination(
                 self.OUTPUT,
@@ -531,12 +563,12 @@ class AgregateCriterias(ClassifySymbology):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTS))
         join_fieldname = self.parameterAsString(parameters,self.JOIN_FIELDNAME,context)
         agr_fieldname = self.parameterAsString(parameters,self.AGR_FIELDNAME,context)
-        area_fieldname = self.parameterAsString(parameters,self.AREA_FIELDNAME,context)
+        #area_fieldname = self.parameterAsString(parameters,self.AREA_FIELDNAME,context)
         out_prefix = self.parameterAsString(parameters,self.PREFIX,context)
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         # Feedback
         nb_layers = len(input_layers)
-        nb_steps = nb_layers * 2 + (2 if area_fieldname else 1) 
+        nb_steps = nb_layers * 2 + 1#(2 if area_fieldname else 1) 
         mf = QgsProcessingMultiStepFeedback(nb_steps,feedback)
         # Classification loop on each layer
         formula = ""
@@ -563,17 +595,18 @@ class AgregateCriterias(ClassifySymbology):
             if cpt < nb_layers - 1:
                 formula += " + "
         # Computes area
-        if area_fieldname:
-            area_path = qgsUtils.mkTmpPath("area.gpkg")
-            qgsTreatments.fieldCalculator(joined,area_fieldname,"$area",area_path,feedback=mf)
-        else:
-            area_path = joined
-        mf.setCurrentStep(nb_layers * 2 + 1)
+        # if area_fieldname:
+        #     area_path = qgsUtils.mkTmpPath("area.gpkg")
+        #     qgsTreatments.fieldCalculator(joined,area_fieldname,"$area",area_path,feedback=mf)
+        # else:
+        #     area_path = joined
+        # mf.setCurrentStep(nb_layers * 2 + 1)
         # Build output layer
         mf.pushDebugInfo("formula = {}".format(formula))
-        qgsTreatments.fieldCalculator(area_path,agr_fieldname,formula,self.output,feedback=mf)
+        #qgsTreatments.fieldCalculator(area_path,agr_fieldname,formula,self.output,feedback=mf)
+        qgsTreatments.fieldCalculator(joined,agr_fieldname,formula,self.output,feedback=mf)
         self.fieldname = agr_fieldname
-        mf.setCurrentStep(nb_layers * 2 + 2)
+        mf.setCurrentStep(nb_layers * 2 + 1)#2)
         return { self.OUTPUT: self.output }
         
         

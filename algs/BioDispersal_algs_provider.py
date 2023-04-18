@@ -62,6 +62,7 @@ from .qualif_algs import (
     ClassifySymbology,
     CompactnessAlg,
     DistanceAlg,
+    PatchAreaV,
     RelativeSurfaceVR,
     ShannonDiversityIndex)
     
@@ -124,6 +125,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             CompactnessAlg(),
             ClassifySymbology(),
             DistanceAlg(),
+            PatchAreaV(),
             RelativeSurfaceVR(),
             ShannonDiversityIndex()]
         for a in alglist:
