@@ -148,7 +148,7 @@ class GroupModel(abstract_model.DictModel):
         self.is_runnable = False
         self.bdModel = bdModel
         itemClass = getattr(sys.modules[__name__], GroupItem.__name__)
-        super().__init__(self,itemClass,feedback=bdModel.feedback)
+        super().__init__(itemClass, feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
         utils.checkFields(groups_fields,dict.keys())

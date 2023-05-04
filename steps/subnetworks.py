@@ -41,10 +41,10 @@ class STItem(abstract_model.DictItem):
 
     @classmethod
     def fromValues(cls,st,descr):
-        dict = {cls.NAME : st,
+        dct = {cls.NAME : st,
                 cls.DESCR : descr}
         #assert(st_fields == dict.keys())
-        st_item = cls(dict)
+        st_item = cls(dct)
         return st_item
         
     def checkItem(self):
@@ -95,7 +95,7 @@ class STModel(abstract_model.DictModel):
         self.is_runnable = False
         self.bdModel = bdModel
         itemClass = getattr(sys.modules[__name__], STItem.__name__)
-        super().__init__(self,itemClass,feedback=bdModel.feedback)
+        super().__init__(itemClass, feedback=bdModel.feedback)
         
     def getSTByName(self,st_name):
         for st in self.items:

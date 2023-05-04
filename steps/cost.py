@@ -66,7 +66,7 @@ class CostModel(abstract_model.DictModel):
         self.is_runnable = True
         self.bdModel = bdModel
         itemClass = getattr(sys.modules[__name__], CostItem.__name__)
-        super().__init__(self,itemClass,feedback=bdModel.feedback)
+        super().__init__(itemClass, feedback=bdModel.feedback)
     
     def mkItemFromDict(self,dict):
         utils.checkFields(cost_fields,dict.keys())
