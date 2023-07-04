@@ -237,8 +237,9 @@ def applyRasterizationFixAllTouch(in_path,out_path,extent,resolution,
     extra_param_name = 'EXTRA'
     if hasattr(rasterize,extra_param_name):
         res = qgsTreatments.applyRasterization(in_path,out_path,extent,resolution,
-                field,burn_val,out_type,nodata_val,all_touch,overwrite,
-                context,feedback)
+                field=field,burn_val=burn_val,out_type=out_type,
+                nodata_val=nodata_val,all_touch=all_touch,overwrite=overwrite,
+                context=context,feedback=feedback)
     else:
         parameters = { 'ALL_TOUCH' : True,
                    'BURN' : burn_val,
