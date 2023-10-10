@@ -37,6 +37,7 @@ Aller dans le menu *Installer/gérer les extensions*, taper *BioDispersal* dans 
 Documentation disponible :
  - [Tutoriels vidéo](https://www.youtube.com/playlist?list=PL0Wd1JAi6QuHdwALwwJqj5TcfNYvjRbcs)
  - [Notice d'utilisation](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/fr/NoticeUtilisation_BioDispersal_v1.1.pdf)
+ - [Qualification des réservoirs de biodiversité](https://github.com/MathieuChailloux/BioDispersal/blob/master/docs/fr/QualifPatch.pdf)
  - [Présentation de la méthode](https://www.umr-tetis.fr/jdownloads/plateformes/MethodePermeabiliteMilieux.pdf)
 
 # Exemple
