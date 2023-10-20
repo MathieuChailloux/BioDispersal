@@ -28,6 +28,7 @@ from qgis.core import (Qgis,
                        QgsFields,
                        QgsField,
                        QgsFeature,
+                       QgsFeatureRequest,
                        QgsGraduatedSymbolRenderer,
                        QgsProcessing,
                        QgsProcessingUtils,
@@ -68,6 +69,101 @@ class QualifAlgorithm(qgsUtils.BaseProcessingAlgorithm):
         return self.tr("Patch qualification (vector)")
     def groupId(self):
         return "qualif"
+        
+class ExtractPatchesV(QualifAlgorithm):
+
+    ALG_NAME = 'extractPatchesV'
+
+    FIELD = 'FIELD'
+    VALUES = 'VALUES'
+    SURFACE = 'SURFACE'
+    DILAT = 'DILAT'
+        
+    def displayName(self):
+        return self.tr('Extract patches (Vector to Vector)')
+        
+    def shortHelpString(self):
+        s = "Extract patches from land use vector layer according to"
+        s += " specified land use types and minimum surface."
+        s += "\nLand use values are integer separated by semicolons (';')."
+        return self.tr(s)
+        
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.INPUT,
+                description=self.tr('Input layer')))
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.FIELD,
+                description=self.tr('Field'),
+                defaultValue=None,
+                type=QgsProcessingParameterField.Numeric,
+                parentLayerParameterName=self.INPUT))
+        self.addParameter(
+            QgsProcessingParameterString (
+                self.VALUES,
+                description=self.tr('Field values (separated by \';\')')))
+        self.addParameter(
+            QgsProcessingParameterNumber (
+                self.SURFACE,
+                description=self.tr('Patch minimum surface (square meters)'),
+                type=QgsProcessingParameterNumber.Double,
+                optional=True))
+        self.addParameter(
+            QgsProcessingParameterNumber (
+                self.DILAT,
+                description=self.tr('Expansion erosion buffer value'),
+                type=QgsProcessingParameterNumber.Integer,
+                optional=True))
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT,
+                self.tr("Output layer")))
+                
+    def processAlgorithm(self,parameters,context,feedback):
+        # Parse params
+        input_source = self.parameterAsSource(parameters,self.INPUT,context)
+        input = input_source.materialize(QgsFeatureRequest(),feedback=feedback)
+        if input is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        fieldname = self.parameterAsString(parameters,self.FIELD,context)
+        if not fieldname:
+            raise QgsProcessingException("No field given")
+        values = self.parameterAsInts(parameters,self.VALUES,context)
+        surface = self.parameterAsDouble(parameters,self.SURFACE,context)
+        dilat = self.parameterAsDouble(parameters,self.DILAT,context)
+        output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        mf = QgsProcessingMultiStepFeedback(5,feedback)
+        # Extract values
+        values_str = [ str(v) for v in values ]
+        values_expr = ",".join(values_str)
+        extract_expr = "{} in ({})".format(fieldname,values_expr)
+        extracted = self.mkTmpPath("extracted.gpkg")
+        qgsTreatments.extractByExpression(input,extract_expr,extracted,feedback=mf)
+        mf.setCurrentStep(1)
+        # Dissolve
+        dissolved = self.mkTmpPath("dissolved.gpkg")
+        qgsTreatments.dissolveLayer(extracted,dissolved,feedback=mf)
+        mf.setCurrentStep(2)
+        # Mutli to single geom
+        singleGeom = self.mkTmpPath("singleGeom.gpkg")
+        qgsTreatments.multiToSingleGeom(dissolved,singleGeom,feedback=mf)
+        mf.setCurrentStep(3)
+        # Expansion dilatation
+        if dilat:
+            expanded = self.mkTmpPath("expanded.gpkg")
+            qgsTreatments.applyBufferFromExpr(singleGeom,dilat,expanded,feedback=mf)
+            eroded = self.mkTmpPath("eroded.gpkg")
+            qgsTreatments.applyBufferFromExpr(expanded,-dilat,eroded,feedback=mf)
+        else:
+            eroded = singleGeom
+        mf.setCurrentStep(4)
+        # Filter surface
+        surface_expr = "$area > {}".format(surface)
+        qgsTreatments.extractByExpression(eroded,surface_expr,output,feedback=mf)
+        mf.setCurrentStep(5)
+        return { 'OUTPUT' : output }
         
 class ExtractPatchesRV(QualifAlgorithm):
 

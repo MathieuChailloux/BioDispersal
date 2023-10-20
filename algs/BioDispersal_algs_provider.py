@@ -58,6 +58,7 @@ from .patch_algs import (
     ExtractPatchesR)
 from .qualif_algs import (
     AgregateCriterias,
+    ExtractPatchesV,
     ExtractPatchesRV,
     ClassifySymbology,
     CompactnessAlg,
@@ -120,6 +121,7 @@ class BioDispersalAlgorithmsProvider(QgsProcessingProvider):
             NeighboursCount(),
             ExtractPatchesR(),
             ExtractPatchesRV(),
+            ExtractPatchesV(),
             # Qualif algs
             AgregateCriterias(),
             CompactnessAlg(),
