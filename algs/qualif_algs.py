@@ -216,7 +216,7 @@ class ExtractPatchesRV(QualifAlgorithm):
         mf.setCurrentStep(1)
         # Polygonize
         patchV_path = self.mkTmpPath("patchesV.gpkg")
-        qgsTreatments.applyPolygonize(patchR_path,patchV_path,feedback=mf)
+        qgsTreatments.applyPolygonizeFieldOpt(patchR_path,patchV_path,feedback=mf)
         mf.setCurrentStep(2)
         # Filter by surface
         expr = "$area >= " + str(surface)
