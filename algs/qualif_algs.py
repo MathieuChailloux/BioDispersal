@@ -267,6 +267,7 @@ class QualifAlg2Layers(QualifAlgClassif):
     LAYER_A = 'LAYER_A'
     LAYER_B = 'LAYER_B'
     VALUES = 'VALUES'
+    OUT_FIELDNAME = 'OUT_FIELDNAME'
     
     def initLayerAV(self):
         self.addParameter(
@@ -299,6 +300,12 @@ class QualifAlg2Layers(QualifAlgClassif):
                 self.VALUES,
                 optional=True,
                 description=self.tr('Values (separated by \';\', all values by default)')))
+    def initOutFieldname(self):
+        self.addParameter(
+            QgsProcessingParameterString (
+                self.OUT_FIELDNAME,
+                optional=True,
+                description=self.tr('Output fieldname')))
         
 
 class QualifAlgVV(QualifAlg2Layers):
@@ -312,18 +319,92 @@ class QualifAlgVR(QualifAlg2Layers):
         self.initLayerBR()
         self.initValues()
         self.initOutLayerV()
+        self.initOutFieldname()
                   
 # Relative surface with patch vector and landuse raster
 class RelativeSurfaceVR(QualifAlgVR):
 
     ALG_NAME = 'relativeSurfaceVR'
+    
+    NODATA_FLAG = 'NODATA_FLAG'
 
     def displayName(self):
         return self.tr("Relative surface")
     def shortHelpString(self):
         return self.tr("Relative surface (percentage of B surface in each patch of layer A)")
         
+    def initAlgorithm(self, config=None):
+        super().initAlgorithm()
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+            self.NODATA_FLAG,
+            description = self.tr('Include NoData pixels in pixel count'),
+            defaultValue=False))
+        
     def processAlgorithm(self,parameters,context,feedback):
+        # Parameters
+        layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
+        if layerA is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_A))
+        layerB = self.parameterAsRasterLayer(parameters,self.LAYER_B,context)
+        if layerB is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
+        values = self.parameterAsString(parameters,self.VALUES,context)
+        self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        nodataFlag = self.parameterAsBool(parameters,self.NODATA_FLAG,context)
+        out_fieldname = self.parameterAsString(parameters,self.OUT_FIELDNAME,context)
+        mf = QgsProcessingMultiStepFeedback(4,feedback)
+        # Values extraction
+        if values:
+            values = self.parameterAsInts(parameters,self.VALUES,context)
+            extract_path = self.mkTmpPath("extract.tif")
+            extract_params = { ExtractPatchesR.INPUT : parameters[self.LAYER_B],
+                ExtractPatchesR.VALUES : parameters[self.VALUES],
+                ExtractPatchesR.OUTPUT : extract_path }
+            processing.run("BioDispersal:" + ExtractPatchesR.ALG_NAME,
+                extract_params,context=context,feedback=mf)
+            # layerB = qgsUtils.loadRasterLayer(extract_path) 
+        else:
+            extract_path = layerB
+        mf.setCurrentStep(1)
+        # Prepare nodata pixels if needed
+        if nodataFlag:
+            nodata_path = qgsUtils.mkTmpPath("nodata.tif")
+            #nodata_val = layerB.dataProvider().sourceNoDataValue(1)
+            qgsTreatments.applyRNull(layerB,0,nodata_path,context=context,feedback=mf)
+        else:
+            nodata_path = layerB
+        # Zonal stats (total count)
+        # Stats 0 = count
+        prefixC = "count_"
+        count_path = qgsUtils.mkTmpPath("count.gpkg")
+        qgsTreatments.rasterZonalStats(layerA,nodata_path,count_path,
+            prefix=prefixC,stats=[0],feedback=mf) 
+        mf.setCurrentStep(2)
+        # Zonal stats
+        # Stats 0 = count
+        values_str = "".join(str(v) for v in values)
+        prefixV = values_str + "_"
+        stats_path = qgsUtils.mkTmpPath("stats.gpkg")
+        qgsTreatments.rasterZonalStats(count_path,extract_path,stats_path,
+            prefix=prefixV,stats=[0],feedback=mf) 
+        mf.setCurrentStep(3)
+        # Compute relative surface
+        # x_res = layerB.rasterUnitsPerPixelX()
+        # y_res = layerB.rasterUnitsPerPixelY()
+        # pixel_surf = x_res * y_res
+        # feedback.pushDebugInfo("pixel_surf = " + str(pixel_surf))
+        expr = '"%scount" / "%scount"' % (prefixV,prefixC)
+        mf.pushDebugInfo("expr = " + expr)
+        self.fieldname = out_fieldname if out_fieldname else "SurfRel_" + values_str
+        # surf_path = qgsUtils.mkTmpPath("surface_relative.gpkg")
+        qgsTreatments.fieldCalculator(stats_path,self.fieldname,expr,self.output,
+            precision=4,feedback=mf)
+        mf.setCurrentStep(4)
+        # Apply classif
+        return { self.OUTPUT : self.output }
+        
+    def processAlgorithmOld(self,parameters,context,feedback):
         # Parameters
         layerA = self.parameterAsVectorLayer(parameters,self.LAYER_A,context)
         if layerA is None:
@@ -418,6 +499,7 @@ class DistanceAlg(QualifAlgVR):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.LAYER_B))
         values = self.parameterAsString(parameters,self.VALUES,context)
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
+        out_fieldname = self.parameterAsString(parameters,self.OUT_FIELDNAME,context)
         mf = QgsProcessingMultiStepFeedback(3,feedback)
         # Values extraction
         if values:
@@ -437,8 +519,11 @@ class DistanceAlg(QualifAlgVR):
         qgsTreatments.applyProximity(extract_path,distance_path,feedback=mf)
         mf.setCurrentStep(2)
         # Zonal stats
-        values_str = "".join(str(v) for v in values)
-        prefix = values_str + "_dist_"
+        if out_fieldname:
+            prefix = out_fieldname + "_"
+        else:
+            values_str = "".join(str(v) for v in values)
+            prefix = values_str + "_dist_"
         self.fieldname = prefix + "min"
         # Stats = 5 <=> minimum
         qgsTreatments.rasterZonalStats(layerA,distance_path,self.output,
@@ -687,7 +772,7 @@ class AgregateCriterias(ClassifySymbology):
                 previous = classified
             mf.setCurrentStep(cpt * 2 + 2)
             # Build formula
-            formula += self.fieldname
+            formula += '\"' + self.fieldname + '\"'
             if cpt < nb_layers - 1:
                 formula += " + "
         # Computes area
