@@ -188,36 +188,40 @@ class SelectionModel(abstract_model.DictModel):
         step_feedback = feedbacks.ProgressMultiStepFeedback(2,feedback)
         step_feedback.setCurrentStep(0)
         if mode == vexpr:
-            self.applySelectionVExpr(item,grp_item,out_path,context,step_feedback)
+            to_warp = qgsUtils.mkTmpPath("selected.gpkg")
+            self.applySelectionVExpr(item,grp_item,to_warp,context,step_feedback)
         elif mode == vfield:
-            self.applySelectionVField(item,grp_name,out_path,context,step_feedback)
+            to_warp = qgsUtils.mkTmpPath("selected.gpkg")
+            self.applySelectionVField(item,grp_name,to_warp,context,step_feedback)
         elif mode == rclasses:
-            out_tmp_path = utils.mkTmpPath(out_path)
+            to_warp = qgsUtils.mkTmpPath("reclassified.gpkg")
             matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
             # Call to native:reclassifybytable.
             # Output type set to Int16 to keep -9999 nodata value and ensure wide range of classes.
             # Boundaries mode = 2 to build reclassify intervals with one single value : [input_val,input_val].
             # Input values not covered by 'matrix' are reclassified to nodata.
-            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,
+            qgsTreatments.applyReclassifyByTable(input,matrix,to_warp,
                                                  out_type = Qgis.Int16,
                                                  boundaries_mode=2,nodata_missing=True,
                                                  context=context,feedback=step_feedback)
-            to_warp = out_tmp_path
         elif mode == rresample:
             to_warp = input
         else:
             utils.user_error("Unexpected mode : " + str(mode))
         step_feedback.setCurrentStep(1)
+        crs, extent, resolution = self.bdModel.getRasterParams()
         if item.isRaster():
             # If selection is applied to raster layer, resampling is performed to match project parameters.
             resampling_mode = item.dict["mode_val"]
-            crs, extent, resolution = self.bdModel.getRasterParams()
             # Output type set to Int16.
             qgsTreatments.applyWarpReproject(to_warp,out_path,resampling_mode,crs.authid(),
                                              extent=extent,extent_crs=crs,resolution=resolution,
                                              out_type=Qgis.Int16,
                                              overwrite=True,context=context,feedback=step_feedback)
             qgsUtils.removeRaster(to_warp)
+        else:
+            qgsTreatments.applyReprojectLayer(to_warp,crs,out_path,context=context,feedback=feedback)
+            # qgsUtils.removeVectorLayer(to_warp)
         step_feedback.setCurrentStep(2)
             
         
