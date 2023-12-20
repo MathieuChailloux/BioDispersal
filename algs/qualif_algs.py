@@ -134,7 +134,7 @@ class ExtractPatchesV(QualifAlgorithm):
         surface = self.parameterAsDouble(parameters,self.SURFACE,context)
         dilat = self.parameterAsDouble(parameters,self.DILAT,context)
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        mf = QgsProcessingMultiStepFeedback(5,feedback)
+        mf = QgsProcessingMultiStepFeedback(6,feedback)
         # Extract values
         values_str = [ str(v) for v in values ]
         values_expr = ",".join(values_str)
@@ -142,27 +142,32 @@ class ExtractPatchesV(QualifAlgorithm):
         extracted = self.mkTmpPath("extracted.gpkg")
         qgsTreatments.extractByExpression(input,extract_expr,extracted,feedback=mf)
         mf.setCurrentStep(1)
-        # Dissolve
-        dissolved = self.mkTmpPath("dissolved.gpkg")
-        qgsTreatments.dissolveLayer(extracted,dissolved,feedback=mf)
-        mf.setCurrentStep(2)
-        # Mutli to single geom
-        singleGeom = self.mkTmpPath("singleGeom.gpkg")
-        qgsTreatments.multiToSingleGeom(dissolved,singleGeom,feedback=mf)
-        mf.setCurrentStep(3)
-        # Expansion dilatation
+        # Expansion
         if dilat:
             expanded = self.mkTmpPath("expanded.gpkg")
-            qgsTreatments.applyBufferFromExpr(singleGeom,dilat,expanded,feedback=mf)
-            eroded = self.mkTmpPath("eroded.gpkg")
-            qgsTreatments.applyBufferFromExpr(expanded,-dilat,eroded,feedback=mf)
+            qgsTreatments.applyBufferFromExpr(extracted,dilat,expanded,feedback=mf)
         else:
-            eroded = singleGeom
+            expanded = extracted
+        mf.setCurrentStep(2)
+        # Dissolve
+        dissolved = self.mkTmpPath("dissolved.gpkg")
+        qgsTreatments.dissolveLayer(expanded,dissolved,feedback=mf)
+        mf.setCurrentStep(3)
+        # dilatation
+        if dilat:
+            eroded = self.mkTmpPath("eroded.gpkg")
+            qgsTreatments.applyBufferFromExpr(dissolved,-dilat,eroded,feedback=mf)
+        else:
+            eroded = dissolved
         mf.setCurrentStep(4)
+        # Mutli to single geom
+        singleGeom = self.mkTmpPath("singleGeom.gpkg")
+        qgsTreatments.multiToSingleGeom(eroded,singleGeom,feedback=mf)
+        mf.setCurrentStep(5)
         # Filter surface
         surface_expr = "$area > {}".format(surface)
-        qgsTreatments.extractByExpression(eroded,surface_expr,output,feedback=mf)
-        mf.setCurrentStep(5)
+        qgsTreatments.extractByExpression(singleGeom,surface_expr,output,feedback=mf)
+        mf.setCurrentStep(6)
         return { 'OUTPUT' : output }
         
 class ExtractPatchesRV(QualifAlgorithm):
