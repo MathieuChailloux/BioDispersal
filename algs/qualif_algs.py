@@ -99,11 +99,13 @@ class ExtractPatchesV(QualifAlgorithm):
                 description=self.tr('Field'),
                 defaultValue=None,
                 type=QgsProcessingParameterField.Numeric,
-                parentLayerParameterName=self.INPUT))
+                parentLayerParameterName=self.INPUT,
+                optional=True))
         self.addParameter(
             QgsProcessingParameterString (
                 self.VALUES,
-                description=self.tr('Field values (separated by \';\')')))
+                description=self.tr('Field values (separated by \';\')'),
+                optional=True))
         self.addParameter(
             QgsProcessingParameterNumber (
                 self.SURFACE,
@@ -127,20 +129,22 @@ class ExtractPatchesV(QualifAlgorithm):
         input = input_source.materialize(QgsFeatureRequest(),feedback=feedback)
         if input is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        fieldname = self.parameterAsString(parameters,self.FIELD,context)
-        if not fieldname:
-            raise QgsProcessingException("No field given")
         values = self.parameterAsInts(parameters,self.VALUES,context)
         surface = self.parameterAsDouble(parameters,self.SURFACE,context)
         dilat = self.parameterAsDouble(parameters,self.DILAT,context)
         output = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         mf = QgsProcessingMultiStepFeedback(6,feedback)
         # Extract values
-        values_str = [ str(v) for v in values ]
-        values_expr = ",".join(values_str)
-        extract_expr = "{} in ({})".format(fieldname,values_expr)
-        extracted = self.mkTmpPath("extracted.gpkg")
-        qgsTreatments.extractByExpression(input,extract_expr,extracted,feedback=mf)
+        fieldname = self.parameterAsString(parameters,self.FIELD,context)
+        if fieldname:
+            values = self.parameterAsInts(parameters,self.VALUES,context)
+            values_str = [ str(v) for v in values ]
+            values_expr = ",".join(values_str)
+            extract_expr = "{} in ({})".format(fieldname,values_expr)
+            extracted = self.mkTmpPath("extracted.gpkg")
+            qgsTreatments.extractByExpression(input,extract_expr,extracted,feedback=mf)
+        else:
+            extracted = input
         mf.setCurrentStep(1)
         # Expansion
         if dilat:
@@ -500,7 +504,7 @@ class ReachableSurface(QualifAlgVR):
         buffer = self.parameterAsDouble(parameters,self.BUFFER,context)
         nodataFlag = self.parameterAsBool(parameters,self.NODATA_FLAG,context)
         out_fieldname = self.parameterAsString(parameters,self.OUT_FIELDNAME,context)
-        mf = QgsProcessingMultiStepFeedback(5,feedback)
+        mf = QgsProcessingMultiStepFeedback(6,feedback)
         # Values extraction
         if values:
             values = self.parameterAsInts(parameters,self.VALUES,context)
@@ -566,7 +570,7 @@ class ReachableSurface(QualifAlgVR):
         fields = [countInitField,countNewField,countValField,self.fieldname]
         qgsTreatments.joinByLoc(layerA,surfPath,out_path=self.output,
             method=1,predicates=[5],fields=fields,feedback=mf)
-        mf.setCurrentStep(5)
+        mf.setCurrentStep(6)
         return { self.OUTPUT : self.output }
         
     def postProcessAlgorithm(self,context,feedback):
