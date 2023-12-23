@@ -100,14 +100,18 @@ class CostModel(abstract_model.DictModel):
         crs, extent, resolution = self.bdModel.getRasterParams()
         if start_layer_type == 'Raster':
             # Warp : 'near' resampling, output type = input type
-            qgsTreatments.applyWarpReproject(start_layer_path,start_raster_path,"near",crs.authid(),
-                                             extent=extent,extent_crs=crs,resolution=resolution,
-                                             out_type=-1,context=context,feedback=step_feedback)
+            # qgsTreatments.applyWarpReproject(start_layer_path,start_raster_path,"near",crs.authid(),
+                                             # extent=extent,extent_crs=crs,resolution=resolution,
+                                             # out_type=-1,context=context,feedback=step_feedback)
+            startR = start_layer_path
         else:
             # Burning all vals to 1, nodata 0, Byte data type
-            qgsTreatments.applyRasterization(start_layer_path,start_raster_path,extent,resolution,
-                                             burn_val=1,out_type=Qgis.Byte,nodata_val=0,all_touch=True,
+            startR = qgsUtils.mkTmpPath("startR.tif")
+            qgsTreatments.applyRasterization(start_layer_path,startR,extent,resolution,
+                                             burn_val=1,out_type=Qgis.Byte,nodata_val=0,all_touch=False,
                                              context=context,feedback=step_feedback)
+        self.bdModel.paramsModel.normalizeRaster(startR,
+            out_path=start_raster_path,context=context,feedback=step_feedback)
         step_feedback.setCurrentStep(1)
         qgsTreatments.applyRCost(start_raster_path,perm_raster_path,cost,tmp_path,
                                  context=context,feedback=step_feedback)
