@@ -471,6 +471,7 @@ class ReachableSurface(QualifAlgVR):
     
     BUFFER = 'BUFFER'
     NODATA_FLAG = 'NODATA_FLAG'
+    JOIN_FIELDNAME = 'JOIN_FIELDNAME'
 
     def displayName(self):
         return self.tr("Reachable surface")
@@ -490,6 +491,12 @@ class ReachableSurface(QualifAlgVR):
             self.NODATA_FLAG,
             description = self.tr('Include NoData pixels in pixel count'),
             defaultValue=False))
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.JOIN_FIELDNAME,
+                description=self.tr('Fieldname used to join layers (join by location otherwise)'),
+                parentLayerParameterName=self.LAYER_A,
+                optional=True))
         
     def processAlgorithm(self,parameters,context,feedback):
         # Parameters
@@ -503,8 +510,9 @@ class ReachableSurface(QualifAlgVR):
         self.output = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         buffer = self.parameterAsDouble(parameters,self.BUFFER,context)
         nodataFlag = self.parameterAsBool(parameters,self.NODATA_FLAG,context)
+        join_fieldname = self.parameterAsString(parameters,self.JOIN_FIELDNAME,context)
         out_fieldname = self.parameterAsString(parameters,self.OUT_FIELDNAME,context)
-        mf = QgsProcessingMultiStepFeedback(6,feedback)
+        mf = QgsProcessingMultiStepFeedback(8,feedback)
         # Values extraction
         if values:
             values = self.parameterAsInts(parameters,self.VALUES,context)
@@ -528,33 +536,33 @@ class ReachableSurface(QualifAlgVR):
         prefixCountInit = "init_"
         countInitField = prefixCountInit + "count"
         count_init_path = qgsUtils.mkTmpPath("countInit.gpkg")
-        qgsTreatments.rasterZonalStats(layerA,layerB,count_init_path,
-            prefix=prefixCountInit,stats=[0],feedback=mf) 
+        if qgsUtils.hasPolygonGeometry(layerA):
+            qgsTreatments.rasterZonalStats(layerA,layerB,count_init_path,
+                prefix=prefixCountInit,stats=[0],feedback=mf)
+        else:
+            qgsTreatments.fieldCalculator(layerA,countInitField,"0",count_init_path,
+                precision=4,feedback=mf)
         mf.setCurrentStep(3)
         # Buffer
         expanded = self.mkTmpPath("expanded.gpkg")
         qgsTreatments.applyBufferFromExpr(count_init_path,buffer,expanded,feedback=mf)
-        mf.setCurrentStep(3)
+        mf.setCurrentStep(4)
         # Zonal stats (total count) - Stats 0 = count
         prefixCountNew = "new_"
         countNewField = prefixCountNew + "count"
         countNew_path = qgsUtils.mkTmpPath("countNew.gpkg")
         qgsTreatments.rasterZonalStats(expanded,layerB,countNew_path,
             prefix=prefixCountNew,stats=[0],feedback=mf) 
-        mf.setCurrentStep(4)
+        mf.setCurrentStep(5)
         # Zonal stats (values count) - Stats 0 = count
         prefixCountValues = "values_"
         countValField = prefixCountValues + "count"
         countVal_path = qgsUtils.mkTmpPath("countVal.gpkg")
         qgsTreatments.rasterZonalStats(countNew_path,nodata_path,countVal_path,
             prefix=prefixCountValues,stats=[0],feedback=mf) 
-        mf.setCurrentStep(4)
-        # Transform pixel to surface
-        # x_res = layerB.rasterUnitsPerPixelX()
-        # y_res = layerB.rasterUnitsPerPixelY()
-        # pixel_surf = x_res * y_res
-        # expr = '"{}count" * {}'.format(prefixC,pixel_surf)
-        expr = '"{}" / ("{}" - "{}")'.format(countValField,countNewField,countInitField)
+        mf.setCurrentStep(6)
+        # Compute results
+        expr = '"{}" / ("{}" - "{}")'.format(countNewField,countValField,countInitField)
         mf.pushDebugInfo("expr = " + expr)
         if out_fieldname:
             self.fieldname = out_fieldname
@@ -565,12 +573,16 @@ class ReachableSurface(QualifAlgVR):
         surfPath = qgsUtils.mkTmpPath("surf.gpkg")
         qgsTreatments.fieldCalculator(countVal_path,self.fieldname,expr,surfPath,
             precision=4,feedback=mf)
-        mf.setCurrentStep(5)
+        mf.setCurrentStep(7)
         # Join on original geom
         fields = [countInitField,countNewField,countValField,self.fieldname]
-        qgsTreatments.joinByLoc(layerA,surfPath,out_path=self.output,
-            method=1,predicates=[5],fields=fields,feedback=mf)
-        mf.setCurrentStep(6)
+        if join_fieldname:
+            qgsTreatments.joinByAttribute(layerA,join_fieldname,surfPath,
+                join_fieldname,self.output,copy_fields=fields,feedback=mf)
+        else:
+            qgsTreatments.joinByLoc(layerA,surfPath,out_path=self.output,
+                method=1,predicates=[5],fields=fields,feedback=mf)
+        mf.setCurrentStep(8)
         return { self.OUTPUT : self.output }
         
     def postProcessAlgorithm(self,context,feedback):
