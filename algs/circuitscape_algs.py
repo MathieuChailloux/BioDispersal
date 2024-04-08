@@ -23,6 +23,7 @@
 """
 
 import os
+import numpy as np
     
 from PyQt5.QtCore import QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
@@ -297,8 +298,10 @@ class RandomStartPointsCircuitscape(CircuitscapeAlgorithm):
             #qgsUtils.loadRasterLayer(points_asc,loadProject=True)
             step_feedback.setCurrentStep(4*i+3)
             # Out config file
-            out_content = config_content.replace('OUTPUT_DIR',out_dir)
-            out_content = out_content.replace('OUTPUT_BNAME',bname)
+            out_file = basepath + ".out"
+            out_log = basepath + ".log"
+            out_content = config_content.replace('OUT_FILE',out_file)
+            out_content = out_content.replace('LOG_FILE',out_log)
             out_content = out_content.replace('START_LAYER',points_asc)
             out_content = out_content.replace('RESISTANCE_LAYER',out_resistance)
             outfile = basepath + "_config.ini"
