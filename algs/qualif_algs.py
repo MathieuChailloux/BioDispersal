@@ -528,9 +528,9 @@ class ReachableSurface(QualifAlgVR):
         # Prepare nodata pixels if needed
         if nodataFlag:
             nodata_path = qgsUtils.mkTmpPath("nodata.tif")
-            qgsTreatments.applyRNull(extract_path,0,nodata_path,context=context,feedback=mf)
+            qgsTreatments.applyRNull(layerB,0,nodata_path,context=context,feedback=mf)
         else:
-            nodata_path = extract_path
+            nodata_path = layerB
         mf.setCurrentStep(2)
         # Zonal stats (init count) - Stats 0 = count
         prefixCountInit = "init_"
@@ -551,18 +551,19 @@ class ReachableSurface(QualifAlgVR):
         prefixCountNew = "new_"
         countNewField = prefixCountNew + "count"
         countNew_path = qgsUtils.mkTmpPath("countNew.gpkg")
-        qgsTreatments.rasterZonalStats(expanded,layerB,countNew_path,
+        qgsTreatments.rasterZonalStats(expanded,nodata_path,countNew_path,
             prefix=prefixCountNew,stats=[0],feedback=mf) 
         mf.setCurrentStep(5)
         # Zonal stats (values count) - Stats 0 = count
         prefixCountValues = "values_"
         countValField = prefixCountValues + "count"
         countVal_path = qgsUtils.mkTmpPath("countVal.gpkg")
-        qgsTreatments.rasterZonalStats(countNew_path,nodata_path,countVal_path,
+        qgsTreatments.rasterZonalStats(countNew_path,extract_path,countVal_path,
             prefix=prefixCountValues,stats=[0],feedback=mf) 
         mf.setCurrentStep(6)
         # Compute results
-        expr = '"{}" / ("{}" - "{}")'.format(countNewField,countValField,countInitField)
+        # expr = '"{}" / ("{}" - "{}")'.format(countNewField,countValField,countInitField)
+        expr = '"{}" / ("{}" - "{}")'.format(countValField,countNewField,countInitField)
         mf.pushDebugInfo("expr = " + expr)
         if out_fieldname:
             self.fieldname = out_fieldname
