@@ -165,7 +165,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             if os.path.isfile(out_path):
                 qgsUtils.removeRaster(out_path)
             qgsTreatments.applyMergeRaster(grp_args,out_path,out_type=Qgis.Int16,
-                                           context=context,feedback=step_feedback)
+                context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
