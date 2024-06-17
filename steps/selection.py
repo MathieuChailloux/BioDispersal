@@ -411,8 +411,8 @@ class SelectionConnector(abstract_model.AbstractConnector):
         for (class_name, class_descr) in class_names:
             class_code = self.model.bdModel.classModel.getFreeCode()
             class_item = classes.ClassItem.fromValues([class_name,class_code,class_descr,grp_name])
-            self.model.bdModel.classModel.addItem(class_item)
-            self.model.bdModel.classModel.layoutChanged.emit()
+            self.model.bdModel.classModel.addRowFromClassItem(class_item)
+            #self.model.bdModel.classModel.layoutChanged.emit()
         item = SelectionItem.fromValues([in_layer_path,mode,mode_val,grp_name])
         return item
         

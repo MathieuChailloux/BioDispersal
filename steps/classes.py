@@ -152,11 +152,9 @@ class ClassModel(abstract_model.DictModel):
                 return cpt
             cpt += 1
             
-    def addItem(self,item):
-        super().addItem(item)
+    def addRowFromClassItem(self,item):
+        self.addItem(item)
         self.bdModel.addClass(item)
-        # self.classAdded.emit(item)
-        # self.classAdded2.emit()
         
     def removeFromGroupName(self,name):
         indexes = []
