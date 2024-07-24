@@ -104,14 +104,17 @@ class CostModel(abstract_model.DictModel):
                                              # extent=extent,extent_crs=crs,resolution=resolution,
                                              # out_type=-1,context=context,feedback=step_feedback)
             startR = start_layer_path
+            nodata = start_layer.dataProvider().sourceNoDataValue(1)
         else:
             # Burning all vals to 1, nodata 0, Byte data type
             startR = qgsUtils.mkTmpPath("startR.tif")
+            nodata = 0
             qgsTreatments.applyRasterization(start_layer_path,startR,extent,resolution,
-                                             burn_val=1,out_type=Qgis.Byte,nodata_val=0,all_touch=False,
+                                             burn_val=1,out_type=Qgis.Byte,nodata_val=nodata,all_touch=False,
                                              context=context,feedback=step_feedback)
         self.bdModel.paramsModel.normalizeRaster(startR,
-            out_path=start_raster_path,context=context,feedback=step_feedback)
+            out_path=start_raster_path,nodata_val=nodata,
+            context=context,feedback=step_feedback)
         step_feedback.setCurrentStep(1)
         qgsTreatments.applyRCost(start_raster_path,perm_raster_path,cost,tmp_path,
                                  context=context,feedback=step_feedback)
