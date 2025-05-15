@@ -235,6 +235,8 @@ class GroupConnector(abstract_model.AbstractConnector):
 
     def mkItem(self):
         name = self.dlg.selectionGroupName.text()
+        if not utils.isValidTag(name):
+            utils.user_error(self.tr("Invalid group name {}").format(name))
         self.dlg.selectionGroupCombo.setCurrentText(name)
         descr = self.dlg.selectionGroupDescr.text()
         selection_in_layer = self.dlg.selectionInLayerCombo.currentLayer()
