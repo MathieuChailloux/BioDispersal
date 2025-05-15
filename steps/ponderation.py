@@ -310,6 +310,8 @@ class PonderationModel(abstract_model.DictModel):
         friction_layer_path = self.bdModel.getOrigPath(item.dict["friction"])
         pond_layer_path = self.bdModel.getOrigPath(item.dict["ponderation"])
         out_layer_path = self.bdModel.getOrigPath(item.dict["out_layer"])
+        qgsUtils.removeLayerFromPath(out_layer_path)
+        qgsUtils.removeRaster(out_layer_path)
         feedback.setProgressText("weighted layer " + item.dict["out_layer"])
         weighting_params = { 'INPUT_LAYER' : friction_layer_path,
                              'WEIGHT_LAYER' : pond_layer_path,

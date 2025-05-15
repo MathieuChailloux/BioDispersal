@@ -182,6 +182,8 @@ class SelectionModel(abstract_model.DictModel):
         mode = item.dict["mode"]
         grp_name = grp_item.dict["name"]
         out_path = self.getItemOutPath(item)
+        qgsUtils.removeLayerFromPath(out_path)
+        qgsUtils.removeRaster(out_path)
         if os.path.isfile(out_path):
             qgsUtils.removeRaster(out_path)
         input = self.getItemInPath(item)
@@ -264,8 +266,8 @@ class SelectionModel(abstract_model.DictModel):
                         step_feedback.reportError("Group '" + grp_name + "' does not exist.")
                         utils.user_error("Several selections in group '" + grp_name +"'")
             out_path = self.bdModel.groupsModel.getOutPath(grp_name)
-            if os.path.isfile(out_path):
-                qgsUtils.removeRaster(out_path)
+            qgsUtils.removeLayerFromPath(out_path)
+            qgsUtils.removeRaster(out_path)
             if not from_raster:
                 crs, extent, resolution = self.bdModel.getRasterParams()
                 aux_algs.applyRasterizationFixAllTouch(

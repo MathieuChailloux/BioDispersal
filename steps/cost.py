@@ -83,14 +83,12 @@ class CostModel(abstract_model.DictModel):
         cost = item.dict["cost"]
         perm_raster_path = self.bdModel.getOrigPath(item.dict["perm_layer"])
         out_path = self.bdModel.getOrigPath(item.dict["out_layer"])
-        if os.path.isfile(out_path):
-            qgsUtils.removeRaster(out_path)
+        qgsUtils.removeLayerFromPath(out_path)
+        qgsUtils.removeRaster(out_path)
         tmp_path = utils.mkTmpPath(out_path,suffix="_disp_tmp")
-        if os.path.isfile(tmp_path):
-            qgsUtils.removeRaster(tmp_path)
+        qgsUtils.removeRaster(tmp_path)
         start_raster_path = utils.mkTmpPath(out_path,suffix="_start")
-        if os.path.isfile(start_raster_path):
-            qgsUtils.removeRaster(start_raster_path)
+        qgsUtils.removeRaster(start_raster_path)
         # Feedback
         out_name =  os.path.basename(out_path)
         feedback.setProgressText(" " + str(out_name))

@@ -162,8 +162,8 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 utils.checkFileExists(grp_layer_file,prefix="Group ")
             step_feedback.pushDebugInfo(str(grp_args))
             out_path = self.bdModel.stModel.getMergedPath(st_item.getName())
-            if os.path.isfile(out_path):
-                qgsUtils.removeRaster(out_path)
+            qgsUtils.removeLayerFromPath(out_path)
+            qgsUtils.removeRaster(out_path)
             qgsTreatments.applyMergeRaster(grp_args,out_path,out_type=Qgis.Int16,
                 context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)

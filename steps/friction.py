@@ -142,6 +142,7 @@ class FrictionModel(ExtensiveTableModel):
             in_path = self.parentModel.stModel.getMergedPath(st_name)
             utils.checkFileExists(in_path)
             out_path = self.parentModel.stModel.getFrictionPath(st_name)
+            qgsUtils.removeLayerFromPath(out_path)
             qgsUtils.removeRaster(out_path)
             self.checkInVals(in_path)
             qgsTreatments.applyReclassifyByTable(in_path,matrix,out_path,
