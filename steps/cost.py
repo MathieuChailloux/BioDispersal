@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsMapLayerProxyModel, Qgis
 from qgis.gui import QgsFileWidget
 

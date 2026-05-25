@@ -31,9 +31,9 @@ from qgis.core import (Qgis,
                        QgsFeature,
                        QgsFeatureRequest,
                        QgsExpression)
-from PyQt5.QtCore import QVariant
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QHeaderView
+from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QHeaderView
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
 from ..algs import BioDispersal_steps_algs as BSA

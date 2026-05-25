@@ -26,9 +26,9 @@ import os.path
 import sys
 import inspect
 
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -250,7 +250,7 @@ class BioDispersal:
         dlg.show()
         print(str(dlg))
         # Run the dialog event loop
-        result = dlg.exec_()
+        result = dlg.exec()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and

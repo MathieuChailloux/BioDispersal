@@ -28,9 +28,9 @@ import traceback
 from io import StringIO
 import locale
 
-from PyQt5 import uic
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QTranslator, qVersion, QCoreApplication
+from qgis.PyQt import uic
+from qgis.PyQt import QtWidgets
+from qgis.PyQt.QtCore import QTranslator, qVersion, QCoreApplication
 from qgis.gui import QgsFileWidget
 from qgis.core import QgsApplication, QgsProcessingContext
 

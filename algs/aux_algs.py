@@ -26,8 +26,8 @@ import os
 import math
 import xml.etree.ElementTree as ET
     
-from PyQt5.QtCore import QCoreApplication, QVariant
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtGui import QIcon
 from qgis.core import (Qgis,
                        QgsField,
                        QgsProcessing,

@@ -26,8 +26,8 @@ import os
 
 from .qgis_lib_mc import utils
 #import helps
-from PyQt5.QtCore import QUrl, QFile, QIODevice, QTextStream
-from PyQt5.QtGui import QTextDocument
+from qgis.PyQt.QtCore import QUrl, QFile, QIODevice, QTextStream
+from qgis.PyQt.QtGui import QTextDocument
 
 class TabItem:
 

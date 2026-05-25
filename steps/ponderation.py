@@ -24,7 +24,7 @@
 
 import re, sys
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import QgsMapLayerProxyModel, QgsProcessingUtils
 from qgis.gui import QgsFileWidget
 

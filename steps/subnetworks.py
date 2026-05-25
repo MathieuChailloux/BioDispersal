@@ -24,9 +24,9 @@
 
 import os, sys, re
 
-from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QHeaderView
+from qgis.PyQt.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QHeaderView
 
 from ..qgis_lib_mc import utils, abstract_model
 from . import params
