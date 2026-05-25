@@ -31,7 +31,12 @@ from qgis.gui import QgsFileWidget
 from qgis.PyQt.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt, QCoreApplication
 from qgis.PyQt.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    qgsTreatments,
+    abstract_model)
 
 # BioDispersal global parameters
 
@@ -103,7 +108,7 @@ class ParamsConnector:
         
     def initGui(self):
         #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
-        self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.dlg.paramsView.setHorizontalScrollMode(SCROLL_PER_PIXEL)
         #self.dlg.extentLayer.setFilter("*.shp;*.tif")
         self.dlg.paramsCrs.setCrs(defaultCrs)
         #self.model.setResolution(25)
@@ -118,7 +123,7 @@ class ParamsConnector:
         self.dlg.workspace.fileChanged.connect(self.model.setWorkspace)
         self.dlg.paramsCrs.crsChanged.connect(self.model.setCrs)
         header = self.dlg.paramsView.horizontalHeader()     
-        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(0, HEADER_STRETCH)
         self.model.layoutChanged.emit()
         
     def tr(self, message):

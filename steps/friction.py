@@ -31,8 +31,18 @@ from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import Qgis
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, feedbacks, styles
-from ..qgis_lib_mc.abstract_model import DictItem, ExtensiveTableModel, AbstractConnector, ComboDelegate
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    qgsTreatments,
+    feedbacks,
+    styles)
+from ..qgis_lib_mc.abstract_model import (
+    DictItem,
+    ExtensiveTableModel,
+    AbstractConnector,
+    ComboDelegate)
 
 from . import params, subnetworks, classes
 # from .classes import ClassItem
@@ -73,9 +83,9 @@ class FrictionModel(ExtensiveTableModel):
         
     def flags(self, index):
         if index.column() in [0,1]:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
         else:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED | ITEM_IS_EDITABLE
         return flags
         
     # Creates FrictionItem from ClassItem

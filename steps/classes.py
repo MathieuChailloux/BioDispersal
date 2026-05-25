@@ -28,7 +28,11 @@ from qgis.PyQt.QtSql import QSqlRecord, QSqlTableModel, QSqlField
 from qgis.PyQt.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import (utils, qgsUtils, abstract_model)
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    abstract_model)
 from . import params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
@@ -182,9 +186,9 @@ class ClassModel(abstract_model.DictModel):
             
     def flags(self, index):
         if index.column() == 0:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
         else:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED | ITEM_IS_EDITABLE
         return flags
             
     # def getReclassDict(self,group_name):

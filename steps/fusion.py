@@ -31,7 +31,15 @@ from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import QModelIndex, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 
-from ..qgis_lib_mc import utils, qgsUtils, xmlUtils, qgsTreatments, abstract_model, feedbacks, config_parsing
+# from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    xmlUtils,
+    qgsTreatments,
+    abstract_model,
+    feedbacks,
+    config_parsing)
 from . import params, subnetworks, groups
 
 fusion_fields = ["name","descr"]

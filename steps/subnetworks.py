@@ -28,6 +28,7 @@ from qgis.PyQt.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyq
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QHeaderView
 
+from ..qgis_lib_mc.qt_compatibility import *
 from ..qgis_lib_mc import utils, abstract_model
 from . import params
 
@@ -169,9 +170,9 @@ class STModel(abstract_model.DictModel):
             
     def flags(self, index):
         if index.column() == 0:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
         else:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED | ITEM_IS_EDITABLE
         return flags
         
 class STConnector(abstract_model.AbstractConnector):

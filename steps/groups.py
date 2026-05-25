@@ -28,7 +28,12 @@ from qgis.PyQt.QtSql import QSqlRecord, QSqlTableModel, QSqlField
 from qgis.PyQt.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    qgsTreatments,
+    abstract_model)
 from . import params, classes
          
 groups_fields = ["name","descr","geom"]
@@ -211,9 +216,9 @@ class GroupModel(abstract_model.DictModel):
         
     def flags(self, index):
         if index.column() == 0:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
         else:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED | ITEM_IS_EDITABLE
         return flags
             
 

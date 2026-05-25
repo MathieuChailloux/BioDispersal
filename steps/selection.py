@@ -31,11 +31,17 @@ from qgis.core import (Qgis,
                        QgsFeature,
                        QgsFeatureRequest,
                        QgsExpression)
-from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtCore import (Qt, QVariant)
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QHeaderView
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    qgsTreatments,
+    abstract_model,
+    feedbacks)
 from ..algs import BioDispersal_steps_algs as BSA
 from ..algs import aux_algs
 from . import params, classes, groups
@@ -471,8 +477,8 @@ class SelectionConnector(abstract_model.AbstractConnector):
         
     def activateVectorMode(self):
         utils.debug("activateVectorMode")
-        self.dlg.selectionLayerFormatRaster.setCheckState(0)
-        self.dlg.selectionLayerFormatVector.setCheckState(2)
+        self.dlg.selectionLayerFormatRaster.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.selectionLayerFormatVector.setCheckState(Qt.CheckState.Checked)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.dlg.selectionInLayer.setFilter(qgsUtils.getVectorFilters())
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeVect)
@@ -480,8 +486,8 @@ class SelectionConnector(abstract_model.AbstractConnector):
             
     def activateRasterMode(self):
         utils.debug("activateRasterMode")
-        self.dlg.selectionLayerFormatVector.setCheckState(0)
-        self.dlg.selectionLayerFormatRaster.setCheckState(2)
+        self.dlg.selectionLayerFormatVector.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.selectionLayerFormatRaster.setCheckState(Qt.CheckState.Checked)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.selectionInLayer.setFilter(qgsUtils.getRasterFilters())
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeRaster)
@@ -504,14 +510,14 @@ class SelectionConnector(abstract_model.AbstractConnector):
         
     def activateExprMode(self):
         utils.debug("activateExprMode")
-        self.dlg.fieldSelectionMode.setCheckState(0)
-        self.dlg.exprSelectionMode.setCheckState(2)
+        self.dlg.fieldSelectionMode.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.exprSelectionMode.setCheckState(Qt.CheckState.Checked)
         self.dlg.stackSelectionExprField.setCurrentWidget(self.dlg.stackSelectionExpr)
         
     def activateFieldMode(self):
         utils.debug("activateFieldMode")
-        self.dlg.exprSelectionMode.setCheckState(0)
-        self.dlg.fieldSelectionMode.setCheckState(2)
+        self.dlg.exprSelectionMode.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.fieldSelectionMode.setCheckState(Qt.CheckState.Checked)
         self.dlg.stackSelectionExprField.setCurrentWidget(self.dlg.stackSelectionField)
         
     # Class / Resample modes
@@ -548,12 +554,12 @@ class SelectionConnector(abstract_model.AbstractConnector):
             self.activateGroupDisplay()
             
     def activateGroupDisplay(self):
-        self.dlg.classDisplay.setCheckState(0)
-        self.dlg.groupDisplay.setCheckState(2)
+        self.dlg.classDisplay.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.groupDisplay.setCheckState(Qt.CheckState.Checked)
         self.dlg.stackGroupClass.setCurrentWidget(self.dlg.stackGroup)
         
     def activateClassDisplay(self):
-        self.dlg.groupDisplay.setCheckState(0)
-        self.dlg.classDisplay.setCheckState(2)
+        self.dlg.groupDisplay.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.classDisplay.setCheckState(Qt.CheckState.Checked)
         self.dlg.stackGroupClass.setCurrentWidget(self.dlg.stackClass)
     
