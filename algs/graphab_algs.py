@@ -20,7 +20,7 @@
  *   (at your option) any later *******************************************/
 """
     
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (Qgis,
                        QgsFields,
                        QgsField,

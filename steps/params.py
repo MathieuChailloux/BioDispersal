@@ -28,8 +28,8 @@ import pathlib
 from qgis.core import (QgsCoordinateReferenceSystem, QgsRectangle, QgsProject,
                        QgsCoordinateTransform, QgsProcessingUtils)
 from qgis.gui import QgsFileWidget
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt, QCoreApplication
-from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
+from qgis.PyQt.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt, QCoreApplication
+from qgis.PyQt.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
 

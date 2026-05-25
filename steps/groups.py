@@ -24,8 +24,8 @@
 
 import os, sys
 
-from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
-from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex
+from qgis.PyQt.QtSql import QSqlRecord, QSqlTableModel, QSqlField
+from qgis.PyQt.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex
 from qgis.gui import QgsFileWidget
 
 from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model

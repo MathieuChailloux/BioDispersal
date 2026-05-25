@@ -25,9 +25,9 @@
 import csv
 import os
 
-from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog
+from qgis.PyQt.QtCore import Qt, QModelIndex
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import Qgis
 from qgis.gui import QgsFileWidget
 

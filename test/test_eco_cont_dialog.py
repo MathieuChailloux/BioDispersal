@@ -14,7 +14,7 @@ __copyright__ = 'Copyright 2018, IRSTEA'
 
 import unittest
 
-from PyQt5.QtGui import QDialogButtonBox, QDialog
+from qgis.PyQt.QtGui import QDialogButtonBox, QDialog
 
 from BioDispersal_dialog import BioDispersalDialaog
 
