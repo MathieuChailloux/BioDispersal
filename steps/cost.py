@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsMapLayerProxyModel, Qgis
 from qgis.gui import QgsFileWidget
 
@@ -30,7 +30,7 @@ from ..qgis_lib_mc import (utils, qgsUtils, abstract_model, qgsTreatments, feedb
 from . import params, subnetworks
 
 import time
-import os
+import os, sys
 
 cost_fields = ["start_layer","perm_layer","cost","out_layer"]
 
@@ -40,12 +40,16 @@ cost_fields = ["start_layer","perm_layer","cost","out_layer"]
 #   - 'cost' : maximal cost
 class CostItem(abstract_model.DictItem):
 
-    def __init__(self,start_layer,perm_layer,cost,out_layer):
+    FIELDS = [ "start_layer", "perm_layer", "cost", "out_layer" ]
+
+    @classmethod
+    def fromValues(cls,start_layer,perm_layer,cost,out_layer):
         dict = {"start_layer" : start_layer,
                 "perm_layer" : perm_layer,
                 "cost" : cost,
                 "out_layer" : out_layer}
-        super().__init__(dict)
+        item = cls(dict)
+        return item
         
     def equals(self,other):
         same_start = self.dict["start_layer"] == other.dict["start_layer"]
@@ -59,15 +63,14 @@ class CostItem(abstract_model.DictItem):
 class CostModel(abstract_model.DictModel):
     
     def __init__(self,bdModel):
-        self.parser_name = "CostModel"
         self.is_runnable = True
         self.bdModel = bdModel
-        super().__init__(self,cost_fields)
+        itemClass = getattr(sys.modules[__name__], CostItem.__name__)
+        super().__init__(itemClass,feedback=bdModel.feedback)
     
     def mkItemFromDict(self,dict):
         utils.checkFields(cost_fields,dict.keys())
-        item = CostItem(dict["start_layer"],dict["perm_layer"],
-                        dict["cost"],dict["out_layer"])
+        item = CostItem(dict)
         return item
         
     def applyItemWithContext(self,item,context,feedback):
@@ -80,14 +83,12 @@ class CostModel(abstract_model.DictModel):
         cost = item.dict["cost"]
         perm_raster_path = self.bdModel.getOrigPath(item.dict["perm_layer"])
         out_path = self.bdModel.getOrigPath(item.dict["out_layer"])
-        if os.path.isfile(out_path):
-            qgsUtils.removeRaster(out_path)
+        qgsUtils.removeLayerFromPath(out_path)
+        qgsUtils.removeRaster(out_path)
         tmp_path = utils.mkTmpPath(out_path,suffix="_disp_tmp")
-        if os.path.isfile(tmp_path):
-            qgsUtils.removeRaster(tmp_path)
+        qgsUtils.removeRaster(tmp_path)
         start_raster_path = utils.mkTmpPath(out_path,suffix="_start")
-        if os.path.isfile(start_raster_path):
-            qgsUtils.removeRaster(start_raster_path)
+        qgsUtils.removeRaster(start_raster_path)
         # Feedback
         out_name =  os.path.basename(out_path)
         feedback.setProgressText(" " + str(out_name))
@@ -97,14 +98,21 @@ class CostModel(abstract_model.DictModel):
         crs, extent, resolution = self.bdModel.getRasterParams()
         if start_layer_type == 'Raster':
             # Warp : 'near' resampling, output type = input type
-            qgsTreatments.applyWarpReproject(start_layer_path,start_raster_path,"near",crs.authid(),
-                                             extent=extent,extent_crs=crs,resolution=resolution,
-                                             out_type=0,context=context,feedback=step_feedback)
+            # qgsTreatments.applyWarpReproject(start_layer_path,start_raster_path,"near",crs.authid(),
+                                             # extent=extent,extent_crs=crs,resolution=resolution,
+                                             # out_type=-1,context=context,feedback=step_feedback)
+            startR = start_layer_path
+            nodata = start_layer.dataProvider().sourceNoDataValue(1)
         else:
             # Burning all vals to 1, nodata 0, Byte data type
-            qgsTreatments.applyRasterization(start_layer_path,start_raster_path,extent,resolution,
-                                             burn_val=1,out_type=Qgis.Byte,nodata_val=0,all_touch=True,
+            startR = qgsUtils.mkTmpPath("startR.tif")
+            nodata = 0
+            qgsTreatments.applyRasterization(start_layer_path,startR,extent,resolution,
+                                             burn_val=1,out_type=Qgis.Byte,nodata_val=nodata,all_touch=False,
                                              context=context,feedback=step_feedback)
+        self.bdModel.paramsModel.normalizeRaster(startR,
+            out_path=start_raster_path,nodata_val=nodata,
+            context=context,feedback=step_feedback)
         step_feedback.setCurrentStep(1)
         qgsTreatments.applyRCost(start_raster_path,perm_raster_path,cost,tmp_path,
                                  context=context,feedback=step_feedback)
@@ -193,6 +201,6 @@ class CostConnector(abstract_model.AbstractConnector):
         perm_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(perm_layer))
         cost = str(self.dlg.costMaxVal.value())
         out_layer_path = self.model.bdModel.normalizePath(self.dlg.costOutLayer.filePath())
-        cost_item = CostItem(start_layer_path,perm_layer_path,cost,out_layer_path)
+        cost_item = CostItem.fromValues(start_layer_path,perm_layer_path,cost,out_layer_path)
         return cost_item
         

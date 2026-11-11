@@ -272,6 +272,7 @@ archive:
 	echo "\nqgis_lib_mc commit number "  >> $(COMMIT_FILE)
 	echo $(LIB_COMMIT) >> $(COMMIT_FILE)
 	zip -r $(PLUGINNAME).zip $(PLUGINNAME)
+	rm -rf $(PLUGINNAME)
 
 mytest:
 	echo $(PY_FILES)

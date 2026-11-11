@@ -22,13 +22,18 @@
  ***************************************************************************/
 """
 
-import os
+import os, sys
 
-from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
-from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex
+from qgis.PyQt.QtSql import QSqlRecord, QSqlTableModel, QSqlField
+from qgis.PyQt.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    qgsTreatments,
+    abstract_model)
 from . import params, classes
          
 groups_fields = ["name","descr","geom"]
@@ -47,7 +52,7 @@ groupsModel = None
     # return None
 
 def copyGroupModel(model):
-    new_model = GroupModel(None)
+    new_model = GroupModel(model.bdModel)
     for i in model.items:
         new_model.addItem(i)
     return new_model
@@ -58,19 +63,27 @@ def copyGroupModel(model):
     # return group_storage
     
 class GroupItem(abstract_model.DictItem):
+
+    FIELDS = [ "name", "descr", "geom" ]
     
-    def __init__(self,group,descr,geom):
+    def __init__(self,dict=dict,feedback=None):
+        #self.in_layer = None
+        self.vectorLayer = None
+        self.rasterLayer = None
+        super().__init__(dict,feedback=feedback)
+        
+    @classmethod
+    def fromValues(cls,group,descr,geom):
         if not geom:
             geom = "No geometry"
         dict = {"name" : group,
                 "descr" : descr,
                 "geom" : geom}
         #assert(groups_fields == dict.keys())
-        self.name = group
-        #self.in_layer = None
-        self.vectorLayer = None
-        self.rasterLayer = None
-        super().__init__(dict)
+        return cls(dict=dict)
+        
+    def getName(self):
+        return self.dict["name"]
         
     def checkItem(self):
         prefix="Group"
@@ -87,15 +100,15 @@ class GroupItem(abstract_model.DictItem):
         return (self.dict["name"] == other.dict["name"])
         
     def getVectorPath(self,grp_path):
-        basename = self.name + "_vector.gpkg"
+        basename = self.getName() + "_vector.gpkg"
         return utils.joinPath(grp_path,basename)
         
     def getRasterPath(selfgrp_path):
-        basename = self.name + "_raster.tif"
+        basename = self.getName() + "_raster.tif"
         return utils.joinPath(grp_path,basename)
         
     def getRasterTmpPath(selfgrp_path):
-        basename = self.name + "_raster_tmp.tif"
+        basename = self.getName() + "_raster_tmp.tif"
         return utils.joinPath(grp_path,basename)
         
     def saveVectorLayer(selfgrp_path):
@@ -137,14 +150,14 @@ class GroupModel(abstract_model.DictModel):
     # groupRemoved = pyqtSignal('PyQt_PyObject')
 
     def __init__(self,bdModel):
-        self.parser_name = "GroupModel"
         self.is_runnable = False
         self.bdModel = bdModel
-        super().__init__(self,groups_fields)
+        itemClass = getattr(sys.modules[__name__], GroupItem.__name__)
+        super().__init__(itemClass,feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
         utils.checkFields(groups_fields,dict.keys())
-        item = GroupItem(dict["name"],dict["descr"],dict["geom"])
+        item = GroupItem(dict)
         return item
         
     def getGroupByName(self,name):
@@ -164,8 +177,9 @@ class GroupModel(abstract_model.DictModel):
             self.bdModel.addGroup(item)
         #self.groupAdded.emit(item)
         
-    def removeItems(self,indexes):
-        if self.bdModel:
+    def removeItems(self,indexes,updatePluginModel=True):
+        utils.debug("items = " + str([i.dict["name"] for i in self.items]))
+        if self.bdModel and updatePluginModel:
             names = [self.items[idx.row()].dict["name"] for idx in indexes]
             for n in names:
                 self.bdModel.removeGroup(n)
@@ -202,23 +216,11 @@ class GroupModel(abstract_model.DictModel):
         
     def flags(self, index):
         if index.column() == 0:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
         else:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED | ITEM_IS_EDITABLE
         return flags
             
-    # def applyRasterizationItem(self,item,context=None,feedback=None):
-        # feedback.pushDebugInfo("[applyRasterizationItem]")
-        # field = "Code"
-        # group_name = item.dict["name"]
-        # in_path = self.getVectorPath(item)
-        # out_path = self.getRasterPath(item)
-        # self.bdModel.paramsModel.checkInit()
-        # resolution = self.bdModel.paramsModel.getResolution()
-        # extent = self.bdModel.paramsModel.getExtentCoords()
-        # qgsTreatments.applyRasterization(in_path,field,out_path,extent,resolution,
-                                         # field=field,out_type=Qgis.UInt16,all_touch=True,
-                                         # context=context,feedback=feedback)
 
 class GroupConnector(abstract_model.AbstractConnector):
 
@@ -238,6 +240,8 @@ class GroupConnector(abstract_model.AbstractConnector):
 
     def mkItem(self):
         name = self.dlg.selectionGroupName.text()
+        if not utils.isValidTag(name):
+            utils.user_error(self.tr("Invalid group name {}").format(name))
         self.dlg.selectionGroupCombo.setCurrentText(name)
         descr = self.dlg.selectionGroupDescr.text()
         selection_in_layer = self.dlg.selectionInLayerCombo.currentLayer()
@@ -246,11 +250,12 @@ class GroupConnector(abstract_model.AbstractConnector):
                 geom = qgsUtils.getLayerSimpleGeomStr(selection_in_layer)
             else:
                 geom = "Raster"
-            groupsItem = GroupItem(name,descr,geom)
+            groupsItem = GroupItem.fromValues(name,descr,geom)
             return groupsItem
-        utils.user_error("No layer selected")
+        else:
+            utils.user_error("No layer selected")
         
-    def addItem(self,item):
+    def addItem(self):
         super().addItem()
         self.dlg.selectionGroupCombo.setCurrentIndex(len(self.model.items)-1)
         

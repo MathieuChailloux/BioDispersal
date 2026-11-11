@@ -22,58 +22,66 @@
  ***************************************************************************/
 """
 
-import os
-import re
+import os, sys, re
 
-from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QHeaderView
+from qgis.PyQt.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal, Qt
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QHeaderView
 
+from ..qgis_lib_mc.qt_compatibility import *
 from ..qgis_lib_mc import utils, abstract_model
 from . import params
 
 #stModel = None
          
 class STItem(abstract_model.DictItem):
+    
+    NAME = "name"
+    DESCR = "descr"
+    FIELDS = [NAME,DESCR]
 
-    def __init__(self,st,descr):
-        dict = {"name" : st,
-                "descr" : descr}
-        self.name = st
+    @classmethod
+    def fromValues(cls,st,descr):
+        dict = {cls.NAME : st,
+                cls.DESCR : descr}
         #assert(st_fields == dict.keys())
-        super().__init__(dict)
+        st_item = cls(dict)
+        return st_item
         
     def checkItem(self):
-        utils.debug(self.dict["name"])
-        if self.dict["name"] == "":
-            utils.user_error("Empty sous-trame name")
+        name = self.dict[self.NAME]
+        if not name.isalnum():
+            utils.user_error("Subnetwork name '" + name
+                + "' must be composed of alpha characters (only letters)")
             
+    def getName(self):
+        return self.dict[self.NAME]
         
     def equals(self,other):
-        return (self.dict["name"] == other.dict["name"])
+        return (self.getName() == other.getName())
                 
     def getMergedPath(self,st_path):
-        basename = self.name + "_merged.tif"
+        basename = self.getName() + "_merged.tif"
         return utils.joinPath(st_path,basename)
         
     def getRulesPath(self,st_path):
-        basename = self.name + "_rules.txt"
+        basename = self.getName() + "_rules.txt"
         return utils.joinPath(st_path,basename)
         
     def getFrictionPath(self,st_path):
-        basename = self.name + "_friction.tif"
+        basename = self.getName() + "_friction.tif"
         return utils.joinPath(st_path,basename)
         
     def getDispersionPath(self,st_path,cost):
-        basename = self.name + "_dispersion_" + str(cost) + ".tif"
+        basename = self.getName() + "_dispersion_" + str(cost) + ".tif"
         return utils.joinPath(st_path,basename)
         
     def getDispersionTmpPath(self,st_path,cost):
-        basename = self.name + "_dispersion_" + str(cost) + "_tmp.tif"
+        basename = self.getName() + "_dispersion_" + str(cost) + "_tmp.tif"
         return utils.joinPath(st_path,basename)
         
     def getStartLayerPath(self,st_path):
-        basename = self.name + "_start.tif"
+        basename = self.getName() + "_start.tif"
         return utils.joinPath(st_path,basename)
         
         
@@ -82,23 +90,22 @@ class STModel(abstract_model.DictModel):
 
     # stAdded = pyqtSignal('PyQt_PyObject')
     # stRemoved = pyqtSignal('PyQt_PyObject')
-    
-    ST_FIELDS = ["name","descr"]
 
     def __init__(self,bdModel):
-        self.parser_name = "STModel"
+        # self.parser_name = "STModel"
         self.is_runnable = False
         self.bdModel = bdModel
-        super().__init__(self,self.ST_FIELDS)
+        itemClass = getattr(sys.modules[__name__], STItem.__name__)
+        super().__init__(itemClass=itemClass,feedback=bdModel.feedback)
         
     def getSTByName(self,st_name):
         for st in self.items:
-            if st.name == st_name:
+            if st.getName() == st_name:
                 return st
         return None
         
     def getSTList(self):
-        return [st.dict["name"] for st in self.items]
+        return [st.getName() for st in self.items]
         
     def getSTPath(self,st_name):
         return self.bdModel.paramsModel.getSTPath(st_name)
@@ -135,7 +142,7 @@ class STModel(abstract_model.DictModel):
         
     def mkItemFromDict(self,dict):
         utils.checkFields(self.ST_FIELDS,dict.keys())
-        item = STItem(dict["name"],dict["descr"])
+        item = STItem(dict=dict)
         return item
         
     def addItem(self,item):
@@ -146,7 +153,13 @@ class STModel(abstract_model.DictModel):
         #self.stAdded.emit(item)
         utils.debug("ST addItem3, items = " + str(self))
         
-    def removeItems(self,indexes):
+    def updateFromXML(self,root,feedback=None):
+        for st in self.getSTList():
+            self.bdModel.removeST(st)
+        super().updateFromXML(root,feedback=feedback)
+
+    def removeItems(self, indexes):
+        utils.debug("indexes " + str(indexes))
         names = [self.items[idx.row()].dict["name"] for idx in indexes]
         utils.debug("names " + str(names))
         super().removeItems(indexes)
@@ -157,9 +170,9 @@ class STModel(abstract_model.DictModel):
             
     def flags(self, index):
         if index.column() == 0:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
         else:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED | ITEM_IS_EDITABLE
         return flags
         
 class STConnector(abstract_model.AbstractConnector):
@@ -181,5 +194,5 @@ class STConnector(abstract_model.AbstractConnector):
     def mkItem(self):
         name = self.dlg.stName.text()
         descr = self.dlg.stDescr.text()
-        stItem = STItem(name,descr)
+        stItem = STItem.fromValues(name,descr)
         return stItem

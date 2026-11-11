@@ -28,11 +28,15 @@ import pathlib
 from qgis.core import (QgsCoordinateReferenceSystem, QgsRectangle, QgsProject,
                        QgsCoordinateTransform, QgsProcessingUtils)
 from qgis.gui import QgsFileWidget
-from PyQt5.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt, QCoreApplication
-from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
+from qgis.PyQt.QtCore import QVariant, QAbstractTableModel, QModelIndex, Qt, QCoreApplication
+from qgis.PyQt.QtWidgets import QAbstractItemView, QFileDialog, QHeaderView
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model
-from ..algs import BioDispersal_algs
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    qgsTreatments,
+    abstract_model)
 
 # BioDispersal global parameters
 
@@ -55,7 +59,7 @@ class ParamsModel(abstract_model.NormalizingParamsModel):
         # self.projectFile = ""
         # self.crs = defaultCrs
         # fields = ["workspace","extentLayer","resolution","projectFile","crs"]
-        abstract_model.NormalizingParamsModel.__init__(self)
+        abstract_model.NormalizingParamsModel.__init__(self,feedback=bdModel.feedback)
             
     def getGroupsPath(self):
         self.checkWorkspaceInit()
@@ -104,7 +108,7 @@ class ParamsConnector:
         
     def initGui(self):
         #self.dlg.paramsView.setHorizontalScrollBarMode(QAbstractItemView.ScrollPerPixel)
-        self.dlg.paramsView.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.dlg.paramsView.setHorizontalScrollMode(SCROLL_PER_PIXEL)
         #self.dlg.extentLayer.setFilter("*.shp;*.tif")
         self.dlg.paramsCrs.setCrs(defaultCrs)
         #self.model.setResolution(25)
@@ -119,7 +123,7 @@ class ParamsConnector:
         self.dlg.workspace.fileChanged.connect(self.model.setWorkspace)
         self.dlg.paramsCrs.crsChanged.connect(self.model.setCrs)
         header = self.dlg.paramsView.horizontalHeader()     
-        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(0, HEADER_STRETCH)
         self.model.layoutChanged.emit()
         
     def tr(self, message):

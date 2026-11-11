@@ -29,17 +29,25 @@ from qgis.core import (Qgis,
                        QgsGeometry,
                        QgsField,
                        QgsFeature,
-                       QgsFeatureRequest)
-from PyQt5.QtCore import QVariant
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QHeaderView
+                       QgsFeatureRequest,
+                       QgsExpression)
+from qgis.PyQt.QtCore import (Qt, QVariant)
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QHeaderView
 
-from ..qgis_lib_mc import utils, qgsUtils, qgsTreatments, abstract_model, feedbacks
-from ..algs import BioDispersal_algs
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    qgsTreatments,
+    abstract_model,
+    feedbacks)
+from ..algs import BioDispersal_steps_algs as BSA
+from ..algs import aux_algs
 from . import params, classes, groups
 
 from osgeo import gdal
-import os
+import os, sys
 
 selection_fields = ["in_layer","mode","mode_val","group"]
 
@@ -56,7 +64,7 @@ vexpr = "VExpr"
 rclasses = "RClasses"
 rresample = "RResample"
 
-# SelectionItem implements DictItem and contains below fields :
+# Selection Item implements DictItem and contains below fields :
 #   - 'in_layer' : input layer from which features are selected
 #   - 'expr' : expression on which selection is performerd
 #                (all features are selected if empty expression)
@@ -64,16 +72,23 @@ rresample = "RResample"
 #   - 'group' : group assigned to selection item
 class SelectionItem(abstract_model.DictItem):
 
-    def __init__(self,in_layer,mode,mode_val,group):
-        dict = {"in_layer" : in_layer,
-                "mode" : mode,
-                "mode_val" : mode_val,
-                "group" : group}
-        self.is_vector = (mode == vfield) or (mode == vexpr)
-        utils.debug("is_vector = " + str(self.is_vector))
-        self.is_raster = (mode == rclasses) or (mode == rresample)
-        utils.debug("is_raster = " + str(self.is_raster))
-        super().__init__(dict)
+    FIELDS = [ "in_layer", "mode", "mode_val", "group" ] 
+
+    # def fromValues(self,in_layer,mode,mode_val,group):
+        # dict = {"in_layer" : in_layer,
+                # "mode" : mode,
+                # "mode_val" : mode_val,
+                # "group" : group}
+        # super().__init__(dict)
+        
+    def getMode(self):
+        return self.dict["mode"]
+    def isVector(self):
+        mode = self.getMode()
+        return (mode == vfield) or (mode == vexpr)
+    def isRaster(self):
+        mode = self.getMode()
+        return (mode == rclasses) or (mode == rresample)
         
     def checkItem(self):
         pass
@@ -82,16 +97,18 @@ class SelectionItem(abstract_model.DictItem):
 class SelectionModel(abstract_model.DictModel):
     
     def __init__(self,bdModel):
-        self.parser_name = "SelectionModel"
+        # self.parser_name = "SelectionModel"
         self.is_runnable = True
         self.bdModel = bdModel
-        super().__init__(self,selection_fields)
+        itemClass = getattr(sys.modules[__name__], SelectionItem.__name__)
+        super().__init__(itemClass=itemClass,feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
         utils.checkFields(selection_fields,dict.keys())
-        mode = dict["mode"]
-        mode_val = dict["mode_val"]
-        item = SelectionItem(dict["in_layer"],mode,mode_val,dict["group"])
+        item = SelectionItem(dict)
+        # mode = dict["mode"]
+        # mode_val = dict["mode_val"]
+        # item = SelectionItem(dict["in_layer"],mode,mode_val,dict["group"])
         return item
         
     # Returns absolute path of 'item' input layer
@@ -101,7 +118,7 @@ class SelectionModel(abstract_model.DictModel):
     # Returns absolute path of 'item' output layer
     def getItemOutPath(self,item):
         grp_name = item.dict["group"]
-        if item.is_vector:
+        if item.isVector():
             return self.bdModel.groupsModel.getVectorPath(grp_name)
         else:
             return self.bdModel.groupsModel.getRasterPath(grp_name)
@@ -138,22 +155,31 @@ class SelectionModel(abstract_model.DictModel):
     def applySelectionVExpr(self,item,grp_item,out_path,context,feedback):
         grp_name = grp_item.dict["name"]
         class_item = self.bdModel.classModel.getClassByName(grp_name)
-        parameters = { BioDispersal_algs.SelectVExprAlg.INPUT : self.getItemInPath(item),
-                       BioDispersal_algs.SelectVExprAlg.EXPR : item.dict["mode_val"],
-                       BioDispersal_algs.SelectVExprAlg.CLASS : grp_name,
-                       BioDispersal_algs.SelectVExprAlg.CODE : class_item.dict["code"],
-                       BioDispersal_algs.SelectVExprAlg.OUTPUT : out_path }
+        mode_val = item.dict["mode_val"]
+        feedback.pushDebugInfo("mode_val " + str(mode_val))
+
+        input = self.getItemInPath(item)
+        # selected_path = qgsUtils.mkTmpPath(grp_name + "_selected.gpkg")
+        # qgsTreatments.extractByExpression(input,mode_val,selected_path,feedback=feedback)
+        # clipped_path = qgsUtils.mkTmpPath(grp_name + "_clipped.gpkg")
+        #self.bdModel.paramsModel.clipByExtent(input,out_path=clipped_path)
+        #parameters = { BSA.SelectVExprAlg.INPUT : clipped_path,
+        parameters = { BSA.SelectVExprAlg.INPUT : input,
+                       BSA.SelectVExprAlg.EXPR : mode_val,
+                       BSA.SelectVExprAlg.CLASS : grp_name,
+                       BSA.SelectVExprAlg.CODE : class_item.dict["code"],
+                       BSA.SelectVExprAlg.OUTPUT : out_path }
         qgsTreatments.applyProcessingAlg("BioDispersal","selectvexpr",parameters,
                                          context=context,feedback=feedback)
         
     # Performs selection by field according to 'item'.
     def applySelectionVField(self,item,grp_name,out_path,context,feedback):
         matrix = self.bdModel.classModel.getMatrixOfGroup(grp_name)
-        parameters = { BioDispersal_algs.SelectVFieldAlg.INPUT : self.getItemInPath(item),
-                       BioDispersal_algs.SelectVFieldAlg.FIELD : item.dict["mode_val"],
-                       BioDispersal_algs.SelectVFieldAlg.GROUP : grp_name,
-                       BioDispersal_algs.SelectVFieldAlg.ASSOC : matrix,
-                       BioDispersal_algs.SelectVFieldAlg.OUTPUT : out_path }
+        parameters = { BSA.SelectVFieldAlg.INPUT : self.getItemInPath(item),
+                       BSA.SelectVFieldAlg.FIELD : item.dict["mode_val"],
+                       BSA.SelectVFieldAlg.GROUP : grp_name,
+                       BSA.SelectVFieldAlg.ASSOC : matrix,
+                       BSA.SelectVFieldAlg.OUTPUT : out_path }
         qgsTreatments.applyProcessingAlg("BioDispersal","selectvfield",parameters,
                                          context=context,feedback=feedback)
         
@@ -162,40 +188,48 @@ class SelectionModel(abstract_model.DictModel):
         mode = item.dict["mode"]
         grp_name = grp_item.dict["name"]
         out_path = self.getItemOutPath(item)
+        qgsUtils.removeLayerFromPath(out_path)
+        qgsUtils.removeRaster(out_path)
+        if os.path.isfile(out_path):
+            qgsUtils.removeRaster(out_path)
         input = self.getItemInPath(item)
         step_feedback = feedbacks.ProgressMultiStepFeedback(2,feedback)
         step_feedback.setCurrentStep(0)
         if mode == vexpr:
-            self.applySelectionVExpr(item,grp_item,out_path,context,step_feedback)
+            to_warp = qgsUtils.mkTmpPath("selected.gpkg")
+            self.applySelectionVExpr(item,grp_item,to_warp,context,step_feedback)
         elif mode == vfield:
-            self.applySelectionVField(item,grp_name,out_path,context,step_feedback)
+            to_warp = qgsUtils.mkTmpPath("selected.gpkg")
+            self.applySelectionVField(item,grp_name,to_warp,context,step_feedback)
         elif mode == rclasses:
-            out_tmp_path = utils.mkTmpPath(out_path)
+            to_warp = qgsUtils.mkTmpPath("reclassified.gpkg")
             matrix = self.bdModel.classModel.getReclassifyMatrixOfGroup(grp_name)
             # Call to native:reclassifybytable.
             # Output type set to Int16 to keep -9999 nodata value and ensure wide range of classes.
             # Boundaries mode = 2 to build reclassify intervals with one single value : [input_val,input_val].
             # Input values not covered by 'matrix' are reclassified to nodata.
-            qgsTreatments.applyReclassifyByTable(input,matrix,out_tmp_path,
+            qgsTreatments.applyReclassifyByTable(input,matrix,to_warp,
                                                  out_type = Qgis.Int16,
                                                  boundaries_mode=2,nodata_missing=True,
                                                  context=context,feedback=step_feedback)
-            to_warp = out_tmp_path
         elif mode == rresample:
             to_warp = input
         else:
             utils.user_error("Unexpected mode : " + str(mode))
         step_feedback.setCurrentStep(1)
-        if item.is_raster:
+        crs, extent, resolution = self.bdModel.getRasterParams()
+        if item.isRaster():
             # If selection is applied to raster layer, resampling is performed to match project parameters.
             resampling_mode = item.dict["mode_val"]
-            crs, extent, resolution = self.bdModel.getRasterParams()
             # Output type set to Int16.
             qgsTreatments.applyWarpReproject(to_warp,out_path,resampling_mode,crs.authid(),
                                              extent=extent,extent_crs=crs,resolution=resolution,
-                                             out_type=2,
+                                             out_type=Qgis.Int16,
                                              overwrite=True,context=context,feedback=step_feedback)
             qgsUtils.removeRaster(to_warp)
+        else:
+            qgsTreatments.applyReprojectLayer(to_warp,crs,out_path,context=context,feedback=feedback)
+            # qgsUtils.removeVectorLayer(to_warp)
         step_feedback.setCurrentStep(2)
             
         
@@ -232,21 +266,22 @@ class SelectionModel(abstract_model.DictModel):
             from_raster = False
             for s in selections:
                 self.applyItemWithContext(s,grp_item,context,step_feedback)
-                if s.is_raster:
+                if s.isRaster():
                     from_raster = True
                     if len(selections) > 1:
                         step_feedback.reportError("Group '" + grp_name + "' does not exist.")
                         utils.user_error("Several selections in group '" + grp_name +"'")
             out_path = self.bdModel.groupsModel.getOutPath(grp_name)
-            if os.path.isfile(out_path):
-                qgsUtils.removeRaster(out_path)
+            qgsUtils.removeLayerFromPath(out_path)
+            qgsUtils.removeRaster(out_path)
             if not from_raster:
                 crs, extent, resolution = self.bdModel.getRasterParams()
-                BioDispersal_algs.applyRasterizationFixAllTouch(grp_vector_path,grp_raster_path,extent,resolution,
-                                                 field="Code",out_type=1,all_touch=True,
-                                                 context=context,feedback=step_feedback)
+                aux_algs.applyRasterizationFixAllTouch(
+                    grp_vector_path,grp_raster_path,extent,resolution,
+                    field="Code",out_type=Qgis.Int16,all_touch=True,
+                    context=context,feedback=step_feedback)
             self.bdModel.paramsModel.normalizeRaster(grp_raster_path,
-                out_path=out_path,context=context,feedback=feedback)
+                out_path=out_path,context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
@@ -325,7 +360,8 @@ class SelectionConnector(abstract_model.AbstractConnector):
         res = []
         for v in vals:
             class_name = group + "_" + str(v)
-            class_descr = "Class " + str(v) + " of group " + group
+            # class_descr = "Class " + str(v) + " of group " + group
+            class_descr = ""
             res.append((class_name,class_descr))
         return res
         
@@ -335,7 +371,7 @@ class SelectionConnector(abstract_model.AbstractConnector):
         if not in_layer:
             utils.user_error("No layer selected")
         in_layer_path = self.model.bdModel.normalizePath(qgsUtils.pathOfLayer(in_layer))
-        expr = self.dlg.selectionExpr.expression()
+        # expr = self.dlg.selectionExpr.expression()
         grp_item = self.getOrCreateGroup()
         grp_name = grp_item.dict["name"]
         grp_descr = grp_item.dict["descr"]
@@ -355,6 +391,9 @@ class SelectionConnector(abstract_model.AbstractConnector):
             elif self.dlg.exprSelectionMode.isChecked():
                 mode = vexpr
                 mode_val = self.dlg.selectionExpr.expression()
+                # utils.debug("mode_val 1 = " + str(mode_val))
+                # mode_val = mode_val.replace('"','\\"')
+                # utils.debug("mode_val 2 = " + str(mode_val))
                 class_names = [(grp_name, grp_descr)]
             else:
                 assert False
@@ -363,9 +402,11 @@ class SelectionConnector(abstract_model.AbstractConnector):
             in_geom = "Raster"
             if self.dlg.selectionCreateClasses.isChecked():
                 mode = rclasses
-                self.model.bdModel.feedback.beginSection("Fetching unique values")
+                self.dlg.feedback.beginSection("Fetching unique values")
+                # self.model.bdModel.feedback.beginSection("Fetching unique values")
                 vals = qgsTreatments.getRasterUniqueVals(in_layer,feedback=self.dlg.feedback)
-                self.model.bdModel.feedback.endSection()
+                # self.model.bdModel.feedback.endSection()
+                self.dlg.feedback.endSection()
                 class_names = self.getClassesFromVals(grp_name,vals)
             else:
                 mode = rresample
@@ -377,10 +418,10 @@ class SelectionConnector(abstract_model.AbstractConnector):
         utils.debug("class_names = " + str(class_names))
         for (class_name, class_descr) in class_names:
             class_code = self.model.bdModel.classModel.getFreeCode()
-            class_item = classes.ClassItem(class_name,class_descr,class_code,grp_name)
-            self.model.bdModel.classModel.addItem(class_item)
-            self.model.bdModel.classModel.layoutChanged.emit()
-        item = SelectionItem(in_layer_path,mode,mode_val,grp_name)
+            class_item = classes.ClassItem.fromValues([class_name,class_code,class_descr,grp_name])
+            self.model.bdModel.classModel.addRowFromClassItem(class_item)
+            #self.model.bdModel.classModel.layoutChanged.emit()
+        item = SelectionItem.fromValues([in_layer_path,mode,mode_val,grp_name])
         return item
         
     def setClass(self,text):
@@ -436,8 +477,8 @@ class SelectionConnector(abstract_model.AbstractConnector):
         
     def activateVectorMode(self):
         utils.debug("activateVectorMode")
-        self.dlg.selectionLayerFormatRaster.setCheckState(0)
-        self.dlg.selectionLayerFormatVector.setCheckState(2)
+        self.dlg.selectionLayerFormatRaster.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.selectionLayerFormatVector.setCheckState(Qt.CheckState.Checked)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.dlg.selectionInLayer.setFilter(qgsUtils.getVectorFilters())
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeVect)
@@ -445,8 +486,8 @@ class SelectionConnector(abstract_model.AbstractConnector):
             
     def activateRasterMode(self):
         utils.debug("activateRasterMode")
-        self.dlg.selectionLayerFormatVector.setCheckState(0)
-        self.dlg.selectionLayerFormatRaster.setCheckState(2)
+        self.dlg.selectionLayerFormatVector.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.selectionLayerFormatRaster.setCheckState(Qt.CheckState.Checked)
         self.dlg.selectionInLayerCombo.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.selectionInLayer.setFilter(qgsUtils.getRasterFilters())
         self.dlg.stackSelectionMode.setCurrentWidget(self.dlg.stackSelectionModeRaster)
@@ -469,14 +510,14 @@ class SelectionConnector(abstract_model.AbstractConnector):
         
     def activateExprMode(self):
         utils.debug("activateExprMode")
-        self.dlg.fieldSelectionMode.setCheckState(0)
-        self.dlg.exprSelectionMode.setCheckState(2)
+        self.dlg.fieldSelectionMode.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.exprSelectionMode.setCheckState(Qt.CheckState.Checked)
         self.dlg.stackSelectionExprField.setCurrentWidget(self.dlg.stackSelectionExpr)
         
     def activateFieldMode(self):
         utils.debug("activateFieldMode")
-        self.dlg.exprSelectionMode.setCheckState(0)
-        self.dlg.fieldSelectionMode.setCheckState(2)
+        self.dlg.exprSelectionMode.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.fieldSelectionMode.setCheckState(Qt.CheckState.Checked)
         self.dlg.stackSelectionExprField.setCurrentWidget(self.dlg.stackSelectionField)
         
     # Class / Resample modes
@@ -513,12 +554,12 @@ class SelectionConnector(abstract_model.AbstractConnector):
             self.activateGroupDisplay()
             
     def activateGroupDisplay(self):
-        self.dlg.classDisplay.setCheckState(0)
-        self.dlg.groupDisplay.setCheckState(2)
+        self.dlg.classDisplay.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.groupDisplay.setCheckState(Qt.CheckState.Checked)
         self.dlg.stackGroupClass.setCurrentWidget(self.dlg.stackGroup)
         
     def activateClassDisplay(self):
-        self.dlg.groupDisplay.setCheckState(0)
-        self.dlg.classDisplay.setCheckState(2)
+        self.dlg.groupDisplay.setCheckState(Qt.CheckState.Unchecked)
+        self.dlg.classDisplay.setCheckState(Qt.CheckState.Checked)
         self.dlg.stackGroupClass.setCurrentWidget(self.dlg.stackClass)
     

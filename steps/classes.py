@@ -22,18 +22,21 @@
  ***************************************************************************/
 """
 
-import os
+import os, sys
 
-from PyQt5.QtSql import QSqlRecord, QSqlTableModel, QSqlField
-from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
+from qgis.PyQt.QtSql import QSqlRecord, QSqlTableModel, QSqlField
+from qgis.PyQt.QtCore import Qt, QVariant, QAbstractTableModel, QModelIndex, pyqtSignal
 from qgis.gui import QgsFileWidget
 
-from ..qgis_lib_mc import (utils, qgsUtils, abstract_model)
+from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    abstract_model)
 from . import params
          
 # Class model is static so that it can be modified by dependant modules suchs as config parsing
 # classModel = None
-class_fields = ["name","code","descr","group"]
 
 # def getClassLayer(grp):
     # clsItem = classModel.getClassByName(out_name)
@@ -52,27 +55,37 @@ class_fields = ["name","code","descr","group"]
 #   - 'code' : class identifier in raster layers (automatically generated)
 class ClassItem(abstract_model.DictItem):
     
-    def __init__(self,cls,descr,code,group):
-        utils.debug("init with code " + str(code))
-        if code == None:
-            code = classModel.getFreeCode()
-            utils.debug("new code = " + str(code))
-        else:
-            try:
-                code = int(code)
-            except TypeError:
-                utils.user_error("Could not build class item from code '" + str(code)+ "'")
-        dict = {"name" : cls,
-                "code": code,
-                "descr" : descr,
-                "group" : group}
-        self.name = cls
-        super().__init__(dict)
+    FIELDS = ["name","code","descr","group"]
+    idField = "name"
+    
+    # @classmethod
+    # def fromValues(cls,name,descr,code,group):
+        # if code == None:
+            # code = classModel.getFreeCode()
+        # else:
+            # try:
+                # code = int(code)
+            # except TypeError:
+                # utils.user_error("Could not build class item from code '" + str(code)+ "'")
+        # dict = {"name" : name,
+                # "code": code,
+                # "descr" : descr,
+                # "group" : group}
+        # utils.debug("dict = " + str(dict))
+        # utils.debug("dict.type = " + str(type(dict)))
+        # return cls(dict=dict)
+        
+    def getName(self):
+        return self.dict["name"]
+    def getCode(self):
+        return self.dict["code"]
+    def getDescr(self):
+        return self.dict["descr"]
         
     def checkItem(self):
         utils.checkName(self,prefix="Class")
         if not self.dict["descr"]:
-            utils.warn("Class '" + self.name + "' with empty description")
+            utils.warn("Class '" + self.getName() + "' with empty description")
         
     def equals(self,other):
         return (self.dict["name"] == other.dict["name"])
@@ -98,13 +111,13 @@ class ClassModel(abstract_model.DictModel):
     # classRemoved = pyqtSignal('PyQt_PyObject')
     
     def __init__(self,bdModel):
-        self.parser_name = "ClassModel"
         self.is_runnable = False
         self.bdModel = bdModel
-        super().__init__(self,class_fields)
+        itemClass = getattr(sys.modules[__name__], ClassItem.__name__)
+        super().__init__(itemClass,feedback=bdModel.feedback)
         
     def mkItemFromDict(self,dict):
-        utils.checkFields(class_fields,dict.keys())
+        utils.checkFields(self.fields,dict.keys())
         item = ClassItem(dict["name"],dict["descr"],dict["code"],dict["group"])
         return item
         
@@ -112,7 +125,7 @@ class ClassModel(abstract_model.DictModel):
         for i in self.items:
             if i.dict["name"] == name:
                 return i
-        None
+        return None
         
     def getClassesOfGroup(self,grp_name):
         class_items = [i for i in self.items if i.dict["group"] == grp_name]
@@ -143,24 +156,26 @@ class ClassModel(abstract_model.DictModel):
                 return cpt
             cpt += 1
             
-    def addItem(self,item):
-        super().addItem(item)
+    def addRowFromClassItem(self,item):
+        self.addItem(item)
         self.bdModel.addClass(item)
-        # self.classAdded.emit(item)
-        # self.classAdded2.emit()
         
     def removeFromGroupName(self,name):
         indexes = []
         names = []
+        codes = []
         cpt = 0
         for cpt, item in enumerate(self.items):
             if item.dict["group"] == name:
                 indexes.append(cpt)
                 names.append(item.dict["name"])
+                # codes.append(item.dict[ClassItem.idField])
             cpt += 1
         self.removeItemsFromRows(indexes) 
         for n in names:
             self.bdModel.removeClass(n)
+        # for c in codes:
+            # self.bdModel.removeClass(c)
          
     def removeItems(self,indexes):
         names = [self.items[idx.row()].dict["name"] for idx in indexes]
@@ -171,9 +186,9 @@ class ClassModel(abstract_model.DictModel):
             
     def flags(self, index):
         if index.column() == 0:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
         else:
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+            flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED | ITEM_IS_EDITABLE
         return flags
             
     # def getReclassDict(self,group_name):

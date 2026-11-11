@@ -1,8 +1,8 @@
 
 import os
 
-from PyQt5 import uic
-from PyQt5 import QtWidgets
+from qgis.PyQt import uic
+from qgis.PyQt import QtWidgets
 
 #FORM_CLASS_TEST, _ = uic.loadUiType(os.path.join(
 #    os.path.dirname(__file__), 'BioDispersalAbout_dialog_base.ui'))

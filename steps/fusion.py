@@ -27,11 +27,19 @@ import subprocess
 import os.path
 import xml.etree.ElementTree as ET
 
-from qgis.core import QgsProject
-from PyQt5.QtCore import QModelIndex, pyqtSlot
-from PyQt5.QtGui import QIcon
+from qgis.core import Qgis, QgsProject
+from qgis.PyQt.QtCore import QModelIndex, pyqtSlot
+from qgis.PyQt.QtGui import QIcon
 
-from ..qgis_lib_mc import utils, qgsUtils, xmlUtils, qgsTreatments, abstract_model, feedbacks, config_parsing
+# from ..qgis_lib_mc.qt_compatibility import *
+from ..qgis_lib_mc import (
+    utils,
+    qgsUtils,
+    xmlUtils,
+    qgsTreatments,
+    abstract_model,
+    feedbacks,
+    config_parsing)
 from . import params, subnetworks, groups
 
 fusion_fields = ["name","descr"]
@@ -46,7 +54,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         self.st_groups = {}
         self.current_st = None
         self.current_model = None
-        super().__init__(self,fusion_fields)
+        super().__init__(fields=fusion_fields,feedback=bdModel.feedback)
         
     def __str__(self):
         res = ""
@@ -102,7 +110,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
         xmlStr += indent + "</" + self.__class__.__name__ + ">"
         return xmlStr
     
-    def fromXMLRoot(self,root):
+    def fromXML(self,root):
         utils.info("[fromXMLRoot] FusionModel")
         for st_root in root:
             st_name = st_root.attrib["name"]
@@ -112,7 +120,7 @@ class FusionModel(abstract_model.AbstractGroupModel):
             if nb_groups == 0:
                 utils.warn("No groups for st " + str(st_name))
             for grp in st_root:
-                grp_model = groups.GroupModel(None)
+                grp_model = groups.GroupModel(self.bdModel)
                 for grp_item in grp:
                     item = grp_model.mkItemFromDict(grp_item.attrib)
                     grp_model.addItem(item)
@@ -124,6 +132,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 self.current_model.layoutChanged.emit()
                 grp_model.layoutChanged.emit()
         self.layoutChanged.emit()
+    def updateFromXML(self,root,feedback=None):
+        self.feedback = feedback
+        self.fromXML(root)
         
     def applyItemsWithContext(self,context,feedback,onlyCurrent=False):
         feedback.beginSection("Groups merge")
@@ -154,15 +165,15 @@ class FusionModel(abstract_model.AbstractGroupModel):
                 step_feedback.pushInfo("groups = " + str(groups.items))
             step_feedback.pushDebugInfo("apply fusion to " + st)
             step_feedback.pushDebugInfo(str([g.dict["name"] for g in groups.items]))
-            grp_args = [self.bdModel.groupsModel.getOutPath(g.name) for g in reversed(groups.items)]
+            grp_args = [self.bdModel.groupsModel.getOutPath(g.getName()) for g in reversed(groups.items)]
             for grp_layer_file in grp_args:
                 utils.checkFileExists(grp_layer_file,prefix="Group ")
             step_feedback.pushDebugInfo(str(grp_args))
-            out_path = self.bdModel.stModel.getMergedPath(st_item.name)
-            if os.path.isfile(out_path):
-                qgsUtils.removeRaster(out_path)
-            qgsTreatments.applyMergeRaster(grp_args,out_path,out_type=1,
-                                           context=context,feedback=step_feedback)
+            out_path = self.bdModel.stModel.getMergedPath(st_item.getName())
+            qgsUtils.removeLayerFromPath(out_path)
+            qgsUtils.removeRaster(out_path)
+            qgsTreatments.applyMergeRaster(grp_args,out_path,out_type=Qgis.Int16,
+                context=context,feedback=step_feedback)
             qgsUtils.loadRasterLayer(out_path,loadProject=True)
             curr_step += 1
             step_feedback.setCurrentStep(curr_step)
@@ -185,8 +196,9 @@ class FusionModel(abstract_model.AbstractGroupModel):
         
     def removeItems(self,index):
         utils.debug("[removeItems] nb of items = " + str(len(self.current_model.items))) 
-        self.current_model.removeItems(index)
+        self.current_model.removeItems(index,updatePluginModel=False)
         self.current_model.layoutChanged.emit()
+        self.layoutChanged.emit()
         
     def addItem(self,item):
         utils.debug("[addItemFusion]")
@@ -219,8 +231,9 @@ class FusionConnector(abstract_model.AbstractConnector):
         self.models = {}
         self.onlySelection = False
         super().__init__(fusionModel,self.dlg.fusionView,
-                         None,self.dlg.fusionRemove,
-                         self.dlg.fusionRun,self.dlg.fusionRunOnlySelection)
+                         addButton=None,removeButton=self.dlg.fusionRemove,
+                         runButton=self.dlg.fusionRun,
+                         selectionCheckbox=self.dlg.fusionRunOnlySelection)
                          
     def initGui(self):
         pass

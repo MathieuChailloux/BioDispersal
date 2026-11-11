@@ -4,10 +4,17 @@
   </head>
   <body style=" font-family:'MS Shell Dlg 2';font-size:8.25pt;font-weight:400;font-style:normal;">
     <p><span style=" font-size:14pt;font-weight:600;">Friction </span></p>
-    <br />
     <p style= " font-size:8pt;">
- Pour chaque classe et chaque sous-trame, un coefficient de friction doit &ecirc;tre renseign&eacute;e. Ce doit &ecirc;tre un entier positif.
+Pour chaque classe et chaque sous-trame, une valeur num&eacute;rique doit &ecirc;tre renseign&eacute;e (en l'absence de valeur, la classe est retir&eacute;e du calcul pour la sous-trame correspondante).
 <br/>
+Plusieurs m&eacute;thodes sont disponibles &agrave; cette &eacute;tape
+<p><span style=" font-size:10pt;font-weight:600;">Coefficients </span></p>
+La m&eacute;thode classique telle que d&eacute;crite dans les tutoriels consiste &agrave; affecter des coefficient de friction dont la valeur num&eacute;rique correspond &agrave; la r&eacute;sistance du milieu aux d&eacute;placements des esp&egrave;ces cibles (plus la valeur est &eacute;lev&eacute;e, plus le milieu est d&eacute;favorable).
+<p><span style=" font-size:10pt;font-weight:600;">Classes de favorabilit&eacute; </span></p>
+Cette m&eacute;thode permet de classifier les milieux en fonction de leur favorabilit&eacute; / r&eacute;sitance aux d&eacute;placements des esp&egrave;ces cible sans avoir &agrave; quantifier cette grandeur. Les classes sont repr&eacute;sent&eacute;es par des valeurs num&eacute;riques ordonn&eacute;es (par exemple de 1 pour un milieu tr&egrave;s d&eacute;favorable &agrave; 5 pour un milieu tr&egrave;s favorable si l'on consid&egrave;re 5 classes de favorabilit&eacute;).
+<br/>
+Une fois la couche de favorabilit&eacute; g&eacute;n&eacute;r&eacute;e, il est possible de l'utiliser pour calculer un indice de distribution potentielle qui permet de s'affranchir des coefficients de friction (algorithme disponible depuis la boîte &agrave; outils de traitements de BioDispersal, cf LIEN pour un tutoriel pas &agrave; pas).
+<p><span style=" font-size:10pt;font-weight:600;">Fichier CSV </span></p>
 Il est possible de passer par un fichier CSV pour travailler sur les coefficients afin de faciliter les &eacute;changes sur cette phase cruciale de la m&eacute;thode.
     </p>
   </body>
